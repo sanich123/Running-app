@@ -5,21 +5,17 @@ import { useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { compressMediaFile, getAccessToGallery, uploadMediaFile } from '@U/file-sending';
 import { GROUPS_COPY } from '../../const';
+import type { GroupPhotoPickerProps } from './types';
 
 export default function GroupPhotoPicker({
   onPhotoAssetChange,
   onUploadingChange,
   initialPhotoUrl = null,
   uploadErrorMessage,
-}: {
-  onPhotoAssetChange: (assetId: string | null) => void;
-  onUploadingChange: (isUploading: boolean) => void;
-  initialPhotoUrl?: string | null;
-  uploadErrorMessage?: string;
-}) {
+}: GroupPhotoPickerProps) {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
-  const copy = GROUPS_COPY[language];
+  const { photoUploadError, changePhoto, addPhoto, uploadingPhoto, removePhoto } = GROUPS_COPY[language];
   const [photoUri, setPhotoUri] = useState<string | null>(initialPhotoUrl);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
 
@@ -29,8 +25,10 @@ export default function GroupPhotoPicker({
     onUploadingChange(true);
     try {
       const result = await getAccessToGallery(['images'], { allowsMultipleSelection: false });
-      if (!result || result.canceled) return;
-      const image = result.assets[0];
+      if (!result) return;
+      const { canceled, assets } = result;
+      if (canceled) return;
+      const [image] = assets;
       if (!image) return;
 
       setPhotoUri(image.uri);
@@ -40,17 +38,17 @@ export default function GroupPhotoPicker({
       const compressedImage = await compressMediaFile(uploadSource, { fileName: image.fileName, mediaType: 'image' });
       if (!compressedImage) {
         setPhotoUri(previousPhotoUri);
-        return errorToast(uploadErrorMessage ?? copy.photoUploadError);
+        return errorToast(uploadErrorMessage ?? photoUploadError);
       }
       const upload = await uploadMediaFile(compressedImage, { scope: 'group' });
       if (!upload?.assetId) {
         setPhotoUri(previousPhotoUri);
-        return errorToast(copy.photoUploadError);
+        return errorToast(photoUploadError);
       }
       onPhotoAssetChange(upload.assetId);
     } catch (error) {
       setPhotoUri(previousPhotoUri);
-      errorToast(uploadErrorMessage ?? copy.photoUploadError, error);
+      errorToast(uploadErrorMessage ?? photoUploadError, error);
     } finally {
       setIsUploadingPhoto(false);
       onUploadingChange(false);
@@ -61,7 +59,7 @@ export default function GroupPhotoPicker({
     <View style={styles.section}>
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel={photoUri ? copy.changePhoto : copy.addPhoto}
+        accessibilityLabel={photoUri ? changePhoto : addPhoto}
         onPress={() => void uploadGroupPhoto()}
         disabled={isUploadingPhoto}
         style={[styles.photoPicker, { backgroundColor: colors.surfaceVariant }]}>
@@ -72,13 +70,13 @@ export default function GroupPhotoPicker({
           <Icon source="image-plus" size={34} color={colors.onSurfaceVariant} />
         )}
         <Text variant="bodyMedium" style={[styles.photoLabel, photoUri && styles.photoLabelOnImage]}>
-          {isUploadingPhoto ? copy.uploadingPhoto : photoUri ? copy.changePhoto : copy.addPhoto}
+          {isUploadingPhoto ? uploadingPhoto : photoUri ? changePhoto : addPhoto}
         </Text>
       </Pressable>
-      {photoUri && (
+      {photoUri ? (
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={copy.removePhoto}
+          accessibilityLabel={removePhoto}
           onPress={() => {
             setPhotoUri(null);
             onPhotoAssetChange(null);
@@ -86,10 +84,10 @@ export default function GroupPhotoPicker({
           style={styles.removePhoto}>
           <Icon source="delete-outline" size={18} color={colors.error} />
           <Text variant="bodySmall" style={{ color: colors.error }}>
-            {copy.removePhoto}
+            {removePhoto}
           </Text>
         </Pressable>
-      )}
+      ) : null}
     </View>
   );
 }

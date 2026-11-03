@@ -12,8 +12,7 @@ import { successToast } from '@S/success-toast/success-toast';
 import { GROUPS_COPY } from '../const';
 import GroupPhotoPicker from '../create-group-page/group-photo-picker/group-photo-picker';
 import GroupEventForm from '../group-events-page/group-event-form/group-event-form';
-
-type ComposerMode = 'post' | 'event';
+import type { ComposerMode } from './types';
 
 export default function CreateGroupContentPage() {
   const router = useRouter();
@@ -22,7 +21,22 @@ export default function CreateGroupContentPage() {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const { userId } = useAppSelector(({ auth }) => auth);
-  const copy = GROUPS_COPY[language];
+  const {
+    createContent,
+    loadError,
+    retry,
+    postAccessDenied,
+    backToGroup,
+    createPost: createPostCopy,
+    createEvent,
+    eventCreated,
+    postPlaceholder,
+    postPhoto,
+    postPhotoUploadError,
+    postCreated,
+    postError,
+    publishPost,
+  } = GROUPS_COPY[language];
   const [mode, setMode] = useState<ComposerMode>('post');
   const { data: group, isLoading, isError, refetch } = useGetGroupByIdQuery(groupId ?? '', { skip: !groupId });
   const [createPost, { isLoading: isPublishing }] = useCreateGroupPostMutation();
@@ -37,18 +51,18 @@ export default function CreateGroupContentPage() {
 
   return (
     <>
-      <Stack.Screen options={{ title: copy.createContent }} />
+      <Stack.Screen options={{ title: createContent }} />
       {isLoading ? (
         <ActivityIndicator style={styles.loader} />
       ) : isError || !group ? (
         <View style={styles.feedback}>
-          <EmptyState icon="account-group-outline" title={copy.loadError} />
-          <Button onPress={() => void refetch()}>{copy.retry}</Button>
+          <EmptyState icon="account-group-outline" title={loadError} />
+          <Button onPress={() => void refetch()}>{retry}</Button>
         </View>
       ) : !canCreatePost ? (
         <View style={styles.feedback}>
-          <EmptyState icon="lock-outline" title={copy.postAccessDenied} />
-          <Button onPress={() => router.back()}>{copy.backToGroup}</Button>
+          <EmptyState icon="lock-outline" title={postAccessDenied} />
+          <Button onPress={() => router.back()}>{backToGroup}</Button>
         </View>
       ) : (
         <KeyboardAvoidingView
@@ -58,45 +72,47 @@ export default function CreateGroupContentPage() {
             <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant }}>
               {group.name}
             </Text>
-            {canCreateEvent && (
+            {canCreateEvent ? (
               <SegmentedButtons
                 value={mode}
-                onValueChange={(value) => setMode(value as ComposerMode)}
+                onValueChange={(value) => {
+                  if (value === 'post' || value === 'event') setMode(value);
+                }}
                 buttons={[
-                  { value: 'post', label: copy.createPost, icon: 'pencil-outline' },
-                  { value: 'event', label: copy.createEvent, icon: 'calendar-plus' },
+                  { value: 'post', label: createPostCopy, icon: 'pencil-outline' },
+                  { value: 'event', label: createEvent, icon: 'calendar-plus' },
                 ]}
               />
-            )}
+            ) : null}
             {mode === 'event' && canCreateEvent ? (
               <GroupEventForm
                 groupId={group.id}
                 groupSports={group.sports}
-                copy={copy}
+                copy={GROUPS_COPY[language]}
                 onCreated={() => {
-                  successToast(copy.eventCreated);
+                  successToast(eventCreated);
                   router.back();
                 }}
               />
             ) : (
               <Surface style={[styles.postForm, { backgroundColor: colors.surface }]} elevation={1}>
                 <Text variant="titleLarge" style={styles.formTitle}>
-                  {copy.createPost}
+                  {createPostCopy}
                 </Text>
                 <CustomTextInput<{ text: string }>
                   control={control}
                   fieldName="text"
                   multiline
                   maxLength={2000}
-                  placeholder={copy.postPlaceholder}
+                  placeholder={postPlaceholder}
                   testID="group-post-input"
                   validation={{ required: '' }}
                 />
-                <Text variant="titleSmall">{copy.postPhoto}</Text>
+                <Text variant="titleSmall">{postPhoto}</Text>
                 <GroupPhotoPicker
                   onPhotoAssetChange={setPhotoAssetId}
                   onUploadingChange={setIsUploadingPhoto}
-                  uploadErrorMessage={copy.postPhotoUploadError}
+                  uploadErrorMessage={postPhotoUploadError}
                 />
                 <Button
                   mode="contained"
@@ -112,13 +128,13 @@ export default function CreateGroupContentPage() {
                         text: text.trim(),
                         ...(photoAssetId ? { photoAssetId } : {}),
                       }).unwrap();
-                      successToast(copy.postCreated);
+                      successToast(postCreated);
                       router.back();
                     } catch (error) {
-                      errorToast(copy.postError, error);
+                      errorToast(postError, error);
                     }
                   }}>
-                  {copy.publishPost}
+                  {publishPost}
                 </Button>
               </Surface>
             )}

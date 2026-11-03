@@ -15,8 +15,13 @@ export default function GroupPhoto({
   style,
   testID = 'group-photo',
 }: GroupPhotoProps) {
-  const imageUrl = photoUrl ?? photoPreviewUrl;
   const isPrivatePreview = Boolean(photoPreviewUrl && !photoUrl);
+  const isReviewPending = ['queued', 'processing', 'review_required'].includes(photoReviewStatus ?? '');
+  const isAwaitingPublication = photoReviewStatus === 'approved' && !photoUrl;
+  const isUnderModeration =
+    (photoPending && photoReviewStatus !== 'approved') || isReviewPending || isAwaitingPublication;
+  const imageUrl = isPrivatePreview ? photoPreviewUrl : isUnderModeration ? null : photoUrl;
+  const moderationStatus = photoReviewStatus ?? 'review_required';
 
   return (
     <View style={[styles.frame, style]} testID={testID}>
@@ -27,10 +32,13 @@ export default function GroupPhoto({
           contentFit="cover"
           placeholder={photoBlurhash}
           placeholderContentFit="cover"
+          recyclingKey={imageUrl}
+          cachePolicy="memory-disk"
+          testID={`${testID}-image`}
         />
-      ) : photoPending ? (
+      ) : isUnderModeration ? (
         <MediaModerationPlaceholder
-          status={photoReviewStatus ?? 'review_required'}
+          status={moderationStatus}
           blurhash={photoBlurhash}
           compact
           showStatus={false}
@@ -41,13 +49,8 @@ export default function GroupPhoto({
           <Icon source={fallbackIcon} size={iconSize} />
         </View>
       )}
-      {photoPending && !isPrivatePreview ? (
-        <MediaModerationPlaceholder
-          status={photoReviewStatus ?? 'review_required'}
-          compact
-          overlay
-          testID={`${testID}-moderation-status`}
-        />
+      {isUnderModeration && !isPrivatePreview ? (
+        <MediaModerationPlaceholder status={moderationStatus} compact overlay testID={`${testID}-moderation-status`} />
       ) : null}
     </View>
   );

@@ -2,6 +2,7 @@ import { StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Dialog, Portal, Switch, Text, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import SettingsRow from '@Routes/settings-page/settings-row/settings-row';
+import { RESPONSIVE_DIALOG_STYLE } from '@S/responsive-dialog-style';
 import { GROUPS_COPY } from '../const';
 import { useGroupNotificationPreferences } from './use-group-notification-preferences';
 
@@ -9,6 +10,7 @@ export default function GroupNotificationSettings({ visible, onDismiss }: { visi
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const groupCopy = GROUPS_COPY[language];
+  const { groupNotificationDeliveryHint, groupNotificationSettingsTitle } = groupCopy;
   const {
     canUpdate,
     copy,
@@ -19,14 +21,15 @@ export default function GroupNotificationSettings({ visible, onDismiss }: { visi
     toggleGroupEvents,
     toggleGroupPosts,
   } = useGroupNotificationPreferences();
+  const { groupEventsNotifications, groupPostsNotifications } = copy;
 
   return (
     <Portal>
-      <Dialog visible={visible} onDismiss={onDismiss}>
-        <Dialog.Title>{groupCopy.groupNotificationSettingsTitle}</Dialog.Title>
+      <Dialog visible={visible} onDismiss={onDismiss} style={RESPONSIVE_DIALOG_STYLE}>
+        <Dialog.Title>{groupNotificationSettingsTitle}</Dialog.Title>
         <Dialog.Content>
           <Text variant="bodyMedium" style={[styles.hint, { color: colors.onSurfaceVariant }]}>
-            {groupCopy.groupNotificationDeliveryHint}
+            {groupNotificationDeliveryHint}
           </Text>
           <View style={styles.settings}>
             {isLoading ? (
@@ -34,11 +37,11 @@ export default function GroupNotificationSettings({ visible, onDismiss }: { visi
             ) : (
               <>
                 <SettingsRow
-                  title={copy.groupPostsNotifications}
+                  title={groupPostsNotifications}
                   leading={
                     <Switch
                       testID="group-post-notifications-switch"
-                      accessibilityLabel={copy.groupPostsNotifications}
+                      accessibilityLabel={groupPostsNotifications}
                       value={groupPostsEnabled}
                       disabled={!canUpdate || isUpdating}
                       onValueChange={(enabled) => void toggleGroupPosts(enabled)}
@@ -46,11 +49,11 @@ export default function GroupNotificationSettings({ visible, onDismiss }: { visi
                   }
                 />
                 <SettingsRow
-                  title={copy.groupEventsNotifications}
+                  title={groupEventsNotifications}
                   leading={
                     <Switch
                       testID="group-event-notifications-switch"
-                      accessibilityLabel={copy.groupEventsNotifications}
+                      accessibilityLabel={groupEventsNotifications}
                       value={groupEventsEnabled}
                       disabled={!canUpdate || isUpdating}
                       onValueChange={(enabled) => void toggleGroupEvents(enabled)}

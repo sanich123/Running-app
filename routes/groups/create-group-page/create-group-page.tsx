@@ -16,7 +16,8 @@ export default function CreateGroupPage() {
   const router = useRouter();
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
-  const copy = GROUPS_COPY[language];
+  const { createIntroTitle, createIntroText, nameRequired, chooseSport, saveError, createButton } =
+    GROUPS_COPY[language];
   const [details, setDetails] = useState<GroupCreationDetails>({
     name: '',
     description: '',
@@ -31,6 +32,8 @@ export default function CreateGroupPage() {
   const [photoAssetId, setPhotoAssetId] = useState<string | null>(null);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [createGroup, { isLoading }] = useCreateGroupMutation();
+  const { name, description, locationName, isWorldwide } = details;
+  const { sports, categoryTags, privacy } = options;
 
   return (
     <KeyboardAvoidingView
@@ -38,10 +41,10 @@ export default function CreateGroupPage() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <Text variant="headlineSmall" style={styles.heading}>
-          {copy.createIntroTitle}
+          {createIntroTitle}
         </Text>
         <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant }}>
-          {copy.createIntroText}
+          {createIntroText}
         </Text>
 
         <GroupPhotoPicker onPhotoAssetChange={setPhotoAssetId} onUploadingChange={setIsUploadingPhoto} />
@@ -52,31 +55,32 @@ export default function CreateGroupPage() {
           mode="contained"
           testID="create-group-submit"
           onPress={async () => {
-            if (!details.name.trim()) {
-              return errorToast(copy.nameRequired);
+            if (!name.trim()) {
+              return errorToast(nameRequired);
             }
-            if (!options.sports.length) {
-              return errorToast(copy.chooseSport);
+            if (!sports.length) {
+              return errorToast(chooseSport);
             }
             try {
               const group = await createGroup({
-                name: details.name.trim(),
-                description: details.description.trim() || undefined,
-                locationName: details.isWorldwide ? undefined : details.locationName.trim() || undefined,
-                sports: options.sports,
-                categoryTags: options.categoryTags,
+                name: name.trim(),
+                description: description.trim() || undefined,
+                locationName: isWorldwide ? undefined : locationName.trim() || undefined,
+                sports,
+                categoryTags,
                 ...(photoAssetId ? { photoAssetId } : {}),
-                privacy: options.privacy,
+                privacy,
               }).unwrap();
-              router.replace(`/groups/${group.id}` as never);
+              const { id } = group;
+              router.replace(`/groups/${id}` as never);
             } catch (error) {
-              errorToast(copy.saveError, error);
+              errorToast(saveError, error);
             }
           }}
           loading={isLoading}
           disabled={isLoading || isUploadingPhoto}
           style={styles.submit}>
-          {copy.createButton}
+          {createButton}
         </Button>
       </ScrollView>
     </KeyboardAvoidingView>

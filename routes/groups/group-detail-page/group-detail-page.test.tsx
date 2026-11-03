@@ -6,10 +6,11 @@ import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import GroupDetailPage from './group-detail-page';
 import { GROUPS_COPY } from '../const';
+import { GROUP_FIXTURE } from '../test-fixtures';
 
 const mockBack = jest.fn();
 const mockPush = jest.fn();
-let mockRouteParams: { groupId: string | string[]; tab?: string | string[] } = { groupId: 'group-1' };
+let mockRouteParams: { groupId: string | string[]; tab?: string | string[] } = { groupId: GROUP_FIXTURE.id };
 const mockGetGroup = jest.fn();
 const mockGetMembersInfinite = jest.fn();
 const mockJoinMutation = jest.fn();
@@ -39,7 +40,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => mockRouteParams,
   useRouter: () => ({ back: mockBack, push: mockPush, replace: mockPush }),
 }));
-jest.mock('@S/error-toast/error-toast', () => ({ errorToast: (...args: unknown[]) => mockErrorToast(...args) }));
+jest.mock('@S/error-toast/error-toast', () => {
+  const actual = jest.requireActual('@S/error-toast/error-toast');
+  return { ...actual, errorToast: (...args: unknown[]) => mockErrorToast(...args) };
+});
 jest.mock('@S/success-toast/success-toast', () => ({
   successToast: (...args: unknown[]) => mockSuccessToast(...args),
 }));
@@ -50,7 +54,7 @@ jest.mock('@R/services/groups/groups', () => ({
   useGetGroupPostsInfiniteQuery: (...args: unknown[]) => mockGetPostsInfinite(...args),
   useGetGroupEventsInfiniteQuery: (...args: unknown[]) => mockGetEventsInfinite(...args),
   useGetGroupEventsQuery: (...args: unknown[]) => mockGetEvents(...args),
-  useJoinGroupMutation: () => mockJoinMutation(),
+  useJoinGroupMutation: (...args: unknown[]) => mockJoinMutation(...args),
   useLeaveGroupMutation: () => mockLeaveMutation(),
   useUpdateGroupMemberMutation: () => mockUpdateMutation(),
   useUpdateGroupPreferencesMutation: () => mockPreferencesMutation(),
@@ -60,12 +64,12 @@ jest.mock('@R/services/groups/groups', () => ({
 describe('GroupDetailPage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockRouteParams = { groupId: 'group-1' };
+    mockRouteParams = { groupId: GROUP_FIXTURE.id };
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     mockGetGroup.mockReturnValue({
       data: {
-        id: 'group-1',
-        name: 'Saturday runners',
+        id: GROUP_FIXTURE.id,
+        name: GROUP_FIXTURE.name,
         description: 'Morning runs together',
         sports: ['run'],
         privacy: 'open',
@@ -115,7 +119,7 @@ describe('GroupDetailPage', () => {
     });
     mockGetEvents.mockReturnValue({ data: [], isLoading: false });
     mockJoin.mockReturnValue({ unwrap: jest.fn().mockResolvedValue({}) });
-    mockJoinMutation.mockReturnValue([mockJoin, { isLoading: false }]);
+    mockJoinMutation.mockReturnValue([mockJoin, { isLoading: false, reset: jest.fn() }]);
     mockLeave.mockReturnValue({ unwrap: jest.fn().mockResolvedValue({}) });
     mockUpdate.mockReturnValue({ unwrap: jest.fn().mockResolvedValue({}) });
     mockUpdatePreferences.mockReturnValue({ unwrap: jest.fn().mockResolvedValue({}) });
@@ -128,11 +132,11 @@ describe('GroupDetailPage', () => {
 
   it('lets a visitor join an open group', async () => {
     await renderWithProviders(<GroupDetailPage />);
-    expect(screen.getByText('Saturday runners')).toBeOnTheScreen();
+    expect(screen.getByText(GROUP_FIXTURE.name)).toBeOnTheScreen();
     await fireEvent.press(screen.getByText('Join group'));
 
     await waitFor(() => {
-      expect(mockJoin).toHaveBeenCalledWith('group-1');
+      expect(mockJoin).toHaveBeenCalledWith(GROUP_FIXTURE.id);
       expect(screen.getByText('Leave group')).toBeOnTheScreen();
     });
     expect(screen.queryByText('Join group')).toBeNull();
@@ -141,7 +145,7 @@ describe('GroupDetailPage', () => {
   it('shows a pending state for a closed group request', async () => {
     mockGetGroup.mockReturnValue({
       data: {
-        id: 'group-1',
+        id: GROUP_FIXTURE.id,
         name: 'Closed runners',
         description: null,
         sports: ['run'],
@@ -160,14 +164,14 @@ describe('GroupDetailPage', () => {
     });
     await renderWithProviders(<GroupDetailPage />);
 
-    expect(screen.getByText('Request pending')).toBeDisabled();
+    expect(screen.getByText('Awaiting approval')).toBeDisabled();
     expect(screen.getByText('3 members')).toBeOnTheScreen();
   });
 
   it('sends a join request to a closed group and reports success', async () => {
     mockGetGroup.mockReturnValue({
       data: {
-        id: 'group-1',
+        id: GROUP_FIXTURE.id,
         name: 'Closed runners',
         description: null,
         sports: ['run'],
@@ -184,20 +188,20 @@ describe('GroupDetailPage', () => {
       isError: false,
       refetch: jest.fn(),
     });
-
     await renderWithProviders(<GroupDetailPage />);
     await userEvent.press(screen.getByText('Request to join'));
 
-    await waitFor(() => expect(mockJoin).toHaveBeenCalledWith('group-1'));
-    await waitFor(() => expect(screen.getByText('Request pending')).toBeDisabled());
+    await waitFor(() => expect(mockJoin).toHaveBeenCalledWith(GROUP_FIXTURE.id));
+    await waitFor(() => expect(screen.getByText('Awaiting approval')).toBeDisabled());
     expect(mockSuccessToast).toHaveBeenCalledWith('Your request was sent');
+    expect(mockJoinMutation).toHaveBeenCalledWith({ fixedCacheKey: `group-join-${GROUP_FIXTURE.id}` });
   });
 
   it('lets an active member leave a group', async () => {
     mockGetGroup.mockReturnValue({
       data: {
-        id: 'group-1',
-        name: 'Saturday runners',
+        id: GROUP_FIXTURE.id,
+        name: GROUP_FIXTURE.name,
         description: null,
         sports: ['run'],
         privacy: 'open',
@@ -217,19 +221,19 @@ describe('GroupDetailPage', () => {
     await renderWithProviders(<GroupDetailPage />);
     fireEvent.press(screen.getByText('Leave group'));
 
-    await waitFor(() => expect(mockLeave).toHaveBeenCalledWith('group-1'));
+    await waitFor(() => expect(mockLeave).toHaveBeenCalledWith(GROUP_FIXTURE.id));
     expect(mockBack).toHaveBeenCalledTimes(1);
   });
 
   it('lets a group manager open join requests and remove a member', async () => {
     mockGetGroup.mockReturnValue({
       data: {
-        id: 'group-1',
-        name: 'Saturday runners',
+        id: GROUP_FIXTURE.id,
+        name: GROUP_FIXTURE.name,
         description: 'Morning runs',
         sports: ['run'],
         privacy: 'closed',
-        locationName: 'Moscow',
+        locationName: GROUP_FIXTURE.locationName,
         createdAt: '2026-10-29T10:00:00.000Z',
         memberCount: 2,
         currentMembership: { status: 'active', role: 'owner' },
@@ -271,15 +275,15 @@ describe('GroupDetailPage', () => {
     await user.press(screen.getByTestId('group-member-profile-member-1'));
     await user.press(screen.getByText('Remove'));
 
-    expect(mockPush).toHaveBeenCalledWith('/groups/group-1/requests');
+    expect(mockPush).toHaveBeenCalledWith(`/groups/${GROUP_FIXTURE.id}/requests`);
     expect(mockPush).toHaveBeenCalledWith('/profile/member-1');
-    expect(mockUpdate).toHaveBeenCalledWith({ groupId: 'group-1', userId: 'member-1', status: 'removed' });
+    expect(mockUpdate).toHaveBeenCalledWith({ groupId: GROUP_FIXTURE.id, userId: 'member-1', status: 'removed' });
   });
 
   it('shows empty member and request sections for an open group owner', async () => {
     mockGetGroup.mockReturnValue({
       data: {
-        id: 'group-1',
+        id: GROUP_FIXTURE.id,
         name: 'New club',
         description: null,
         sports: [],
@@ -325,8 +329,8 @@ describe('GroupDetailPage', () => {
   it('reports an error when leaving a group fails', async () => {
     mockGetGroup.mockReturnValue({
       data: {
-        id: 'group-1',
-        name: 'Saturday runners',
+        id: GROUP_FIXTURE.id,
+        name: GROUP_FIXTURE.name,
         description: null,
         sports: ['run'],
         privacy: 'open',
@@ -354,10 +358,16 @@ describe('GroupDetailPage', () => {
 
   it('shows a retry action after group details fail to load', async () => {
     const refetch = jest.fn();
-    mockGetGroup.mockReturnValue({ data: undefined, isLoading: false, isError: true, refetch });
+    mockGetGroup.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: true,
+      error: { status: 503, data: { message: 'Service unavailable' } },
+      refetch,
+    });
     await renderWithProviders(<GroupDetailPage />);
 
-    expect(await screen.findByText('Could not load groups')).toBeOnTheScreen();
+    expect(await screen.findByText('503, Service unavailable')).toBeOnTheScreen();
     fireEvent.press(screen.getByText('Retry'));
     expect(refetch).toHaveBeenCalledTimes(1);
   });
@@ -365,8 +375,8 @@ describe('GroupDetailPage', () => {
   it('shares the group link and displays its photo and type tags', async () => {
     mockGetGroup.mockReturnValue({
       data: {
-        id: 'group-1',
-        name: 'Saturday runners',
+        id: GROUP_FIXTURE.id,
+        name: GROUP_FIXTURE.name,
         description: null,
         sports: ['run'],
         categoryTags: ['team'],
@@ -390,9 +400,9 @@ describe('GroupDetailPage', () => {
     await userEvent.press(screen.getByLabelText('Group actions'));
     await userEvent.press(screen.getByText('Share group'));
     expect(share).toHaveBeenCalledWith({
-      title: 'Saturday runners',
-      message: expect.stringContaining('/groups/group-1'),
-      url: expect.stringContaining('/groups/group-1'),
+      title: GROUP_FIXTURE.name,
+      message: expect.stringContaining(`/groups/${GROUP_FIXTURE.id}`),
+      url: expect.stringContaining(`/groups/${GROUP_FIXTURE.id}`),
     });
     share.mockRestore();
   });
@@ -413,8 +423,8 @@ describe('GroupDetailPage', () => {
   it('shows the monthly distance leaderboard for visible member activities', async () => {
     mockGetGroup.mockReturnValue({
       data: {
-        id: 'group-1',
-        name: 'Saturday runners',
+        id: GROUP_FIXTURE.id,
+        name: GROUP_FIXTURE.name,
         description: null,
         sports: ['run'],
         privacy: 'open',
@@ -462,8 +472,8 @@ describe('GroupDetailPage', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     mockGetGroup.mockReturnValue({
       data: {
-        id: 'group-1',
-        name: 'Saturday runners',
+        id: GROUP_FIXTURE.id,
+        name: GROUP_FIXTURE.name,
         description: null,
         sports: ['run'],
         categoryTags: ['team'],
@@ -508,8 +518,8 @@ describe('GroupDetailPage', () => {
   it('saves notification and home-feed preferences for an active member', async () => {
     mockGetGroup.mockReturnValue({
       data: {
-        id: 'group-1',
-        name: 'Saturday runners',
+        id: GROUP_FIXTURE.id,
+        name: GROUP_FIXTURE.name,
         description: null,
         sports: ['run'],
         privacy: 'open',
@@ -533,12 +543,12 @@ describe('GroupDetailPage', () => {
     await user.press(screen.getByText('Admin posts only'));
 
     expect(mockUpdatePreferences).toHaveBeenNthCalledWith(1, {
-      groupId: 'group-1',
+      groupId: GROUP_FIXTURE.id,
       notificationPreference: 'announcements',
       feedPreference: 'all',
     });
     expect(mockUpdatePreferences).toHaveBeenNthCalledWith(2, {
-      groupId: 'group-1',
+      groupId: GROUP_FIXTURE.id,
       notificationPreference: 'all',
       feedPreference: 'admins',
     });
@@ -547,8 +557,8 @@ describe('GroupDetailPage', () => {
   it('uses preference defaults and reports when saving preferences fails', async () => {
     mockGetGroup.mockReturnValue({
       data: {
-        id: 'group-1',
-        name: 'Saturday runners',
+        id: GROUP_FIXTURE.id,
+        name: GROUP_FIXTURE.name,
         description: null,
         sports: ['run'],
         privacy: 'open',
@@ -574,14 +584,14 @@ describe('GroupDetailPage', () => {
       expect(mockErrorToast).toHaveBeenCalledWith(GROUPS_COPY[LANGUAGES.english].saveError, expect.any(Error)),
     );
     expect(mockUpdatePreferences).toHaveBeenCalledWith({
-      groupId: 'group-1',
+      groupId: GROUP_FIXTURE.id,
       notificationPreference: 'announcements',
       feedPreference: 'all',
     });
     await user.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].adminPostsOnly));
     await waitFor(() =>
       expect(mockUpdatePreferences).toHaveBeenLastCalledWith({
-        groupId: 'group-1',
+        groupId: GROUP_FIXTURE.id,
         notificationPreference: 'all',
         feedPreference: 'admins',
       }),
@@ -591,8 +601,8 @@ describe('GroupDetailPage', () => {
   it('renders the group feed for active members', async () => {
     mockGetGroup.mockReturnValue({
       data: {
-        id: 'group-1',
-        name: 'Saturday runners',
+        id: GROUP_FIXTURE.id,
+        name: GROUP_FIXTURE.name,
         description: null,
         sports: ['run'],
         privacy: 'open',
@@ -703,22 +713,31 @@ describe('GroupDetailPage', () => {
   });
 
   it('shows an error state when the group feed cannot load', async () => {
-    mockGetPostsInfinite.mockReturnValue({ data: undefined, isLoading: false, isError: true });
+    const refetchPosts = jest.fn();
+    mockGetPostsInfinite.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: true,
+      error: { status: 500, data: { message: 'Internal Server Error' } },
+      refetch: refetchPosts,
+    });
     const user = userEvent.setup();
     await renderWithProviders(<GroupDetailPage />);
     await user.press(screen.getByLabelText(GROUPS_COPY[LANGUAGES.english].postsTab));
 
-    expect(screen.getByText(GROUPS_COPY[LANGUAGES.english].loadError)).toBeOnTheScreen();
+    expect(screen.getByText('500, Internal Server Error')).toBeOnTheScreen();
+    await user.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].retry));
+    expect(refetchPosts).toHaveBeenCalledTimes(1);
   });
 
   it('opens the group post and event composer from the header', async () => {
     mockGetGroup.mockReturnValue({
       data: {
-        id: 'group-1',
-        name: 'Saturday runners',
+        id: GROUP_FIXTURE.id,
+        name: GROUP_FIXTURE.name,
         description: null,
         sports: ['run'],
-        privacy: 'open',
+        privacy: 'closed',
         locationName: null,
         createdAt: '2026-10-29T10:00:00.000Z',
         updatedAt: '2026-10-29T10:00:00.000Z',
@@ -736,11 +755,11 @@ describe('GroupDetailPage', () => {
     const createButton = screen.getByTestId('group-create-content-header-button');
     await userEvent.press(createButton);
 
-    expect(mockPush).toHaveBeenCalledWith('/groups/group-1/create-content');
+    expect(mockPush).toHaveBeenCalledWith(`/groups/${GROUP_FIXTURE.id}/create-content`);
   });
 
   it('loads events for the selected period', async () => {
-    mockRouteParams = { groupId: ['group-1'], tab: ['events'] };
+    mockRouteParams = { groupId: [GROUP_FIXTURE.id], tab: ['events'] };
     mockGetEventsInfinite.mockReturnValue({
       data: {
         pages: [
@@ -773,7 +792,10 @@ describe('GroupDetailPage', () => {
     const user = userEvent.setup();
     await user.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].pastEvents));
     await waitFor(() =>
-      expect(mockGetEventsInfinite).toHaveBeenLastCalledWith({ groupId: 'group-1', period: 'past' }, { skip: false }),
+      expect(mockGetEventsInfinite).toHaveBeenLastCalledWith(
+        { groupId: GROUP_FIXTURE.id, period: 'past' },
+        { skip: false },
+      ),
     );
   });
 
@@ -781,8 +803,8 @@ describe('GroupDetailPage', () => {
     const refetch = jest.fn();
     mockGetGroup.mockReturnValue({
       data: {
-        id: 'group-1',
-        name: 'Saturday runners',
+        id: GROUP_FIXTURE.id,
+        name: GROUP_FIXTURE.name,
         description: null,
         sports: ['run'],
         privacy: 'open',
@@ -808,11 +830,11 @@ describe('GroupDetailPage', () => {
   it('shows owner request controls and deletes the group after confirmation', async () => {
     mockGetGroup.mockReturnValue({
       data: {
-        id: 'group-1',
-        name: 'Saturday runners',
+        id: GROUP_FIXTURE.id,
+        name: GROUP_FIXTURE.name,
         description: null,
         sports: ['run'],
-        privacy: 'open',
+        privacy: 'closed',
         locationName: null,
         createdAt: '2026-10-29T10:00:00.000Z',
         updatedAt: '2026-10-29T10:00:00.000Z',
@@ -837,16 +859,43 @@ describe('GroupDetailPage', () => {
     expect(screen.getByText(GROUPS_COPY[LANGUAGES.english].deleteGroupTitle)).toBeOnTheScreen();
     await user.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].deleteGroupConfirm));
 
-    await waitFor(() => expect(mockDeleteGroup).toHaveBeenCalledWith('group-1'));
+    await waitFor(() => expect(mockDeleteGroup).toHaveBeenCalledWith(GROUP_FIXTURE.id));
     expect(mockSuccessToast).toHaveBeenCalledWith(GROUPS_COPY[LANGUAGES.english].groupDeleted);
     expect(mockPush).toHaveBeenCalledWith('/groups');
+  });
+
+  it('does not show join request controls for an open group', async () => {
+    mockGetGroup.mockReturnValue({
+      data: {
+        id: GROUP_FIXTURE.id,
+        name: GROUP_FIXTURE.name,
+        description: null,
+        sports: ['run'],
+        privacy: 'open',
+        locationName: null,
+        createdAt: '2026-10-29T10:00:00.000Z',
+        updatedAt: '2026-10-29T10:00:00.000Z',
+        createdByUserId: 'owner-1',
+        isOwner: true,
+        memberCount: 1,
+        currentMembership: null,
+        canManage: true,
+        pendingRequestCount: 0,
+      },
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+    await renderWithProviders(<GroupDetailPage />);
+
+    expect(screen.queryByTestId('group-requests-header-button')).toBeNull();
   });
 
   it('lets the owner cancel deletion and reports a failed deletion', async () => {
     mockGetGroup.mockReturnValue({
       data: {
-        id: 'group-1',
-        name: 'Saturday runners',
+        id: GROUP_FIXTURE.id,
+        name: GROUP_FIXTURE.name,
         description: null,
         sports: ['run'],
         privacy: 'open',
@@ -915,8 +964,8 @@ describe('GroupDetailPage', () => {
     const fetchNextPage = jest.fn();
     mockGetGroup.mockReturnValue({
       data: {
-        id: 'group-1',
-        name: 'Saturday runners',
+        id: GROUP_FIXTURE.id,
+        name: GROUP_FIXTURE.name,
         description: null,
         sports: ['run'],
         privacy: 'open',
@@ -977,7 +1026,7 @@ describe('GroupDetailPage', () => {
   });
 
   it('loads another events page when scrolling near the bottom', async () => {
-    mockRouteParams = { groupId: 'group-1', tab: 'events' };
+    mockRouteParams = { groupId: GROUP_FIXTURE.id, tab: 'events' };
     const fetchNextPage = jest.fn();
     mockGetEventsInfinite.mockReturnValue({
       data: { pages: [{ items: [], hasMore: true, nextCursor: 'events' }] },
@@ -1043,28 +1092,14 @@ describe('GroupDetailPage', () => {
   it('does not join when route parameters have no group id', async () => {
     mockRouteParams = { groupId: [] };
     mockGetGroup.mockReturnValue({
-      data: {
-        id: 'group-1',
-        name: 'Saturday runners',
-        description: null,
-        sports: ['run'],
-        privacy: 'open',
-        locationName: null,
-        createdAt: '2026-10-29T10:00:00.000Z',
-        updatedAt: '2026-10-29T10:00:00.000Z',
-        memberCount: 1,
-        currentMembership: null,
-        canManage: false,
-        pendingRequestCount: 0,
-      },
+      data: undefined,
       isLoading: false,
       isError: false,
       refetch: jest.fn(),
     });
     await renderWithProviders(<GroupDetailPage />);
-    fireEvent.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].join));
-
     expect(mockGetGroup).toHaveBeenCalledWith('', { skip: true });
+    expect(screen.queryByText(GROUPS_COPY[LANGUAGES.english].join)).toBeNull();
     expect(mockJoin).not.toHaveBeenCalled();
   });
 });

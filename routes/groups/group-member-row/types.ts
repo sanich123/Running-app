@@ -12,7 +12,7 @@ export interface GroupMemberRowProps {
   canManage: boolean;
   isRequest?: boolean;
   isUpdating: boolean;
-  onUpdateMember: (userId: string, status: GroupMemberUpdateStatus) => void;
+  onUpdateMember?: (userId: string, status: GroupMemberUpdateStatus) => void;
   rank?: number;
   distanceLabel?: string;
   onPressProfile?: () => void;

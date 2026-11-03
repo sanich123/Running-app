@@ -13,25 +13,28 @@ export default function GroupMemberRow({
   distanceLabel,
   onPressProfile,
 }: GroupMemberRowProps) {
+  const { member: memberCopy, owner, admin, approve, decline, remove } = copy;
   const { colors } = useTheme();
-  const name = [member.profile?.name, member.profile?.surname].filter(Boolean).join(' ');
+  const { userId, role, profile } = member;
+  const { name: firstName, surname, city, profilePhoto } = profile ?? {};
+  const name = [firstName, surname].filter(Boolean).join(' ');
 
   return (
     <Surface style={[styles.member, { backgroundColor: colors.surface }]}>
-      {rank !== undefined && (
+      {rank !== undefined ? (
         <Text variant="titleMedium" style={[styles.rank, { color: colors.primary }]}>
           {rank}
         </Text>
-      )}
+      ) : null}
       <Pressable
-        accessibilityLabel={onPressProfile ? name || copy.member : undefined}
+        accessibilityLabel={onPressProfile ? name || memberCopy : undefined}
         accessibilityRole={onPressProfile ? 'button' : undefined}
         disabled={!onPressProfile}
         onPress={onPressProfile}
         style={styles.profile}
-        testID={onPressProfile ? `group-member-profile-${member.userId}` : undefined}>
-        {member.profile?.profilePhoto ? (
-          <Avatar.Image size={44} source={{ uri: member.profile.profilePhoto }} />
+        testID={onPressProfile ? `group-member-profile-${userId}` : undefined}>
+        {profilePhoto ? (
+          <Avatar.Image size={44} source={{ uri: profilePhoto }} />
         ) : (
           <View style={[styles.avatar, { backgroundColor: colors.primaryContainer }]}>
             <Icon source="account" color={colors.primary} size={22} />
@@ -39,43 +42,39 @@ export default function GroupMemberRow({
         )}
         <View style={styles.memberInfo}>
           <Text variant="bodyLarge" numberOfLines={1} style={styles.memberName}>
-            {name || copy.member}
+            {name || memberCopy}
           </Text>
-          {!!member.profile?.city && <Text variant="bodySmall">{member.profile.city}</Text>}
-          {distanceLabel && (
+          {city ? <Text variant="bodySmall">{city}</Text> : null}
+          {distanceLabel ? (
             <Text variant="bodyMedium" style={styles.distance}>
               {distanceLabel}
             </Text>
-          )}
-          {(member.role === 'owner' || member.role === 'admin') && (
+          ) : null}
+          {role === 'owner' || role === 'admin' ? (
             <Text variant="bodySmall" style={{ color: colors.primary }}>
-              {member.role === 'owner' ? copy.owner : copy.admin}
+              {role === 'owner' ? owner : admin}
             </Text>
-          )}
+          ) : null}
         </View>
       </Pressable>
-      {canManage && member.role !== 'owner' && (
+      {canManage && onUpdateMember && role !== 'owner' ? (
         <View style={styles.actions}>
           {isRequest ? (
             <>
-              <Button
-                compact
-                mode="contained"
-                disabled={isUpdating}
-                onPress={() => onUpdateMember(member.userId, 'active')}>
-                {copy.approve}
+              <Button compact mode="contained" disabled={isUpdating} onPress={() => onUpdateMember(userId, 'active')}>
+                {approve}
               </Button>
-              <Button compact disabled={isUpdating} onPress={() => onUpdateMember(member.userId, 'rejected')}>
-                {copy.decline}
+              <Button compact disabled={isUpdating} onPress={() => onUpdateMember(userId, 'rejected')}>
+                {decline}
               </Button>
             </>
           ) : (
-            <Button compact disabled={isUpdating} onPress={() => onUpdateMember(member.userId, 'removed')}>
-              {copy.remove}
+            <Button compact disabled={isUpdating} onPress={() => onUpdateMember(userId, 'removed')}>
+              {remove}
             </Button>
           )}
         </View>
-      )}
+      ) : null}
     </Surface>
   );
 }

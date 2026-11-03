@@ -25,17 +25,28 @@ export default function GroupOptionsFields({
   const { colors } = useTheme();
   const { width, height } = useWindowDimensions();
   const { language } = useAppSelector(({ settings }) => settings);
-  const copy = GROUPS_COPY[language];
+  const {
+    tooManyCategories,
+    sports: sportsCopy,
+    categories,
+    chooseCategories,
+    privacy: privacyCopy,
+    open,
+    closed,
+    openDescription,
+    closedDescription,
+  } = GROUPS_COPY[language];
   const sportLabels = getGroupSportLabels(language);
   const categoryLabels = GROUP_CATEGORY_LABELS[language === LANGUAGES.english ? 'en' : 'ru'];
-  const selectedSport = options.sports[0] ?? GROUP_SPORTS[0];
+  const { sports, categoryTags, privacy: selectedPrivacy } = options;
+  const selectedSport = sports[0] ?? GROUP_SPORTS[0];
   const [isSportMenuVisible, setIsSportMenuVisible] = useState(false);
   const [isCategoryMenuVisible, setIsCategoryMenuVisible] = useState(false);
   const dropdownWidth = Math.min(Math.max(width - 32, 220), 688);
   const categoryMenuHeight = Math.min(360, Math.max(height - 220, 180));
 
   const toggleSport = (sport: GroupSport) => {
-    if (options.sports[0] === sport) return;
+    if (sports[0] === sport) return;
     onChange({
       ...options,
       sports: [sport],
@@ -43,20 +54,20 @@ export default function GroupOptionsFields({
   };
 
   const toggleCategory = (categoryTag: GroupCategoryTag) => {
-    if (options.categoryTags.includes(categoryTag)) {
-      onChange({ ...options, categoryTags: options.categoryTags.filter((selectedTag) => selectedTag !== categoryTag) });
+    if (categoryTags.includes(categoryTag)) {
+      onChange({ ...options, categoryTags: categoryTags.filter((selectedTag) => selectedTag !== categoryTag) });
       return;
     }
-    if (options.categoryTags.length === 3) {
-      return errorToast(copy.tooManyCategories);
+    if (categoryTags.length === 3) {
+      return errorToast(tooManyCategories);
     }
-    onChange({ ...options, categoryTags: [...options.categoryTags, categoryTag] });
+    onChange({ ...options, categoryTags: [...categoryTags, categoryTag] });
   };
 
   return (
     <View style={styles.section}>
       <Text variant="titleMedium" style={styles.sectionTitle}>
-        {copy.sports}
+        {sportsCopy}
       </Text>
       <Menu
         visible={isSportMenuVisible}
@@ -96,7 +107,7 @@ export default function GroupOptionsFields({
       </Menu>
 
       <Text variant="titleMedium" style={styles.sectionTitle}>
-        {copy.categories}
+        {categories}
       </Text>
       <Menu
         visible={isCategoryMenuVisible}
@@ -106,9 +117,7 @@ export default function GroupOptionsFields({
         anchor={
           <TouchableRipple
             accessibilityLabel={
-              options.categoryTags.length
-                ? options.categoryTags.map((tag) => categoryLabels[tag]).join(', ')
-                : copy.chooseCategories
+              categoryTags.length ? categoryTags.map((tag) => categoryLabels[tag]).join(', ') : chooseCategories
             }
             accessibilityRole="button"
             onPress={() => setIsCategoryMenuVisible(true)}
@@ -121,11 +130,9 @@ export default function GroupOptionsFields({
                 numberOfLines={1}
                 style={[
                   styles.dropdownLabel,
-                  { color: options.categoryTags.length ? colors.onSurface : colors.onSurfaceVariant },
+                  { color: categoryTags.length ? colors.onSurface : colors.onSurfaceVariant },
                 ]}>
-                {options.categoryTags.length
-                  ? options.categoryTags.map((tag) => categoryLabels[tag]).join(' · ')
-                  : copy.chooseCategories}
+                {categoryTags.length ? categoryTags.map((tag) => categoryLabels[tag]).join(' · ') : chooseCategories}
               </Text>
               <Icon source="chevron-down" size={20} color={colors.onSurfaceVariant} />
             </View>
@@ -136,7 +143,7 @@ export default function GroupOptionsFields({
             <Menu.Item
               key={categoryTag}
               title={categoryLabels[categoryTag]}
-              leadingIcon={options.categoryTags.includes(categoryTag) ? 'checkbox-marked' : 'checkbox-blank-outline'}
+              leadingIcon={categoryTags.includes(categoryTag) ? 'checkbox-marked' : 'checkbox-blank-outline'}
               testID={`group-category-option-${categoryTag}`}
               onPress={() => toggleCategory(categoryTag)}
             />
@@ -145,11 +152,11 @@ export default function GroupOptionsFields({
       </Menu>
 
       <Text variant="titleMedium" style={styles.sectionTitle}>
-        {copy.privacy}
+        {privacyCopy}
       </Text>
       <View accessibilityRole="radiogroup" style={styles.privacyOptions}>
         {(['open', 'closed'] as const).map((privacy) => {
-          const isSelected = options.privacy === privacy;
+          const isSelected = selectedPrivacy === privacy;
           return (
             <Pressable
               key={privacy}
@@ -173,10 +180,10 @@ export default function GroupOptionsFields({
               />
               <View style={styles.privacyText}>
                 <Text variant="titleSmall" style={{ color: colors.onSurface, fontWeight: '700' }}>
-                  {privacy === 'open' ? copy.open : copy.closed}
+                  {privacy === 'open' ? open : closed}
                 </Text>
                 <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant }}>
-                  {privacy === 'open' ? copy.openDescription : copy.closedDescription}
+                  {privacy === 'open' ? openDescription : closedDescription}
                 </Text>
               </View>
             </Pressable>

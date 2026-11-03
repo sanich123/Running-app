@@ -15,9 +15,10 @@ export default function GroupDetailsFields({
 }) {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
-  const copy = GROUPS_COPY[language];
+  const { groupName, nameRequired, description: descriptionCopy, worldwide, location } = GROUPS_COPY[language];
+  const { name, description, locationName, isWorldwide } = details;
   const { control } = useForm<GroupCreationTextFields>({
-    defaultValues: { name: details.name, description: details.description, locationName: details.locationName },
+    defaultValues: { name, description, locationName },
   });
 
   return (
@@ -25,16 +26,16 @@ export default function GroupDetailsFields({
       <CustomTextInput<GroupCreationTextFields>
         control={control}
         fieldName="name"
-        label={copy.groupName}
+        label={groupName}
         callback={(name) => onChange({ ...details, name })}
         maxLength={80}
         testID="group-name-input"
-        validation={{ required: copy.nameRequired }}
+        validation={{ required: nameRequired }}
       />
       <CustomTextInput<GroupCreationTextFields>
         control={control}
         fieldName="description"
-        label={copy.description}
+        label={descriptionCopy}
         callback={(description) => onChange({ ...details, description })}
         maxLength={2000}
         multiline
@@ -44,28 +45,24 @@ export default function GroupDetailsFields({
       />
       <Pressable
         accessibilityRole="checkbox"
-        accessibilityState={{ checked: details.isWorldwide }}
+        accessibilityState={{ checked: isWorldwide }}
         testID="group-worldwide-toggle"
-        onPress={() => onChange({ ...details, isWorldwide: !details.isWorldwide })}
+        onPress={() => onChange({ ...details, isWorldwide: !isWorldwide })}
         style={styles.worldwideOption}>
-        <Icon
-          source={details.isWorldwide ? 'checkbox-marked' : 'checkbox-blank-outline'}
-          size={22}
-          color={colors.primary}
-        />
-        <Text variant="bodyMedium">{copy.worldwide}</Text>
+        <Icon source={isWorldwide ? 'checkbox-marked' : 'checkbox-blank-outline'} size={22} color={colors.primary} />
+        <Text variant="bodyMedium">{worldwide}</Text>
       </Pressable>
-      {!details.isWorldwide && (
+      {!isWorldwide ? (
         <CustomTextInput<GroupCreationTextFields>
           control={control}
           fieldName="locationName"
-          label={copy.location}
+          label={location}
           callback={(locationName) => onChange({ ...details, locationName })}
           maxLength={160}
           testID="group-location-input"
           validation={{ required: '' }}
         />
-      )}
+      ) : null}
     </View>
   );
 }

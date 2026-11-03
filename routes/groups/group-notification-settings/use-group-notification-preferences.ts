@@ -9,6 +9,7 @@ export function useGroupNotificationPreferences() {
   const { language } = useAppSelector(({ settings }) => settings);
   const { userId } = useAppSelector(({ auth }) => auth);
   const copy = NOTIFICATION_COPY[getNotificationLocale(language)];
+  const { updateSettingError } = copy;
   const { data: profile, isSuccess } = useGetUserProfileByUserIdQuery(userId, { skip: !userId });
   const [updateProfile, { isLoading }] = useUpdateProfileByUserIdMutation();
 
@@ -19,7 +20,7 @@ export function useGroupNotificationPreferences() {
     try {
       await updateProfile({ body, id: userId }).unwrap();
     } catch (error) {
-      errorToast(copy.updateSettingError, error);
+      errorToast(updateSettingError, error);
     }
   };
 

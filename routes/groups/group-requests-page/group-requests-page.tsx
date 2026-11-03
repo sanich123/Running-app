@@ -14,8 +14,8 @@ export default function GroupRequestsPage() {
   const groupId = Array.isArray(rawGroupId) ? rawGroupId[0] : rawGroupId;
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
-  const userId = useAppSelector(({ auth }) => auth.userId);
-  const copy = GROUPS_COPY[language];
+  const { userId } = useAppSelector(({ auth }) => auth);
+  const { loadError, noRequestsPage, requestsPageTitle, retry, saveError } = GROUPS_COPY[language];
   const {
     data: group,
     isLoading: isGroupLoading,
@@ -24,6 +24,7 @@ export default function GroupRequestsPage() {
   } = useGetGroupByIdQuery(groupId ?? '', { skip: !groupId });
   const isGroupOwner = Boolean(group && (group.isOwner || (userId && group.createdByUserId === userId)));
   const canManageGroup = Boolean(group?.canManage || isGroupOwner);
+  const groupName = group?.name;
   const { data: requests = [], isLoading: areRequestsLoading } = useGetGroupMembersQuery(
     { groupId: groupId ?? '', status: 'pending' },
     { skip: !groupId || !canManageGroup },
@@ -35,43 +36,43 @@ export default function GroupRequestsPage() {
     try {
       await updateMember({ groupId, userId, status }).unwrap();
     } catch (error) {
-      errorToast(copy.saveError, error);
+      errorToast(saveError, error);
     }
   };
 
   return (
     <>
-      <Stack.Screen options={{ title: copy.requestsPageTitle }} />
+      <Stack.Screen options={{ title: requestsPageTitle }} />
       {isGroupLoading || areRequestsLoading ? (
         <ActivityIndicator style={styles.loader} />
       ) : isGroupError || !group || !canManageGroup ? (
         <View style={styles.feedback}>
-          <EmptyState icon="account-group-outline" title={copy.loadError} />
-          <Button onPress={() => refetch()}>{copy.retry}</Button>
+          <EmptyState icon="account-group-outline" title={loadError} />
+          <Button onPress={() => refetch()}>{retry}</Button>
         </View>
       ) : (
         <ScrollView
           contentContainerStyle={[styles.content, Platform.OS === 'web' && styles.webContent]}
           style={{ backgroundColor: colors.background }}>
           <Text variant="headlineSmall" style={styles.title}>
-            {group.name}
+            {groupName}
           </Text>
           {requests.length ? (
-            requests.map((member) => (
+            requests.map(({ userId: memberId, ...member }) => (
               <GroupMemberRow
-                key={member.userId}
-                member={member}
+                key={memberId}
+                member={{ userId: memberId, ...member }}
                 isRequest
                 canManage
                 isUpdating={isUpdating}
                 onUpdateMember={updateRequest}
-                copy={copy}
+                copy={GROUPS_COPY[language]}
                 language={language}
               />
             ))
           ) : (
             <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant }}>
-              {copy.noRequestsPage}
+              {noRequestsPage}
             </Text>
           )}
         </ScrollView>

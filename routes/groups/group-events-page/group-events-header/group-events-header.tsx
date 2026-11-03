@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 import { SegmentedButtons, Text } from 'react-native-paper';
-import type { GroupEventPeriod, GroupEventsCopy } from '../types';
+import type { GroupEventsHeaderProps } from './types';
 
 export default function GroupEventsHeader({
   groupName,
@@ -8,26 +8,24 @@ export default function GroupEventsHeader({
   onPeriodChange,
   copy,
   showTitle = true,
-}: {
-  groupName: string;
-  period: GroupEventPeriod;
-  onPeriodChange: (period: GroupEventPeriod) => void;
-  copy: GroupEventsCopy;
-  showTitle?: boolean;
-}) {
+}: GroupEventsHeaderProps) {
+  const { events, upcomingEvents, pastEvents } = copy;
   return (
     <View style={styles.container}>
-      {showTitle && (
+      {showTitle ? (
         <Text variant="headlineSmall" style={styles.heading}>
-          {copy.events} · {groupName}
+          {events} · {groupName}
         </Text>
-      )}
+      ) : null}
       <SegmentedButtons
         value={period}
-        onValueChange={(value) => onPeriodChange(value as GroupEventPeriod)}
+        onValueChange={(value) => {
+          if (value !== 'upcoming' && value !== 'past') return;
+          onPeriodChange(value);
+        }}
         buttons={[
-          { value: 'upcoming', label: copy.upcomingEvents },
-          { value: 'past', label: copy.pastEvents },
+          { value: 'upcoming', label: upcomingEvents },
+          { value: 'past', label: pastEvents },
         ]}
       />
     </View>

@@ -3,8 +3,7 @@ import { ActivityIndicator, Surface, Text, useTheme } from 'react-native-paper';
 import { useGetGroupEventsQuery } from '@R/services/groups/groups';
 import EmptyState from '@S/empty-state/empty-state';
 import { GROUP_SPORT_LABELS } from '../../const';
-import type { GroupEventPeriod, GroupEventsCopy } from '../types';
-import type { GroupEvent } from '@R/services/groups/types';
+import type { GroupEventsListProps } from './types';
 
 export default function GroupEventsList({
   groupId,
@@ -14,15 +13,8 @@ export default function GroupEventsList({
   locale,
   events,
   isLoading: isLoadingProvidedEvents,
-}: {
-  groupId: string;
-  period: GroupEventPeriod;
-  canSeeEvents: boolean;
-  copy: GroupEventsCopy;
-  locale: string;
-  events?: GroupEvent[];
-  isLoading?: boolean;
-}) {
+}: GroupEventsListProps) {
+  const { eventsPrivate, eventSport, distanceUnit, noUpcomingEvents, noPastEvents } = copy;
   const { colors } = useTheme();
   const { data: queriedEvents = [], isLoading: isLoadingQuery } = useGetGroupEventsQuery(
     { groupId, period },
@@ -35,7 +27,7 @@ export default function GroupEventsList({
     <ActivityIndicator />
   ) : !canSeeEvents ? (
     <View style={styles.empty}>
-      <EmptyState icon="lock-outline" title={copy.eventsPrivate} />
+      <EmptyState icon="lock-outline" title={eventsPrivate} />
     </View>
   ) : visibleEvents.length ? (
     visibleEvents.map(({ id, title, startsAt, sport, distanceKm, locationName, description }) => (
@@ -46,19 +38,19 @@ export default function GroupEventsList({
         <Text variant="bodyMedium" style={{ color: colors.primary }}>
           {new Date(startsAt).toLocaleString(locale)}
         </Text>
-        {(sport || typeof distanceKm === 'number') && (
+        {sport || typeof distanceKm === 'number' ? (
           <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant }}>
-            {sport ? GROUP_SPORT_LABELS[sport][locale === 'ru-RU' ? 'ru' : 'en'] : copy.eventSport}
-            {typeof distanceKm === 'number' ? ` · ${distanceKm.toLocaleString(locale)} ${copy.distanceUnit}` : ''}
+            {sport ? GROUP_SPORT_LABELS[sport][locale === 'ru-RU' ? 'ru' : 'en'] : eventSport}
+            {typeof distanceKm === 'number' ? ` · ${distanceKm.toLocaleString(locale)} ${distanceUnit}` : ''}
           </Text>
-        )}
-        {!!locationName && <Text variant="bodyMedium">{locationName}</Text>}
-        {!!description && <Text variant="bodyMedium">{description}</Text>}
+        ) : null}
+        {locationName ? <Text variant="bodyMedium">{locationName}</Text> : null}
+        {description ? <Text variant="bodyMedium">{description}</Text> : null}
       </Surface>
     ))
   ) : (
     <View style={styles.empty}>
-      <EmptyState icon="calendar-star" title={period === 'upcoming' ? copy.noUpcomingEvents : copy.noPastEvents} />
+      <EmptyState icon="calendar-star" title={period === 'upcoming' ? noUpcomingEvents : noPastEvents} />
     </View>
   );
 }

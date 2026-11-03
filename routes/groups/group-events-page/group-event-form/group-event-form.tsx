@@ -11,21 +11,24 @@ import { formatSelectedDate, setTimeOnDate } from '@Routes/save-activity-page/da
 import CustomTextInput from '@S/custom-text-input/custom-text-input';
 import { errorToast } from '@S/error-toast/error-toast';
 import { GROUP_SPORTS } from '../../const';
-import type { GroupEventFormValues, GroupEventsCopy } from '../types';
+import type { GroupEventFormValues } from '../types';
+import type { GroupEventFormProps } from './types';
 import type { GroupSport } from '@R/services/groups/types';
 import '@Routes/save-activity-page/date-picker/date-time-picker/register-translations';
 
-export default function GroupEventForm({
-  groupId,
-  groupSports = GROUP_SPORTS,
-  copy,
-  onCreated,
-}: {
-  groupId: string;
-  groupSports?: GroupSport[];
-  copy: GroupEventsCopy;
-  onCreated?: () => void;
-}) {
+export default function GroupEventForm({ groupId, groupSports = GROUP_SPORTS, copy, onCreated }: GroupEventFormProps) {
+  const {
+    createEvent: createEventCopy,
+    eventTitle,
+    eventDistance,
+    eventDescription,
+    eventLocation,
+    eventStartsAt,
+    eventTitleInvalid,
+    eventDateInvalid,
+    eventDistanceInvalid,
+    eventError,
+  } = copy;
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const availableSports = groupSports.length ? groupSports : GROUP_SPORTS;
@@ -47,12 +50,12 @@ export default function GroupEventForm({
   return (
     <Surface style={[styles.form, { backgroundColor: colors.surface }]} elevation={1}>
       <Text variant="titleLarge" style={styles.formTitle}>
-        {copy.createEvent}
+        {createEventCopy}
       </Text>
       <CustomTextInput<GroupEventFormValues>
         control={control}
         fieldName="title"
-        label={copy.eventTitle}
+        label={eventTitle}
         maxLength={120}
         testID="group-event-title-input"
         validation={{ required: '' }}
@@ -60,7 +63,7 @@ export default function GroupEventForm({
       <CustomTextInput<GroupEventFormValues>
         control={control}
         fieldName="distanceKm"
-        label={copy.eventDistance}
+        label={eventDistance}
         inputMode="decimal"
         maxLength={6}
         validation={{ required: '' }}
@@ -69,7 +72,7 @@ export default function GroupEventForm({
       <CustomTextInput<GroupEventFormValues>
         control={control}
         fieldName="description"
-        label={copy.eventDescription}
+        label={eventDescription}
         maxLength={2000}
         multiline
         validation={{ required: '' }}
@@ -77,15 +80,15 @@ export default function GroupEventForm({
       <CustomTextInput<GroupEventFormValues>
         control={control}
         fieldName="locationName"
-        label={copy.eventLocation}
+        label={eventLocation}
         maxLength={160}
         validation={{ required: '' }}
       />
       <View style={styles.field}>
-        <Text variant="labelLarge">{copy.eventStartsAt}</Text>
+        <Text variant="labelLarge">{eventStartsAt}</Text>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={copy.eventStartsAt}
+          accessibilityLabel={eventStartsAt}
           testID="group-event-date-input"
           onPress={() => {
             setSelectedDate(startsAt);
@@ -105,15 +108,15 @@ export default function GroupEventForm({
         disabled={isCreating}
         loading={isCreating}
         onPress={async () => {
-          if (title.trim().length < 2) return errorToast(copy.eventTitleInvalid);
-          if (startsAt.getTime() <= Date.now()) return errorToast(copy.eventDateInvalid);
+          if (title.trim().length < 2) return errorToast(eventTitleInvalid);
+          if (startsAt.getTime() <= Date.now()) return errorToast(eventDateInvalid);
           const normalizedDistanceText = distanceText.trim().replace(',', '.');
           const distanceKm = normalizedDistanceText ? Number(normalizedDistanceText) : undefined;
           if (
             normalizedDistanceText &&
             (!/^\d+(\.\d)?$/.test(normalizedDistanceText) || !distanceKm || distanceKm > 500)
           ) {
-            return errorToast(copy.eventDistanceInvalid);
+            return errorToast(eventDistanceInvalid);
           }
           try {
             await createEvent({
@@ -128,10 +131,10 @@ export default function GroupEventForm({
             if (onCreated) onCreated();
             else reset({ title: '', description: '', locationName: '', distanceKm: '' });
           } catch (error) {
-            errorToast(copy.eventError, error);
+            errorToast(eventError, error);
           }
         }}>
-        {copy.createEvent}
+        {createEventCopy}
       </Button>
       <DatePickerModal
         mode="single"
