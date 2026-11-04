@@ -3288,9 +3288,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rnmapbox/maps@npm:^10.3.16":
-  version: 10.3.16
-  resolution: "@rnmapbox/maps@npm:10.3.16"
+"@rnmapbox/maps@npm:^10.3.17":
+  version: 10.3.17
+  resolution: "@rnmapbox/maps@npm:10.3.17"
   dependencies:
     "@turf/along": "npm:6.5.0"
     "@turf/distance": "npm:6.5.0"
@@ -3312,7 +3312,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 10c0/073be5107d0e39b36ea55c9fe46a1d4ab229073e6ff49c35d059318f1e0d97d5ab04aa0ed6101b0ade872a905a342554a4c8bf1c0b17f778b8ba83e90965a766
+  checksum: 10c0/d4c537dc31a56a4e86e2c3b05f9107a9b507489c388aafb32f3a326df26924a5731f555188c3c5e741a897d90ea54f259d69b3c55b8db959c5bf606881353f5d
   languageName: node
   linkType: hard
 
@@ -11972,9 +11972,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-nitro-fetch@npm:^1.9.0":
-  version: 1.9.0
-  resolution: "react-native-nitro-fetch@npm:1.9.0"
+"react-native-nitro-fetch@npm:^1.10.0":
+  version: 1.10.0
+  resolution: "react-native-nitro-fetch@npm:1.10.0"
   dependencies:
     web-streams-polyfill: "npm:^4.2.0"
   peerDependencies:
@@ -11985,7 +11985,7 @@ __metadata:
   peerDependenciesMeta:
     react-native-worklets:
       optional: true
-  checksum: 10c0/73bf6c4293a3cf1dcb02b0aa1c8d00b0d53810eccb12942f7bb34318889a2f10de343e8c895a46352e9b7d61228a28757d27aed7cac4b7cc7a70d12b06ce32b4
+  checksum: 10c0/ba314781a8c5f65dd6fb69f5643d913eb252e76b634f3878e66af6ddbdc169a691a73207374bef61b2f517438de0bf347bf96fc6e5f6dac388ac776fb2f50f44
   languageName: node
   linkType: hard
 
@@ -12711,7 +12711,7 @@ __metadata:
     "@react-native-vector-icons/material-design-icons": "npm:^14.0.0"
     "@react-native/jest-preset": "npm:~0.88.1"
     "@reduxjs/toolkit": "npm:^2.14.0"
-    "@rnmapbox/maps": "npm:^10.3.16"
+    "@rnmapbox/maps": "npm:^10.3.17"
     "@testing-library/react-native": "npm:^14.1.0"
     "@turf/bbox": "npm:^7.4.0"
     "@turf/distance": "npm:^7.4.0"
@@ -12787,7 +12787,7 @@ __metadata:
     react-native-health-connect: "npm:4.1.3"
     react-native-keyboard-controller: "npm:1.22.7"
     react-native-mmkv: "npm:4.3.2"
-    react-native-nitro-fetch: "npm:^1.9.0"
+    react-native-nitro-fetch: "npm:^1.10.0"
     react-native-nitro-modules: "npm:0.37.2"
     react-native-pager-view: "npm:9.0.7"
     react-native-paper: "npm:^5.15.4"
