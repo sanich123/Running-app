@@ -45,6 +45,7 @@ export default function GroupDetailHeaderActions({
               icon="account-clock-outline"
               accessibilityLabel={manageRequests}
               onPress={() => router.push(`/groups/${id}/requests` as never)}
+              style={styles.headerActionButton}
               testID="group-requests-header-button"
             />
             {pendingRequestCount > 0 ? (
@@ -58,13 +59,19 @@ export default function GroupDetailHeaderActions({
             accessibilityLabel={createContent}
             testID="group-create-content-header-button"
             onPress={() => router.push(`/groups/${id}/create-content` as never)}
+            style={styles.headerActionButton}
           />
         ) : null}
         <Menu
           visible={isMenuVisible}
           onDismiss={() => setIsMenuVisible(false)}
           anchor={
-            <IconButton icon="dots-vertical" accessibilityLabel={groupActions} onPress={() => setIsMenuVisible(true)} />
+            <IconButton
+              icon="dots-vertical"
+              accessibilityLabel={groupActions}
+              onPress={() => setIsMenuVisible(true)}
+              style={styles.headerActionButton}
+            />
           }>
           <Menu.Item
             leadingIcon="share-variant"
@@ -136,5 +143,6 @@ export default function GroupDetailHeaderActions({
 
 const styles = StyleSheet.create({
   actions: { alignItems: 'center', flexDirection: 'row' },
+  headerActionButton: { margin: 0 },
   requestBadge: { position: 'absolute', right: 2, top: 2 },
 });

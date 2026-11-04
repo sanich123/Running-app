@@ -60,6 +60,7 @@ describe('EditGroupPage', () => {
 
   it('saves the owner changes and returns to the group', async () => {
     await renderWithProviders(<EditGroupPage />);
+    expect(screen.queryByTestId('group-category-selector')).not.toBeOnTheScreen();
     await userEvent.press(screen.getByTestId('edit-group-submit'));
 
     await waitFor(() =>

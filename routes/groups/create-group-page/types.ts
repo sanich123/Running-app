@@ -1,4 +1,4 @@
-import type { GroupCategoryTag, GroupPrivacy, GroupSport } from '@R/services/groups/types';
+import type { GroupPrivacy, GroupSport } from '@R/services/groups/types';
 
 export interface GroupCreationDetails {
   name: string;
@@ -11,6 +11,5 @@ export type GroupCreationTextFields = Pick<GroupCreationDetails, 'name' | 'descr
 
 export interface GroupCreationOptions {
   sports: GroupSport[];
-  categoryTags: GroupCategoryTag[];
   privacy: GroupPrivacy;
 }

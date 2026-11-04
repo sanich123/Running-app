@@ -5,6 +5,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import CustomImage from '@S/custom-image/custom-image';
 import MediaModerationPlaceholder from '@S/media-moderation-placeholder/media-moderation-placeholder';
 import { GROUPS_COPY } from '../const';
+import { isGroupPhotoUnderModeration } from './utils';
 import type { GroupPhotoProps } from './types';
 
 export default function GroupPhoto({
@@ -12,7 +13,8 @@ export default function GroupPhoto({
   photoPreviewUrl,
   photoBlurhash,
   photoReviewStatus,
-  photoPending = false,
+  photoPending,
+  isOwner = false,
   fallbackIcon = 'account-group-outline',
   iconSize = 25,
   style,
@@ -22,11 +24,18 @@ export default function GroupPhoto({
   const { language } = useAppSelector(({ settings }) => settings);
   const copy = GROUPS_COPY[language];
   const isPrivatePreview = Boolean(photoPreviewUrl && !photoUrl);
-  const isReviewPending = ['queued', 'processing', 'review_required'].includes(photoReviewStatus ?? '');
-  const isAwaitingPublication = photoReviewStatus === 'approved' && !photoUrl;
-  const isUnderModeration =
-    (photoPending && photoReviewStatus !== 'approved') || isReviewPending || isAwaitingPublication;
-  const imageUrl = isPrivatePreview ? photoPreviewUrl : isUnderModeration ? null : photoUrl;
+  const isUnderModeration = isGroupPhotoUnderModeration({
+    photoUrl,
+    photoPreviewUrl,
+    photoBlurhash,
+    photoReviewStatus,
+    photoPending,
+  });
+  const imageUrl = isUnderModeration
+    ? isOwner && isPrivatePreview
+      ? photoPreviewUrl
+      : null
+    : (photoUrl ?? photoPreviewUrl);
   const moderationStatus = photoReviewStatus ?? 'review_required';
 
   return (
@@ -68,7 +77,7 @@ export default function GroupPhoto({
             <Icon source={fallbackIcon} size={iconSize} />
           </View>
         )}
-        {isUnderModeration && !isPrivatePreview ? (
+        {isUnderModeration && !isOwner ? (
           <MediaModerationPlaceholder
             status={moderationStatus}
             compact

@@ -10,6 +10,10 @@ import { GROUP_FIXTURE } from '../test-fixtures';
 
 const mockBack = jest.fn();
 const mockPush = jest.fn();
+const mockFocusCallbacks: (() => void)[] = [];
+const mockUseFocusEffect = jest.fn((callback: () => void) => {
+  mockFocusCallbacks.push(callback);
+});
 let mockRouteParams: { groupId: string | string[]; tab?: string | string[] } = { groupId: GROUP_FIXTURE.id };
 const mockGetGroup = jest.fn();
 const mockGetGroups = jest.fn();
@@ -30,6 +34,7 @@ const mockErrorToast = jest.fn();
 const mockSuccessToast = jest.fn();
 
 jest.mock('expo-router', () => ({
+  useFocusEffect: (callback: () => void) => mockUseFocusEffect(callback),
   Stack: {
     Screen: ({ options }: { options: { headerRight?: () => unknown } }) => {
       const React = jest.requireActual('react');
@@ -63,6 +68,7 @@ jest.mock('@R/services/groups/groups', () => ({
 describe('GroupDetailPage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockFocusCallbacks.length = 0;
     mockRouteParams = { groupId: GROUP_FIXTURE.id };
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     mockGetGroups.mockReturnValue({ data: [], isLoading: false });
@@ -174,6 +180,28 @@ describe('GroupDetailPage', () => {
 
     expect(screen.getByText('Awaiting approval')).toBeDisabled();
     expect(screen.getByText('3 members')).toBeOnTheScreen();
+  });
+
+  it('refetches group details whenever the screen receives focus', async () => {
+    const refetch = jest.fn();
+    mockGetGroup.mockReturnValue({
+      data: { ...GROUP_FIXTURE, currentMembership: { status: 'pending', role: 'member' } },
+      isLoading: false,
+      isError: false,
+      refetch,
+    });
+    await renderWithProviders(<GroupDetailPage />);
+
+    expect(mockGetGroup).toHaveBeenCalledWith(GROUP_FIXTURE.id, {
+      skip: false,
+      refetchOnMountOrArgChange: true,
+    });
+    const onFocus = mockFocusCallbacks.at(-1);
+    expect(onFocus).toBeDefined();
+
+    onFocus?.();
+
+    expect(refetch).toHaveBeenCalledTimes(1);
   });
 
   it('sends a join request to a closed group and reports success', async () => {
@@ -604,6 +632,8 @@ describe('GroupDetailPage', () => {
                 createdAt: '2026-10-29T10:00:00.000Z',
                 author: { userId: 'member-2', name: null, profilePhoto: null },
                 photoUrl: null,
+                photoBlurhash: 'pending-post-blurhash',
+                photoReviewStatus: 'processing',
                 hasPhoto: true,
                 photoPending: true,
               },
@@ -630,6 +660,7 @@ describe('GroupDetailPage', () => {
     await user.press(screen.getByLabelText(GROUPS_COPY[LANGUAGES.english].postsTab));
 
     expect(screen.getByText('Photo ready')).toBeOnTheScreen();
+    expect(screen.getByTestId('group-post-photo-photo-pending-placeholder')).toBeOnTheScreen();
     expect(screen.getByTestId('group-post-photo-photo-pending-moderation-status')).toBeOnTheScreen();
     expect(screen.getByText(GROUPS_COPY[LANGUAGES.english].postPhotoUnavailable)).toBeOnTheScreen();
     expect(screen.getAllByText(GROUPS_COPY[LANGUAGES.english].member)).toHaveLength(2);
@@ -1030,7 +1061,7 @@ describe('GroupDetailPage', () => {
       refetch: jest.fn(),
     });
     await renderWithProviders(<GroupDetailPage />);
-    expect(mockGetGroup).toHaveBeenCalledWith('', { skip: true });
+    expect(mockGetGroup).toHaveBeenCalledWith('', { skip: true, refetchOnMountOrArgChange: true });
     expect(screen.queryByText(GROUPS_COPY[LANGUAGES.english].join)).toBeNull();
     expect(mockJoin).not.toHaveBeenCalled();
   });

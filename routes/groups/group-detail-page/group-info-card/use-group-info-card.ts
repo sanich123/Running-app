@@ -6,7 +6,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { successToast } from '@S/success-toast/success-toast';
 import { getIconNameByTypeOfSport } from '@U/icon-utils';
-import { GROUP_CATEGORY_LABELS, GROUPS_COPY, getGroupSportLabels } from '../../const';
+import { GROUP_CATEGORY_LABELS, GROUPS_COPY, getGroupMemberCountLabel, getGroupSportLabels } from '../../const';
 import type { GroupDetails } from '@R/services/groups/types';
 
 export default function useGroupInfoCard(group: GroupDetails, isRefreshing: boolean) {
@@ -60,6 +60,7 @@ export default function useGroupInfoCard(group: GroupDetails, isRefreshing: bool
     isLeaving,
     isOwner,
     isPending,
+    memberCountLabel: getGroupMemberCountLabel(language, group.memberCount),
     onJoin,
     onLeave,
     sportLabels,

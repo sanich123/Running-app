@@ -50,10 +50,7 @@ jest.mock('expo-router', () => {
     ),
     useRouter: () => ({ replace: mockReplace }),
     useIsFocused: () => true,
-    useNavigation: () => ({
-      addListener: () => () => undefined,
-      isFocused: () => true,
-    }),
+    useNavigation: () => ({ addListener: () => () => undefined }),
   };
 });
 

@@ -52,7 +52,6 @@ describe('CreateGroupPage', () => {
         description: undefined,
         locationName: undefined,
         sports: ['walk'],
-        categoryTags: [],
         privacy: 'open',
       }),
     );
@@ -137,20 +136,7 @@ describe('CreateGroupPage', () => {
     expect(mockUploadMediaFile).not.toHaveBeenCalled();
   });
 
-  it('limits a group to three category tags', async () => {
-    await renderWithProviders(<CreateGroupPage />);
-    const user = userEvent.setup();
-
-    await user.press(screen.getByTestId('group-category-selector'));
-    await user.press(screen.getByTestId('group-category-option-casual'));
-    await user.press(screen.getByTestId('group-category-option-brand'));
-    await user.press(screen.getByTestId('group-category-option-team'));
-    await user.press(screen.getByTestId('group-category-option-corporate'));
-
-    expect(mockErrorToast).toHaveBeenCalledWith(GROUPS_COPY[LANGUAGES.english].tooManyCategories);
-  });
-
-  it('uploads a group photo and creates a worldwide group with category tags', async () => {
+  it('uploads a group photo and creates a worldwide group', async () => {
     mockGetAccessToGallery.mockResolvedValueOnce({
       canceled: false,
       assets: [{ uri: 'file:///group-photo.jpg', fileName: 'group-photo.jpg' }],
@@ -163,9 +149,6 @@ describe('CreateGroupPage', () => {
       expect(mockUploadMediaFile).toHaveBeenCalledWith('file:///compressed-group-photo.jpg', { scope: 'group' }),
     );
     await user.type(screen.getByTestId('group-name-input'), 'Global running team');
-    await user.press(screen.getByTestId('group-category-selector'));
-    await user.press(screen.getByTestId('group-category-option-team'));
-    await user.press(screen.getByTestId('group-category-option-local'));
     await user.press(screen.getByText('This group is for everyone, everywhere'));
     await user.press(screen.getByTestId('create-group-submit'));
 
@@ -175,7 +158,6 @@ describe('CreateGroupPage', () => {
         description: undefined,
         locationName: undefined,
         sports: ['run'],
-        categoryTags: ['team', 'local'],
         photoAssetId: 'photo-asset-1',
         privacy: 'open',
       }),

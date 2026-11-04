@@ -1,5 +1,5 @@
-import { StyleSheet, View } from 'react-native';
-import { Icon, IconButton, Text, useTheme } from 'react-native-paper';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { Icon, Text, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import CustomImage from '@S/custom-image/custom-image';
@@ -34,17 +34,18 @@ export default function MediaModerationPlaceholder({
 
   return overlay ? (
     statusConfig.isStage ? (
-      <IconButton
+      <Pressable
         testID={testID}
         accessibilityRole="button"
         accessibilityLabel={title}
-        icon={statusConfig.stageIcon}
-        iconColor="#fff"
-        size={overlayIconSize}
-        rippleColor="rgba(255, 255, 255, 0.18)"
-        onPress={() => infoToast(title)}
-        style={[styles.overlayButton, { height: overlayIconSize * 2, top: topOffset, width: overlayIconSize * 2 }]}
-      />
+        hitSlop={8}
+        onPress={(event) => {
+          event.stopPropagation();
+          infoToast(title);
+        }}
+        style={[styles.overlayButton, { height: overlayIconSize * 2, top: topOffset, width: overlayIconSize * 2 }]}>
+        <Icon testID={`${testID}-icon`} source="shield-search" color="#fff" size={overlayIconSize} />
+      </Pressable>
     ) : null
   ) : (
     <View
@@ -55,7 +56,13 @@ export default function MediaModerationPlaceholder({
       style={[styles.container, { backgroundColor: colors.surfaceVariant, borderRadius }]}
       pointerEvents="none">
       {blurhash ? (
-        <CustomImage source={{ uri: '' }} placeholder={blurhash} contentFit="cover" style={StyleSheet.absoluteFill} />
+        <CustomImage
+          source={{ uri: '' }}
+          placeholder={blurhash}
+          contentFit="cover"
+          style={StyleSheet.absoluteFill}
+          testID={`${testID}-blurhash`}
+        />
       ) : null}
       {showStatus ? (
         <View style={compact ? styles.compactContent : styles.content}>
@@ -91,6 +98,8 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   overlayButton: {
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
     left: 4,
     margin: 0,
     position: 'absolute',

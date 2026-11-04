@@ -23,7 +23,6 @@ export default function GroupInfoCard({
     photoPending,
     privacy,
     locationName,
-    memberCount,
   } = group;
   const categoryTags = groupCategoryTags ?? [];
   const {
@@ -33,6 +32,7 @@ export default function GroupInfoCard({
     isActiveMember,
     isJoining,
     isLeaving,
+    memberCountLabel,
     isOwner,
     isPending,
     onJoin,
@@ -40,7 +40,7 @@ export default function GroupInfoCard({
     sportLabels,
     sports,
   } = useGroupInfoCard(group, isRefreshing);
-  const { open, closed, members, pending, join, request, leave } = copy;
+  const { open, closed, pending, join, request, leave } = copy;
 
   return (
     <Surface style={[styles.hero, { backgroundColor: colors.surface }]} elevation={1}>
@@ -51,6 +51,7 @@ export default function GroupInfoCard({
           photoBlurhash={photoBlurhash}
           photoReviewStatus={photoReviewStatus}
           photoPending={photoPending}
+          isOwner={isOwner}
           style={[styles.groupPhoto, { backgroundColor: colors.primaryContainer }]}
           iconSize={28}
           testID="group-detail-photo"
@@ -63,14 +64,14 @@ export default function GroupInfoCard({
             accessible
             accessibilityLabel={`${privacy === 'open' ? open : closed} · ${groupSports
               .map((sport) => sportLabels[sport])
-              .join(', ')} · ${memberCount} ${members}`}
+              .join(', ')} · ${memberCountLabel}`}
             style={styles.metaLine}>
             <Icon source={privacy === 'open' ? 'earth' : 'lock-outline'} size={16} color={colors.onSurfaceVariant} />
             {sports.map(({ icon, sport }) => (
               <Icon key={sport} source={icon} size={18} color={colors.primary} />
             ))}
             <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
-              {memberCount} {members}
+              {memberCountLabel}
             </Text>
           </View>
           {locationName ? (

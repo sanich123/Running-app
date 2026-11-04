@@ -1,6 +1,6 @@
 import { LANGUAGES } from '@const/enums';
 import { SPORTS_BTNS_VALUES } from '@const/sports';
-import type { GroupCategoryTag, GroupSport } from '@R/services/groups/types';
+import type { GroupSport } from '@R/services/groups/types';
 
 export const GROUP_SPORTS: GroupSport[] = [
   SPORTS_BTNS_VALUES.run,
@@ -24,20 +24,23 @@ export function getGroupSportLabels(language: LANGUAGES): Record<GroupSport, str
   >;
 }
 
-export const GROUP_CATEGORY_TAGS: GroupCategoryTag[] = [
-  'casual',
-  'brand',
-  'team',
-  'corporate',
-  'coach',
-  'creator',
-  'event',
-  'local',
-  'fundraiser',
-  'advice',
-  'social',
-  'other',
-];
+export function getGroupMemberCountLabel(language: LANGUAGES, memberCount: number): string {
+  if (language === LANGUAGES.english) return `${memberCount} ${memberCount === 1 ? 'member' : 'members'}`;
+
+  const absoluteCount = Math.abs(memberCount);
+  const lastTwoDigits = absoluteCount % 100;
+  const lastDigit = absoluteCount % 10;
+  const memberLabel =
+    lastTwoDigits >= 11 && lastTwoDigits <= 14
+      ? 'участников'
+      : lastDigit === 1
+        ? 'участник'
+        : lastDigit >= 2 && lastDigit <= 4
+          ? 'участника'
+          : 'участников';
+
+  return `${memberCount} ${memberLabel}`;
+}
 
 export const GROUP_CATEGORY_LABELS = {
   en: {
@@ -89,7 +92,6 @@ export const GROUPS_COPY = {
     emptyTitle: 'Find your people',
     emptyMessage: 'Create a group or explore communities around your favorite activities.',
     noResults: 'No groups found',
-    members: 'members',
     open: 'Open',
     closed: 'Closed',
     join: 'Join group',
@@ -97,8 +99,6 @@ export const GROUPS_COPY = {
     pending: 'Awaiting approval',
     leave: 'Leave group',
     sports: 'Activities',
-    categories: 'Group type (choose up to 3)',
-    chooseCategories: 'Select group types',
     photo: 'Group photo',
     openPhoto: 'Open group photo',
     closePhoto: 'Close photo',
@@ -106,7 +106,6 @@ export const GROUPS_COPY = {
     changePhoto: 'Change photo',
     uploadingPhoto: 'Uploading photo…',
     photoUploadError: 'Could not upload the group photo',
-    tooManyCategories: 'Choose no more than three group types',
     worldwide: 'This group is for everyone, everywhere',
     groupName: 'Group name',
     description: 'Description',
@@ -217,7 +216,6 @@ export const GROUPS_COPY = {
     emptyTitle: 'Найдите свою команду',
     emptyMessage: 'Создайте группу или найдите сообщество по любимым видам активности.',
     noResults: 'Группы не найдены',
-    members: 'участников',
     open: 'Открытая',
     closed: 'Закрытая',
     join: 'Вступить в группу',
@@ -225,8 +223,6 @@ export const GROUPS_COPY = {
     pending: 'Заявка на рассмотрении',
     leave: 'Покинуть группу',
     sports: 'Активности',
-    categories: 'Тип группы (до 3 вариантов)',
-    chooseCategories: 'Выберите тип группы',
     photo: 'Фото группы',
     openPhoto: 'Открыть фото группы',
     closePhoto: 'Закрыть фото',
@@ -234,7 +230,6 @@ export const GROUPS_COPY = {
     changePhoto: 'Изменить фото',
     uploadingPhoto: 'Загружаем фото…',
     photoUploadError: 'Не удалось загрузить фото группы',
-    tooManyCategories: 'Выберите не больше трёх типов группы',
     worldwide: 'Группа для участников со всего мира',
     groupName: 'Название группы',
     description: 'Описание',

@@ -1,5 +1,7 @@
-import { Stack } from 'expo-router';
-import { useTheme } from 'react-native-paper';
+import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons/static';
+import { Platform, Pressable } from 'react-native';
+import { Stack, useRouter } from 'expo-router';
+import { Text, useTheme } from 'react-native-paper';
 import { LABELS } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
@@ -7,16 +9,49 @@ import { useAppSelector } from '@R/typed-hooks';
 export default function GroupsLayout() {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
+  const { back } = useRouter();
 
   return (
     <Stack
-      screenOptions={{
+      screenOptions={({ navigation }) => ({
         contentStyle: { backgroundColor: colors.background },
+        headerBackButtonDisplayMode: Platform.OS === 'ios' || Platform.OS === 'web' ? 'minimal' : 'default',
+        headerBackVisible: Platform.OS === 'android' ? false : undefined,
+        headerLeft:
+          Platform.OS === 'android'
+            ? ({ canGoBack, tintColor }) =>
+                canGoBack ? (
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={LABELS[language].back}
+                    hitSlop={8}
+                    onPress={() => back()}
+                    style={{ alignItems: 'flex-start', height: 48, justifyContent: 'center', width: 32 }}>
+                    <MaterialDesignIcons name="arrow-left" color={tintColor ?? colors.onSurface} size={24} />
+                  </Pressable>
+                ) : null
+            : undefined,
         headerStyle: { backgroundColor: colors.surface },
+        headerTitle:
+          Platform.OS === 'android'
+            ? ({ children }) => (
+                <Text
+                  numberOfLines={1}
+                  style={{
+                    color: colors.primary,
+                    fontFamily: FONT_FAMILIES.semiBold,
+                    fontSize: 16,
+                    transform: [{ translateX: navigation.canGoBack() ? -8 : 16 }, { translateY: -2 }],
+                  }}>
+                  {children}
+                </Text>
+              )
+            : undefined,
+        headerTitleAlign: 'left',
         headerTintColor: colors.onSurface,
         headerTitleStyle: { color: colors.primary, fontFamily: FONT_FAMILIES.semiBold, fontSize: 16 },
         title: LABELS[language].groups,
-      }}>
+      })}>
       <Stack.Screen name="index" options={{ title: LABELS[language].groups }} />
       <Stack.Screen name="create" options={{ title: language === 'russian' ? 'Создать группу' : 'Create group' }} />
       <Stack.Screen name="[groupId]" options={{ title: LABELS[language].groups }} />

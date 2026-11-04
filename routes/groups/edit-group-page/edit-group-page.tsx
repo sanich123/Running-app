@@ -57,12 +57,12 @@ export default function EditGroupPage() {
       locationName: locationName ?? '',
       isWorldwide: locationName === null,
     },
-    options: { sports, categoryTags, privacy },
+    options: { sports, privacy },
   };
   const form = formState?.groupId === id ? formState.value : initialForm;
   const { details, options } = form;
   const { name: editedName, description: editedDescription, locationName: editedLocationName, isWorldwide } = details;
-  const { sports: selectedSports, categoryTags: selectedCategoryTags, privacy: selectedPrivacy } = options;
+  const { sports: selectedSports, privacy: selectedPrivacy } = options;
 
   return isLoading ? (
     <ActivityIndicator style={styles.loader} />
@@ -114,7 +114,7 @@ export default function EditGroupPage() {
                   name: editedName.trim(),
                   description: editedDescription.trim() || null,
                   sports: selectedSports,
-                  categoryTags: selectedCategoryTags,
+                  categoryTags,
                   ...(photoAssetId !== undefined ? { photoAssetId } : {}),
                   privacy: selectedPrivacy,
                   locationName: isWorldwide ? null : editedLocationName.trim() || null,

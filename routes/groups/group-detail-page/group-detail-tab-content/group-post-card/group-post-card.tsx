@@ -5,12 +5,14 @@ import { LANGUAGES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import { GROUPS_COPY } from '../../../const';
 import GroupPhoto from '../../../group-photo/group-photo';
+import { isGroupPhotoUnderModeration } from '../../../group-photo/utils';
 import type { GroupPost } from '@R/services/groups/types';
 
 export default function GroupPostCard({ post }: { post: GroupPost }) {
   const router = useRouter();
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
+  const { userId } = useAppSelector(({ auth }) => auth);
   const { member, postPhotoUnavailable } = GROUPS_COPY[language];
   const locale = language === LANGUAGES.russian ? 'ru-RU' : 'en-US';
   const {
@@ -29,6 +31,13 @@ export default function GroupPostCard({ post }: { post: GroupPost }) {
   const authorUserId = author?.userId;
   const authorProfilePhoto = author?.profilePhoto;
   const postPhotoUrl = photoUrl ?? photoPreviewUrl;
+  const isPhotoUnderModeration = isGroupPhotoUnderModeration({
+    photoUrl,
+    photoPreviewUrl,
+    photoBlurhash,
+    photoReviewStatus,
+    photoPending,
+  });
 
   return (
     <Surface style={[styles.post, { backgroundColor: colors.surface }]} elevation={1}>
@@ -54,19 +63,20 @@ export default function GroupPostCard({ post }: { post: GroupPost }) {
         </View>
       </Pressable>
       <Text variant="bodyLarge">{text}</Text>
-      {hasPhoto && (postPhotoUrl || photoPending) ? (
+      {hasPhoto && (postPhotoUrl || isPhotoUnderModeration) ? (
         <GroupPhoto
           photoUrl={photoUrl}
           photoPreviewUrl={photoPreviewUrl}
           photoBlurhash={photoBlurhash}
           photoReviewStatus={photoReviewStatus}
           photoPending={photoPending}
+          isOwner={Boolean(authorUserId && userId && authorUserId === userId)}
           fallbackIcon="image-off-outline"
           style={[styles.postPhoto, { backgroundColor: colors.surfaceVariant }]}
           testID={`group-post-photo-${id}`}
         />
       ) : null}
-      {hasPhoto && !photoPending && !postPhotoUrl ? (
+      {hasPhoto && !isPhotoUnderModeration && !postPhotoUrl ? (
         <View style={styles.postPhotoNotice}>
           <Icon source="image-off-outline" size={16} color={colors.onSurfaceVariant} />
           <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>

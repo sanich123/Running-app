@@ -35,6 +35,17 @@ describe('MediaModerationPlaceholder', () => {
     expect(statusButton).toBeOnTheScreen();
     expect(statusButton).toHaveProp('accessibilityRole', 'button');
     expect(statusButton).toHaveProp('accessibilityLabel', copy.processing);
+    expect(screen.getByTestId('media-moderation-placeholder-icon', { includeHiddenElements: true })).toHaveTextContent(
+      String.fromCodePoint(0xf0d9a),
+    );
+    expect(statusButton).toHaveStyle({
+      alignItems: 'flex-start',
+      height: 40,
+      justifyContent: 'flex-start',
+      left: 4,
+      top: 4,
+      width: 40,
+    });
     expect(screen.queryByText(copy.processing)).toBeNull();
     fireEvent.press(statusButton);
     expect(infoToast).toHaveBeenCalledWith(copy.processing);
@@ -49,6 +60,9 @@ describe('MediaModerationPlaceholder', () => {
     const statusButton = screen.getByTestId('media-moderation-placeholder');
     expect(statusButton).toHaveProp('accessibilityRole', 'button');
     expect(statusButton).toHaveProp('accessibilityLabel', stageTitle);
+    expect(screen.getByTestId('media-moderation-placeholder-icon', { includeHiddenElements: true })).toHaveTextContent(
+      String.fromCodePoint(0xf0d9a),
+    );
   });
 
   it.each([

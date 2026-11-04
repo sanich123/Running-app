@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useNavigation } from 'expo-router';
+import { useIsFocused, useNavigation } from 'expo-router';
 import {
   acceptMigrationJob,
   resetMigration,
@@ -25,7 +25,8 @@ export default function useMigrationController() {
   const { userId, accessToken } = useAppSelector(({ auth }) => auth);
   const state = useMigrationState();
   const navigation = useNavigation();
-  const isFocusedRef = useRef(false);
+  const isFocused = useIsFocused();
+  const isFocusedRef = useRef(isFocused);
   const cancelMigrationRef = useRef<MigrationCancelHandler>(null);
   const [isCancelAvailable, setIsCancelAvailable] = useState(false);
   const [isForegroundUploadSession, setIsForegroundUploadSession] = useState(false);
@@ -38,7 +39,6 @@ export default function useMigrationController() {
       isFocusedRef.current = false;
       setIsForegroundUploadSession(false);
     });
-    isFocusedRef.current = navigation.isFocused();
 
     return () => {
       unsubscribeFocus();

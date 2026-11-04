@@ -39,5 +39,5 @@ export default function GroupsPageHeaderActions() {
 
 const styles = StyleSheet.create({
   headerActions: { alignItems: 'center', flexDirection: 'row' },
-  headerActionButton: { marginRight: 0 },
+  headerActionButton: { margin: 0 },
 });

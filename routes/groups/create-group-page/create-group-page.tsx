@@ -26,14 +26,13 @@ export default function CreateGroupPage() {
   });
   const [options, setOptions] = useState<GroupCreationOptions>({
     sports: [SPORTS_BTNS_VALUES.run],
-    categoryTags: [],
     privacy: 'open',
   });
   const [photoAssetId, setPhotoAssetId] = useState<string | null>(null);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [createGroup, { isLoading }] = useCreateGroupMutation();
   const { name, description, locationName, isWorldwide } = details;
-  const { sports, categoryTags, privacy } = options;
+  const { sports, privacy } = options;
 
   return (
     <KeyboardAvoidingView
@@ -67,7 +66,6 @@ export default function CreateGroupPage() {
                 description: description.trim() || undefined,
                 locationName: isWorldwide ? undefined : locationName.trim() || undefined,
                 sports,
-                categoryTags,
                 ...(photoAssetId ? { photoAssetId } : {}),
                 privacy,
               }).unwrap();

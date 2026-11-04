@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useLocalSearchParams } from 'expo-router';
+import { useCallback, useEffect } from 'react';
+import { useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useGetGroupByIdQuery, useGetGroupsQuery, useJoinGroupMutation } from '@R/services/groups/groups';
 import { useAppSelector } from '@R/typed-hooks';
 import { GROUPS_COPY } from '../const';
@@ -19,6 +19,7 @@ export default function useGroupDetailPage() {
     refetch,
   } = useGetGroupByIdQuery(groupId ?? '', {
     skip: !groupId,
+    refetchOnMountOrArgChange: true,
   });
   const [, { data: joinResult }] = useJoinGroupMutation({
     fixedCacheKey: `group-join-${groupId ?? 'unresolved'}`,
@@ -27,6 +28,12 @@ export default function useGroupDetailPage() {
   const { data: myGroups = [], isLoading: isLoadingMyGroups } = useGetGroupsQuery(
     { scope: 'mine' },
     { skip: !hasUnknownOpenMembership || joinResult?.id === group?.id },
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      if (groupId) void refetch();
+    }, [groupId, refetch]),
   );
 
   useEffect(() => {

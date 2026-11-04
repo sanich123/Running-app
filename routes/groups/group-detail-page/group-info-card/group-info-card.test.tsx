@@ -45,6 +45,33 @@ describe('GroupInfoCard', () => {
     expect(screen.queryByText(GROUPS_COPY[LANGUAGES.english].leave)).not.toBeOnTheScreen();
   });
 
+  it('uses the correct Russian member count form in the group details', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
+    await renderWithProviders(<GroupInfoCard group={{ ...group, memberCount: 21 }} />);
+
+    expect(screen.getByText('21 участник')).toBeOnTheScreen();
+  });
+
+  it('shows a pending group cover preview to its owner without a moderation button', async () => {
+    await renderWithProviders(
+      <GroupInfoCard
+        group={{
+          ...group,
+          isOwner: true,
+          photoPreviewUrl: 'https://cdn.example.test/private-preview.jpg',
+          photoBlurhash: 'pending-blurhash',
+          photoReviewStatus: 'processing',
+          photoPending: true,
+        }}
+      />,
+    );
+
+    expect(screen.getByTestId('group-detail-photo-image')).toHaveProp('source', {
+      uri: 'https://cdn.example.test/private-preview.jpg',
+    });
+    expect(screen.queryByTestId('group-detail-photo-moderation-status')).toBeNull();
+  });
+
   it('shows leave only for an active non-owner membership', async () => {
     await renderWithProviders(
       <GroupInfoCard

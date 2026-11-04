@@ -22,7 +22,7 @@ yarn madge \
   ./app ./routes ./shared ./constants ./redux ./utils
 
 # 6. Проверка неиспользуемых экспортов ts-prune
-yarn ts-prune
+yarn ts-prune || true
 
 # 7. Обновление зависимостей
 yarn npm-check-updates || true

@@ -210,6 +210,31 @@ describe('CreateGroupContentPage', () => {
     expect(mockSuccessToast).toHaveBeenCalledWith(GROUPS_COPY[LANGUAGES.english].postCreated);
   });
 
+  it('keeps event creation available only to owners and group managers', async () => {
+    mockGetGroup.mockReturnValue({
+      data: {
+        ...group,
+        isOwner: false,
+        canManage: false,
+        createdByUserId: 'another-owner',
+        currentMembership: {
+          status: 'active',
+          role: 'member',
+          notificationPreference: 'all',
+          feedPreference: 'all',
+        },
+      },
+      isLoading: false,
+      isFetching: false,
+      isError: false,
+      refetch: mockRefetch,
+    });
+    await renderWithProviders(<CreateGroupContentPage />);
+
+    expect(screen.getByTestId('group-post-input')).toBeOnTheScreen();
+    expect(screen.queryByText(GROUPS_COPY[LANGUAGES.english].createEvent)).not.toBeOnTheScreen();
+  });
+
   it('waits for the group membership query before deciding whether posting is allowed', async () => {
     mockGetGroup.mockReturnValue({
       data: { ...group, isOwner: false, canManage: false, createdByUserId: 'another-owner', currentMembership: null },
