@@ -68,6 +68,8 @@ export const MEDIA_UPLOAD_REQUEST_TIMEOUT = 60_000;
 export const PUBLIC_AUTH_ENDPOINTS = new Set([
   'registerUser',
   'loginUser',
+  'loginWithYandexNative',
+  'loginWithVkNative',
   'requestEmailLink',
   'refreshToken',
   'verifyConfig',

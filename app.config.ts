@@ -91,9 +91,14 @@ export default {
       favicon: './assets/images/favicon.png',
       output: 'single',
     },
-    extra: { eas: { projectId: '413aa829-bbae-467c-9201-4688b894f2f7' } },
+    extra: {
+      eas: { projectId: '413aa829-bbae-467c-9201-4688b894f2f7' },
+      yandexClientId: '9579493850f04422939ad16ef2be37ee',
+      vkIdClientId: process.env.VK_NATIVE_CLIENT_ID || '54878048',
+    },
     plugins: [
       './custom.plugin',
+      './config/native-auth-plugin',
       'react-native-nitro-fetch',
       'react-native-health-connect',
       'react-native-compressor',

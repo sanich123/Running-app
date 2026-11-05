@@ -8,6 +8,8 @@ import type {
   EmailPasswordData,
   LoginUserResponse,
   MessageApiResponse,
+  NativeVkAuthCode,
+  ProviderAccessToken,
   RegisterResponse,
   VerifyLoginData,
   VerifyPasswordChangeCodeData,
@@ -27,6 +29,20 @@ const authenticationApi = runichApi.injectEndpoints({
       query: ({ email, password }) => ({
         url: '/auth/login',
         body: { email, password },
+        method: 'POST',
+      }),
+    }),
+    loginWithYandexNative: mutation<LoginUserResponse, ProviderAccessToken>({
+      query: ({ accessToken }) => ({
+        url: '/auth/yandex/native',
+        body: { accessToken },
+        method: 'POST',
+      }),
+    }),
+    loginWithVkNative: mutation<LoginUserResponse, NativeVkAuthCode>({
+      query: (body) => ({
+        url: '/auth/vk/native',
+        body,
         method: 'POST',
       }),
     }),
@@ -106,6 +122,8 @@ const authenticationApi = runichApi.injectEndpoints({
 export const {
   useRegisterUserMutation,
   useLoginUserMutation,
+  useLoginWithYandexNativeMutation,
+  useLoginWithVkNativeMutation,
   useRequestEmailLinkMutation,
   useLogoutMutation,
   useUpdateSessionLocationMutation,

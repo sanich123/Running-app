@@ -8,6 +8,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import ActivityRoutesButton from '@Routes/activity/activity-routes-button/activity-routes-button';
 import ActivitySettingsButton from '@Routes/activity/activity-settings/activity-settings-button/activity-settings-button';
 import CloseBtn from '@Routes/activity/close-btn/close-btn';
+import ActivityErrorMsg from '@Routes/activity/error-msg/error-msg';
 import IconChooseSport from '@Routes/activity/icon-choose-sport/icon-choose-sport';
 import Map from '@Routes/activity/map/map';
 import Metrics from '@Routes/activity/metrics/metrics';
@@ -49,7 +50,12 @@ export default function Activity() {
               pointerEvents={isMapVisible ? 'auto' : 'none'}>
               <Map onLocationReadinessChange={setIsLocationReadyForRecording} />
             </View>
-            {activityStatus !== STATUSES.initial ? <Metrics /> : null}
+            {activityStatus !== STATUSES.initial ? (
+              <>
+                <ActivityErrorMsg />
+                <Metrics />
+              </>
+            ) : null}
           </View>
           <View style={[styles.metricsLayout, { backgroundColor: colors.surfaceVariant }]}>
             <View style={styles.metrics}>

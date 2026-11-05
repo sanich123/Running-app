@@ -23,7 +23,10 @@ import { createLocationJournal } from '@U/location/location-journal';
 import Activity from './activity';
 import { ACTIVITY_SHOW_MAP_TEST_ID } from './show-map-btn/const';
 
-jest.mock('expo-router', () => ({ Stack: { Screen: () => null } }));
+jest.mock('expo-router', () => ({
+  Stack: { Screen: () => null },
+  useGlobalSearchParams: () => ({ sport: 'run' }),
+}));
 
 jest.mock('@Routes/activity/icon-choose-sport/icon-choose-sport', () => ({
   __esModule: true,

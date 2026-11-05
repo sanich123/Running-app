@@ -67,7 +67,7 @@ export default function ActiveMotionStatus({ language }: { language: LANGUAGES }
         <Text variant="titleSmall" style={{ color: colors.onSecondaryContainer }}>
           {ACTIVITY_MOTION_STATUS[language].title}
         </Text>
-        <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+        <Text numberOfLines={2} variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
           {ACTIVITY_MOTION_STATUS[language].description}
         </Text>
       </View>

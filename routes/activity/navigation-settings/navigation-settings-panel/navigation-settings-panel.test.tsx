@@ -11,9 +11,9 @@ import {
 } from '@R/slices/settings/types';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import NavigationSettingsButton from './navigation-settings-button';
+import NavigationSettingsPanel from './navigation-settings-panel';
 
-describe('NavigationSettingsButton', () => {
+describe('NavigationSettingsPanel', () => {
   beforeEach(() => {
     mockStore.dispatch(setNavigationAlertDistanceMeters(DEFAULT_NAVIGATION_ALERT_DISTANCE_METERS));
     mockStore.dispatch(setNavigationAlertRepeatIntervalMinutes(DEFAULT_NAVIGATION_ALERT_REPEAT_INTERVAL_MINUTES));
@@ -22,11 +22,8 @@ describe('NavigationSettingsButton', () => {
 
   it('provides route distance, repeat interval and voice alert controls', async () => {
     const user = userEvent.setup();
-    await renderWithProviders(<NavigationSettingsButton />);
+    await renderWithProviders(<NavigationSettingsPanel />);
 
-    expect(screen.getByTestId('activity-navigation-settings-button')).toBeOnTheScreen();
-    await user.press(screen.getByTestId('activity-navigation-settings-button'));
-    expect(screen.getByTestId('activity-navigation-settings-button')).toBeOnTheScreen();
     expect(screen.getByText('Настройки навигации')).toBeOnTheScreen();
     expect(screen.getByTestId('navigation-alert-distance-value')).toHaveTextContent('50 м');
     expect(screen.getByTestId('navigation-alert-repeat-interval-value')).toHaveTextContent('1 мин');
@@ -44,14 +41,26 @@ describe('NavigationSettingsButton', () => {
     expect(mockStore.getState().settings.navigationAlertsMuted).toBe(true);
   });
 
-  it('renders native iOS stepper symbols in the settings sheet', async () => {
+  it('renders native iOS stepper symbols in the navigation settings panel', async () => {
     const platform = jest.replaceProperty(Platform, 'OS', 'ios');
-    const user = userEvent.setup();
     try {
-      await renderWithProviders(<NavigationSettingsButton />);
-      await user.press(screen.getByTestId('activity-navigation-settings-button'));
+      await renderWithProviders(<NavigationSettingsPanel />);
 
       expect(screen.getByText('Настройки навигации')).toBeOnTheScreen();
+      expect(screen.getByTestId('decrease-navigation-alert-distance')).toBeOnTheScreen();
+      expect(screen.getByTestId('increase-navigation-alert-distance')).toBeOnTheScreen();
+      expect(screen.getByTestId('decrease-navigation-alert-interval')).toBeOnTheScreen();
+      expect(screen.getByTestId('increase-navigation-alert-interval')).toBeOnTheScreen();
+    } finally {
+      platform.restore();
+    }
+  });
+
+  it('renders Android stepper icons in the navigation settings panel', async () => {
+    const platform = jest.replaceProperty(Platform, 'OS', 'android');
+    try {
+      await renderWithProviders(<NavigationSettingsPanel />);
+
       expect(screen.getByTestId('decrease-navigation-alert-distance')).toBeOnTheScreen();
       expect(screen.getByTestId('increase-navigation-alert-distance')).toBeOnTheScreen();
       expect(screen.getByTestId('decrease-navigation-alert-interval')).toBeOnTheScreen();

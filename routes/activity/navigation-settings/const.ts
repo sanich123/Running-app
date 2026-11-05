@@ -3,7 +3,9 @@ import { LANGUAGES } from '@const/enums';
 export const NAVIGATION_SETTINGS_COPY = {
   [LANGUAGES.english]: {
     title: 'Navigation settings',
-    open: 'Navigation settings',
+    modalTitle: 'Route navigation',
+    openNavigation: 'Open route navigation settings and actions',
+    actionsTitle: 'Actions',
     distanceTitle: 'Alert distance from route',
     distanceDescription: 'Speak when you are farther than this distance from the selected route.',
     decreaseDistance: 'Decrease route alert distance',
@@ -24,7 +26,9 @@ export const NAVIGATION_SETTINGS_COPY = {
   },
   [LANGUAGES.russian]: {
     title: 'Настройки навигации',
-    open: 'Настройки навигации',
+    modalTitle: 'Навигация по маршруту',
+    openNavigation: 'Открыть настройки и действия навигации по маршруту',
+    actionsTitle: 'Действия',
     distanceTitle: 'Расстояние от маршрута',
     distanceDescription: 'Предупреждать, если вы дальше этого расстояния от выбранного маршрута.',
     decreaseDistance: 'Уменьшить расстояние уведомления',

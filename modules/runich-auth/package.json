@@ -1,0 +1,10 @@
+{
+  "name": "runich-auth",
+  "version": "1.0.0",
+  "private": true,
+  "main": "src/RunichAuth.ts",
+  "types": "src/RunichAuth.ts",
+  "peerDependencies": {
+    "expo": "*"
+  }
+}

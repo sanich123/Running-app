@@ -4,6 +4,7 @@ coverage
 .easignore
 .gitignore
 jest-setup.ts
-android
-ios
+/android
+/ios
+modules/runich-auth/android/build/
 .expo/

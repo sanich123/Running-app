@@ -1,12 +1,54 @@
+import { useState } from 'react';
 import Svg, { Path } from 'react-native-svg';
-import { Linking, View, StyleSheet } from 'react-native';
+import { Linking, View, StyleSheet, Platform } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Text, TouchableRipple } from 'react-native-paper';
-import { useAppSelector } from '@R/typed-hooks';
+import {
+  useLoginWithVkNativeMutation,
+  useLoginWithYandexNativeMutation,
+} from '@R/services/authentication/authentication';
+import { setAuthSession } from '@R/slices/auth/auth';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { errorToast } from '@S/error-toast/error-toast';
+import { loginWithVkNative, loginWithYandexNative } from '../../../modules/runich-auth/src/RunichAuth';
 import { SOCIAL_AUTH_TEXT, VK_AUTH_URL, YANDEX_AUTH_URL } from '../const';
 
 export default function SocialAuthButtons() {
+  const { replace } = useRouter();
   const { language } = useAppSelector(({ settings }) => settings);
+  const dispatch = useAppDispatch();
   const copy = SOCIAL_AUTH_TEXT[language];
+  const [loginWithYandex] = useLoginWithYandexNativeMutation();
+  const [loginWithVk] = useLoginWithVkNativeMutation();
+  const [isNativeAuthLoading, setNativeAuthLoading] = useState(false);
+
+  const handleNativeLogin = async (provider: 'yandex' | 'vk') => {
+    setNativeAuthLoading(true);
+    try {
+      if (provider === 'yandex') {
+        const accessToken = await loginWithYandexNative();
+        if (!accessToken) return;
+        const session = await loginWithYandex({ accessToken }).unwrap();
+        dispatch(setAuthSession(session));
+        replace('/(tabs)/(home)');
+      } else {
+        const authorization = await loginWithVkNative();
+        if (!authorization) return;
+        const session = await loginWithVk(authorization).unwrap();
+        dispatch(setAuthSession(session));
+        replace('/(tabs)/(home)');
+      }
+    } catch (error) {
+      errorToast(`Не удалось войти через ${provider === 'yandex' ? 'Яндекс' : 'VK'}`, error);
+    } finally {
+      setNativeAuthLoading(false);
+    }
+  };
+
+  const handleYandexPress = () =>
+    Platform.OS === 'android' ? void handleNativeLogin('yandex') : void Linking.openURL(YANDEX_AUTH_URL);
+  const handleVkPress = () =>
+    Platform.OS === 'android' ? void handleNativeLogin('vk') : void Linking.openURL(VK_AUTH_URL);
 
   return (
     <View style={styles.layout}>
@@ -15,7 +57,8 @@ export default function SocialAuthButtons() {
           testID="yandex-auth"
           accessibilityLabel={copy.yandex}
           style={[styles.button, styles.yandexButton]}
-          onPress={() => void Linking.openURL(YANDEX_AUTH_URL)}
+          onPress={handleYandexPress}
+          disabled={isNativeAuthLoading}
           accessibilityRole="button">
           <View style={styles.buttonContent}>
             <View style={styles.iconFrame}>
@@ -33,7 +76,8 @@ export default function SocialAuthButtons() {
           testID="vk-auth"
           accessibilityLabel={copy.vk}
           style={[styles.button, styles.vkButton]}
-          onPress={() => void Linking.openURL(VK_AUTH_URL)}
+          onPress={handleVkPress}
+          disabled={isNativeAuthLoading}
           accessibilityRole="button">
           <View style={styles.buttonContent}>
             <View style={styles.iconFrame}>

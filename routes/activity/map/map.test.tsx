@@ -237,12 +237,13 @@ describe('activity recording map', () => {
     });
 
     expect(await screen.findByTestId('activity-map-route-navigation')).toBeOnTheScreen();
-    expect(screen.getByTestId('navigation-preferences')).toBeOnTheScreen();
-    expect(StyleSheet.flatten(screen.getByTestId('navigation-actions').props.style).bottom).toBe(24);
-    expect(StyleSheet.flatten(screen.getByTestId('navigation-preferences').props.style).top).toBeGreaterThan(0);
+    expect(screen.getByTestId('open-navigation-controls')).toBeOnTheScreen();
+    expect(StyleSheet.flatten(screen.getByTestId('navigation-launcher').props.style).bottom).toBe(24);
     await waitFor(() =>
       expect(mockFitBounds).toHaveBeenCalledWith([37.61, 55.71], [37.6, 55.7], [56, 56, 56, 56], 500),
     );
+    await user.press(screen.getByTestId('open-navigation-controls'));
+    expect(screen.getByTestId('navigation-actions')).toBeOnTheScreen();
     await user.press(screen.getByTestId('toggle-navigation-active'));
     await user.press(screen.getByTestId('toggle-imported-route-visibility'));
     await user.press(screen.getByTestId('finish-route-navigation'));
@@ -275,6 +276,7 @@ describe('activity recording map', () => {
     });
 
     expect(screen.queryByTestId('activity-map-route-navigation')).toBeNull();
+    await user.press(screen.getByTestId('open-navigation-controls'));
     await user.press(screen.getByTestId('toggle-imported-route-visibility'));
     await user.press(screen.getByTestId('download-offline-map-for-route'));
 
@@ -295,6 +297,9 @@ describe('activity recording map', () => {
       onFinishNavigation: jest.fn(),
       onDownloadOfflineMap: jest.fn(),
     });
+
+    const user = userEvent.setup();
+    await user.press(screen.getByTestId('open-navigation-controls'));
 
     expect(screen.getByTestId('toggle-imported-route-visibility')).toBeOnTheScreen();
     expect(screen.getByTestId('finish-route-navigation')).toBeOnTheScreen();

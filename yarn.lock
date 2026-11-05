@@ -12090,16 +12090,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-svg@npm:15.16.0":
-  version: 15.16.0
-  resolution: "react-native-svg@npm:15.16.0"
+"react-native-svg@npm:15.16.1":
+  version: 15.16.1
+  resolution: "react-native-svg@npm:15.16.1"
   dependencies:
     css-select: "npm:^5.1.0"
     css-tree: "npm:^1.1.3"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10c0/8196b9f9fae75643a58c61c3411a2121d65d33c9ddd447f9cf2cba8e7131e45b621e34950b3e1918788ee4137ee034e7ae59f960cb85e79561b180d9bfb31539
+  checksum: 10c0/0f7bc6e09718dc225c7fd1af94b9aa61d7e29b3f6f1756f96cefb6e19725f0667a5f9274532f8bfe5afc28e7be5bcf45f98b9a73629b649fdbcfced99645094c
   languageName: node
   linkType: hard
 
@@ -12695,6 +12695,14 @@ __metadata:
   languageName: node
   linkType: hard
 
+"runich-auth@workspace:*, runich-auth@workspace:modules/runich-auth":
+  version: 0.0.0-use.local
+  resolution: "runich-auth@workspace:modules/runich-auth"
+  peerDependencies:
+    expo: "*"
+  languageName: unknown
+  linkType: soft
+
 "runich-running-app@workspace:.":
   version: 0.0.0-use.local
   resolution: "runich-running-app@workspace:."
@@ -12795,7 +12803,7 @@ __metadata:
     react-native-reanimated: "npm:4.7.1"
     react-native-safe-area-context: "npm:~5.11.1"
     react-native-screens: "npm:~4.30.1"
-    react-native-svg: "npm:15.16.0"
+    react-native-svg: "npm:15.16.1"
     react-native-toast-message: "npm:2.5.2"
     react-native-url-polyfill: "npm:^4.0.0"
     react-native-uuid: "npm:^2.0.4"
@@ -12806,6 +12814,7 @@ __metadata:
     react-native-zip-archive: "npm:^9.5.3"
     react-redux: "npm:^9.3.1"
     redux-persist: "npm:^6.0.0"
+    runich-auth: "workspace:*"
     test-renderer: "npm:^1.3.1"
     ts-prune: "npm:^0.10.3"
     turf-linestring: "npm:^1.0.2"

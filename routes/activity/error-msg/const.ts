@@ -3,18 +3,16 @@ import { LANGUAGES } from '../../../constants/enums';
 export const ACTIVITY_ERROR_MSG = {
   [LANGUAGES.english]: {
     recoveryTitle: 'Tracking paused',
-    errorMsg:
-      'The app was closed in the background, so we restored your activity and paused tracking. Press “Continue” to resume recording.',
+    errorMsg: 'The app closed in the background. Press “Continue”.',
     speedTitle: 'GPS signal check',
     tooMuchSpeed: (speed: number, maxSpeed: number, time: string) =>
-      `At ${time}, we skipped a location at ${speed.toFixed(1)} km/h. It was faster than the safe limit for this activity (${maxSpeed} km/h), so it was most likely a GPS jump.`,
+      `At ${time}: ${speed.toFixed(1)} km/h exceeded the ${maxSpeed} km/h limit. GPS point skipped.`,
   },
   [LANGUAGES.russian]: {
     recoveryTitle: 'Отслеживание на паузе',
-    errorMsg:
-      'Приложение было закрыто в фоновом режиме, поэтому мы восстановили данные и поставили отслеживание на паузу. Нажмите «Продолжить», чтобы продолжить запись.',
+    errorMsg: 'Приложение закрылось в фоне. Нажмите «Продолжить».',
     speedTitle: 'Проверка сигнала GPS',
     tooMuchSpeed: (speed: number, maxSpeed: number, time: string) =>
-      `В ${time} точка пропущена: скорость ${speed.toFixed(1)} км/ч выше реалистичного предела для этой активности (${maxSpeed} км/ч). Скорее всего, это сбой GPS.`,
+      `В ${time}: ${speed.toFixed(1)} км/ч выше лимита ${maxSpeed} км/ч. Точка GPS пропущена.`,
   },
 } as const;
