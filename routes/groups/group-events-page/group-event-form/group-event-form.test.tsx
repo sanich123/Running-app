@@ -1,20 +1,21 @@
 import type * as ReactTypes from 'react';
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
+import { http, HttpResponse } from 'msw';
 import type * as ReactNativeTypes from 'react-native';
 import type * as ReactNativePaperTypes from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
+import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
+import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import GroupEventForm from './group-event-form';
 import { GROUPS_COPY, GROUP_SPORT_LABELS } from '../../const';
 
-const mockCreateEvent = jest.fn();
 const mockErrorToast = jest.fn();
+const eventRequests: { groupId: string; body: Record<string, unknown> }[] = [];
+let eventRequestError = false;
 
-jest.mock('@R/services/groups/groups', () => ({
-  useCreateGroupEventMutation: () => [mockCreateEvent, { isLoading: false }],
-}));
 jest.mock('react-native-paper-dates', () => {
   const ReactModule = jest.requireActual('react') as typeof ReactTypes;
   const { View } = jest.requireActual('react-native') as typeof ReactNativeTypes;
@@ -79,8 +80,20 @@ jest.mock('@S/error-toast/error-toast', () => ({ errorToast: (...args: unknown[]
 describe('GroupEventForm', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    eventRequests.length = 0;
+    eventRequestError = false;
+    server.use(
+      http.post(`${BASE_URL}/groups/:groupId/events`, async ({ params, request }) => {
+        eventRequests.push({
+          groupId: String(params.groupId),
+          body: (await request.json()) as Record<string, unknown>,
+        });
+        return eventRequestError
+          ? HttpResponse.json({ message: 'offline' }, { status: 500 })
+          : HttpResponse.json({ id: 'event-1' }, { status: 201 });
+      }),
+    );
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    mockCreateEvent.mockReturnValue({ unwrap: jest.fn().mockResolvedValue({ id: 'event-1' }) });
   });
 
   it('submits a future event with trimmed required details and no distance', async () => {
@@ -92,23 +105,24 @@ describe('GroupEventForm', () => {
     await user.type(screen.getByTestId(copy.eventLocation), '  Riverside park  ');
     await user.press(screen.getByTestId('group-event-submit'));
 
-    await waitFor(() =>
-      expect(mockCreateEvent).toHaveBeenCalledWith({
-        groupId: 'group-1',
+    await waitFor(() => expect(eventRequests).toHaveLength(1));
+    expect(eventRequests[0]).toEqual({
+      groupId: 'group-1',
+      body: {
         title: 'Sunday long run',
         description: 'Meet by the river',
         locationName: 'Riverside park',
         sport: 'run',
         startsAt: expect.any(String),
-      }),
-    );
-    const startsAt = new Date(mockCreateEvent.mock.calls[0][0].startsAt);
+      },
+    });
+    const startsAt = new Date(String(eventRequests[0].body.startsAt));
     expect(startsAt.toString()).not.toBe('Invalid Date');
     expect(startsAt.getTime()).toBeGreaterThan(Date.now());
   });
 
   it('shows an error when event submission fails', async () => {
-    mockCreateEvent.mockReturnValue({ unwrap: jest.fn().mockRejectedValue(new Error('offline')) });
+    eventRequestError = true;
     const copy = GROUPS_COPY[LANGUAGES.english];
     await renderWithProviders(<GroupEventForm groupId="group-1" copy={copy} />);
     const user = userEvent.setup();
@@ -117,7 +131,9 @@ describe('GroupEventForm', () => {
     await user.type(screen.getByTestId(copy.eventLocation), 'Riverside park');
     await user.press(screen.getByTestId('group-event-submit'));
 
-    await waitFor(() => expect(mockErrorToast).toHaveBeenCalledWith(copy.eventError, expect.any(Error)));
+    await waitFor(() =>
+      expect(mockErrorToast).toHaveBeenCalledWith(copy.eventError, expect.objectContaining({ status: 500 })),
+    );
   });
 
   it('uses the group sport without showing a redundant activity picker', async () => {
@@ -137,7 +153,7 @@ describe('GroupEventForm', () => {
     await user.type(screen.getByTestId(copy.eventLocation), 'Central park');
     await user.press(screen.getByTestId('group-event-submit'));
 
-    await waitFor(() => expect(mockCreateEvent).toHaveBeenCalledWith(expect.objectContaining({ sport: 'walk' })));
+    await waitFor(() => expect(eventRequests[0]?.body).toEqual(expect.objectContaining({ sport: 'walk' })));
   });
 
   it('falls back to the supported sports when the group has none configured', async () => {
@@ -149,7 +165,7 @@ describe('GroupEventForm', () => {
     await user.type(screen.getByTestId(copy.eventLocation), 'Central park');
     await user.press(screen.getByTestId('group-event-submit'));
 
-    await waitFor(() => expect(mockCreateEvent).toHaveBeenCalledWith(expect.objectContaining({ sport: 'run' })));
+    await waitFor(() => expect(eventRequests[0]?.body).toEqual(expect.objectContaining({ sport: 'run' })));
   });
 
   it('requires a meaningful title before submitting', async () => {
@@ -158,7 +174,7 @@ describe('GroupEventForm', () => {
     await userEvent.press(screen.getByTestId('group-event-submit'));
 
     expect(mockErrorToast).toHaveBeenCalledWith(copy.eventTitleInvalid);
-    expect(mockCreateEvent).not.toHaveBeenCalled();
+    expect(eventRequests).toHaveLength(0);
   });
 
   it('rejects a date that has passed since the form opened', async () => {
@@ -176,7 +192,7 @@ describe('GroupEventForm', () => {
     nowSpy.mockRestore();
 
     expect(mockErrorToast).toHaveBeenCalledWith(copy.eventDateInvalid);
-    expect(mockCreateEvent).not.toHaveBeenCalled();
+    expect(eventRequests).toHaveLength(0);
   });
 
   it('rejects distances outside the supported range', async () => {
@@ -190,7 +206,7 @@ describe('GroupEventForm', () => {
     await user.press(screen.getByTestId('group-event-submit'));
 
     expect(mockErrorToast).toHaveBeenCalledWith(copy.eventDistanceInvalid);
-    expect(mockCreateEvent).not.toHaveBeenCalled();
+    expect(eventRequests).toHaveLength(0);
   });
 
   it('selects a date and time before publishing an event', async () => {
@@ -210,19 +226,18 @@ describe('GroupEventForm', () => {
     await user.type(screen.getByTestId(copy.eventLocation), '  Riverside park  ');
     await user.press(screen.getByTestId('group-event-submit'));
 
-    await waitFor(() =>
-      expect(mockCreateEvent).toHaveBeenCalledWith(
-        expect.objectContaining({
-          groupId: 'group-1',
-          title: 'Park run',
-          sport: 'run',
-          distanceKm: 4.5,
-          description: 'Meet by the river',
-          locationName: 'Riverside park',
-          startsAt: startsAt.toISOString(),
-        }),
-      ),
-    );
+    await waitFor(() => expect(eventRequests).toHaveLength(1));
+    expect(eventRequests[0]).toEqual({
+      groupId: 'group-1',
+      body: expect.objectContaining({
+        title: 'Park run',
+        sport: 'run',
+        distanceKm: 4.5,
+        description: 'Meet by the river',
+        locationName: 'Riverside park',
+        startsAt: startsAt.toISOString(),
+      }),
+    });
     expect(onCreated).toHaveBeenCalledTimes(1);
   });
 

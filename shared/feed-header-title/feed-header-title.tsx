@@ -11,10 +11,6 @@ export default function FeedHeaderTitle({ children, isBrand = false }: PropsWith
   const { canGoBack, replace } = useRouter();
   const hasBackRoute = canGoBack();
 
-  if (isBrand && hasBackRoute) {
-    return null;
-  }
-
   if (Platform.OS !== 'web') {
     return (
       <Text

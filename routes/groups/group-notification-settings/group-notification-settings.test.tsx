@@ -1,30 +1,46 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react-native';
+import { http, HttpResponse } from 'msw';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { NOTIFICATION_COPY } from '@Routes/notifications/constants';
+import { MOCK_SERVER_IDS, MOCK_SERVER_PROFILE } from '@T/responses/runich';
+import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
+import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import GroupNotificationSettings from './group-notification-settings';
 import { GROUPS_COPY } from '../const';
 
-const mockGetProfile = jest.fn();
-const mockUpdateProfile = jest.fn();
-
-jest.mock('@R/services/profile/profile', () => ({
-  useGetUserProfileByUserIdQuery: (...args: unknown[]) => mockGetProfile(...args),
-  useUpdateProfileByUserIdMutation: () => [mockUpdateProfile, { isLoading: false }],
-}));
+const updatedPreferences: Record<string, unknown>[] = [];
+let profileResponse = { ...MOCK_SERVER_PROFILE, groupPostsNotifications: false, groupEventsNotifications: true };
+let holdProfileResponse = false;
+let releaseProfileResponse: (() => void) | undefined;
 
 describe('GroupNotificationSettings', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    updatedPreferences.length = 0;
+    profileResponse = { ...MOCK_SERVER_PROFILE, groupPostsNotifications: false, groupEventsNotifications: true };
+    holdProfileResponse = false;
+    releaseProfileResponse = undefined;
+    server.use(
+      http.get(`${BASE_URL}/user/${MOCK_SERVER_IDS.userId}/profile`, async () => {
+        if (holdProfileResponse) {
+          await new Promise<void>((resolve) => {
+            releaseProfileResponse = resolve;
+          });
+        }
+        return HttpResponse.json(profileResponse);
+      }),
+      http.patch(`${BASE_URL}/user/${MOCK_SERVER_IDS.userId}/profile`, async ({ request }) => {
+        const body = (await request.json()) as Record<string, unknown>;
+        updatedPreferences.push(body);
+        profileResponse = { ...profileResponse, ...body };
+        return HttpResponse.json(profileResponse);
+      }),
+    );
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    mockStore.dispatch(setMockUserId('group-settings-owner'));
-    mockGetProfile.mockReturnValue({
-      data: { groupPostsNotifications: false, groupEventsNotifications: true },
-      isSuccess: true,
-    });
-    mockUpdateProfile.mockReturnValue({ unwrap: jest.fn().mockResolvedValue({}) });
+    mockStore.dispatch(setMockUserId(MOCK_SERVER_IDS.userId));
   });
 
   it('shows group notification preferences and explains delivery channels', async () => {
@@ -41,26 +57,20 @@ describe('GroupNotificationSettings', () => {
   it('saves each preference to the matching profile field', async () => {
     await renderWithProviders(<GroupNotificationSettings visible onDismiss={jest.fn()} />);
     await fireEvent(screen.getByTestId('group-post-notifications-switch'), 'valueChange', true);
-    await waitFor(() => expect(mockUpdateProfile).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(updatedPreferences).toHaveLength(1));
     await fireEvent(screen.getByTestId('group-event-notifications-switch'), 'valueChange', false);
-    await waitFor(() => expect(mockUpdateProfile).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(updatedPreferences).toHaveLength(2));
 
-    expect(mockUpdateProfile).toHaveBeenNthCalledWith(1, {
-      body: { groupPostsNotifications: true },
-      id: 'group-settings-owner',
-    });
-    expect(mockUpdateProfile).toHaveBeenNthCalledWith(2, {
-      body: { groupEventsNotifications: false },
-      id: 'group-settings-owner',
-    });
+    expect(updatedPreferences).toEqual([{ groupPostsNotifications: true }, { groupEventsNotifications: false }]);
   });
 
   it('uses the Russian text and keeps controls disabled until the profile loads', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    mockGetProfile.mockReturnValue({ data: undefined, isSuccess: false });
+    holdProfileResponse = true;
     await renderWithProviders(<GroupNotificationSettings visible onDismiss={jest.fn()} />);
 
     expect(await screen.findByTestId('group-notification-settings-loading')).toBeOnTheScreen();
     expect(screen.getByText(GROUPS_COPY[LANGUAGES.russian].groupNotificationDeliveryHint)).toBeOnTheScreen();
+    releaseProfileResponse?.();
   });
 });

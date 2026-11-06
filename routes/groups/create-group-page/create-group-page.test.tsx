@@ -1,19 +1,25 @@
-import { screen, userEvent, waitFor } from '@testing-library/react-native';
+import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
+import { http, HttpResponse } from 'msw';
 import { Keyboard, Platform } from 'react-native';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
+import { MOCK_GROUP_DETAILS } from '@T/responses/groups';
+import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
+import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { GROUPS_COPY } from '../const';
 import CreateGroupPage from './create-group-page';
 
 const mockReplace = jest.fn();
-const mockCreateGroupMutation = jest.fn();
-const mockCreateGroup = jest.fn();
 const mockErrorToast = jest.fn();
 const mockGetAccessToGallery = jest.fn();
 const mockCompressMediaFile = jest.fn();
 const mockUploadMediaFile = jest.fn();
+const createGroupRequests: Record<string, unknown>[] = [];
+let createGroupError = false;
+let holdCreateGroupResponse = false;
+let releaseCreateGroupResponse: (() => void) | undefined;
 
 jest.mock('expo-router', () => ({ useRouter: () => ({ replace: mockReplace }) }));
 jest.mock('@S/error-toast/error-toast', () => ({ errorToast: (...args: unknown[]) => mockErrorToast(...args) }));
@@ -22,17 +28,27 @@ jest.mock('@U/file-sending', () => ({
   compressMediaFile: (...args: unknown[]) => mockCompressMediaFile(...args),
   uploadMediaFile: (...args: unknown[]) => mockUploadMediaFile(...args),
 }));
-jest.mock('@R/services/groups/groups', () => ({
-  useCreateGroupMutation: () => mockCreateGroupMutation(),
-}));
-
 describe('CreateGroupPage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    createGroupRequests.length = 0;
+    createGroupError = false;
+    holdCreateGroupResponse = false;
+    releaseCreateGroupResponse = undefined;
+    server.use(
+      http.post(`${BASE_URL}/groups`, async ({ request }) => {
+        createGroupRequests.push((await request.json()) as Record<string, unknown>);
+        if (createGroupError) return HttpResponse.json({ message: 'network failed' }, { status: 500 });
+        if (holdCreateGroupResponse) {
+          await new Promise<void>((resolve) => {
+            releaseCreateGroupResponse = resolve;
+          });
+        }
+        return HttpResponse.json({ ...MOCK_GROUP_DETAILS, id: 'new-group' }, { status: 201 });
+      }),
+    );
     jest.spyOn(Keyboard, 'addListener').mockImplementation(() => ({ remove: jest.fn() }) as never);
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    mockCreateGroup.mockReturnValue({ unwrap: jest.fn().mockResolvedValue({ id: 'new-group' }) });
-    mockCreateGroupMutation.mockReturnValue([mockCreateGroup, { isLoading: false }]);
     mockGetAccessToGallery.mockResolvedValue({ canceled: true, assets: [] });
     mockCompressMediaFile.mockResolvedValue('file:///compressed-group-photo.jpg');
     mockUploadMediaFile.mockResolvedValue({ assetId: 'photo-asset-1' });
@@ -47,13 +63,13 @@ describe('CreateGroupPage', () => {
     await user.press(screen.getByTestId('create-group-submit'));
 
     await waitFor(() =>
-      expect(mockCreateGroup).toHaveBeenCalledWith({
-        name: 'City walkers',
-        description: undefined,
-        locationName: undefined,
-        sports: ['walk'],
-        privacy: 'open',
-      }),
+      expect(createGroupRequests).toEqual([
+        {
+          name: 'City walkers',
+          sports: ['walk'],
+          privacy: 'open',
+        },
+      ]),
     );
     await waitFor(() => expect(mockReplace).toHaveBeenCalledWith('/groups/new-group'));
   });
@@ -77,11 +93,11 @@ describe('CreateGroupPage', () => {
 
     await user.press(screen.getByTestId('create-group-submit'));
     expect(mockErrorToast).toHaveBeenCalledWith(GROUPS_COPY[LANGUAGES.english].nameRequired);
-    expect(mockCreateGroup).not.toHaveBeenCalled();
+    expect(createGroupRequests).toHaveLength(0);
   });
 
   it('sends a closed-group request and reports a save failure', async () => {
-    mockCreateGroup.mockReturnValue({ unwrap: jest.fn().mockRejectedValue(new Error('network failed')) });
+    createGroupError = true;
     await renderWithProviders(<CreateGroupPage />);
     const user = userEvent.setup();
 
@@ -92,22 +108,26 @@ describe('CreateGroupPage', () => {
     await user.press(screen.getByTestId('create-group-submit'));
 
     await waitFor(() =>
-      expect(mockCreateGroup).toHaveBeenCalledWith(
-        expect.objectContaining({
-          name: 'Closed runners',
-          sports: ['hike'],
-          privacy: 'closed',
-        }),
-      ),
+      expect(createGroupRequests).toEqual([
+        expect.objectContaining({ name: 'Closed runners', sports: ['hike'], privacy: 'closed' }),
+      ]),
     );
-    expect(mockErrorToast).toHaveBeenCalledWith(GROUPS_COPY[LANGUAGES.english].saveError, expect.any(Error));
+    expect(mockErrorToast).toHaveBeenCalledWith(
+      GROUPS_COPY[LANGUAGES.english].saveError,
+      expect.objectContaining({ status: 500 }),
+    );
   });
 
   it('disables submission while the create request is loading', async () => {
-    mockCreateGroupMutation.mockReturnValue([mockCreateGroup, { isLoading: true }]);
+    holdCreateGroupResponse = true;
     await renderWithProviders(<CreateGroupPage />);
+    const user = userEvent.setup();
+    await user.type(screen.getByTestId('group-name-input'), 'City runners');
+    await user.press(screen.getByTestId('create-group-submit'));
 
+    await waitFor(() => expect(createGroupRequests).toHaveLength(1));
     expect(screen.getByTestId('create-group-submit')).toBeDisabled();
+    await act(async () => releaseCreateGroupResponse?.());
   });
 
   it('renders Russian creation copy with the Android keyboard behavior', async () => {
@@ -153,14 +173,14 @@ describe('CreateGroupPage', () => {
     await user.press(screen.getByTestId('create-group-submit'));
 
     await waitFor(() =>
-      expect(mockCreateGroup).toHaveBeenCalledWith({
-        name: 'Global running team',
-        description: undefined,
-        locationName: undefined,
-        sports: ['run'],
-        photoAssetId: 'photo-asset-1',
-        privacy: 'open',
-      }),
+      expect(createGroupRequests).toEqual([
+        {
+          name: 'Global running team',
+          sports: ['run'],
+          photoAssetId: 'photo-asset-1',
+          privacy: 'open',
+        },
+      ]),
     );
   });
 
@@ -179,6 +199,6 @@ describe('CreateGroupPage', () => {
       expect(mockErrorToast).toHaveBeenCalledWith(GROUPS_COPY[LANGUAGES.english].photoUploadError, expect.any(Error)),
     );
     expect(screen.getByTestId('create-group-submit')).not.toBeDisabled();
-    expect(mockCreateGroup).not.toHaveBeenCalled();
+    expect(createGroupRequests).toHaveLength(0);
   });
 });

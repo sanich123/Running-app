@@ -55,15 +55,15 @@ describe('FeedHeaderTitle', () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: originalOS });
   });
 
-  it('hides the Runich brand on the home page when navigation can go back', async () => {
+  it('keeps the Runich brand visible on the home page when navigation can go back', async () => {
     const originalOS = Platform.OS;
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
 
     await render(<FeedHeaderTitle isBrand>Home</FeedHeaderTitle>);
 
     expect(mockCanGoBack).toHaveBeenCalled();
-    expect(screen.queryByText(FEED_HEADER_BRAND.title)).not.toBeOnTheScreen();
-    expect(screen.queryByLabelText(FEED_HEADER_BRAND.accessibilityLabel)).not.toBeOnTheScreen();
+    expect(screen.getByText(FEED_HEADER_BRAND.title)).toBeOnTheScreen();
+    expect(screen.getByLabelText(FEED_HEADER_BRAND.accessibilityLabel)).toBeOnTheScreen();
     expect(mockReplace).not.toHaveBeenCalled();
     Object.defineProperty(Platform, 'OS', { configurable: true, value: originalOS });
   });

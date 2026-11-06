@@ -1,16 +1,17 @@
 import { fireEvent, screen, userEvent, waitFor } from '@testing-library/react-native';
+import { http, HttpResponse } from 'msw';
 import { Keyboard } from 'react-native';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
-import { mockStore } from '@T/utils/mock-store';
+import { BASE_URL } from '@T/utils/handlers';
+import { createMockStore } from '@T/utils/mock-store';
+import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import EditGroupPage from './edit-group-page';
 import { GROUPS_COPY } from '../const';
+import type { GroupDetails } from '@R/services/groups/types';
 
 const mockReplace = jest.fn();
-const mockGetGroup = jest.fn();
-const mockUpdateGroup = jest.fn();
-const mockRefetch = jest.fn();
 const mockErrorToast = jest.fn();
 const mockSuccessToast = jest.fn();
 
@@ -23,12 +24,7 @@ jest.mock('@S/error-toast/error-toast', () => ({ errorToast: (...args: unknown[]
 jest.mock('@S/success-toast/success-toast', () => ({
   successToast: (...args: unknown[]) => mockSuccessToast(...args),
 }));
-jest.mock('@R/services/groups/groups', () => ({
-  useGetGroupByIdQuery: (...args: unknown[]) => mockGetGroup(...args),
-  useUpdateGroupMutation: () => [mockUpdateGroup, { isLoading: false }],
-}));
-
-const group = {
+const group: GroupDetails = {
   id: 'group-1',
   name: 'Saturday runners',
   description: 'Morning runs',
@@ -36,6 +32,8 @@ const group = {
   categoryTags: ['team'],
   photoUrl: null,
   photoPreviewUrl: null,
+  photoBlurhash: null,
+  photoReviewStatus: null,
   photoPending: false,
   privacy: 'open',
   locationName: 'Moscow',
@@ -47,78 +45,102 @@ const group = {
   currentMembership: null,
   canManage: true,
   pendingRequestCount: 0,
-} as const;
+};
+
+let groupResponse: GroupDetails = group;
+let groupRequestError = false;
+let updateRequestError = false;
+const groupRequests: string[] = [];
+const updateRequests: Record<string, unknown>[] = [];
+let testStore: ReturnType<typeof createMockStore>;
 
 describe('EditGroupPage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    testStore = createMockStore();
+    groupResponse = group;
+    groupRequestError = false;
+    updateRequestError = false;
+    groupRequests.length = 0;
+    updateRequests.length = 0;
+    server.use(
+      http.get(`${BASE_URL}/groups/group-1`, () => {
+        groupRequests.push('group-1');
+        return groupRequestError
+          ? HttpResponse.json({ message: 'group unavailable' }, { status: 503 })
+          : HttpResponse.json(groupResponse);
+      }),
+      http.patch(`${BASE_URL}/groups/group-1`, async ({ request }) => {
+        updateRequests.push((await request.json()) as Record<string, unknown>);
+        return updateRequestError
+          ? HttpResponse.json({ message: 'offline' }, { status: 500 })
+          : HttpResponse.json(groupResponse);
+      }),
+    );
     jest.spyOn(Keyboard, 'addListener').mockImplementation(() => ({ remove: jest.fn() }) as never);
-    mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    mockGetGroup.mockReturnValue({ data: group, isLoading: false, isError: false, refetch: mockRefetch });
-    mockUpdateGroup.mockReturnValue({ unwrap: jest.fn().mockResolvedValue(undefined) });
+    testStore.dispatch(changeLanguage(LANGUAGES.english));
   });
 
+  async function renderLoadedPage() {
+    await renderWithProviders(<EditGroupPage />, { store: testStore });
+    await waitFor(() => {
+      expect(groupRequests).toHaveLength(1);
+    });
+    await waitFor(() => expect(screen.queryByRole('progressbar')).not.toBeOnTheScreen());
+  }
+
   it('saves the owner changes and returns to the group', async () => {
-    await renderWithProviders(<EditGroupPage />);
+    await renderLoadedPage();
     expect(screen.queryByTestId('group-category-selector')).not.toBeOnTheScreen();
     await userEvent.press(screen.getByTestId('edit-group-submit'));
 
-    await waitFor(() =>
-      expect(mockUpdateGroup).toHaveBeenCalledWith({
-        groupId: 'group-1',
-        name: 'Saturday runners',
-        description: 'Morning runs',
-        sports: ['run'],
-        categoryTags: ['team'],
-        privacy: 'open',
-        locationName: 'Moscow',
-      }),
-    );
+    await waitFor(() => expect(updateRequests).toHaveLength(1));
+    expect(updateRequests[0]).toEqual({
+      name: 'Saturday runners',
+      description: 'Morning runs',
+      sports: ['run'],
+      categoryTags: ['team'],
+      privacy: 'open',
+      locationName: 'Moscow',
+    });
     expect(mockSuccessToast).toHaveBeenCalledWith(GROUPS_COPY[LANGUAGES.english].groupUpdated);
     expect(mockReplace).toHaveBeenCalledWith('/groups/group-1');
   });
 
   it('saves a worldwide group without a location name', async () => {
-    await renderWithProviders(<EditGroupPage />);
+    await renderLoadedPage();
     const user = userEvent.setup();
     await user.press(screen.getByTestId('group-worldwide-toggle'));
     await user.press(screen.getByTestId('edit-group-submit'));
 
-    await waitFor(() => expect(mockUpdateGroup).toHaveBeenCalledWith(expect.objectContaining({ locationName: null })));
+    await waitFor(() => expect(updateRequests[0]).toEqual(expect.objectContaining({ locationName: null })));
   });
 
   it('requires at least one sport before saving', async () => {
-    mockGetGroup.mockReturnValue({
-      data: { ...group, sports: [] },
-      isLoading: false,
-      isError: false,
-      refetch: mockRefetch,
-    });
-    await renderWithProviders(<EditGroupPage />);
+    groupResponse = { ...group, sports: [] };
+    await renderLoadedPage();
     fireEvent.press(screen.getByTestId('edit-group-submit'));
 
     expect(mockErrorToast).toHaveBeenCalledWith(GROUPS_COPY[LANGUAGES.english].chooseSport);
-    expect(mockUpdateGroup).not.toHaveBeenCalled();
+    expect(updateRequests).toHaveLength(0);
   });
 
   it('reports an error when group updates fail', async () => {
-    mockUpdateGroup.mockReturnValue({ unwrap: jest.fn().mockRejectedValue(new Error('offline')) });
-    await renderWithProviders(<EditGroupPage />);
+    updateRequestError = true;
+    await renderLoadedPage();
     await userEvent.press(screen.getByTestId('edit-group-submit'));
 
     await waitFor(() =>
-      expect(mockErrorToast).toHaveBeenCalledWith(GROUPS_COPY[LANGUAGES.english].saveError, expect.any(Error)),
+      expect(mockErrorToast).toHaveBeenCalledWith(
+        GROUPS_COPY[LANGUAGES.english].saveError,
+        expect.objectContaining({ status: 500 }),
+      ),
     );
   });
 
   it('keeps non-owners out of the edit form', async () => {
-    mockGetGroup.mockReturnValue({
-      data: { ...group, isOwner: false, createdByUserId: 'another-user' },
-      isLoading: false,
-      isError: false,
-      refetch: mockRefetch,
-    });
-    await renderWithProviders(<EditGroupPage />);
+    groupResponse = { ...group, isOwner: false, createdByUserId: 'another-user' };
+    await renderLoadedPage();
 
     expect(screen.getByText(GROUPS_COPY[LANGUAGES.english].ownerOnlyEdit)).toBeOnTheScreen();
     fireEvent.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].deleteGroupCancel));
@@ -127,21 +149,21 @@ describe('EditGroupPage', () => {
   });
 
   it('requires a valid group name before saving', async () => {
-    await renderWithProviders(<EditGroupPage />);
+    await renderLoadedPage();
     const user = userEvent.setup();
     await user.clear(screen.getByTestId('group-name-input'));
     await user.type(screen.getByTestId('group-name-input'), 'A');
     await user.press(screen.getByTestId('edit-group-submit'));
 
     expect(mockErrorToast).toHaveBeenCalledWith(GROUPS_COPY[LANGUAGES.english].nameRequired);
-    expect(mockUpdateGroup).not.toHaveBeenCalled();
+    expect(updateRequests).toHaveLength(0);
   });
 
   it('offers retry when group details fail to load', async () => {
-    mockGetGroup.mockReturnValue({ data: undefined, isLoading: false, isError: true, refetch: mockRefetch });
-    await renderWithProviders(<EditGroupPage />);
-    fireEvent.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].retry));
+    groupRequestError = true;
+    await renderLoadedPage();
+    await userEvent.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].retry));
 
-    expect(mockRefetch).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(groupRequests).toHaveLength(2));
   });
 });

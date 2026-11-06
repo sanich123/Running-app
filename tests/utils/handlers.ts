@@ -63,7 +63,14 @@ export const handlers = [
   }),
   http.get(`${BASE_URL}/subscription/me`, () => HttpResponse.json(MOCK_SERVER_SUBSCRIPTION)),
   http.get(`${BASE_URL}/notification/unread-count`, () => HttpResponse.json(MOCK_SERVER_NOTIFICATION_UNREAD_COUNT)),
+  http.get(`${BASE_URL}/notification`, () =>
+    HttpResponse.json({ notifications: [], hasMore: false, nextCursor: null }),
+  ),
   http.patch(`${BASE_URL}/notification/:notificationId/read`, () => HttpResponse.json({ updated: 1 })),
+  http.patch(`${BASE_URL}/notification/read-all`, () => HttpResponse.json({ updated: 0 })),
+  http.get(`${BASE_URL}/notification/push-token`, () => HttpResponse.json({ enabled: false })),
+  http.post(`${BASE_URL}/notification/push-token`, () => HttpResponse.json({ enabled: true })),
+  http.delete(`${BASE_URL}/notification/push-token`, () => HttpResponse.json({ enabled: false, updated: 1 })),
   http.get(`${BASE_URL}/activity/migration-strava/current`, () => HttpResponse.json(MOCK_SERVER_MIGRATION_JOB)),
   http.get(`${BASE_URL}/groups/:groupId`, ({ params }) =>
     HttpResponse.json({ ...MOCK_GROUP_DETAILS, id: `${params.groupId}` }),

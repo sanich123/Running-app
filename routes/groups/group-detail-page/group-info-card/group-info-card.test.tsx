@@ -1,22 +1,18 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
+import { http, HttpResponse } from 'msw';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
+import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
+import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import GroupInfoCard from './group-info-card';
 import { GROUP_CATEGORY_LABELS, GROUPS_COPY } from '../../const';
 import { GROUP_FIXTURE } from '../../test-fixtures';
 import type { GroupDetails } from '@R/services/groups/types';
 
-const mockJoinGroup = jest.fn();
-const mockLeaveGroup = jest.fn();
-const mockJoinMutation = jest.fn();
 const mockBack = jest.fn();
-
-jest.mock('@R/services/groups/groups', () => ({
-  useJoinGroupMutation: (...args: unknown[]) => mockJoinMutation(...args),
-  useLeaveGroupMutation: () => [mockLeaveGroup, { isLoading: false }],
-}));
+const groupRequests: string[] = [];
 jest.mock('expo-router', () => ({
   useRouter: () => ({ back: mockBack }),
 }));
@@ -26,10 +22,26 @@ const group: GroupDetails = { ...GROUP_FIXTURE, updatedAt: GROUP_FIXTURE.created
 describe('GroupInfoCard', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    groupRequests.length = 0;
+    server.use(
+      http.post(`${BASE_URL}/groups/group-1/join`, ({ request }) => {
+        groupRequests.push(`${request.method} /groups/group-1/join`);
+        return HttpResponse.json({
+          ...GROUP_FIXTURE,
+          currentMembership: {
+            status: 'active',
+            role: 'member',
+            notificationPreference: 'all',
+            feedPreference: 'all',
+          },
+        });
+      }),
+      http.delete(`${BASE_URL}/groups/group-1/membership`, ({ request }) => {
+        groupRequests.push(`${request.method} /groups/group-1/membership`);
+        return new HttpResponse(null, { status: 204 });
+      }),
+    );
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    mockJoinGroup.mockReturnValue({ unwrap: jest.fn().mockResolvedValue({ id: GROUP_FIXTURE.id }) });
-    mockLeaveGroup.mockReturnValue({ unwrap: jest.fn().mockResolvedValue(undefined) });
-    mockJoinMutation.mockReturnValue([mockJoinGroup, { isLoading: false, reset: jest.fn() }]);
   });
 
   it('shows group information and joins from its own mutation', async () => {
@@ -41,7 +53,7 @@ describe('GroupInfoCard', () => {
       expect(screen.getByText(GROUP_CATEGORY_LABELS.en[categoryTag])).toBeOnTheScreen();
     });
     await userEvent.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].join));
-    await waitFor(() => expect(mockJoinGroup).toHaveBeenCalledWith(GROUP_FIXTURE.id));
+    await waitFor(() => expect(groupRequests).toEqual(['POST /groups/group-1/join']));
     expect(screen.queryByText(GROUPS_COPY[LANGUAGES.english].leave)).not.toBeOnTheScreen();
   });
 
@@ -87,28 +99,16 @@ describe('GroupInfoCard', () => {
       />,
     );
 
-    expect(screen.getByText(GROUPS_COPY[LANGUAGES.english].leave)).toBeOnTheScreen();
+    await userEvent.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].leave));
+    await waitFor(() => expect(groupRequests).toEqual(['DELETE /groups/group-1/membership']));
     expect(screen.queryByText(GROUPS_COPY[LANGUAGES.english].join)).not.toBeOnTheScreen();
   });
 
   it('uses the matching active join result while membership refreshes', async () => {
-    mockJoinMutation.mockReturnValue([
-      mockJoinGroup,
-      {
-        data: {
-          id: GROUP_FIXTURE.id,
-          currentMembership: {
-            status: 'active',
-            role: 'member',
-            notificationPreference: 'all',
-            feedPreference: 'all',
-          },
-        },
-        isLoading: false,
-      },
-    ]);
     await renderWithProviders(<GroupInfoCard group={{ ...group, currentMembership: null }} isRefreshing />);
 
+    await userEvent.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].join));
+    await waitFor(() => expect(groupRequests).toEqual(['POST /groups/group-1/join']));
     expect(screen.getByText(GROUPS_COPY[LANGUAGES.english].leave)).toBeOnTheScreen();
     expect(screen.queryByText(GROUPS_COPY[LANGUAGES.english].join)).not.toBeOnTheScreen();
   });

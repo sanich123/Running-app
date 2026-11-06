@@ -1,10 +1,13 @@
 import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
+import { http, HttpResponse } from 'msw';
 import { Platform } from 'react-native';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { errorToast } from '@S/error-toast/error-toast';
 import { TEST_URLS } from '@T/mocks/const';
+import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
+import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { deleteUploadedMedia, getAccessToGallery } from '@U/file-sending';
 import { uploadActivityMediaBatch } from '../utils';
@@ -26,20 +29,28 @@ jest.mock('@U/file-sending', () => ({
   getAccessToGallery: jest.fn(),
   deleteUploadedMedia: jest.fn().mockResolvedValue(true),
 }));
-const mockAppendActivityMedia = jest.fn();
-jest.mock('@R/services/activity/activity', () => ({
-  ...jest.requireActual('@R/services/activity/activity'),
-  useAppendActivityMediaMutation: () => [mockAppendActivityMedia],
-}));
 jest.mock('../utils', () => ({ uploadActivityMediaBatch: jest.fn() }));
 jest.mock('@S/error-toast/error-toast', () => ({ errorToast: jest.fn() }));
 
 const originalPlatform = Platform.OS;
+let appendMediaRequest: { activityId: string; body: unknown } | undefined;
+let appendMediaResponse: object;
+let appendMediaStatus: number;
 
 describe('Upload photos btn', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockAppendActivityMedia.mockReset();
+    appendMediaRequest = undefined;
+    appendMediaResponse = { success: true, media: [] };
+    appendMediaStatus = 200;
+    server.use(
+      http.post(`${BASE_URL}/activity/:activityId/media`, async ({ params, request }) => {
+        appendMediaRequest = { activityId: String(params.activityId), body: await request.json() };
+        return appendMediaStatus >= 400
+          ? new HttpResponse(null, { status: appendMediaStatus })
+          : HttpResponse.json(appendMediaResponse);
+      }),
+    );
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'ios' });
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     mockStore.dispatch(setMockUserId('upload-user'));
@@ -291,9 +302,7 @@ describe('Upload photos btn', () => {
       assets: [{ uri: 'photo.jpg', fileName: 'photo.jpg', mimeType: 'image/jpeg' }],
     });
     (uploadActivityMediaBatch as jest.Mock).mockResolvedValue([uploadedMedia]);
-    mockAppendActivityMedia.mockReturnValue({
-      unwrap: jest.fn().mockResolvedValue({ success: true, media: [persistedMedia] }),
-    });
+    appendMediaResponse = { success: true, media: [persistedMedia] };
     await renderWithProviders(
       <UploadPhotosBtn
         isDisabled={false}
@@ -307,7 +316,7 @@ describe('Upload photos btn', () => {
     await user.press(screen.getByTestId('upload-gallery-button'));
 
     await waitFor(() => expect(setImages).toHaveBeenCalledWith([persistedMedia]));
-    expect(mockAppendActivityMedia).toHaveBeenCalledWith({ id: 'activity-id', media: [uploadedMedia] });
+    expect(appendMediaRequest).toEqual({ activityId: 'activity-id', body: { media: [uploadedMedia] } });
     expect(deleteUploadedMedia).not.toHaveBeenCalled();
     expect(mockStore.getState().activity.media).toContainEqual(persistedMedia);
   });
@@ -321,7 +330,7 @@ describe('Upload photos btn', () => {
       assets: [{ uri: 'photo.jpg', fileName: 'photo.jpg', mimeType: 'image/jpeg' }],
     });
     (uploadActivityMediaBatch as jest.Mock).mockResolvedValue([uploadedMedia]);
-    mockAppendActivityMedia.mockReturnValue({ unwrap: jest.fn().mockRejectedValue(new Error('append failed')) });
+    appendMediaStatus = 500;
     await renderWithProviders(
       <UploadPhotosBtn
         isDisabled={false}

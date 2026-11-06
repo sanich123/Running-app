@@ -1,66 +1,77 @@
-import { fireEvent, screen } from '@testing-library/react-native';
+import { fireEvent, screen, userEvent, waitFor } from '@testing-library/react-native';
+import { http, HttpResponse } from 'msw';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
-import { mockStore } from '@T/utils/mock-store';
+import { BASE_URL } from '@T/utils/handlers';
+import { createMockStore } from '@T/utils/mock-store';
+import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import GroupsList from './groups-list';
 import { GROUPS_COPY } from '../../const';
 import { GROUP_FIXTURE } from '../../test-fixtures';
+import type { GroupSport } from '@R/services/groups/types';
 
-const mockGetGroups = jest.fn();
 const mockPush = jest.fn();
-jest.mock('@R/services/groups/groups', () => ({ useGetGroupsQuery: (...args: unknown[]) => mockGetGroups(...args) }));
+let groupsResponse: unknown[] = [];
+let groupsError: { status: number; message: string } | undefined;
+const groupRequests: URL[] = [];
+let testStore: ReturnType<typeof createMockStore>;
 jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush }) }));
 
 describe('GroupsList', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    mockGetGroups.mockReturnValue({
-      data: [GROUP_FIXTURE],
-      isLoading: false,
-      isFetching: false,
-      isError: false,
-      refetch: jest.fn(),
-    });
+    testStore = createMockStore();
+    groupRequests.length = 0;
+    groupsResponse = [GROUP_FIXTURE];
+    groupsError = undefined;
+    server.use(
+      http.get(`${BASE_URL}/groups`, ({ request }) => {
+        groupRequests.push(new URL(request.url));
+        return groupsError
+          ? HttpResponse.json(
+              { statusCode: groupsError.status, message: groupsError.message },
+              { status: groupsError.status },
+            )
+          : HttpResponse.json(groupsResponse);
+      }),
+    );
+    testStore.dispatch(changeLanguage(LANGUAGES.english));
   });
 
-  it('loads groups with the selected filters and opens a group', async () => {
-    await renderWithProviders(<GroupsList filters={{ scope: 'all', search: 'run', sport: 'run' }} />);
+  async function renderLoadedList(filters: { scope: 'all' | 'mine'; search: string; sport: GroupSport | undefined }) {
+    await renderWithProviders(<GroupsList filters={filters} />, { store: testStore });
+    await waitFor(() => {
+      expect(groupRequests.length).toBeGreaterThan(0);
+    });
+    await waitFor(() => expect(screen.queryByRole('progressbar')).not.toBeOnTheScreen());
+  }
 
-    expect(mockGetGroups).toHaveBeenCalledWith({ scope: 'all', search: 'run', sport: 'run' });
+  it('loads groups with the selected filters and opens a group', async () => {
+    await renderLoadedList({ scope: 'all', search: 'run', sport: 'run' });
+
+    expect(groupRequests[0]?.searchParams.get('scope')).toBe('all');
+    expect(groupRequests[0]?.searchParams.get('search')).toBe('run');
+    expect(groupRequests[0]?.searchParams.get('sport')).toBe('run');
     fireEvent.press(screen.getByText(GROUP_FIXTURE.name));
     expect(mockPush).toHaveBeenCalledWith(`/groups/${GROUP_FIXTURE.id}`);
   });
 
   it('shows the HTTP status and a retry button after a failed request', async () => {
-    const refetch = jest.fn();
-    mockGetGroups.mockReturnValue({
-      data: [],
-      isLoading: false,
-      isFetching: false,
-      isError: true,
-      error: { status: 500, data: { statusCode: 500, message: 'Ошибка операции с базой данных' } },
-      refetch,
-    });
-    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
-    await renderWithProviders(<GroupsList filters={{ scope: 'all', search: '', sport: undefined }} />);
+    groupsError = { status: 500, message: 'Ошибка операции с базой данных' };
+    testStore.dispatch(changeLanguage(LANGUAGES.russian));
+    await renderLoadedList({ scope: 'all', search: '', sport: undefined });
 
     expect(screen.getByText('500, Ошибка операции с базой данных')).toBeOnTheScreen();
-    fireEvent.press(screen.getByText(GROUPS_COPY[LANGUAGES.russian].retry));
-    expect(refetch).toHaveBeenCalledTimes(1);
+    await userEvent.press(screen.getByText(GROUPS_COPY[LANGUAGES.russian].retry));
+    await screen.findByText('500, Ошибка операции с базой данных');
+    expect(groupRequests).toHaveLength(2);
   });
 
   it('shows an empty search result when there are no matches', async () => {
-    mockGetGroups.mockReturnValue({
-      data: [],
-      isLoading: false,
-      isFetching: false,
-      isError: false,
-      refetch: jest.fn(),
-    });
-    mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    await renderWithProviders(<GroupsList filters={{ scope: 'all', search: 'unknown', sport: undefined }} />);
+    groupsResponse = [];
+    testStore.dispatch(changeLanguage(LANGUAGES.english));
+    await renderLoadedList({ scope: 'all', search: 'unknown', sport: undefined });
 
     expect(screen.getByText(GROUPS_COPY[LANGUAGES.english].noResults)).toBeOnTheScreen();
   });
@@ -93,16 +104,10 @@ describe('GroupsList', () => {
       name: 'Not joined',
       privacy: 'closed' as const,
     };
-    mockGetGroups.mockReturnValue({
-      data: [activeGroup, ownedGroup, pendingGroup, visitorGroup],
-      isLoading: false,
-      isFetching: false,
-      isError: false,
-      refetch: jest.fn(),
-    });
-    await renderWithProviders(<GroupsList filters={{ scope: 'mine', search: '', sport: undefined }} />);
+    groupsResponse = [activeGroup, ownedGroup, pendingGroup, visitorGroup];
+    await renderLoadedList({ scope: 'mine', search: '', sport: undefined });
 
-    expect(mockGetGroups).toHaveBeenCalledWith({ scope: 'mine', search: '', sport: undefined });
+    expect(groupRequests[0]?.searchParams.get('scope')).toBe('mine');
     expect(screen.getByText('Joined runners')).toBeOnTheScreen();
     expect(screen.getByText('My team')).toBeOnTheScreen();
     expect(screen.queryByText('Requested group')).not.toBeOnTheScreen();
