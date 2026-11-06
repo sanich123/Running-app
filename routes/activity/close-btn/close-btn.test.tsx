@@ -7,6 +7,7 @@ import * as errorToastModule from '@S/error-toast/error-toast';
 import { mockStore, resetMockLocation } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import * as backgroundLocation from '@U/location/expo-task-manager/background-location';
+import { ACTIVITY_TRACKING_ERROR_COPY } from '../const';
 import ActivityCloseBtn from './close-btn';
 import { ACTIVITY_CLOSE_BTN } from './const';
 
@@ -116,9 +117,7 @@ describe('Activity close btn', () => {
     await renderWithProviders(<ActivityCloseBtn />);
     await userEvent.press(screen.getByTestId('activity-close-button'));
 
-    await waitFor(() =>
-      expect(errorToast).toHaveBeenCalledWith('Не удалось остановить отслеживание геопозиции', error),
-    );
+    await waitFor(() => expect(errorToast).toHaveBeenCalledWith(ACTIVITY_TRACKING_ERROR_COPY.stop, error));
     expect(mockBack).not.toHaveBeenCalled();
     expect(mockReplace).not.toHaveBeenCalled();
     expect(mockStore.getState().location.activityStatus).toBe(STATUSES.initial);

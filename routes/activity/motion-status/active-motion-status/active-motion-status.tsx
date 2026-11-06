@@ -84,7 +84,7 @@ export default function ActiveMotionStatus({ language }: { language: LANGUAGES }
 
 const styles = StyleSheet.create({
   message: {
-    alignItems: 'flex-start',
+    alignItems: 'center',
     borderRadius: 18,
     borderWidth: 1,
     flexDirection: 'row',

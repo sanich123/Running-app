@@ -1,9 +1,14 @@
-import { act, fireEvent, screen, within } from '@testing-library/react-native';
+import { act, fireEvent, screen, waitFor, within } from '@testing-library/react-native';
 import * as MediaLibrary from 'expo-media-library';
+import { http, HttpResponse } from 'msw';
 import { Platform } from 'react-native';
 import { LANGUAGES } from '@const/enums';
-import { changeLanguage, setSaveCameraPhotosToGallery } from '@R/slices/settings/settings';
+import { setSaveCameraPhotosToGallery } from '@R/slices/activity-settings/activity-settings';
+import { changeLanguage } from '@R/slices/settings/settings';
+import { EMAIL_NOTIFICATIONS_COPY } from '@Routes/settings-page/email-notifications/const';
+import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
+import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { PROFILE_PRIVACY_SETTING_SECTIONS, PROFILE_PRIVACY_SETTINGS } from '../const';
 import ProfilePrivacySettings from './profile-privacy-settings';
@@ -12,14 +17,9 @@ const mockPush = jest.fn();
 
 jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush }) }));
 
-const mockUpdateProfile = jest.fn();
 const originalPlatformOSDescriptor = Object.getOwnPropertyDescriptor(Platform, 'OS');
 const originalPlatformVersionDescriptor = Object.getOwnPropertyDescriptor(Platform, 'Version');
 const englishPrivacyCopy = PROFILE_PRIVACY_SETTINGS[LANGUAGES.english];
-
-jest.mock('@R/services/profile/profile', () => ({
-  useUpdateProfileByUserIdMutation: () => [mockUpdateProfile, { isLoading: false }],
-}));
 
 const defaultSettings = {
   userId: 'owner-id',
@@ -45,9 +45,7 @@ describe('ProfilePrivacySettings', () => {
       mockStore.dispatch(changeLanguage(LANGUAGES.english));
       mockStore.dispatch(setSaveCameraPhotosToGallery(false));
     });
-    mockUpdateProfile.mockReset();
     mockPush.mockReset();
-    mockUpdateProfile.mockReturnValue({ unwrap: jest.fn().mockResolvedValue({}) });
   });
 
   it('shows existing settings with their defaults and exposes the photo privacy option', async () => {
@@ -63,9 +61,9 @@ describe('ProfilePrivacySettings', () => {
     expect(screen.getByTestId('privacy-setting-hideProfilePhotos').props.value).toBe(true);
     expect(screen.getByTestId('privacy-setting-saveCameraPhotosToGallery').props.value).toBe(false);
     expect(screen.queryByTestId('privacy-setting-emailNotifications')).not.toBeOnTheScreen();
-    expect(screen.queryByText('Email notifications')).not.toBeOnTheScreen();
+    expect(screen.queryByText(EMAIL_NOTIFICATIONS_COPY[LANGUAGES.english].fullTitle)).not.toBeOnTheScreen();
     expect(MediaLibrary.requestPermissionsAsync).not.toHaveBeenCalled();
-    expect(screen.getByText('Other users can find your profile through search.')).toBeOnTheScreen();
+    expect(screen.getByText(PROFILE_PRIVACY_SETTINGS[LANGUAGES.english].profileSearchDescription)).toBeOnTheScreen();
   });
 
   it('groups activity totals under profile privacy', () => {
@@ -88,8 +86,7 @@ describe('ProfilePrivacySettings', () => {
     });
 
     expect(MediaLibrary.requestPermissionsAsync).toHaveBeenCalledWith(true, ['photo']);
-    expect(mockStore.getState().settings.saveCameraPhotosToGallery).toBe(true);
-    expect(mockUpdateProfile).not.toHaveBeenCalled();
+    expect(mockStore.getState().activitySettings.saveCameraPhotosToGallery).toBe(true);
   });
 
   it('requests write-only storage permission on Android 10', async () => {
@@ -102,7 +99,7 @@ describe('ProfilePrivacySettings', () => {
     });
 
     expect(MediaLibrary.requestPermissionsAsync).toHaveBeenCalledWith(true, ['photo']);
-    expect(mockStore.getState().settings.saveCameraPhotosToGallery).toBe(true);
+    expect(mockStore.getState().activitySettings.saveCameraPhotosToGallery).toBe(true);
   });
 
   it('does not request storage permission on Android 11', async () => {
@@ -115,7 +112,21 @@ describe('ProfilePrivacySettings', () => {
     });
 
     expect(MediaLibrary.requestPermissionsAsync).not.toHaveBeenCalled();
-    expect(mockStore.getState().settings.saveCameraPhotosToGallery).toBe(true);
+    expect(mockStore.getState().activitySettings.saveCameraPhotosToGallery).toBe(true);
+  });
+
+  it('disables saving camera photos without requesting permission', async () => {
+    await act(async () => {
+      mockStore.dispatch(setSaveCameraPhotosToGallery(true));
+    });
+    await renderWithProviders(<ProfilePrivacySettings {...defaultSettings} />);
+
+    await act(async () => {
+      fireEvent(screen.getByTestId('privacy-setting-saveCameraPhotosToGallery'), 'valueChange', false);
+    });
+
+    expect(MediaLibrary.requestPermissionsAsync).not.toHaveBeenCalled();
+    expect(mockStore.getState().activitySettings.saveCameraPhotosToGallery).toBe(false);
   });
 
   it('keeps gallery saving disabled when write-only photo access is denied', async () => {
@@ -126,53 +137,76 @@ describe('ProfilePrivacySettings', () => {
       fireEvent(screen.getByTestId('privacy-setting-saveCameraPhotosToGallery'), 'valueChange', true);
     });
 
-    expect(mockStore.getState().settings.saveCameraPhotosToGallery).toBe(false);
+    expect(mockStore.getState().activitySettings.saveCameraPhotosToGallery).toBe(false);
   });
 
   it('saves the profile photo viewing preference through the profile update mutation', async () => {
+    const updateBodies: unknown[] = [];
+    server.use(
+      http.patch(`${BASE_URL}/user/owner-id/profile`, async ({ request }) => {
+        updateBodies.push(await request.json());
+        return HttpResponse.json({});
+      }),
+    );
     await renderWithProviders(<ProfilePrivacySettings {...defaultSettings} />);
 
     await fireEvent(screen.getByTestId('privacy-setting-hideProfilePhotos'), 'valueChange', false);
 
-    expect(mockUpdateProfile).toHaveBeenCalledWith({ id: 'owner-id', body: { hideProfilePhotos: true } });
+    await waitFor(() => expect(updateBodies).toEqual([{ hideProfilePhotos: true }]));
   });
 
   it('saves whether other users can follow the profile', async () => {
+    const updateBodies: unknown[] = [];
+    server.use(
+      http.patch(`${BASE_URL}/user/owner-id/profile`, async ({ request }) => {
+        updateBodies.push(await request.json());
+        return HttpResponse.json({});
+      }),
+    );
     await renderWithProviders(<ProfilePrivacySettings {...defaultSettings} />);
 
     expect(screen.getByTestId('privacy-setting-allowNewFollowers')).toHaveProp('value', true);
     await fireEvent(screen.getByTestId('privacy-setting-allowNewFollowers'), 'valueChange', false);
 
-    expect(mockUpdateProfile).toHaveBeenCalledWith({ id: 'owner-id', body: { allowNewFollowers: false } });
+    await waitFor(() => expect(updateBodies).toEqual([{ allowNewFollowers: false }]));
   });
 
   it('saves whether other users can view activity replays', async () => {
+    const updateBodies: unknown[] = [];
+    server.use(
+      http.patch(`${BASE_URL}/user/owner-id/profile`, async ({ request }) => {
+        updateBodies.push(await request.json());
+        return HttpResponse.json({});
+      }),
+    );
     await renderWithProviders(<ProfilePrivacySettings {...defaultSettings} />);
 
     await fireEvent(screen.getByTestId('privacy-setting-allowActivityReplayViewing'), 'valueChange', false);
 
-    expect(mockUpdateProfile).toHaveBeenCalledWith({ id: 'owner-id', body: { allowActivityReplayViewing: false } });
+    await waitFor(() => expect(updateBodies).toEqual([{ allowActivityReplayViewing: false }]));
   });
 
   it('saves each activity chart metric preference independently', async () => {
+    const updateBodies: unknown[] = [];
+    server.use(
+      http.patch(`${BASE_URL}/user/owner-id/profile`, async ({ request }) => {
+        updateBodies.push(await request.json());
+        return HttpResponse.json({});
+      }),
+    );
     await renderWithProviders(<ProfilePrivacySettings {...defaultSettings} />);
 
     await fireEvent(screen.getByTestId('privacy-setting-allowActivityHeartRateViewing'), 'valueChange', false);
     await fireEvent(screen.getByTestId('privacy-setting-allowActivityElevationViewing'), 'valueChange', false);
     await fireEvent(screen.getByTestId('privacy-setting-allowActivityPaceViewing'), 'valueChange', false);
 
-    expect(mockUpdateProfile).toHaveBeenNthCalledWith(1, {
-      id: 'owner-id',
-      body: { allowActivityHeartRateViewing: false },
-    });
-    expect(mockUpdateProfile).toHaveBeenNthCalledWith(2, {
-      id: 'owner-id',
-      body: { allowActivityElevationViewing: false },
-    });
-    expect(mockUpdateProfile).toHaveBeenNthCalledWith(3, {
-      id: 'owner-id',
-      body: { allowActivityPaceViewing: false },
-    });
+    await waitFor(() =>
+      expect(updateBodies).toEqual([
+        { allowActivityHeartRateViewing: false },
+        { allowActivityElevationViewing: false },
+        { allowActivityPaceViewing: false },
+      ]),
+    );
     expect(
       within(screen.getByTestId('privacy-activity-preview-graph')).getByText(
         englishPrivacyCopy.activityPreviewGraphHidden,

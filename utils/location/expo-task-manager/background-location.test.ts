@@ -3,7 +3,7 @@ import * as TaskManager from 'expo-task-manager';
 import { setLastPosition } from '@R/slices/location/location';
 import { resetStore, store } from '@R/store';
 import { errorToast } from '@S/error-toast/error-toast';
-import { LOCATION_TRACKING } from '../const';
+import { BACKGROUND_LOCATION_ERROR_COPY, LOCATION_TRACKING } from '../const';
 import { startLocationTracking, stopLocationTracking } from './background-location';
 import { getMetricsTaskManager, saveMetricsToStoreTaskManager } from './utils';
 import type { LocationObject } from 'expo-location';
@@ -79,7 +79,7 @@ describe('background location tracking', () => {
 
   it('ignores task errors and empty location batches', async () => {
     await taskHandler({ error: new Error('permission revoked'), data: null });
-    expect(errorToast).toHaveBeenCalledWith('Ошибка фонового отслеживания геопозиции', expect.any(Error));
+    expect(errorToast).toHaveBeenCalledWith(BACKGROUND_LOCATION_ERROR_COPY.taskFailed, expect.any(Error));
 
     await taskHandler({ error: null, data: undefined });
     await taskHandler({ error: null, data: { locations: [] } });

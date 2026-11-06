@@ -12,6 +12,7 @@ import {
 } from '@R/slices/location/location';
 import { setTrackingRecoveryStatus } from '@R/slices/tracking-recovery/tracking-recovery';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { ACTIVITY_TRACKING_ERROR_COPY } from '@Routes/activity/const';
 import { errorToast } from '@S/error-toast/error-toast';
 import { getCurrentActivityDuration } from '@U/activity-duration';
 import { startLocationTracking, stopLocationTracking } from '@U/location/expo-task-manager/background-location';
@@ -88,9 +89,7 @@ export default function PauseBtn() {
           }
         } catch (error) {
           errorToast(
-            activityStatus === STATUSES.paused
-              ? 'Не удалось запустить отслеживание геопозиции'
-              : 'Не удалось остановить отслеживание геопозиции',
+            activityStatus === STATUSES.paused ? ACTIVITY_TRACKING_ERROR_COPY.start : ACTIVITY_TRACKING_ERROR_COPY.stop,
             error,
           );
         } finally {

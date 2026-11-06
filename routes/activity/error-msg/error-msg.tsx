@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, StyleSheet } from 'react-native';
 import { Icon, IconButton, Text, useTheme } from 'react-native-paper';
 import {
@@ -12,13 +11,12 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { TIMEOUT_MESSAGE } from '@Routes/activity/location-indicator/const';
 import { getMaxTrackingSpeedForSport } from '@U/location/location-utils';
 import { useGlobalActivitySportParams } from '../activity-params';
-import { ACTIVITY_ERROR_MSG } from './const';
+import { ACTIVITY_ERROR_MSG, NO_SPEED_ALERT_TIME } from './const';
 import ActivityMotionStatus from '../motion-status/activity-motion-status/activity-motion-status';
 
 export default function ErrorMsg() {
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
-  const insets = useSafeAreaInsets();
   const { isAppShutedByPhone, isTooMuchSpeed, tooMuchSpeed, tooMuchSpeedTimestamp, isMapVisible } = useAppSelector(
     ({ location }) => location,
   );
@@ -31,7 +29,7 @@ export default function ErrorMsg() {
         second: '2-digit',
         hour12: false,
       })
-    : '--:--:--';
+    : NO_SPEED_ALERT_TIME;
 
   useEffect(() => {
     if (isAppShutedByPhone) {
@@ -41,7 +39,7 @@ export default function ErrorMsg() {
   }, [isAppShutedByPhone, dispatch]);
 
   return (
-    <View style={[styles.errorMsg, isMapVisible ? styles.aboveMetrics : { top: insets.top + 72 }]}>
+    <View style={[styles.errorMsg, isMapVisible ? styles.aboveMetrics : styles.hiddenWithMetrics]}>
       {isAppShutedByPhone ? (
         <View
           style={[styles.message, { backgroundColor: colors.primaryContainer, borderColor: colors.outlineVariant }]}>
@@ -102,12 +100,12 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     gap: 6,
     position: 'absolute',
-    left: 12,
-    right: 84,
-    maxWidth: 480,
+    left: 0,
+    right: 0,
     zIndex: 2,
   },
   aboveMetrics: { bottom: '12%' },
+  hiddenWithMetrics: { display: 'none' },
   message: {
     alignItems: 'flex-start',
     borderRadius: 14,
@@ -117,7 +115,7 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     marginHorizontal: 0,
     paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingVertical: 2,
   },
-  messageContent: { flex: 1, gap: 3 },
+  messageContent: { flex: 1, gap: 2 },
 });

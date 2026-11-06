@@ -6,6 +6,7 @@ import { MAX_MOBILE_WIDTH } from '@const/const';
 import { ROUTES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import { getSteps } from '../util';
+import { BAR_CHART_EMPTY_COPY } from './const';
 import type { BarChartWrapperProps } from '../types';
 
 export default function BarChartWrapper({ metricsArr, year }: BarChartWrapperProps) {
@@ -29,7 +30,7 @@ export default function BarChartWrapper({ metricsArr, year }: BarChartWrapperPro
     <View style={styles.wrapper}>
       {!hasValues && (
         <Text variant="bodySmall" style={[styles.emptyLabel, { color: colors.onSurfaceVariant }]}>
-          Нет данных за этот период
+          {BAR_CHART_EMPTY_COPY}
         </Text>
       )}
       <BarChart

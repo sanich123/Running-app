@@ -3,8 +3,8 @@ import { STATUSES } from '@const/enums';
 import { setNavigationTrackId } from '@R/slices/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { MAPS_PAGE_COPY, type OfflineBounds } from '@Routes/maps-page/const';
+import useNavigationAlerts from './use-navigation-alerts';
 import useNavigationRoute from './use-navigation-route';
-import useNavigationVoiceAlerts from './use-navigation-voice-alerts';
 import { ACTIVITY_SETTINGS } from '../activity-settings/const';
 import { NAVIGATION_SETTINGS_COPY } from '../navigation-settings/const';
 import type { ActivityNavigationContextValue } from '../navigation-context';
@@ -12,13 +12,14 @@ import type { ActivityNavigationContextValue } from '../navigation-context';
 export default function useActivityNavigation(isLocationReady: boolean) {
   const dispatch = useAppDispatch();
   const { activityStatus, lastPosition, navigationTrackId } = useAppSelector(({ location }) => location);
+  const { language } = useAppSelector(({ settings }) => settings);
   const {
     activityVoiceIdentifier,
-    language,
     navigationAlertDistanceMeters,
     navigationAlertRepeatIntervalMinutes,
     navigationAlertsMuted,
-  } = useAppSelector(({ settings }) => settings);
+    navigationHapticsEnabled,
+  } = useAppSelector(({ activitySettings }) => activitySettings);
   const activitySettingsLabels = ACTIVITY_SETTINGS[language];
   const mapsPageCopy = MAPS_PAGE_COPY[language];
   const [hiddenNavigationTrackId, setHiddenNavigationTrackId] = useState<string | null>(null);
@@ -47,7 +48,7 @@ export default function useActivityNavigation(isLocationReady: boolean) {
     recordingPosition: lastPosition,
   });
 
-  useNavigationVoiceAlerts({
+  useNavigationAlerts({
     navigationTrackId,
     isNavigationActive,
     navigationAlertsMuted,
@@ -57,6 +58,7 @@ export default function useActivityNavigation(isLocationReady: boolean) {
     navigationAlertRepeatIntervalMinutes,
     language,
     activityVoiceIdentifier,
+    navigationHapticsEnabled,
   });
 
   const toggleNavigation = useCallback(() => {

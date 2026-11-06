@@ -9,7 +9,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import { EMPTY_STATE_COPY } from '@S/empty-state/const';
 import EmptyState from '@S/empty-state/empty-state';
 import ErrorComponent from '@S/error-component/error-component';
-import { getMediaGridCellSize, MEDIA_GRID_COLUMNS, MEDIA_GRID_GAP, MEDIA_GRID_PAGE_SIZE } from './const';
+import { getMediaGridCellSize, MEDIA_GRID_COLUMNS, MEDIA_GRID_PAGE_SIZE } from './const';
 import MediaGridImage from './image/media-grid-image/media-grid-image';
 import type { ActivityMediaItem } from '@S/card/types';
 
@@ -66,7 +66,6 @@ export default function MediaGrid() {
             testID="media-grid-list"
             style={[styles.list, { width: gridWidth }]}
             contentContainerStyle={{ backgroundColor: colors.background, width: '100%' }}
-            columnWrapperStyle={styles.row}
             data={media}
             renderItem={renderItem}
             initialNumToRender={20}
@@ -106,5 +105,4 @@ const styles = StyleSheet.create({
   list: {
     alignSelf: 'center',
   },
-  row: { columnGap: MEDIA_GRID_GAP },
 });

@@ -1,7 +1,9 @@
 import { screen } from '@testing-library/react-native';
+import { LANGUAGES } from '@const/enums';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import MediaSection from './media-section';
+import { UPLOAD_PHOTO_BTN } from '../upload-photos-btn/ const';
 
 describe('MediaSection', () => {
   it('shows photos and videos with delete controls when editing an activity', async () => {
@@ -38,7 +40,7 @@ describe('MediaSection', () => {
     expect(screen.queryByText('Фото и видео')).not.toBeOnTheScreen();
     expect(screen.getByTestId('upload-gallery-button')).toBeOnTheScreen();
     expect(screen.getByTestId('show-camera-button')).toBeOnTheScreen();
-    expect(screen.getByText('Можно добавить до 5 фото или видео. Видео — до 1 минуты')).toBeOnTheScreen();
+    expect(screen.getByText(UPLOAD_PHOTO_BTN[LANGUAGES.russian].uploadHint)).toBeOnTheScreen();
   });
 
   it('disables both upload entry points after five media files are attached', async () => {

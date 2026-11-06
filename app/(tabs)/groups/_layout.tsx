@@ -41,7 +41,7 @@ export default function GroupsLayout() {
                     color: colors.primary,
                     fontFamily: FONT_FAMILIES.semiBold,
                     fontSize: 16,
-                    transform: [{ translateX: navigation.canGoBack() ? -8 : 16 }, { translateY: -2 }],
+                    transform: [{ translateX: navigation.canGoBack() ? 0 : 16 }, { translateY: -2 }],
                   }}>
                   {children}
                 </Text>

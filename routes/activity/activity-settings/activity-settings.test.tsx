@@ -1,17 +1,19 @@
 import { act, fireEvent, screen, userEvent, waitFor } from '@testing-library/react-native';
 import * as Speech from 'expo-speech';
+import { LANGUAGES } from '@const/enums';
 import {
   addActivityReminder,
-  changeLanguage,
   setActivityReminderEnabled,
   setActivityVoiceEnabled,
   setActivityVoiceMetrics,
-} from '@R/slices/settings/settings';
+} from '@R/slices/activity-settings/activity-settings';
+import { changeLanguage } from '@R/slices/settings/settings';
 import { createMockBottomSheetModalRef } from '@T/utils/mock-ref';
 import { mockStore, resetMockActivityReminders } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ActivityLocationInfoModal from './activity-location-info-modal/activity-location-info-modal';
 import ActivitySettings from './activity-settings';
+import { ACTIVITY_SETTINGS, ACTIVITY_VOICE_PREVIEW } from './const';
 
 describe('ActivitySettings', () => {
   beforeEach(() => {
@@ -24,11 +26,11 @@ describe('ActivitySettings', () => {
   it('shows settings under the corresponding enabled switch', async () => {
     await renderWithProviders(<ActivitySettings settingsModalRef={{ current: null }} />);
 
-    expect(screen.getByText('Настройки активности')).toBeOnTheScreen();
+    expect(screen.getByText(ACTIVITY_SETTINGS[LANGUAGES.russian].title)).toBeOnTheScreen();
     expect(screen.queryByTestId('navigation-alert-distance-value')).toBeNull();
     expect(screen.getByTestId('activity-location-info-button')).toBeOnTheScreen();
-    expect(screen.getByText('Информация о геопозиции и отслеживании тренировок')).toBeOnTheScreen();
-    expect(screen.getByText('Разрешения, запись метрик и ограничения Android')).toBeOnTheScreen();
+    expect(screen.getByText(ACTIVITY_SETTINGS[LANGUAGES.russian].locationTrackingInfoTitle)).toBeOnTheScreen();
+    expect(screen.getByText(ACTIVITY_SETTINGS[LANGUAGES.russian].locationTrackingInfoDescription)).toBeOnTheScreen();
     expect(screen.getByTestId('activity-voice-enabled')).toBeOnTheScreen();
     expect(screen.getByTestId('activity-voice-metric-pace')).toBeOnTheScreen();
     expect(screen.getByTestId('activity-reminders-enabled')).toBeOnTheScreen();
@@ -46,7 +48,7 @@ describe('ActivitySettings', () => {
     expect(screen.getByTestId('activity-reminder-interval')).toBeOnTheScreen();
     expect(screen.getByTestId('activity-reminder-text-input')).toBeOnTheScreen();
     expect(screen.getByTestId('activity-reminder-install')).toBeOnTheScreen();
-    expect(screen.getByText('Напоминания не установлены')).toBeOnTheScreen();
+    expect(screen.getByText(ACTIVITY_SETTINGS[LANGUAGES.russian].noReminders)).toBeOnTheScreen();
   });
 
   it('opens the location information modal from its settings row', async () => {
@@ -84,22 +86,22 @@ describe('ActivitySettings', () => {
     await act(async () => {
       screen.getByTestId('activity-voice-enabled').props.onChange({ nativeEvent: { value: false } });
     });
-    expect(mockStore.getState().settings.activityVoiceEnabled).toBe(false);
+    expect(mockStore.getState().activitySettings.activityVoiceEnabled).toBe(false);
 
     await act(async () => {
       screen.getByTestId('activity-voice-enabled').props.onChange({ nativeEvent: { value: true } });
     });
-    expect(mockStore.getState().settings.activityVoiceEnabled).toBe(true);
+    expect(mockStore.getState().activitySettings.activityVoiceEnabled).toBe(true);
 
     await act(async () => {
       screen.getByTestId('activity-reminders-enabled').props.onChange({ nativeEvent: { value: true } });
     });
-    expect(mockStore.getState().settings.activityReminderEnabled).toBe(true);
+    expect(mockStore.getState().activitySettings.activityReminderEnabled).toBe(true);
 
     await act(async () => {
       screen.getByTestId('activity-reminders-enabled').props.onChange({ nativeEvent: { value: false } });
     });
-    expect(mockStore.getState().settings.activityReminderEnabled).toBe(false);
+    expect(mockStore.getState().activitySettings.activityReminderEnabled).toBe(false);
   });
 
   it('shows and removes a saved reminder', async () => {
@@ -111,7 +113,7 @@ describe('ActivitySettings', () => {
     expect(screen.getByText('Пора попить воды.')).toBeOnTheScreen();
     fireEvent.press(screen.getByTestId('activity-reminder-delete-water-reminder'));
 
-    expect(mockStore.getState().settings.activityReminders).toEqual([]);
+    expect(mockStore.getState().activitySettings.activityReminders).toEqual([]);
   });
 
   it('saves the draft only after confirming installation', async () => {
@@ -123,10 +125,10 @@ describe('ActivitySettings', () => {
       screen.getByTestId('activity-reminder-text-input').props.onChangeText('Пора сделать глоток воды.');
     });
 
-    expect(mockStore.getState().settings.activityReminders).toEqual([]);
+    expect(mockStore.getState().activitySettings.activityReminders).toEqual([]);
     fireEvent.press(screen.getByTestId('activity-reminder-install'));
 
-    expect(mockStore.getState().settings.activityReminders).toEqual([
+    expect(mockStore.getState().activitySettings.activityReminders).toEqual([
       expect.objectContaining({ intervalMinutes: 20, text: 'Пора сделать глоток воды.' }),
     ]);
   });
@@ -143,7 +145,7 @@ describe('ActivitySettings', () => {
       screen.getByTestId('activity-reminder-text-input').props.onSubmitEditing();
     });
 
-    expect(mockStore.getState().settings.activityReminders).toEqual([
+    expect(mockStore.getState().activitySettings.activityReminders).toEqual([
       expect.objectContaining({ intervalMinutes: 20, text: 'Пора сделать глоток воды.' }),
     ]);
   });
@@ -155,7 +157,7 @@ describe('ActivitySettings', () => {
       screen.getByTestId('activity-voice-metric-elevation').props.onChange({ nativeEvent: { value: false } });
     });
 
-    expect(mockStore.getState().settings.activityVoiceMetrics).toEqual(['pace', 'movingTime']);
+    expect(mockStore.getState().activitySettings.activityVoiceMetrics).toEqual(['pace', 'movingTime']);
   });
 
   it('previews the selected voice', async () => {
@@ -166,15 +168,12 @@ describe('ActivitySettings', () => {
     await user.press(voiceButton);
 
     await waitFor(() =>
-      expect(Speech.speak).toHaveBeenCalledWith(
-        'Первый километр. Темп пять минут тридцать секунд на километр. Время движения пять минут тридцать секунд. Набор высоты десять метров.',
-        {
-          language: 'ru-RU',
-          voice: 'mock-russian-voice',
-          rate: 0.9,
-          useApplicationAudioSession: false,
-        },
-      ),
+      expect(Speech.speak).toHaveBeenCalledWith(ACTIVITY_VOICE_PREVIEW[LANGUAGES.russian], {
+        language: 'ru-RU',
+        voice: 'mock-russian-voice',
+        rate: 0.9,
+        useApplicationAudioSession: false,
+      }),
     );
   });
 
@@ -190,14 +189,14 @@ describe('ActivitySettings', () => {
     expect(voice).toBeOnTheScreen();
     await userEvent.setup().press(screen.getByTestId('activity-system-voice'));
     expect(Speech.speak).toHaveBeenCalledWith(
-      'First kilometre. Pace five minutes thirty seconds per kilometre. Moving time five minutes thirty seconds. Elevation gain ten meters.',
+      ACTIVITY_VOICE_PREVIEW[LANGUAGES.english],
       expect.objectContaining({ language: 'en-US', voice: undefined }),
     );
 
     await act(async () => {
       screen.getByTestId('activity-voice-metric-pace').props.onChange({ nativeEvent: { value: true } });
     });
-    expect(mockStore.getState().settings.activityVoiceMetrics).toEqual(['pace']);
+    expect(mockStore.getState().activitySettings.activityVoiceMetrics).toEqual(['pace']);
   });
 
   it('shows unavailable voices, ignores invalid reminders and survives preview errors', async () => {
@@ -210,13 +209,15 @@ describe('ActivitySettings', () => {
     });
     await renderWithProviders(<ActivitySettings settingsModalRef={{ current: null }} />);
 
-    await waitFor(() => expect(screen.getByText('No system voices available')).toBeOnTheScreen());
+    await waitFor(() =>
+      expect(screen.getByText(ACTIVITY_SETTINGS[LANGUAGES.english].voicesUnavailable)).toBeOnTheScreen(),
+    );
     await act(async () => {
       screen.getByTestId('activity-reminder-interval').props.onChangeText('0');
       screen.getByTestId('activity-reminder-text-input').props.onChangeText('   ');
     });
     fireEvent.press(screen.getByTestId('activity-reminder-install'));
-    expect(mockStore.getState().settings.activityReminders).toEqual([]);
+    expect(mockStore.getState().activitySettings.activityReminders).toEqual([]);
     const user = userEvent.setup();
     await expect(user.press(screen.getByTestId('activity-system-voice'))).resolves.toBeUndefined();
   });

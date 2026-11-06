@@ -16,19 +16,19 @@ import {
   setActivityVoiceEnabled,
   setActivityVoiceIdentifier,
   setActivityVoiceMetrics,
-} from '@R/slices/settings/settings';
-import { getActivitySettings } from '@R/slices/settings/types';
+} from '@R/slices/activity-settings/activity-settings';
+import { getActivitySettings } from '@R/slices/activity-settings/types';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { ACTIVITY_SETTINGS, ACTIVITY_VOICE_METRICS, ACTIVITY_VOICE_PREVIEW } from '../const';
-import type { ActivityVoiceMetric } from '@R/slices/settings/types';
+import type { ActivityVoiceMetric } from '@R/slices/activity-settings/types';
 import type { Voice } from 'expo-speech';
 
 export default function VoiceSettings() {
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
-  const settings = useAppSelector(({ settings: state }) => state);
-  const { language } = settings;
-  const { activityVoiceEnabled, activityVoiceMetrics, activityVoiceIdentifier } = getActivitySettings(settings);
+  const { language } = useAppSelector(({ settings }) => settings);
+  const activitySettings = useAppSelector(({ activitySettings: state }) => state);
+  const { activityVoiceEnabled, activityVoiceMetrics, activityVoiceIdentifier } = getActivitySettings(activitySettings);
   const [voices, setVoices] = useState<Voice[]>([]);
   const [isLoadingVoices, setIsLoadingVoices] = useState(true);
   const labels = ACTIVITY_SETTINGS[language];

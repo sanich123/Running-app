@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react';
 import { screen, userEvent } from '@testing-library/react-native';
 import { ROUTES } from '@const/enums';
 import { mockStore } from '@T/utils/mock-store';
@@ -13,47 +12,11 @@ const mockListSavedOfflineMaps = jest.fn();
 const mockListTracks = jest.fn();
 
 jest.mock('expo-router', () => {
-  const React = jest.requireActual('react');
-  const { Fragment } = React;
-  const { Pressable, Text, View } = jest.requireActual('react-native');
-  const MenuAction = ({ children, onPress }: { children?: ReactNode; onPress?: () => void }) =>
-    React.createElement(Pressable, { accessibilityRole: 'button', onPress }, React.createElement(Text, null, children));
-  const Menu = ({
-    children,
-    icon,
-    accessibilityLabel,
-  }: {
-    children?: ReactNode;
-    icon?: string;
-    accessibilityLabel?: string;
-  }) => {
-    const [visible, setVisible] = React.useState(false);
-    return React.createElement(
-      View,
-      null,
-      React.createElement(
-        Pressable,
-        {
-          accessibilityLabel,
-          accessibilityRole: 'button',
-          testID: icon === 'plus' ? 'routes-add-action' : undefined,
-          onPress: () => setVisible(true),
-        },
-        React.createElement(Text, null, icon),
-      ),
-      visible ? children : null,
-    );
-  };
-  const Toolbar = Object.assign(({ children }: { children?: ReactNode }) => React.createElement(View, null, children), {
-    Menu,
-    MenuAction,
-  });
   return {
-    Stack: {
-      Screen: ({ options, children }: { options?: { headerRight?: () => ReactNode }; children?: ReactNode }) =>
-        React.createElement(Fragment, null, options?.headerRight?.(), children),
-      Toolbar,
-    },
+    ...require('@T/utils/expo-router-toolbar-mock').createExpoRouterToolbarMock({
+      renderHeaderRight: true,
+      menuTestIds: { plus: 'routes-add-action' },
+    }),
     useRouter: () => ({ push: mockPush }),
   };
 });

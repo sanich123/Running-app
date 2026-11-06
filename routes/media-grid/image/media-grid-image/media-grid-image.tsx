@@ -107,7 +107,7 @@ export default function MediaGridImage({
           <MediaModerationPlaceholder
             status={mediaReviewStatus}
             blurhash={blurhash}
-            borderRadius={10}
+            borderRadius={0}
             compact
             hideTitle={cellSize < 130}
             showStatus={false}
@@ -127,7 +127,7 @@ export default function MediaGridImage({
 }
 
 const styles = StyleSheet.create({
-  container: { borderRadius: 10, overflow: 'hidden', position: 'relative' },
+  container: { overflow: 'hidden', position: 'relative' },
   deleteButton: {
     position: 'absolute',
     right: 4,

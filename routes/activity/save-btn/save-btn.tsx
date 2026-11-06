@@ -25,6 +25,7 @@ import { deactivateLocationJournal, readLocationJournal, removeLocationJournal }
 import { getSpeedInMinsInKm } from '@U/location/location-utils';
 import { getMillisecondsFromHoursMinutesSeconds } from '@U/time-formatter';
 import { getDeviceTimeZone } from '@U/time-zone';
+import { ACTIVITY_SAVE_ERROR_COPY } from './const';
 import { isServerUnavailableError, createTrackedActivityBody } from './utils';
 import type { ActivityToSend, ActivityUpdateRequest } from '@R/services/activity/types';
 
@@ -71,7 +72,7 @@ export default function SaveBtn() {
           if (userId) {
             const activityOwnerId = isEditingActivity ? activityId : userId;
             if (!activityOwnerId) {
-              return errorToast('Не удалось определить активность');
+              return errorToast(ACTIVITY_SAVE_ERROR_COPY.undetectedActivity);
             }
             const distance = Number(manualDistance) || 0;
             const hours = Number(manualHours) || 0;
@@ -144,7 +145,7 @@ export default function SaveBtn() {
                 });
               }
               if (!savedActivity.body.speed || !savedActivity.body.duration) {
-                return errorToast('Тренировка не имеет скорости или продолжительности');
+                return errorToast(ACTIVITY_SAVE_ERROR_COPY.missingSpeedOrDuration);
               }
               await sendActivity(savedActivity)
                 .unwrap()

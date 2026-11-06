@@ -2,7 +2,7 @@ import { screen, userEvent } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ReportQueue from './report-queue';
-import { MODERATION_DASHBOARD_COPY } from '../../const';
+import { MODERATION_DASHBOARD_COPY, REPORT_STATUS_OPTIONS } from '../../const';
 import type { ModerationAppealItem, ModerationReportItem } from '@R/services/moderation/types';
 
 const copy = MODERATION_DASHBOARD_COPY[LANGUAGES.english];
@@ -52,7 +52,7 @@ describe('ReportQueue', () => {
     await user.press(screen.getByTestId('moderation-report-filter-open'));
     await user.press(screen.getByTestId('moderation-report-report-1'));
 
-    expect(onStatusFilterChange).toHaveBeenCalledWith('open');
+    expect(onStatusFilterChange).toHaveBeenCalledWith(REPORT_STATUS_OPTIONS[0]);
     expect(onSelectReport).toHaveBeenCalledWith('report-1');
   });
 

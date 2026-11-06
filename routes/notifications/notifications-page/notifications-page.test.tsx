@@ -5,6 +5,8 @@ import { MAX_MOBILE_WIDTH } from '@const/const';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { runichApi } from '@R/runich-api/runich-api';
 import { changeLanguage } from '@R/slices/settings/settings';
+import { NOTIFICATION_COPY } from '@Routes/notifications/constants';
+import { ERROR_COMPONENT_COPY } from '@S/error-component/const';
 import { TEST_URLS } from '@T/mocks/const';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
@@ -63,7 +65,9 @@ describe('NotificationsPage', () => {
 
     await renderWithProviders(<NotificationsPage />);
 
-    expect(await screen.findByText('Alice Runner понравилась ваша тренировка')).toBeOnTheScreen();
+    expect(
+      await screen.findByText(NOTIFICATION_COPY.russian.activityLikeTitle.replace('{actor}', 'Alice Runner')),
+    ).toBeOnTheScreen();
     expect(screen.getByTestId('unread-notification-1')).toBeOnTheScreen();
     await fireEvent.press(screen.getByTestId('notification-notification-1'));
 
@@ -144,7 +148,7 @@ describe('NotificationsPage', () => {
     );
 
     await renderWithProviders(<NotificationsPage />);
-    await screen.findByText('Alice Runner прокомментировал(а) вашу тренировку');
+    await screen.findByText(NOTIFICATION_COPY.russian.commentTitle.replace('{actor}', 'Alice Runner'));
     await fireEvent.press(screen.getByTestId('markNotificationRead-notification-mark-read'));
 
     await waitFor(() => expect(isRead).toBe(true));
@@ -222,9 +226,9 @@ describe('NotificationsPage', () => {
     );
 
     await renderWithProviders(<NotificationsPage />);
-    await screen.findByText('Не удалось загрузить уведомления');
-    await fireEvent.press(screen.getByText('Повторить'));
-    await screen.findByText('Пока нет уведомлений');
+    await screen.findByText(NOTIFICATION_COPY.russian.loadError);
+    await fireEvent.press(screen.getByText(ERROR_COMPONENT_COPY[LANGUAGES.russian].retry));
+    await screen.findByText(NOTIFICATION_COPY.russian.empty);
     expect(requests).toBe(2);
     expect(screen.getByTestId('markAllNotificationsReadButton').props.accessibilityState.disabled).toBe(true);
   });
@@ -276,7 +280,7 @@ describe('NotificationsPage', () => {
     );
 
     await renderWithProviders(<NotificationsPage />);
-    await screen.findByText('Новое уведомление');
+    await screen.findByText(NOTIFICATION_COPY.russian.genericTitle);
     await fireEvent.press(screen.getByTestId('notificationSettingsHeaderButton'));
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.settings}/${ROUTES.notificationSettings}`);
     await fireEvent(screen.getByTestId('notificationsList'), 'onEndReached');
@@ -311,11 +315,11 @@ describe('NotificationsPage', () => {
     await screen.findByText('A note');
     await fireEvent.press(screen.getByTestId('notification-notification-other'));
     await waitFor(() =>
-      expect(mockErrorToast).toHaveBeenCalledWith('Не удалось отметить уведомление прочитанным', expect.anything()),
+      expect(mockErrorToast).toHaveBeenCalledWith(NOTIFICATION_COPY.russian.markReadError, expect.anything()),
     );
     await fireEvent.press(screen.getByTestId('markAllNotificationsReadButton'));
     await waitFor(() =>
-      expect(mockErrorToast).toHaveBeenCalledWith('Не удалось прочитать уведомления', expect.anything()),
+      expect(mockErrorToast).toHaveBeenCalledWith(NOTIFICATION_COPY.russian.markAllReadError, expect.anything()),
     );
     expect(mockPush).not.toHaveBeenCalled();
   });

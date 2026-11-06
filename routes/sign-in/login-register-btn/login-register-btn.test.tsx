@@ -11,7 +11,7 @@ import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { SignInPageStates } from '@U/validate-email-password';
-import { EMAIL_LINK_BTN, LOGIN_BTN, REGISTER_BTN, RESET_BTN } from './const';
+import { EMAIL_LINK_BTN, LOGIN_BTN, REGISTER_BTN, RESET_BTN, EMAIL_SEND_ERROR } from './const';
 import LoginRegisterBtn from './login-register-btn';
 import type { EmailPasswordData } from '@R/services/authentication/types';
 
@@ -116,7 +116,7 @@ describe('Login btn', () => {
     );
     await user.press(screen.getByText(REGISTER_BTN.russian.register));
 
-    await waitFor(() => expect(errorToast).toHaveBeenCalledWith('Не удалось отправить письмо', expect.anything()));
+    await waitFor(() => expect(errorToast).toHaveBeenCalledWith(EMAIL_SEND_ERROR, expect.anything()));
     expect(mockPush).not.toHaveBeenCalled();
     errorToast.mockRestore();
   });

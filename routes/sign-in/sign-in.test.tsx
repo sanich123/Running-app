@@ -8,7 +8,11 @@ import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { SignInPageStates } from '@U/validate-email-password';
-import { SIGN_IN_FIELDS } from './const';
+import { SIGN_IN_ACCESS_DENIED_COPY, SIGN_IN_FIELDS } from './const';
+import { EMAIL_REGISTRATION_RESTRICTION_COPY } from './email-registration-restriction/const';
+import { LEGAL_CONSENTS_COPY } from './legal-consents/const';
+import { LOGIN_BTN } from './login-register-btn/const';
+import { REGISTER_NAVIGATION } from './login-register-navigation/const';
 import SignIn from './sign-in';
 
 const mockPush = jest.fn();
@@ -54,8 +58,8 @@ describe('sign in', () => {
     await renderWithProviders(<SignIn />);
     const emailInput = screen.getByTestId(SIGN_IN_FIELDS.email);
     const passwordInput = screen.getByTestId(SIGN_IN_FIELDS.password);
-    expect(emailInput.props.accessibilityLabel).toBe('Электронная почта');
-    expect(passwordInput.props.accessibilityLabel).toBe('Пароль');
+    expect(emailInput.props.accessibilityLabel).toBe(SIGN_IN_FIELDS.email);
+    expect(passwordInput.props.accessibilityLabel).toBe(SIGN_IN_FIELDS.password);
     await user.clear(emailInput);
     await user.clear(passwordInput);
     await user.type(emailInput, 'runner@example.test');
@@ -69,8 +73,8 @@ describe('sign in', () => {
     const user = userEvent.setup();
     mockPush.mockClear();
     await renderWithProviders(<SignIn />);
-    await user.press(screen.getByText('Пользовательского соглашения'));
-    await user.press(screen.getByText('Политикой в отношении обработки персональных данных'));
+    await user.press(screen.getByText(LEGAL_CONSENTS_COPY[LANGUAGES.russian].agreementLink));
+    await user.press(screen.getByText(LEGAL_CONSENTS_COPY[LANGUAGES.russian].privacyPolicyLink));
     expect(mockPush).toHaveBeenNthCalledWith(1, `/${ROUTES.userAgreement}`);
     expect(mockPush).toHaveBeenNthCalledWith(2, `/${ROUTES.privacyPolicy}`);
   });
@@ -100,10 +104,12 @@ describe('sign in', () => {
       screen.getByText(/\* Регистрация по email — только с адресом российского почтового оператора/),
     ).toBeOnTheScreen();
     await user.press(screen.getByTestId('registration-email-restriction'));
-    expect(screen.getByText('Ограничение регистрации')).toBeOnTheScreen();
-    expect(screen.getByText(/С 1 декабря 2023 года Федеральный закон/)).toBeOnTheScreen();
-    await user.press(screen.getByText('Закрыть'));
-    await waitFor(() => expect(screen.queryByText('Ограничение регистрации')).not.toBeOnTheScreen());
+    expect(screen.getByText(EMAIL_REGISTRATION_RESTRICTION_COPY[LANGUAGES.russian].title)).toBeOnTheScreen();
+    expect(screen.getByText(EMAIL_REGISTRATION_RESTRICTION_COPY[LANGUAGES.russian].description)).toBeOnTheScreen();
+    await user.press(screen.getByText(EMAIL_REGISTRATION_RESTRICTION_COPY[LANGUAGES.russian].close));
+    await waitFor(() =>
+      expect(screen.queryByText(EMAIL_REGISTRATION_RESTRICTION_COPY[LANGUAGES.russian].title)).not.toBeOnTheScreen(),
+    );
     const emailInput = screen.getByTestId(SIGN_IN_FIELDS.email);
     const passwordInput = screen.getByTestId(SIGN_IN_FIELDS.password);
     await user.clear(emailInput);
@@ -118,7 +124,7 @@ describe('sign in', () => {
   it('opens the personal data consent document from the second checkbox', async () => {
     const user = userEvent.setup();
     await renderWithProviders(<SignIn />);
-    await user.press(screen.getByText('согласие на обработку'));
+    await user.press(screen.getByText(LEGAL_CONSENTS_COPY[LANGUAGES.russian].personalDataLink));
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.consents}`);
   });
 
@@ -135,12 +141,8 @@ describe('sign in', () => {
 
     await renderWithProviders(<SignIn />);
 
-    expect(
-      screen.getByText(
-        'У этого аккаунта нет прав для входа в админку. Попросите администратора выдать вам соответствующие права.',
-      ),
-    ).toBeOnTheScreen();
-    await user.press(screen.getByText('Зарегаться'));
+    expect(screen.getByText(SIGN_IN_ACCESS_DENIED_COPY[LANGUAGES.russian])).toBeOnTheScreen();
+    await user.press(screen.getByText(REGISTER_NAVIGATION[LANGUAGES.russian].btn));
 
     expect(mockPush).toHaveBeenCalledWith({
       pathname: '/' + ROUTES.signIn,
@@ -158,11 +160,7 @@ describe('sign in', () => {
 
     await renderWithProviders(<SignIn />);
 
-    expect(
-      screen.getByText(
-        'This account does not have admin access. Ask an administrator to grant you the required permissions.',
-      ),
-    ).toBeOnTheScreen();
+    expect(screen.getByText(SIGN_IN_ACCESS_DENIED_COPY[LANGUAGES.english])).toBeOnTheScreen();
   });
 
   it('falls back to the login form for an unknown authentication step', async () => {
@@ -170,7 +168,7 @@ describe('sign in', () => {
 
     await renderWithProviders(<SignIn />);
 
-    expect(screen.getByTestId('auth-submit-text')).toHaveTextContent('Войти');
+    expect(screen.getByTestId('auth-submit-text')).toHaveTextContent(LOGIN_BTN[LANGUAGES.russian].login);
     expect(screen.getByTestId(SIGN_IN_FIELDS.password)).toBeOnTheScreen();
   });
 
@@ -188,7 +186,7 @@ describe('sign in', () => {
     mockAuthParams = { authStep: SignInPageStates.login };
 
     await renderWithProviders(<SignIn />);
-    await user.press(screen.getByText('Зарегаться'));
+    await user.press(screen.getByText(REGISTER_NAVIGATION[LANGUAGES.russian].btn));
 
     expect(mockPush).toHaveBeenCalledWith({
       pathname: '/' + ROUTES.signIn,

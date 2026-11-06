@@ -5,21 +5,27 @@ import {
   setNavigationAlertDistanceMeters,
   setNavigationAlertRepeatIntervalMinutes,
   setNavigationAlertsMuted,
-} from '@R/slices/settings/settings';
+  setNavigationHapticsEnabled,
+} from '@R/slices/activity-settings/activity-settings';
 import {
   getNavigationAlertDistanceMeters,
   getNavigationAlertRepeatIntervalMinutes,
   MAX_NAVIGATION_ALERT_REPEAT_INTERVAL_MINUTES,
   MIN_NAVIGATION_ALERT_REPEAT_INTERVAL_MINUTES,
-} from '@R/slices/settings/types';
+} from '@R/slices/activity-settings/types';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { NAVIGATION_SETTINGS_COPY } from '../const';
 
 export default function NavigationSettingsPanel() {
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
-  const { language, navigationAlertDistanceMeters, navigationAlertRepeatIntervalMinutes, navigationAlertsMuted } =
-    useAppSelector(({ settings }) => settings);
+  const { language } = useAppSelector(({ settings }) => settings);
+  const {
+    navigationAlertDistanceMeters,
+    navigationAlertRepeatIntervalMinutes,
+    navigationAlertsMuted,
+    navigationHapticsEnabled,
+  } = useAppSelector(({ activitySettings }) => activitySettings);
   const labels = NAVIGATION_SETTINGS_COPY[language];
   const alertDistance = getNavigationAlertDistanceMeters(navigationAlertDistanceMeters);
   const repeatInterval = getNavigationAlertRepeatIntervalMinutes(navigationAlertRepeatIntervalMinutes);
@@ -133,8 +139,8 @@ export default function NavigationSettingsPanel() {
         {labels.repeatDescription}
       </Text>
       <Divider />
-      <View style={styles.voiceAlertsSetting}>
-        <View style={styles.voiceAlertsRow}>
+      <View style={styles.alertsSetting}>
+        <View style={styles.alertsRow}>
           <Text variant="titleSmall" style={{ color: colors.onSurface }}>
             {labels.voiceAlertsTitle}
           </Text>
@@ -152,6 +158,26 @@ export default function NavigationSettingsPanel() {
           {labels.voiceAlertsDescription}
         </Text>
       </View>
+      <Divider />
+      <View style={styles.alertsSetting}>
+        <View style={styles.alertsRow}>
+          <Text variant="titleSmall" style={{ color: colors.onSurface }}>
+            {labels.hapticAlertsTitle}
+          </Text>
+          <Switch
+            accessibilityLabel={labels.hapticAlertsTitle}
+            color={colors.primary}
+            value={navigationHapticsEnabled}
+            onValueChange={(enabled) => {
+              dispatch(setNavigationHapticsEnabled(enabled));
+            }}
+            testID="navigation-haptics-enabled"
+          />
+        </View>
+        <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+          {labels.hapticAlertsDescription}
+        </Text>
+      </View>
     </View>
   );
 }
@@ -164,6 +190,6 @@ const styles = StyleSheet.create({
   stepperButtonContent: { alignItems: 'center', flex: 1, justifyContent: 'center' },
   stepperControl: { alignItems: 'center', flexDirection: 'row', gap: 4 },
   stepperValue: { minWidth: 42, textAlign: 'center' },
-  voiceAlertsRow: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
-  voiceAlertsSetting: { gap: 4 },
+  alertsRow: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
+  alertsSetting: { gap: 4 },
 });

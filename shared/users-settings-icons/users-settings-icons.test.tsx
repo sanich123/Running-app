@@ -1,16 +1,17 @@
-import { act, fireEvent, screen, userEvent } from '@testing-library/react-native';
+import { act, fireEvent, screen, userEvent, waitFor } from '@testing-library/react-native';
+import { http, HttpResponse } from 'msw';
 import { AppState, Platform } from 'react-native';
 import { ACTIVITY_SAVE_BTN } from '@const/activity-save-btn';
 import { ROUTES } from '@const/enums';
+import { BASE_URL } from '@T/utils/handlers';
+import { server } from '@T/utils/server';
+import { NOTIFICATIONS_OVERFLOW_LABEL } from './notifications-btn/const';
 import UsersSettingsIcons from './users-settings-icons';
 import { mockStore, setMockUserId } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
 const mockPush = jest.fn();
-const mockUnreadRefetch = jest.fn();
 let mockAppStateListener: ((state: 'active') => void) | undefined;
-let mockUnreadCount = 3;
 let mockIsFocused = true;
-let mockUnreadQueryOptions: Record<string, unknown> | undefined;
 let mockPathname = `/${ROUTES.home}/${ROUTES.activity}/someActivityId`;
 let mockParams = { userId: 'someUserId', id: 'someActivityId' };
 jest.mock('expo-router', () => ({
@@ -19,24 +20,9 @@ jest.mock('expo-router', () => ({
   usePathname: () => mockPathname,
   useGlobalSearchParams: () => mockParams,
 }));
-jest.mock('@R/services/notifications/notifications', () => ({
-  notificationsApi: {
-    endpoints: {
-      getNotifications: { initiate: () => ({ type: 'test/getNotificationsInitiated' }) },
-      getUnreadNotificationCount: { initiate: () => ({ type: 'test/getUnreadNotificationCountInitiated' }) },
-    },
-  },
-  useGetUnreadNotificationCountQuery: (_arg: unknown, options: Record<string, unknown>) => {
-    mockUnreadQueryOptions = options;
-    return { data: mockUnreadCount, refetch: mockUnreadRefetch };
-  },
-}));
 describe('User settings icons', () => {
   beforeEach(() => {
-    mockUnreadCount = 3;
     mockIsFocused = true;
-    mockUnreadQueryOptions = undefined;
-    mockUnreadRefetch.mockClear();
     mockAppStateListener = undefined;
     mockPush.mockClear();
     jest.spyOn(AppState, 'addEventListener').mockImplementation((_event, listener) => {
@@ -99,27 +85,26 @@ describe('User settings icons', () => {
     mockParams = { userId: 'anotherUserId', id: '' };
     await renderWithProviders(<UsersSettingsIcons showCreateActivity />);
 
-    expect(mockUnreadQueryOptions).toMatchObject({ pollingInterval: 60_000, skipPollingIfUnfocused: true });
     expect(screen.getAllByTestId(/Icon$/).map((icon) => icon.props.testID)).toEqual([
       'createActivityIcon',
       'usersIcon',
       'settingsIcon',
       'notificationsIcon',
     ]);
-    expect(screen.getByTestId('notificationsBadge')).toHaveTextContent('3');
+    expect(await screen.findByText('3')).toBeOnTheScreen();
     await user.press(screen.getByTestId('notificationsIcon'));
 
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.notifications}`);
   });
 
   it('shows a compact 99+ badge when the unread count exceeds 99', async () => {
-    mockUnreadCount = 150;
+    server.use(http.get(`${BASE_URL}/notification/unread-count`, () => HttpResponse.json({ count: 150 })));
     mockPathname = `/${ROUTES.home}`;
     mockParams = { userId: 'anotherUserId', id: '' };
 
     await renderWithProviders(<UsersSettingsIcons showCreateActivity />);
 
-    expect(screen.getByTestId('notificationsBadge')).toHaveTextContent('99+');
+    expect(await screen.findByText(NOTIFICATIONS_OVERFLOW_LABEL)).toBeOnTheScreen();
     expect(screen.getByTestId('notificationsBadge')).toHaveStyle({ height: 16 });
   });
 
@@ -136,33 +121,51 @@ describe('User settings icons', () => {
   });
 
   it('stops polling the unread badge while the home page is not focused', async () => {
+    let requestCount = 0;
+    server.use(
+      http.get(`${BASE_URL}/notification/unread-count`, () => {
+        requestCount += 1;
+        return HttpResponse.json({ count: 3 });
+      }),
+    );
     mockIsFocused = false;
     mockPathname = `/${ROUTES.home}`;
     mockParams = { userId: 'anotherUserId', id: '' };
 
     await renderWithProviders(<UsersSettingsIcons showCreateActivity />);
 
-    expect(mockUnreadQueryOptions).toMatchObject({ pollingInterval: 0, skipPollingIfUnfocused: true });
+    await waitFor(() => expect(requestCount).toBe(1));
+    await act(async () => {
+      await jest.advanceTimersByTimeAsync(60_000);
+    });
+    expect(requestCount).toBe(1);
   });
 
   it('refreshes the unread count when the home page or app returns to the foreground', async () => {
+    let requestCount = 0;
+    server.use(
+      http.get(`${BASE_URL}/notification/unread-count`, () => {
+        requestCount += 1;
+        return HttpResponse.json({ count: 3 });
+      }),
+    );
     mockPathname = '/' + ROUTES.home;
     mockParams = { userId: 'anotherUserId', id: '' };
     mockIsFocused = false;
 
     const { rerender, unmount } = await renderWithProviders(<UsersSettingsIcons showCreateActivity />);
 
-    expect(mockUnreadRefetch).not.toHaveBeenCalled();
+    await waitFor(() => expect(requestCount).toBe(1));
     await act(async () => {
       mockIsFocused = true;
       rerender(<UsersSettingsIcons showCreateActivity />);
     });
-    expect(mockUnreadRefetch).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(requestCount).toBe(2));
 
     await act(async () => {
       mockAppStateListener?.('active');
     });
-    expect(mockUnreadRefetch).toHaveBeenCalledTimes(2);
+    await waitFor(() => expect(requestCount).toBe(3));
 
     unmount();
   });

@@ -87,5 +87,5 @@ export default function Map({ onLocationReadinessChange }: { onLocationReadiness
 const styles = StyleSheet.create({
   mapWrapper: { flex: 1, position: 'relative' },
   permissionLoading: { alignItems: 'center', flex: 1, justifyContent: 'center' },
-  mapActions: { bottom: 24, gap: 6, position: 'absolute', right: 12 },
+  mapActions: { bottom: 56, gap: 6, position: 'absolute', right: 12 },
 });

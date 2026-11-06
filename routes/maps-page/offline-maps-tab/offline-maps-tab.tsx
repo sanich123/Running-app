@@ -12,6 +12,7 @@ import {
   subscribeToOfflineMaps,
   type SavedOfflineMap,
 } from '@U/offline-map-library';
+import { OFFLINE_MAP_STORAGE_UNAVAILABLE_LABEL } from './const';
 import OfflineMapList from './offline-map-list/offline-map-list';
 import {
   formatBytes,
@@ -32,7 +33,7 @@ export default function OfflineMapsTab({ copy }: { copy: MapsPageCopy }) {
 
   const totalStorageBytes = maps.reduce((total, offlineMap) => total + (offlineMap.sizeBytes ?? 0), 0);
   const totalStorageLabel = maps.some((offlineMap) => offlineMap.sizeBytes === undefined)
-    ? '—'
+    ? OFFLINE_MAP_STORAGE_UNAVAILABLE_LABEL
     : formatBytes(totalStorageBytes);
 
   const refreshMaps = useCallback(async () => {

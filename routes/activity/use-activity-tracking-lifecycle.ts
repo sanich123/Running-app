@@ -11,6 +11,7 @@ import {
 } from '@R/slices/location/location';
 import { clearTrackingRecovery, setTrackingRecoveryStatus } from '@R/slices/tracking-recovery/tracking-recovery';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { ACTIVITY_TRACKING_ERROR_COPY } from '@Routes/activity/const';
 import { errorToast } from '@S/error-toast/error-toast';
 import { getAndStoreInitialPosition } from '@U/get-initial-position';
 import useActivityDurationTimer from '@U/hooks/use-activity-duration-timer';
@@ -99,7 +100,7 @@ export default function useActivityTrackingLifecycle(isLocationReadyForRecording
         dispatch(setEmptyLastArrayWhenPaused());
         dispatch(setIsAppShuted(true));
       })
-      .catch((error: unknown) => errorToast('Не удалось поставить отслеживание на паузу', error));
+      .catch((error: unknown) => errorToast(ACTIVITY_TRACKING_ERROR_COPY.pause, error));
   }, [dispatch, isRecoveringTracking]);
 
   useActivityDurationTimer(!isRecoveringTracking);

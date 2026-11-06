@@ -8,6 +8,9 @@ import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import AdminAccessManagement from './admin-access-management';
+import { ADMIN_ACCESS_COPY } from './const';
+
+const russianCopy = ADMIN_ACCESS_COPY[LANGUAGES.russian];
 
 describe('AdminAccessManagement', () => {
   beforeEach(() => {
@@ -36,14 +39,14 @@ describe('AdminAccessManagement', () => {
     await renderWithProviders(<AdminAccessManagement isSuperuser={false} />);
     await screen.findByTestId('admin-user-user-2');
     await user.type(screen.getByTestId('admin-user-search'), ' Target@Example ');
-    await user.press(screen.getByText('Найти'));
+    await user.press(screen.getByText(russianCopy.find));
     await user.press(await screen.findByTestId('admin-edit-user-2'));
     await user.press(await screen.findByTestId('admin-role-moderator-user-2'));
     await user.press(screen.getByTestId('admin-access-save'));
 
     await waitFor(() => expect(searchedEmails).toContain('target@example'));
     await waitFor(() => expect(grantedRoles).toEqual(['moderator']));
-    expect(screen.getByText('Модерация контента')).toBeOnTheScreen();
+    expect(screen.getByText(russianCopy.roles.moderator)).toBeOnTheScreen();
   });
 
   it('lets a superuser revoke a role and displays audit events', async () => {
@@ -77,9 +80,9 @@ describe('AdminAccessManagement', () => {
     await user.press(screen.getByTestId('admin-access-save'));
 
     await waitFor(() => expect(revokedRoles).toEqual(['moderator']));
-    expect(screen.getByText('Модерация контента · target@example.test')).toBeOnTheScreen();
-    expect(screen.getByText('Управление правами')).toBeOnTheScreen();
-    expect(screen.getByText('Суперпользователь')).toBeOnTheScreen();
+    expect(screen.getByText(`${russianCopy.roles.moderator} · target@example.test`)).toBeOnTheScreen();
+    expect(screen.getByText(russianCopy.roles.access_manager)).toBeOnTheScreen();
+    expect(screen.getByText(russianCopy.roles.superuser)).toBeOnTheScreen();
     expect(screen.getByText(/admin@example\.test/)).toBeOnTheScreen();
   });
 
@@ -96,7 +99,7 @@ describe('AdminAccessManagement', () => {
 
     expect(await screen.findByTestId('admin-edit-user-1')).toBeDisabled();
     expect(screen.queryByTestId('admin-role-moderator-user-1')).toBeNull();
-    expect(screen.getByText('Изменений пока нет.')).toBeOnTheScreen();
+    expect(screen.getByText(russianCopy.noAudit)).toBeOnTheScreen();
   });
 
   it('shows loading indicators and then the empty states when the admin lists are empty', async () => {
@@ -125,8 +128,8 @@ describe('AdminAccessManagement', () => {
     expect(screen.getByTestId('admin-audit-loading')).toBeOnTheScreen();
     finishUsers?.();
     finishAudit?.();
-    expect(await screen.findByText('Пользователи не найдены.')).toBeOnTheScreen();
-    expect(screen.getByText('Изменений пока нет.')).toBeOnTheScreen();
+    expect(await screen.findByText(russianCopy.noUsers)).toBeOnTheScreen();
+    expect(screen.getByText(russianCopy.noAudit)).toBeOnTheScreen();
   });
 
   it('uses English copy and reports a failed role update without changing the role', async () => {
@@ -158,8 +161,8 @@ describe('AdminAccessManagement', () => {
     await user.press(await screen.findByTestId('admin-role-moderator-user-2'));
     await user.press(screen.getByTestId('admin-access-save'));
 
-    expect(await screen.findByText('User access')).toBeOnTheScreen();
+    expect(await screen.findByText(ADMIN_ACCESS_COPY[LANGUAGES.english].title)).toBeOnTheScreen();
     expect(screen.getByText(/Revoked by admin@example\.test/)).toBeOnTheScreen();
-    expect(screen.getByText('Content moderation')).toBeOnTheScreen();
+    expect(screen.getByText(ADMIN_ACCESS_COPY[LANGUAGES.english].roles.moderator)).toBeOnTheScreen();
   });
 });

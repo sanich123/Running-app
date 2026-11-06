@@ -2,6 +2,7 @@ import { screen, userEvent, within } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ActivityPrivacyPreview from './activity-privacy-preview';
+import { ACTIVITY_PREVIEW_HEART_RATE_ZONES } from './const';
 import { PROFILE_PRIVACY_SETTINGS } from '../../const';
 
 const copy = PROFILE_PRIVACY_SETTINGS[LANGUAGES.russian];
@@ -49,8 +50,8 @@ describe('ActivityPrivacyPreview', () => {
     expect(screen.getByText(copy.activityPreviewZoneLabel)).toBeOnTheScreen();
     expect(screen.getByText(copy.activityPreviewTime)).toBeOnTheScreen();
     expect(screen.getByTestId('privacy-activity-preview-heart-rate-zone-5')).toBeOnTheScreen();
-    expect(screen.getByText('46 %')).toBeOnTheScreen();
-    expect(screen.getByText('24:54')).toBeOnTheScreen();
+    expect(screen.getByText(ACTIVITY_PREVIEW_HEART_RATE_ZONES[3].percentage)).toBeOnTheScreen();
+    expect(screen.getByText(ACTIVITY_PREVIEW_HEART_RATE_ZONES[3].duration)).toBeOnTheScreen();
   });
 
   it('shows hidden heart-rate sections explicitly while keeping allowed graph metrics selectable', async () => {

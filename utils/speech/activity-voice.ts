@@ -1,6 +1,6 @@
 import * as Speech from 'expo-speech';
 import { LANGUAGES } from '@const/enums';
-import type { ActivitySettings, ActivityVoiceMetric } from '@R/slices/settings/types';
+import type { ActivitySettings, ActivityVoiceMetric } from '@R/slices/activity-settings/types';
 
 const SPEECH_LOCALES = {
   [LANGUAGES.english]: 'en-US',

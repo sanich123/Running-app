@@ -60,7 +60,7 @@ describe('GroupMembersList', () => {
     await renderWithProviders(<GroupMembersList group={group} />);
 
     expect(screen.getByText('Alex Runner')).toBeOnTheScreen();
-    expect(screen.queryByText('Group notifications')).not.toBeOnTheScreen();
+    expect(screen.queryByText(GROUPS_COPY[LANGUAGES.english].groupNotificationSettingsTitle)).not.toBeOnTheScreen();
     expect(screen.queryByText('Show group posts in your home feed')).not.toBeOnTheScreen();
     const user = userEvent.setup();
     await user.press(screen.getByTestId('group-member-profile-member-1'));
@@ -78,7 +78,7 @@ describe('GroupMembersList', () => {
     await renderWithProviders(<GroupMembersList group={group} />);
 
     expect(screen.getByText(copy.noMembers)).toBeOnTheScreen();
-    expect(screen.queryByText('Group notifications')).not.toBeOnTheScreen();
+    expect(screen.queryByText(GROUPS_COPY[LANGUAGES.english].groupNotificationSettingsTitle)).not.toBeOnTheScreen();
     expect(screen.queryByText('Show group posts in your home feed')).not.toBeOnTheScreen();
     expect(StyleSheet.flatten(screen.getByTestId('group-detail-scroll').props.contentContainerStyle)).toEqual(
       expect.objectContaining({ flexGrow: 1 }),

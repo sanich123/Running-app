@@ -1,15 +1,17 @@
 import { Platform, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Checkbox, Text, useTheme } from 'react-native-paper';
-import { LANGUAGES, ROUTES } from '@const/enums';
+import { ROUTES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
+import { LEGAL_CONSENTS_COPY } from './const';
 import type { LegalConsentsProps } from './types';
 
 export default function LegalConsents({ values, onChange }: LegalConsentsProps) {
   const { colors } = useTheme();
   const { push } = useRouter();
   const { language } = useAppSelector(({ settings }) => settings);
-  const isRussian = language === LANGUAGES.russian;
+  const isRussian = language === 'russian';
+  const copy = LEGAL_CONSENTS_COPY[language];
   const CheckboxComponent = Platform.OS === 'ios' ? Checkbox.IOS : Checkbox.Android;
   const documentPath = (route: ROUTES, englishRoute: ROUTES = route) =>
     `/${isRussian ? route : englishRoute}` as Parameters<typeof push>[0];
@@ -19,11 +21,7 @@ export default function LegalConsents({ values, onChange }: LegalConsentsProps) 
       <View style={styles.row}>
         <CheckboxComponent
           testID="legal-consent-agreement"
-          accessibilityLabel={
-            isRussian
-              ? 'Принимаю пользовательское соглашение и политику обработки персональных данных'
-              : 'I accept the User Agreement and Personal Data Processing Policy'
-          }
+          accessibilityLabel={copy.agreementAccessibilityLabel}
           accessibilityState={{ checked: values.agreementAndPolicy }}
           aria-checked={values.agreementAndPolicy}
           status={values.agreementAndPolicy ? 'checked' : 'unchecked'}
@@ -31,21 +29,21 @@ export default function LegalConsents({ values, onChange }: LegalConsentsProps) 
           color={colors.primary}
         />
         <Text variant="bodySmall" style={styles.label}>
-          {isRussian ? 'Я принимаю условия ' : 'I accept the '}
+          {copy.agreementPrefix}
           <Text
             variant="bodySmall"
             style={[styles.link, { color: colors.primary }]}
             accessibilityRole="link"
             onPress={() => push(documentPath(ROUTES.userAgreement, ROUTES.userAgreementEnglish))}>
-            {isRussian ? 'Пользовательского соглашения' : 'User Agreement'}
+            {copy.agreementLink}
           </Text>
-          {isRussian ? ' и ознакомлен(а) с ' : ' and have read the '}
+          {copy.agreementConnector}
           <Text
             variant="bodySmall"
             style={[styles.link, { color: colors.primary }]}
             accessibilityRole="link"
             onPress={() => push(documentPath(ROUTES.privacyPolicy, ROUTES.privacyPolicyEnglish))}>
-            {isRussian ? 'Политикой в отношении обработки персональных данных' : 'Personal Data Processing Policy'}
+            {copy.privacyPolicyLink}
           </Text>
         </Text>
       </View>
@@ -53,9 +51,7 @@ export default function LegalConsents({ values, onChange }: LegalConsentsProps) 
       <View style={styles.row}>
         <CheckboxComponent
           testID="legal-consent-personal-data"
-          accessibilityLabel={
-            isRussian ? 'Согласен на обработку персональных данных' : 'I consent to personal data processing'
-          }
+          accessibilityLabel={copy.personalDataAccessibilityLabel}
           accessibilityState={{ checked: values.personalData }}
           aria-checked={values.personalData}
           status={values.personalData ? 'checked' : 'unchecked'}
@@ -63,15 +59,15 @@ export default function LegalConsents({ values, onChange }: LegalConsentsProps) 
           color={colors.primary}
         />
         <Text variant="bodySmall" style={styles.label}>
-          {isRussian ? 'Я выражаю свое ' : 'I give my '}
+          {copy.personalDataPrefix}
           <Text
             variant="bodySmall"
             style={[styles.link, { color: colors.primary }]}
             accessibilityRole="link"
             onPress={() => push(documentPath(ROUTES.consents, ROUTES.consentsEnglish))}>
-            {isRussian ? 'согласие на обработку' : 'consent to the processing'}
+            {copy.personalDataLink}
           </Text>
-          {isRussian ? ' моих персональных данных' : ' of my personal data'}
+          {copy.personalDataSuffix}
         </Text>
       </View>
     </View>

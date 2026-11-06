@@ -1,11 +1,15 @@
 import { SymbolView } from 'expo-symbols';
 import { Platform, Pressable, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
-import { IconButton, useTheme } from 'react-native-paper';
+import { Icon, useTheme } from 'react-native-paper';
 import { LABELS, ROUTES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
-import { IOS_ACTIVITY_HEADER_ICON_COLOR } from '@Routes/activity/const';
-import { getMapControlButtonStyle } from '@S/map-control-button/const';
+import {
+  ACTIVITY_HEADER_BUTTON_SIZE,
+  IOS_ACTIVITY_HEADER_ICON_COLOR,
+  getActivityHeaderButtonStyle,
+  isActivityHeaderButtonTap,
+} from '@Routes/activity/const';
 
 export default function ActivityRoutesButton() {
   const { colors } = useTheme();
@@ -26,17 +30,19 @@ export default function ActivityRoutesButton() {
       <SymbolView name="map" size={23} tintColor={IOS_ACTIVITY_HEADER_ICON_COLOR} weight="medium" />
     </Pressable>
   ) : (
-    <IconButton
+    <Pressable
+      accessibilityRole="button"
       accessibilityLabel={LABELS[language].routes}
-      containerColor={colors.surface}
-      icon="map-marker-path"
-      iconColor={colors.onSurface}
-      mode="contained-tonal"
-      onPress={openRoutes}
-      size={24}
-      style={getMapControlButtonStyle(40, colors.surface, colors.outlineVariant)}
-      testID="activity-routes-button"
-    />
+      android_ripple={{ color: colors.onSurface, radius: ACTIVITY_HEADER_BUTTON_SIZE / 2 }}
+      onPress={(event) => {
+        if (isActivityHeaderButtonTap(event)) {
+          openRoutes();
+        }
+      }}
+      style={getActivityHeaderButtonStyle(colors.surface, colors.outlineVariant)}
+      testID="activity-routes-button">
+      <Icon source="map-marker-path" size={24} color={colors.onSurface} />
+    </Pressable>
   );
 }
 

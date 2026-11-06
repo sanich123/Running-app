@@ -1,10 +1,14 @@
 import { useRef } from 'react';
 import { SymbolView } from 'expo-symbols';
 import { Platform, Pressable, StyleSheet } from 'react-native';
-import { IconButton, useTheme } from 'react-native-paper';
+import { Icon, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
-import { IOS_ACTIVITY_HEADER_ICON_COLOR } from '@Routes/activity/const';
-import { getMapControlButtonStyle } from '@S/map-control-button/const';
+import {
+  ACTIVITY_HEADER_BUTTON_SIZE,
+  IOS_ACTIVITY_HEADER_ICON_COLOR,
+  getActivityHeaderButtonStyle,
+  isActivityHeaderButtonTap,
+} from '@Routes/activity/const';
 import ActivityLocationInfoModal from '../activity-location-info-modal/activity-location-info-modal';
 import ActivitySettings from '../activity-settings';
 import { ACTIVITY_SETTINGS } from '../const';
@@ -29,17 +33,19 @@ export default function ActivitySettingsButton() {
           <SymbolView name="gearshape" size={23} tintColor={IOS_ACTIVITY_HEADER_ICON_COLOR} weight="medium" />
         </Pressable>
       ) : (
-        <IconButton
-          testID="activity-settings-button"
-          mode="contained-tonal"
-          icon="cogs"
-          iconColor={colors.onSurface}
-          containerColor={colors.surface}
-          size={24}
-          style={getMapControlButtonStyle(40, colors.surface, colors.outlineVariant)}
-          onPress={openActivitySettings}
+        <Pressable
+          accessibilityRole="button"
           accessibilityLabel={ACTIVITY_SETTINGS[language].open}
-        />
+          android_ripple={{ color: colors.onSurface, radius: ACTIVITY_HEADER_BUTTON_SIZE / 2 }}
+          onPress={(event) => {
+            if (isActivityHeaderButtonTap(event)) {
+              openActivitySettings();
+            }
+          }}
+          style={getActivityHeaderButtonStyle(colors.surface, colors.outlineVariant)}
+          testID="activity-settings-button">
+          <Icon source="cogs" size={24} color={colors.onSurface} />
+        </Pressable>
       )}
       <ActivitySettings
         settingsModalRef={activitySettingsModalRef}

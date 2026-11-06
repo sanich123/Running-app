@@ -15,6 +15,7 @@ import {
 } from '@R/slices/migration/migration';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
+import { MIGRATION_ERROR_COPY } from '@U/migration-strava/const';
 import { startStravaMigration } from '@U/migration-strava/migration-archive';
 import { cancelActiveMigrationUpload } from '@U/migration-strava/send-tools';
 import useMigrationState from './hooks';
@@ -85,7 +86,7 @@ export default function useMigrationController() {
         accessToken,
       });
     } catch (error) {
-      errorToast('Ошибка миграции из Strava', error);
+      errorToast(MIGRATION_ERROR_COPY.page, error);
     }
   }, [accessToken, dispatch, handleCancelReady, userId]);
 

@@ -5,6 +5,7 @@ import { LANGUAGES, ROUTES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { listSavedOfflineMaps } from '@U/offline-map-library';
 import { MAPS_PAGE_COPY } from '../const';
+import { OFFLINE_MAP_STORAGE_UNAVAILABLE_LABEL } from './const';
 import OfflineMapsTab from './offline-maps-tab';
 
 const mockErrorToast = jest.fn();
@@ -77,7 +78,7 @@ describe('offline maps tab', () => {
 
     expect(await screen.findByText('Москва')).toBeOnTheScreen();
     expect(screen.getByText('region-2')).toBeOnTheScreen();
-    expect(screen.getByText('—')).toBeOnTheScreen();
+    expect(screen.getByText(OFFLINE_MAP_STORAGE_UNAVAILABLE_LABEL)).toBeOnTheScreen();
   });
 
   it('shows retry after map library loading fails', async () => {

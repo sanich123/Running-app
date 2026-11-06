@@ -1,9 +1,10 @@
 import { screen, userEvent } from '@testing-library/react-native';
-import { ROUTES } from '@const/enums';
+import { LANGUAGES, ROUTES } from '@const/enums';
 import { MOCK_SERVER_ACTIVITY } from '@T/responses/runich';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import EditActivityButton from './edit-activity-button';
+import { ACTIVITY_ACTIONS_MENU } from '../const';
 import type { ActivityResponse } from '@R/runich-api/types';
 
 const mockPush = jest.fn();
@@ -31,7 +32,7 @@ describe('edit activity button', () => {
     const user = userEvent.setup();
 
     await renderWithProviders(<EditActivityButton activity={activity} />);
-    expect(screen.getByText('Редактировать')).toBeOnTheScreen();
+    expect(screen.getByText(ACTIVITY_ACTIONS_MENU[LANGUAGES.russian].edit)).toBeOnTheScreen();
     await user.press(screen.getByTestId('activity-actions-menu-edit'));
 
     expect(mockStore.getState().activity.media).toEqual(activity.media);

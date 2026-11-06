@@ -1,6 +1,9 @@
 import { LANGUAGES } from '@const/enums';
 import { SPORTS_BTNS_VALUES } from '@const/sports';
 
+export const VIDEO_BRAND_NAME = 'RUNICH';
+export const VIDEO_BRAND_UNAVAILABLE_METRIC = '—';
+
 export const ACTIVITY_LABELS = {
   [LANGUAGES.english]: {
     [SPORTS_BTNS_VALUES.run]: 'RUN',

@@ -1,5 +1,6 @@
 import { fireEvent, screen, userEvent } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
+import { Dimensions, StyleSheet } from 'react-native';
 import { LANGUAGES } from '@const/enums';
 import { runichApi } from '@R/runich-api/runich-api';
 import { changeLanguage } from '@R/slices/settings/settings';
@@ -23,6 +24,8 @@ describe('WeekStatistics', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
   });
 
+  afterEach(() => jest.restoreAllMocks());
+
   it('renders loading state', async () => {
     server.use(http.get(`${BASE_URL}/statistics/${MOCK_SERVER_IDS.userId}/week`, loadingResponse));
     await renderWithProviders(<WeekStatistics />);
@@ -37,12 +40,22 @@ describe('WeekStatistics', () => {
     expect(mockPush).toHaveBeenCalledTimes(1);
   });
 
+  it('fits the report card to a narrow viewport', async () => {
+    jest.spyOn(Dimensions, 'get').mockReturnValue({ width: 320, height: 640, scale: 1, fontScale: 1 });
+    await renderWithProviders(<WeekStatistics />);
+
+    expect(await screen.findByText(`${MOCK_SERVER_STATISTICS.week.totalItems}`)).toBeOnTheScreen();
+    expect(StyleSheet.flatten(screen.getByTestId('week-statistics').props.style)).toEqual(
+      expect.objectContaining({ width: 320 }),
+    );
+  });
+
   it('renders localized metric units in Russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     await renderWithProviders(<WeekStatistics />);
 
     expect(await screen.findByText(`${MOCK_SERVER_STATISTICS.week.totalItems}`)).toBeOnTheScreen();
-    expect(screen.getByText('Тренировки')).toBeOnTheScreen();
+    expect(screen.getByText(WEEK_STATISTICS[LANGUAGES.russian].activities)).toBeOnTheScreen();
     expect(screen.getByText('0ч 1мин')).toBeOnTheScreen();
     expect(screen.getByText('138 км')).toBeOnTheScreen();
   });

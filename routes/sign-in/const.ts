@@ -54,6 +54,13 @@ export const SIGN_IN_SEO = {
   },
 } as const;
 
+export const SIGN_IN_ACCESS_DENIED_COPY = {
+  [LANGUAGES.english]:
+    'This account does not have admin access. Ask an administrator to grant you the required permissions.',
+  [LANGUAGES.russian]:
+    'У этого аккаунта нет прав для входа в админку. Попросите администратора выдать вам соответствующие права.',
+} as const;
+
 export const AUTH_DIVIDER_TEXT = {
   [LANGUAGES.english]: 'or',
   [LANGUAGES.russian]: 'или',

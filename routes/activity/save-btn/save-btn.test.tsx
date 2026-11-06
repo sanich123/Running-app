@@ -27,6 +27,7 @@ import {
   readLocationJournal,
   removeLocationJournal,
 } from '@U/location/location-journal';
+import { ACTIVITY_SAVE_ERROR_COPY } from './const';
 import ActivitySaveBtn from './save-btn';
 import { isServerUnavailableError } from './utils';
 
@@ -131,7 +132,7 @@ describe('Activity save btn', () => {
     await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
     await userEvent.press(screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID));
 
-    expect(errorToast).toHaveBeenCalledWith('Не удалось определить активность');
+    expect(errorToast).toHaveBeenCalledWith(ACTIVITY_SAVE_ERROR_COPY.undetectedActivity);
     expect(mockBack).not.toHaveBeenCalled();
   });
 
@@ -147,7 +148,7 @@ describe('Activity save btn', () => {
     await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
     await userEvent.press(screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID));
 
-    expect(errorToast).toHaveBeenCalledWith('Тренировка не имеет скорости или продолжительности');
+    expect(errorToast).toHaveBeenCalledWith(ACTIVITY_SAVE_ERROR_COPY.missingSpeedOrDuration);
     expect(mockStore.getState().activity.unsyncedActivities).toHaveLength(0);
     removeLocationJournal(finishedActivity.routeJournalId!);
   });

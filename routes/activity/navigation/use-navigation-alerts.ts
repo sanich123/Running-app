@@ -1,6 +1,10 @@
 import { useEffect, useRef } from 'react';
+import * as Haptics from 'expo-haptics';
 import { LANGUAGES } from '@const/enums';
-import { getNavigationAlertDistanceMeters, getNavigationAlertRepeatIntervalMinutes } from '@R/slices/settings/types';
+import {
+  getNavigationAlertDistanceMeters,
+  getNavigationAlertRepeatIntervalMinutes,
+} from '@R/slices/activity-settings/types';
 import {
   getDistanceToRouteMeters,
   MAX_CONFIDENT_NAVIGATION_ACCURACY_METERS,
@@ -11,10 +15,11 @@ import { speakActivityMessage, stopActivitySpeech } from '@U/speech/activity-voi
 import type { ActivityLocation } from '@S/card/types';
 import type { LocationObject } from 'expo-location';
 
-export default function useNavigationVoiceAlerts({
+export default function useNavigationAlerts({
   navigationTrackId,
   isNavigationActive,
   navigationAlertsMuted,
+  navigationHapticsEnabled,
   navigationRoute,
   currentPosition,
   navigationAlertDistanceMeters,
@@ -25,6 +30,7 @@ export default function useNavigationVoiceAlerts({
   navigationTrackId: string | null;
   isNavigationActive: boolean;
   navigationAlertsMuted: boolean;
+  navigationHapticsEnabled: boolean;
   navigationRoute: ActivityLocation[] | null;
   currentPosition: LocationObject | null;
   navigationAlertDistanceMeters: number;
@@ -32,10 +38,12 @@ export default function useNavigationVoiceAlerts({
   language: LANGUAGES;
   activityVoiceIdentifier: string | null;
 }) {
-  const lastAnnouncementAt = useRef<number | null>(null);
+  const lastVoiceAlertAt = useRef<number | null>(null);
+  const lastHapticAlertAt = useRef<number | null>(null);
 
   useEffect(() => {
-    lastAnnouncementAt.current = null;
+    lastVoiceAlertAt.current = null;
+    lastHapticAlertAt.current = null;
   }, [navigationTrackId]);
 
   useEffect(() => {
@@ -59,23 +67,31 @@ export default function useNavigationVoiceAlerts({
 
     const alertDistance = getNavigationAlertDistanceMeters(navigationAlertDistanceMeters);
     if (distanceFromRoute <= alertDistance - NAVIGATION_ALERT_REARM_DISTANCE_METERS) {
-      lastAnnouncementAt.current = null;
+      lastVoiceAlertAt.current = null;
+      lastHapticAlertAt.current = null;
       return;
     }
-    if (distanceFromRoute <= alertDistance || navigationAlertsMuted) return;
+    if (distanceFromRoute <= alertDistance) return;
 
-    const announcementTimestamp = Date.now();
+    const alertTimestamp = Date.now();
     const repeatIntervalMilliseconds =
       getNavigationAlertRepeatIntervalMinutes(navigationAlertRepeatIntervalMinutes) * 60_000;
-    const lastAnnouncementTimestamp = lastAnnouncementAt.current;
-    if (
-      lastAnnouncementTimestamp !== null &&
-      announcementTimestamp - lastAnnouncementTimestamp < repeatIntervalMilliseconds
-    ) {
-      return;
-    }
+    const shouldVibrate =
+      navigationHapticsEnabled &&
+      (lastHapticAlertAt.current === null || alertTimestamp - lastHapticAlertAt.current >= repeatIntervalMilliseconds);
+    const shouldSpeak =
+      !navigationAlertsMuted &&
+      (lastVoiceAlertAt.current === null || alertTimestamp - lastVoiceAlertAt.current >= repeatIntervalMilliseconds);
+    if (!shouldVibrate && !shouldSpeak) return;
 
-    lastAnnouncementAt.current = announcementTimestamp;
+    if (shouldVibrate) {
+      lastHapticAlertAt.current = alertTimestamp;
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => undefined);
+    }
+    if (!shouldSpeak) return;
+
+    lastVoiceAlertAt.current = alertTimestamp;
+
     const roundedDistance = Math.max(10, Math.round(distanceFromRoute / 10) * 10);
     const text =
       distanceFromRoute > MAX_NUMERIC_NAVIGATION_ALERT_DISTANCE_METERS
@@ -94,6 +110,7 @@ export default function useNavigationVoiceAlerts({
     navigationAlertDistanceMeters,
     navigationAlertRepeatIntervalMinutes,
     navigationAlertsMuted,
+    navigationHapticsEnabled,
     navigationRoute,
     navigationTrackId,
   ]);

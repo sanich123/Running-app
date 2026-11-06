@@ -4,6 +4,7 @@ import { LANGUAGES, ROUTES } from '@const/enums';
 import { runichApi } from '@R/runich-api/runich-api';
 import { setCommentActivityId } from '@R/slices/comment/comment';
 import { changeLanguage } from '@R/slices/settings/settings';
+import { EMPTY_STATE_COPY } from '@S/empty-state/const';
 import { MOCK_COMMENTS } from '@T/mocks/mock-comments';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
@@ -39,7 +40,7 @@ describe('Comments', () => {
     );
 
     expect(screen.getByTestId('comments-skeleton')).toBeOnTheScreen();
-    expect(await screen.findByText('Комментариев пока нет')).toBeOnTheScreen();
+    expect(await screen.findByText(EMPTY_STATE_COPY[LANGUAGES.russian].comments.title)).toBeOnTheScreen();
   });
 
   it('shows the empty state without a loading indicator when there are no comments', async () => {
@@ -48,7 +49,7 @@ describe('Comments', () => {
       <Comments commentsModalRef={{ current: { snapToIndex: jest.fn() } as unknown as BottomSheetModalMethods }} />,
       { store: mockStore },
     );
-    expect(await screen.findByText('Комментариев пока нет')).toBeOnTheScreen();
+    expect(await screen.findByText(EMPTY_STATE_COPY[LANGUAGES.russian].comments.title)).toBeOnTheScreen();
     expect(screen.queryByTestId('commentsActivityIndicator')).not.toBeOnTheScreen();
   });
 

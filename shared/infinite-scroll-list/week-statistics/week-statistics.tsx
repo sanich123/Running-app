@@ -40,6 +40,7 @@ export default function WeekStatistics() {
 
   return (
     <TouchableRipple
+      testID="week-statistics"
       borderless
       onPress={() => {
         if (isError) {

@@ -1,5 +1,7 @@
 import { screen } from '@testing-library/react-native';
+import { LANGUAGES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { DISPLAY_ACTIVITY_MAP_TEXT } from './const';
 import DisplayActivityMap from './display-activity-map';
 import { getActivityMapBounds, getRouteSpeedColors } from './utils';
 import type { ActivityLocation } from '@S/card/types';
@@ -55,7 +57,7 @@ describe('display activity map', () => {
     await renderWithProviders(
       <DisplayActivityMap locations={[{ coords: {} } as LocationObject]} kilometresSplit={[]} />,
     );
-    expect(screen.getByText('Недостаточно данных для отображения маршрута')).toBeOnTheScreen();
+    expect(screen.getByText(DISPLAY_ACTIVITY_MAP_TEXT[LANGUAGES.russian].insufficientData)).toBeOnTheScreen();
   });
 
   it('fits a valid route to the map camera', async () => {

@@ -1,5 +1,6 @@
 import { errorToast } from '@S/error-toast/error-toast';
 import { TEST_URLS } from '@T/mocks/const';
+import { FILE_SENDING_ERROR_COPY } from './const';
 import {
   compressMediaFile,
   createVideoThumbnail,
@@ -236,8 +237,8 @@ describe('uploadMediaWithThumbnail', () => {
       ),
     ).resolves.toEqual([null]);
 
-    expect(errorToast).toHaveBeenCalledWith('Модератор отклонил часть медиафайлов');
-    expect(errorToast).toHaveBeenCalledWith('Не удалось проверить часть медиафайлов. Они не будут прикреплены');
+    expect(errorToast).toHaveBeenCalledWith(FILE_SENDING_ERROR_COPY.mediaRejected);
+    expect(errorToast).toHaveBeenCalledWith(FILE_SENDING_ERROR_COPY.mediaReviewFailed);
   });
 
   it('keeps an uploaded video when thumbnail generation or compression fails', async () => {

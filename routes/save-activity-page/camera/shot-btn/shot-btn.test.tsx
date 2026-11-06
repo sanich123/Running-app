@@ -1,8 +1,9 @@
 import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import * as MediaLibrary from 'expo-media-library';
 import { LANGUAGES } from '@const/enums';
+import { setSaveCameraPhotosToGallery } from '@R/slices/activity-settings/activity-settings';
 import { resetAuthSlice } from '@R/slices/auth/auth';
-import { changeLanguage, setSaveCameraPhotosToGallery } from '@R/slices/settings/settings';
+import { changeLanguage } from '@R/slices/settings/settings';
 import * as errorToastModule from '@S/error-toast/error-toast';
 import { TEST_URLS } from '@T/mocks/const';
 import { createMockMutableRef } from '@T/utils/mock-ref';

@@ -1,22 +1,21 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
+import { http, HttpResponse } from 'msw';
 import { Platform } from 'react-native';
 import { MOCK_SERVER_ACTIVITY } from '@T/responses/runich';
+import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
+import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ActivityRouteActions from './route-actions';
 import MenuView from '../menu-view/menu-view';
 import type { ActivityResponse } from '@R/runich-api/types';
 
-const mockGetLocations = jest.fn();
 const mockPush = jest.fn();
 const mockShareAsync = jest.fn();
 const mockSaveActivityTrack = jest.fn();
 const mockGetSavedActivityTrackFile = jest.fn();
 const originalPlatformOS = Platform.OS;
 
-jest.mock('@R/services/activity/activity', () => ({
-  useLazyGetLocationsByActivityIdQuery: () => [mockGetLocations],
-}));
 jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush }) }));
 jest.mock('expo-sharing', () => ({
   isAvailableAsync: jest.fn(() => Promise.resolve(true)),
@@ -37,8 +36,6 @@ const rawLocations = [
 describe('activity route actions', () => {
   beforeEach(() => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
-    mockGetLocations.mockReset();
-    mockGetLocations.mockReturnValue({ unwrap: () => Promise.resolve({ locations: rawLocations }) });
     mockPush.mockReset();
     mockShareAsync.mockReset();
     mockSaveActivityTrack.mockReset();
@@ -64,6 +61,13 @@ describe('activity route actions', () => {
   }
 
   it('downloads the owner route as GPX through the platform share sheet', async () => {
+    const requests: string[] = [];
+    server.use(
+      http.get(`${BASE_URL}/activity/${activity.id}/locations`, ({ request }) => {
+        requests.push(request.url);
+        return HttpResponse.json({ locations: rawLocations });
+      }),
+    );
     const user = await openRouteActionMenu();
     await user.press(screen.getByTestId('activity-actions-menu-download-gpx'));
 
@@ -73,18 +77,25 @@ describe('activity route actions', () => {
         expect.objectContaining({ mimeType: 'application/gpx+xml' }),
       ),
     );
-    expect(mockGetLocations).toHaveBeenCalledWith({ activityId: activity.id, raw: true });
+    expect(requests).toEqual([`${BASE_URL}/activity/${activity.id}/locations?raw=true`]);
     expect(mockSaveActivityTrack).toHaveBeenCalledWith(
       expect.objectContaining({ activityId: activity.id, locations: rawLocations }),
     );
   });
 
   it('starts navigation with a locally saved copy of the full route', async () => {
+    const requests: string[] = [];
+    server.use(
+      http.get(`${BASE_URL}/activity/${activity.id}/locations`, ({ request }) => {
+        requests.push(request.url);
+        return HttpResponse.json({ locations: rawLocations });
+      }),
+    );
     const user = await openRouteActionMenu();
     await user.press(screen.getByTestId('activity-actions-menu-navigate'));
 
     await waitFor(() => expect(mockPush).toHaveBeenCalledWith('/(tabs)/activity'));
     expect(mockStore.getState().location.navigationTrackId).toBe(`activity-${activity.id}`);
-    expect(mockGetLocations).toHaveBeenCalledWith({ activityId: activity.id, raw: true });
+    expect(requests).toEqual([`${BASE_URL}/activity/${activity.id}/locations?raw=true`]);
   });
 });

@@ -1,5 +1,6 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import activity from '@R/slices/activity/activity';
+import activitySettings from '@R/slices/activity-settings/activity-settings';
 import auth, { setAuthSession } from '@R/slices/auth/auth';
 import comment from '@R/slices/comment/comment';
 import loading from '@R/slices/loading/loading';
@@ -17,6 +18,7 @@ import { runichApi } from '../../redux/runich-api/runich-api';
 const rootReducer = combineReducers({
   network,
   settings,
+  activitySettings,
   subscription,
   location,
   activity,
@@ -41,21 +43,25 @@ const resettableReducer = (
   if (action.type === RESET_MOCK_LOCATION) return { ...nextState, location: location(undefined, action) };
   if (action.type === RESET_MOCK_MAIN_FEED) return { ...nextState, mainFeed: mainFeed(undefined, action) };
   if (action.type === RESET_MOCK_ACTIVITY_REMINDERS) {
-    return { ...nextState, settings: { ...nextState.settings, activityReminders: [] } };
+    return { ...nextState, activitySettings: { ...nextState.activitySettings, activityReminders: [] } };
   }
   return nextState;
 };
 
-export const mockStore = configureStore({
-  reducer: resettableReducer,
-  middleware: (getDefaultMiddleware) => {
-    const profileListenerMiddleware = createProfileListenerMiddleware();
-    return getDefaultMiddleware({ serializableCheck: false }).concat(
-      profileListenerMiddleware.middleware,
-      runichApi.middleware,
-    );
-  },
-});
+export function createMockStore() {
+  return configureStore({
+    reducer: resettableReducer,
+    middleware: (getDefaultMiddleware) => {
+      const profileListenerMiddleware = createProfileListenerMiddleware();
+      return getDefaultMiddleware({ serializableCheck: false }).concat(
+        profileListenerMiddleware.middleware,
+        runichApi.middleware,
+      );
+    },
+  });
+}
+
+export const mockStore = createMockStore();
 
 export const resetMockLocation = () => ({ type: RESET_MOCK_LOCATION });
 

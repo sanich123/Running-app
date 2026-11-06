@@ -36,6 +36,8 @@ export const DASHBOARD_LABELS = {
     stepsUnit: 'шагов',
     calories: 'Калории',
     kilocalories: 'ккал',
+    previousYear: 'Предыдущий год',
+    nextYear: 'Следующий год',
   },
   [LANGUAGES.english]: {
     yearActivity: 'Year activity',
@@ -66,6 +68,8 @@ export const DASHBOARD_LABELS = {
     stepsUnit: 'steps',
     calories: 'Calories',
     kilocalories: 'kcal',
+    previousYear: 'Previous year',
+    nextYear: 'Next year',
   },
 } as const;
 

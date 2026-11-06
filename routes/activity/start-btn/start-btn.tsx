@@ -23,6 +23,7 @@ import {
   startTrackingRecovery,
 } from '@R/slices/tracking-recovery/tracking-recovery';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { ACTIVITY_TRACKING_ERROR_COPY } from '@Routes/activity/const';
 import { errorToast } from '@S/error-toast/error-toast';
 import { getCurrentActivityDuration } from '@U/activity-duration';
 import { getCurrentOrLastKnownPosition } from '@U/get-initial-position';
@@ -219,8 +220,8 @@ export default function StartBtn({
           resetPedometerActivity();
           errorToast(
             activityStatus === STATUSES.initial
-              ? 'Не удалось запустить отслеживание геопозиции'
-              : 'Не удалось остановить отслеживание геопозиции',
+              ? ACTIVITY_TRACKING_ERROR_COPY.start
+              : ACTIVITY_TRACKING_ERROR_COPY.stop,
             error,
           );
         } finally {

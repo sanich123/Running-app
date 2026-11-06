@@ -30,8 +30,8 @@ describe('GroupMemberRow', () => {
     expect(screen.getByText('Alex Runner')).toBeOnTheScreen();
     expect(screen.getByText('Moscow')).toBeOnTheScreen();
     const user = userEvent.setup();
-    await user.press(screen.getByText('Approve'));
-    await user.press(screen.getByText('Decline'));
+    await user.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].approve));
+    await user.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].decline));
 
     expect(onUpdateMember).toHaveBeenCalledWith('member-1', 'active');
     expect(onUpdateMember).toHaveBeenCalledWith('member-1', 'rejected');
@@ -56,7 +56,7 @@ describe('GroupMemberRow', () => {
       />,
     );
 
-    expect(screen.queryByText('Remove')).not.toBeOnTheScreen();
+    expect(screen.queryByText(GROUPS_COPY[LANGUAGES.english].remove)).not.toBeOnTheScreen();
   });
 
   it('shows administrator details and a removal action', async () => {
@@ -80,9 +80,9 @@ describe('GroupMemberRow', () => {
     );
 
     expect(screen.getByText('Sam')).toBeOnTheScreen();
-    expect(screen.getByText('Admin')).toBeOnTheScreen();
+    expect(screen.getByText(GROUPS_COPY[LANGUAGES.english].admin)).toBeOnTheScreen();
     const user = userEvent.setup();
-    await user.press(screen.getByText('Remove'));
+    await user.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].remove));
     expect(onUpdateMember).toHaveBeenCalledWith('admin-1', 'removed');
   });
 
@@ -105,9 +105,9 @@ describe('GroupMemberRow', () => {
       />,
     );
 
-    expect(screen.getByText('Owner')).toBeOnTheScreen();
-    expect(screen.getByText('Member')).toBeOnTheScreen();
-    expect(screen.queryByText('Remove')).not.toBeOnTheScreen();
+    expect(screen.getByText(GROUPS_COPY[LANGUAGES.english].owner)).toBeOnTheScreen();
+    expect(screen.getByText(GROUPS_COPY[LANGUAGES.english].member)).toBeOnTheScreen();
+    expect(screen.queryByText(GROUPS_COPY[LANGUAGES.english].remove)).not.toBeOnTheScreen();
   });
 
   it('renders a member profile photo', async () => {
@@ -182,5 +182,29 @@ describe('GroupMemberRow', () => {
     await userEvent.press(screen.getByTestId('group-member-profile-runner-1'));
 
     expect(onPressProfile).toHaveBeenCalledTimes(1);
+  });
+
+  it('uses the translated member label when the profile has no name', async () => {
+    const member: GroupMember = {
+      userId: 'unnamed-member',
+      role: 'member',
+      status: 'active',
+      joinedAt: null,
+      profile: null,
+    };
+    const copy = GROUPS_COPY[LANGUAGES.english];
+    await renderWithProviders(
+      <GroupMemberRow
+        member={member}
+        copy={copy}
+        language={LANGUAGES.english}
+        canManage={false}
+        isUpdating={false}
+        onUpdateMember={jest.fn()}
+        onPressProfile={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByRole('button', { name: copy.member })).toBeOnTheScreen();
   });
 });

@@ -1,5 +1,7 @@
 import { LANGUAGES } from '../../../constants/enums';
 
+export const NO_SPEED_ALERT_TIME = '--:--:--';
+
 export const ACTIVITY_ERROR_MSG = {
   [LANGUAGES.english]: {
     recoveryTitle: 'Tracking paused',

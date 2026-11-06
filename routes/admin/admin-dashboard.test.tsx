@@ -3,11 +3,17 @@ import { http, HttpResponse } from 'msw';
 import { LANGUAGES } from '@const/enums';
 import { runichApi } from '@R/runich-api/runich-api';
 import { changeLanguage } from '@R/slices/settings/settings';
+import { ERROR_COMPONENT_COPY } from '@S/error-component/const';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { ADMIN_ACCESS_COPY } from './admin-access-management/const';
 import AdminDashboard from './admin-dashboard';
+import { ADMIN_DASHBOARD_COPY } from './const';
+import { MODERATION_DASHBOARD_COPY } from '../profile/moderation/const';
+
+const russianCopy = ADMIN_DASHBOARD_COPY[LANGUAGES.russian];
 
 const mockReplace = jest.fn();
 const mockRouteParams = { current: {} };
@@ -56,9 +62,7 @@ describe('AdminDashboard', () => {
 
     expect(screen.getByTestId('admin-access-loading')).toBeOnTheScreen();
     releaseAccess?.();
-    expect(
-      await screen.findByText('У вас есть право отправлять email. Этот раздел админки пока не подключён.'),
-    ).toBeOnTheScreen();
+    expect(await screen.findByText(russianCopy.emailOnly)).toBeOnTheScreen();
   });
 
   it('shows an error state when the backend cannot check admin access', async () => {
@@ -68,7 +72,7 @@ describe('AdminDashboard', () => {
 
     await renderWithProviders(<AdminDashboard />);
 
-    expect(await screen.findByText('Повторить')).toBeOnTheScreen();
+    expect(await screen.findByText(ERROR_COMPONENT_COPY[LANGUAGES.russian].retry)).toBeOnTheScreen();
   });
 
   it('shows the email-only notice to a user with no connected admin section', async () => {
@@ -76,9 +80,7 @@ describe('AdminDashboard', () => {
 
     await renderWithProviders(<AdminDashboard />);
 
-    expect(
-      await screen.findByText('У вас есть право отправлять email. Этот раздел админки пока не подключён.'),
-    ).toBeOnTheScreen();
+    expect(await screen.findByText(russianCopy.emailOnly)).toBeOnTheScreen();
   });
 
   it('shows moderation for a moderator', async () => {
@@ -90,7 +92,7 @@ describe('AdminDashboard', () => {
 
     await renderWithProviders(<AdminDashboard />);
 
-    expect(await screen.findByText('Модерация')).toBeOnTheScreen();
+    expect(await screen.findByText(russianCopy.moderation)).toBeOnTheScreen();
   });
 
   it('opens access management for an access manager and uses the selected language', async () => {
@@ -103,9 +105,10 @@ describe('AdminDashboard', () => {
 
     await renderWithProviders(<AdminDashboard />);
 
-    expect(await screen.findByText('User access')).toBeOnTheScreen();
-    expect(screen.getByText('No users found.')).toBeOnTheScreen();
-    expect(screen.getByText('No changes yet.')).toBeOnTheScreen();
+    const englishAccessCopy = ADMIN_ACCESS_COPY[LANGUAGES.english];
+    expect(await screen.findByText(englishAccessCopy.title)).toBeOnTheScreen();
+    expect(screen.getByText(englishAccessCopy.noUsers)).toBeOnTheScreen();
+    expect(screen.getByText(englishAccessCopy.noAudit)).toBeOnTheScreen();
   });
 
   it('opens access management by default for an access manager and switches sections for a superuser', async () => {
@@ -128,12 +131,12 @@ describe('AdminDashboard', () => {
 
     expect(await screen.findByTestId('admin-section-moderation')).toBeOnTheScreen();
     await user.press(screen.getByTestId('admin-section-access'));
-    expect(await screen.findByText('Права пользователей')).toBeOnTheScreen();
+    expect(await screen.findByText(ADMIN_ACCESS_COPY[LANGUAGES.russian].title)).toBeOnTheScreen();
     await user.press(await screen.findByTestId('admin-edit-user-2'));
-    expect(screen.getByText('Суперпользователь')).toBeOnTheScreen();
+    expect(screen.getByText(ADMIN_ACCESS_COPY[LANGUAGES.russian].roles.superuser)).toBeOnTheScreen();
     await user.press(screen.getByTestId('admin-access-cancel'));
 
     await user.press(screen.getByTestId('admin-section-moderation'));
-    expect(await screen.findByText('Активных жалоб нет.')).toBeOnTheScreen();
+    expect(await screen.findByText(MODERATION_DASHBOARD_COPY[LANGUAGES.russian].emptyReports)).toBeOnTheScreen();
   });
 });

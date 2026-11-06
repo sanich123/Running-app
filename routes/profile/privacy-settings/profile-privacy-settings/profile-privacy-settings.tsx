@@ -3,7 +3,7 @@ import * as MediaLibrary from 'expo-media-library';
 import { Platform, StyleSheet, View } from 'react-native';
 import { Switch, Text, useTheme } from 'react-native-paper';
 import { useUpdateProfileByUserIdMutation } from '@R/services/profile/profile';
-import { setSaveCameraPhotosToGallery } from '@R/slices/settings/settings';
+import { setSaveCameraPhotosToGallery } from '@R/slices/activity-settings/activity-settings';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { PROFILE_PRIVACY_SETTING_SECTIONS, PROFILE_PRIVACY_SETTINGS, type ProfilePrivacySettingKey } from '../const';
@@ -29,7 +29,8 @@ export default function ProfilePrivacySettings({
 }: ProfilePrivacySettingsProps) {
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
-  const { language, saveCameraPhotosToGallery } = useAppSelector(({ settings }) => settings);
+  const { language } = useAppSelector(({ settings }) => settings);
+  const { saveCameraPhotosToGallery } = useAppSelector(({ activitySettings }) => activitySettings);
   const [updateProfile, { isLoading }] = useUpdateProfileByUserIdMutation();
   const [isRequestingGalleryPermission, setIsRequestingGalleryPermission] = useState(false);
   const [settings, setSettings] = useState<ProfilePrivacyValues>(() =>

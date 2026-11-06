@@ -4,6 +4,7 @@ import { MAX_MOBILE_WIDTH } from '@const/const';
 import { LANGUAGES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import { MAP_SPORT_TO_TITLE } from '@U/icon-utils';
+import { MONTH_TYPES_CHIPS_COPY } from './const';
 import type { MonthChips } from '../types';
 import type { SPORTS_BTNS_VALUES } from '@const/sports';
 
@@ -26,7 +27,7 @@ export default function MonthTypesChips({ typesOfSport, setSelectedType, selecte
       ]}>
       <Card.Content style={styles.content}>
         <Text variant="labelLarge" style={[styles.label, { color: colors.onSurfaceVariant }]}>
-          {isRussian ? 'Вид спорта' : 'Sport'}
+          {MONTH_TYPES_CHIPS_COPY[language].sport}
         </Text>
         <FlatList
           data={typesOfSport}

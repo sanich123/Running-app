@@ -7,7 +7,7 @@ import {
   getNavigationAlertRepeatIntervalMinutes,
   MAX_NAVIGATION_ALERT_REPEAT_INTERVAL_MINUTES,
   MIN_NAVIGATION_ALERT_REPEAT_INTERVAL_MINUTES,
-  SETTINGS_INITIAL_STATE,
+  ACTIVITY_SETTINGS_INITIAL_STATE,
 } from './types';
 
 describe('getNavigationAlertDistanceMeters', () => {
@@ -27,17 +27,17 @@ describe('getNavigationAlertRepeatIntervalMinutes', () => {
     expect(getNavigationAlertRepeatIntervalMinutes(0)).toBe(MIN_NAVIGATION_ALERT_REPEAT_INTERVAL_MINUTES);
     expect(getNavigationAlertRepeatIntervalMinutes(20)).toBe(MAX_NAVIGATION_ALERT_REPEAT_INTERVAL_MINUTES);
     expect(getNavigationAlertRepeatIntervalMinutes(Number.NaN)).toBe(DEFAULT_NAVIGATION_ALERT_REPEAT_INTERVAL_MINUTES);
-    expect(SETTINGS_INITIAL_STATE.navigationAlertsMuted).toBe(false);
+    expect(ACTIVITY_SETTINGS_INITIAL_STATE.navigationAlertsMuted).toBe(false);
   });
 });
 
 describe('getActivitySettings', () => {
   it('uses defaults for absent or invalid setting collections', () => {
     expect(getActivitySettings({})).toEqual({
-      activityVoiceEnabled: SETTINGS_INITIAL_STATE.activityVoiceEnabled,
+      activityVoiceEnabled: ACTIVITY_SETTINGS_INITIAL_STATE.activityVoiceEnabled,
       activityVoiceMetrics: DEFAULT_ACTIVITY_VOICE_METRICS,
       activityVoiceIdentifier: null,
-      activityReminderEnabled: SETTINGS_INITIAL_STATE.activityReminderEnabled,
+      activityReminderEnabled: ACTIVITY_SETTINGS_INITIAL_STATE.activityReminderEnabled,
       activityReminders: [],
     });
     expect(

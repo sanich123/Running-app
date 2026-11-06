@@ -22,6 +22,7 @@ import {
   type UploadMediaBatchRequest,
   type UploadMediaRequest,
 } from './file-sending';
+import { FILE_SENDING_ERROR_COPY } from './file-sending/const';
 import { MAX_MEDIA_BATCH_SIZE, MAX_MEDIA_FILE_SIZE } from './file-sending/file-utils';
 
 jest.mock('expo-image-picker', () => ({ launchImageLibraryAsync: jest.fn() }));
@@ -201,7 +202,7 @@ describe('file sending', () => {
     ).resolves.toBeNull();
     expect(uploadMediaBatch).not.toHaveBeenCalled();
     expect(errorToast).toHaveBeenCalledWith(
-      'Не удалось загрузить медиафайлы',
+      FILE_SENDING_ERROR_COPY.uploadsFailed,
       expect.objectContaining({ message: 'Суммарный размер файлов не должен превышать 250 МБ' }),
     );
   });
@@ -239,10 +240,10 @@ describe('file sending', () => {
 
   it('reports unsupported and oversized files during compression', async () => {
     await expect(compressMediaFile('document.pdf')).resolves.toBeNull();
-    expect(errorToast).toHaveBeenCalledWith('Такое разрешение нельзя использовать для изображения');
+    expect(errorToast).toHaveBeenCalledWith(FILE_SENDING_ERROR_COPY.invalidImageFormat);
 
     await expect(compressMediaFile('archive.mkv')).resolves.toBeNull();
-    expect(errorToast).toHaveBeenCalledWith('Поддерживаются только видео MP4, MOV и WebM');
+    expect(errorToast).toHaveBeenCalledWith(FILE_SENDING_ERROR_COPY.invalidVideoFormat);
 
     (getVideoMetaData as jest.Mock)
       .mockResolvedValueOnce({ size: 1_000, duration: 61 })
@@ -250,18 +251,18 @@ describe('file sending', () => {
       .mockResolvedValueOnce({ size: MAX_MEDIA_FILE_SIZE + 1, duration: 10 });
     await expect(compressMediaFile('long.mp4')).resolves.toBeNull();
     expect(VideoCompressor.compress).not.toHaveBeenCalled();
-    expect(errorToast).toHaveBeenCalledWith('Длительность видео должна быть не более 1 минуты');
+    expect(errorToast).toHaveBeenCalledWith(FILE_SENDING_ERROR_COPY.videoDurationExceeded);
 
     await expect(compressMediaFile('large.mp4')).resolves.toBeNull();
     expect(VideoCompressor.compress).toHaveBeenCalledTimes(1);
-    expect(errorToast).toHaveBeenCalledWith('Размер видео должен быть не более 50 МБ');
+    expect(errorToast).toHaveBeenCalledWith(FILE_SENDING_ERROR_COPY.videoSizeExceeded);
   });
 
   it('reports compression and upload errors but treats thumbnail failures as a fallback', async () => {
     const compressionError = new Error('image compression failed');
     (ImageCompressor.compress as jest.Mock).mockRejectedValue(compressionError);
     await expect(compressMediaFile('photo.jpg')).resolves.toBeNull();
-    expect(errorToast).toHaveBeenCalledWith('Ошибка во время сжатия изображения', compressionError);
+    expect(errorToast).toHaveBeenCalledWith(FILE_SENDING_ERROR_COPY.compressionFailed.image, compressionError);
 
     const uploadError = new Error('upload failed');
     uploadMedia.mockRejectedValue(uploadError);
@@ -278,7 +279,7 @@ describe('file sending', () => {
         uploadMedia,
       ),
     ).resolves.toBeNull();
-    expect(errorToast).toHaveBeenCalledWith('Не удалось загрузить медиафайл', uploadError);
+    expect(errorToast).toHaveBeenCalledWith(FILE_SENDING_ERROR_COPY.uploadFailed, uploadError);
 
     const thumbnailError = new Error('thumbnail failed');
     (VideoThumbnails.getThumbnailAsync as jest.Mock).mockRejectedValue(thumbnailError);
@@ -311,7 +312,7 @@ describe('file sending', () => {
 
     (ImagePicker.launchImageLibraryAsync as jest.Mock).mockRejectedValue(new Error('gallery unavailable'));
     await expect(getAccessToGallery()).resolves.toBeUndefined();
-    expect(errorToast).toHaveBeenCalledWith('Не удалось открыть галерею', expect.any(Error));
+    expect(errorToast).toHaveBeenCalledWith(FILE_SENDING_ERROR_COPY.galleryOpenFailed, expect.any(Error));
   });
 
   it('passes browser videos through without using the native compressor', async () => {
@@ -343,7 +344,7 @@ describe('file sending', () => {
     mockBrowserVideoMetadata();
 
     await expect(compressMediaFile(webFile)).resolves.toBeNull();
-    expect(errorToast).toHaveBeenCalledWith('Размер видео должен быть не более 50 МБ');
+    expect(errorToast).toHaveBeenCalledWith(FILE_SENDING_ERROR_COPY.videoSizeExceeded);
     expect(getVideoMetaData).not.toHaveBeenCalled();
     expect(VideoCompressor.compress).not.toHaveBeenCalled();
   });
@@ -353,17 +354,17 @@ describe('file sending', () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
     mockBrowserVideoMetadata(Number.POSITIVE_INFINITY);
     await expect(compressMediaFile(webFile)).resolves.toBeNull();
-    expect(errorToast).toHaveBeenLastCalledWith('Не удалось определить длительность видео');
+    expect(errorToast).toHaveBeenLastCalledWith(FILE_SENDING_ERROR_COPY.videoDurationUnavailable);
 
     mockBrowserVideoMetadata(61);
     await expect(compressMediaFile(webFile)).resolves.toBeNull();
-    expect(errorToast).toHaveBeenLastCalledWith('Длительность видео должна быть не более 1 минуты');
+    expect(errorToast).toHaveBeenLastCalledWith(FILE_SENDING_ERROR_COPY.videoDurationExceeded);
 
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'ios' });
     (getVideoMetaData as jest.Mock).mockResolvedValueOnce({ size: 1_000, duration: Number.NaN });
     await expect(compressMediaFile('unknown-duration.mp4')).resolves.toBeNull();
     expect(VideoCompressor.compress).not.toHaveBeenCalled();
-    expect(errorToast).toHaveBeenLastCalledWith('Не удалось определить длительность видео');
+    expect(errorToast).toHaveBeenLastCalledWith(FILE_SENDING_ERROR_COPY.videoDurationUnavailable);
 
     mockErrorToast.mockClear();
     (VideoCompressor.compress as jest.Mock).mockResolvedValueOnce(null);
@@ -386,7 +387,7 @@ describe('file sending', () => {
 
     restoreGlobalProperty(globalThis, 'document', undefined);
     await expect(compressMediaFile(TEST_URLS.clipVideo)).resolves.toBeNull();
-    expect(errorToast).toHaveBeenLastCalledWith('Ошибка во время сжатия видео', expect.any(Error));
+    expect(errorToast).toHaveBeenLastCalledWith(FILE_SENDING_ERROR_COPY.compressionFailed.video, expect.any(Error));
   });
 
   it('returns null for empty batches and null server results', async () => {
@@ -566,7 +567,7 @@ describe('file sending', () => {
         contentType: 'image/jpeg',
       },
     ]);
-    expect(errorToast).toHaveBeenCalledWith('Media sent to moderation. Upload will continue after review');
+    expect(errorToast).toHaveBeenCalledWith(FILE_SENDING_ERROR_COPY.videoModerationNotice.english);
     expect(requestCount).toBe(2);
   });
 
@@ -622,7 +623,7 @@ describe('file sending', () => {
 
     expect(progressNotifications).toEqual([0.95, 0.95]);
     expect(errorToast).toHaveBeenCalledTimes(1);
-    expect(errorToast).toHaveBeenCalledWith('Медиа отправлено модератору. Загрузка продолжится после проверки');
+    expect(errorToast).toHaveBeenCalledWith(FILE_SENDING_ERROR_COPY.videoModerationNotice.russian);
     expect(requestCount).toBe(3);
   });
 

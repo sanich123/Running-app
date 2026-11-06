@@ -2,12 +2,13 @@ import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ActivityIndicator, SegmentedButtons, Text, useTheme } from 'react-native-paper';
-import { LANGUAGES, ROUTES } from '@const/enums';
+import { ROUTES } from '@const/enums';
 import { useGetAdminAccessQuery } from '@R/services/admin/admin';
 import { useAppSelector } from '@R/typed-hooks';
 import ModerationDashboard from '@Routes/profile/moderation/moderation-dashboard';
 import ErrorComponent from '@S/error-component/error-component';
 import AdminAccessManagement from './admin-access-management/admin-access-management';
+import { ADMIN_DASHBOARD_COPY } from './const';
 
 type AdminSection = 'moderation' | 'access';
 
@@ -29,20 +30,7 @@ export default function AdminDashboard() {
   const canManageRoles = access?.permissions.includes('admin.roles.manage') === true;
   const hasPermissions = (access?.permissions.length ?? 0) > 0;
   const hasSelectedSection = canModerate || canManageRoles;
-  const copy =
-    language === LANGUAGES.russian
-      ? {
-          loading: 'Проверяем права доступа…',
-          moderation: 'Модерация',
-          access: 'Права доступа',
-          emailOnly: 'У вас есть право отправлять email. Этот раздел админки пока не подключён.',
-        }
-      : {
-          loading: 'Checking access…',
-          moderation: 'Moderation',
-          access: 'Access rights',
-          emailOnly: 'You can send email. This admin section is not connected yet.',
-        };
+  const copy = ADMIN_DASHBOARD_COPY[language];
 
   useEffect(() => {
     if (!isLoading && access && !hasPermissions) {

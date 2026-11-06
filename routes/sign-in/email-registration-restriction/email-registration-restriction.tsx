@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
 import { Button, Dialog, Portal, Text, useTheme } from 'react-native-paper';
-import { LANGUAGES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import { RESPONSIVE_DIALOG_STYLE } from '@S/responsive-dialog-style';
+import { EMAIL_REGISTRATION_RESTRICTION_COPY } from './const';
 
 export default function EmailRegistrationRestriction() {
   const [visible, setVisible] = useState(false);
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
-  const isRussian = language === LANGUAGES.russian;
+  const copy = EMAIL_REGISTRATION_RESTRICTION_COPY[language];
 
   return (
     <>
@@ -21,9 +21,7 @@ export default function EmailRegistrationRestriction() {
         <Text
           variant="bodySmall"
           style={[styles.triggerText, { color: colors.primary, textDecorationLine: 'underline' }]}>
-          {isRussian
-            ? '* Регистрация по email — только с адресом российского почтового оператора (.ru или .рф).'
-            : '* Email registration is available only with an address from a Russian email provider (.ru or .рф).'}
+          {copy.trigger}
         </Text>
       </Pressable>
 
@@ -33,12 +31,10 @@ export default function EmailRegistrationRestriction() {
           visible={visible}
           onDismiss={() => setVisible(false)}
           style={[RESPONSIVE_DIALOG_STYLE, { backgroundColor: colors.surface }]}>
-          <Dialog.Title>{isRussian ? 'Ограничение регистрации' : 'Email registration restriction'}</Dialog.Title>
+          <Dialog.Title>{copy.title}</Dialog.Title>
           <Dialog.Content>
             <Text variant="bodyMedium" style={styles.modalText}>
-              {isRussian
-                ? 'С 1 декабря 2023 года Федеральный закон от 31 июля 2023 г. № 406-ФЗ запретил российским сайтам регистрировать пользователей, находящихся в РФ, с использованием иностранной электронной почты. Поэтому Runich принимает email для регистрации только в российских доменных зонах .ru и .рф. Правило применяется ко всей регистрации по email; вход и восстановление доступа к ранее созданным аккаунтам не ограничиваются.'
-                : 'From 1 December 2023, Federal Law No. 406-FZ of 31 July 2023 prohibited Russian websites from registering users located in Russia with foreign email. Therefore Runich accepts only .ru and .рф addresses for email registration. The rule applies to all email registrations; sign-in and recovery for existing accounts are not restricted.'}
+              {copy.description}
             </Text>
           </Dialog.Content>
           <Dialog.Actions>
@@ -46,7 +42,7 @@ export default function EmailRegistrationRestriction() {
               testID="registration-email-restriction-dialog-close"
               textColor={colors.primary}
               onPress={() => setVisible(false)}>
-              {isRussian ? 'Закрыть' : 'Close'}
+              {copy.close}
             </Button>
           </Dialog.Actions>
         </Dialog>

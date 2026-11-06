@@ -47,7 +47,7 @@ describe('GroupsList', () => {
     await renderWithProviders(<GroupsList filters={{ scope: 'all', search: '', sport: undefined }} />);
 
     expect(screen.getByText('500, Ошибка операции с базой данных')).toBeOnTheScreen();
-    fireEvent.press(screen.getByText('Повторить'));
+    fireEvent.press(screen.getByText(GROUPS_COPY[LANGUAGES.russian].retry));
     expect(refetch).toHaveBeenCalledTimes(1);
   });
 

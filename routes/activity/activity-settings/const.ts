@@ -1,7 +1,7 @@
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { Platform, TextInput } from 'react-native';
 import { LANGUAGES } from '@const/enums';
-import type { ActivityVoiceMetric } from '@R/slices/settings/types';
+import type { ActivityVoiceMetric } from '@R/slices/activity-settings/types';
 
 export const ACTIVITY_SETTINGS = {
   [LANGUAGES.english]: {

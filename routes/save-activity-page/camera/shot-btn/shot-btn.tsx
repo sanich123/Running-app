@@ -19,7 +19,8 @@ export default function ShotBtn({ cameraRef, setPhotos, photos, maxPhotos = 10, 
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
   const { userId } = useAppSelector(({ auth }) => auth);
-  const { language, saveCameraPhotosToGallery } = useAppSelector(({ settings }) => settings);
+  const { language } = useAppSelector(({ settings }) => settings);
+  const { saveCameraPhotosToGallery } = useAppSelector(({ activitySettings }) => activitySettings);
   const [isLoading, setIsLoading] = useState(false);
   const [appendActivityMedia] = useAppendActivityMediaMutation();
   const [uploadProgress, setUploadProgress] = useState(0);

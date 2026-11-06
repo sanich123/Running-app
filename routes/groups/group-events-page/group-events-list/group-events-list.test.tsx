@@ -1,31 +1,28 @@
 import { screen } from '@testing-library/react-native';
+import { http, HttpResponse } from 'msw';
 import { LANGUAGES } from '@const/enums';
+import { BASE_URL } from '@T/utils/handlers';
+import { loadingResponse } from '@T/utils/response-states';
+import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import GroupEventsList from './group-events-list';
 import { GROUPS_COPY } from '../../const';
 
-const mockGetEvents = jest.fn();
-
-jest.mock('@R/services/groups/groups', () => ({
-  useGetGroupEventsQuery: (...args: unknown[]) => mockGetEvents(...args),
-}));
-
 describe('GroupEventsList', () => {
-  beforeEach(() => jest.clearAllMocks());
-
   it('shows event details returned for the selected period', async () => {
-    mockGetEvents.mockReturnValue({
-      data: [
-        {
-          id: 'event-1',
-          title: 'Sunday long run',
-          startsAt: '2026-11-01T10:00:00.000Z',
-          description: 'Meet at the park',
-          locationName: 'Gorky Park',
-        },
-      ],
-      isLoading: false,
-    });
+    server.use(
+      http.get(`${BASE_URL}/groups/group-1/events`, () =>
+        HttpResponse.json([
+          {
+            id: 'event-1',
+            title: 'Sunday long run',
+            startsAt: '2026-11-01T10:00:00.000Z',
+            description: 'Meet at the park',
+            locationName: 'Gorky Park',
+          },
+        ]),
+      ),
+    );
     await renderWithProviders(
       <GroupEventsList
         groupId="group-1"
@@ -36,13 +33,20 @@ describe('GroupEventsList', () => {
       />,
     );
 
-    expect(screen.getByText('Sunday long run')).toBeOnTheScreen();
+    expect(await screen.findByText('Sunday long run')).toBeOnTheScreen();
     expect(screen.getByText('Meet at the park')).toBeOnTheScreen();
     expect(screen.getByText('Gorky Park')).toBeOnTheScreen();
   });
 
   it('shows loading and hides private events without requesting them', async () => {
-    mockGetEvents.mockReturnValue({ data: [], isLoading: true });
+    const requests: string[] = [];
+    server.use(
+      http.get(`${BASE_URL}/groups/group-1/events`, loadingResponse),
+      http.get(`${BASE_URL}/groups/private-group/events`, ({ request }) => {
+        requests.push(request.url);
+        return HttpResponse.json([]);
+      }),
+    );
     await renderWithProviders(
       <GroupEventsList
         groupId="group-1"
@@ -54,8 +58,6 @@ describe('GroupEventsList', () => {
     );
     expect(screen.getByRole('progressbar')).toBeOnTheScreen();
 
-    mockGetEvents.mockClear();
-    mockGetEvents.mockReturnValue({ data: [], isLoading: false });
     await renderWithProviders(
       <GroupEventsList
         groupId="private-group"
@@ -66,7 +68,7 @@ describe('GroupEventsList', () => {
       />,
     );
     expect(screen.getByText(GROUPS_COPY[LANGUAGES.english].eventsPrivate)).toBeOnTheScreen();
-    expect(mockGetEvents).toHaveBeenCalledWith({ groupId: 'private-group', period: 'upcoming' }, { skip: true });
+    expect(requests).toEqual([]);
   });
 
   it.each([
@@ -82,6 +84,13 @@ describe('GroupEventsList', () => {
   });
 
   it('renders provided event sport, distance and optional details without querying', async () => {
+    const requests: string[] = [];
+    server.use(
+      http.get(`${BASE_URL}/groups/group-1/events`, ({ request }) => {
+        requests.push(request.url);
+        return HttpResponse.json([]);
+      }),
+    );
     const copy = GROUPS_COPY[LANGUAGES.english];
     await renderWithProviders(
       <GroupEventsList
@@ -107,6 +116,6 @@ describe('GroupEventsList', () => {
 
     expect(screen.getByText('Running · 5.5 km')).toBeOnTheScreen();
     expect(screen.getByText('Easy pace')).toBeOnTheScreen();
-    expect(mockGetEvents).toHaveBeenCalledWith({ groupId: 'group-1', period: 'upcoming' }, { skip: true });
+    expect(requests).toEqual([]);
   });
 });

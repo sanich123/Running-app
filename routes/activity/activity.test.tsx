@@ -2,13 +2,13 @@ import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import * as Speech from 'expo-speech';
 import { StyleSheet } from 'react-native';
 import { LANGUAGES, STATUSES } from '@const/enums';
-import { setActivityStatus, setLastPosition, setNavigationTrackId } from '@R/slices/location/location';
 import {
-  changeLanguage,
   setNavigationAlertRepeatIntervalMinutes,
   setNavigationAlertsMuted,
-} from '@R/slices/settings/settings';
-import { DEFAULT_NAVIGATION_ALERT_REPEAT_INTERVAL_MINUTES } from '@R/slices/settings/types';
+} from '@R/slices/activity-settings/activity-settings';
+import { DEFAULT_NAVIGATION_ALERT_REPEAT_INTERVAL_MINUTES } from '@R/slices/activity-settings/types';
+import { setActivityStatus, setLastPosition, setNavigationTrackId } from '@R/slices/location/location';
+import { changeLanguage } from '@R/slices/settings/settings';
 import {
   clearTrackingRecovery,
   setTrackingRecoveryStatus,
@@ -21,6 +21,7 @@ import * as activityTrackLibrary from '@U/activity-track/track-library';
 import * as backgroundLocation from '@U/location/expo-task-manager/background-location';
 import { createLocationJournal } from '@U/location/location-journal';
 import Activity from './activity';
+import { ACTIVITY_TRACKING_ERROR_COPY } from './const';
 import { ACTIVITY_SHOW_MAP_TEST_ID } from './show-map-btn/const';
 
 jest.mock('expo-router', () => ({
@@ -599,9 +600,7 @@ describe('Activity', () => {
 
     await renderWithProviders(<Activity />);
 
-    await waitFor(() =>
-      expect(mockErrorToast).toHaveBeenCalledWith('Не удалось поставить отслеживание на паузу', error),
-    );
+    await waitFor(() => expect(mockErrorToast).toHaveBeenCalledWith(ACTIVITY_TRACKING_ERROR_COPY.pause, error));
     expect(mockStore.getState().location.activityStatus).toBe(STATUSES.continued);
     expect(mockStore.getState().location.isAppShutedByPhone).toBe(false);
   });

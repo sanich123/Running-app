@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { SymbolView } from 'expo-symbols';
 import { Platform, Pressable, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ActivityIndicator, IconButton, useTheme } from 'react-native-paper';
+import { ActivityIndicator, Icon, useTheme } from 'react-native-paper';
 import { ROUTES, STATUSES } from '@const/enums';
 import {
   resetLastKm,
@@ -15,10 +15,15 @@ import {
 } from '@R/slices/location/location';
 import { clearTrackingRecovery } from '@R/slices/tracking-recovery/tracking-recovery';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { IOS_ACTIVITY_HEADER_ICON_COLOR } from '@Routes/activity/const';
+import {
+  ACTIVITY_HEADER_BUTTON_SIZE,
+  ACTIVITY_TRACKING_ERROR_COPY,
+  IOS_ACTIVITY_HEADER_ICON_COLOR,
+  getActivityHeaderButtonStyle,
+  isActivityHeaderButtonTap,
+} from '@Routes/activity/const';
 import ConfirmDialog from '@S/confirm-dialog/confirm-dialog';
 import { errorToast } from '@S/error-toast/error-toast';
-import { getMapControlButtonStyle } from '@S/map-control-button/const';
 import { getCurrentActivityDuration } from '@U/activity-duration';
 import { stopLocationTracking } from '@U/location/expo-task-manager/background-location';
 import { getActiveLocationJournalId, removeLocationJournal } from '@U/location/location-journal';
@@ -69,7 +74,7 @@ export default function CloseBtn() {
         closeActivity();
       }
     } catch (error) {
-      errorToast('Не удалось остановить отслеживание геопозиции', error);
+      errorToast(ACTIVITY_TRACKING_ERROR_COPY.stop, error);
     } finally {
       setIsStoppingTracking(false);
     }
@@ -82,6 +87,7 @@ export default function CloseBtn() {
           accessibilityRole="button"
           accessibilityLabel={ACTIVITY_CLOSE_BTN[language].btnText}
           accessibilityState={{ disabled: isStoppingTracking }}
+          android_ripple={{ color: colors.onSurface, radius: ACTIVITY_HEADER_BUTTON_SIZE / 2 }}
           disabled={isStoppingTracking}
           onPress={stopTrackingAndClose}
           style={styles.iosHeaderButton}
@@ -93,19 +99,24 @@ export default function CloseBtn() {
           )}
         </Pressable>
       ) : (
-        <IconButton
+        <Pressable
+          accessibilityRole="button"
           accessibilityLabel={ACTIVITY_CLOSE_BTN[language].btnText}
-          containerColor={colors.surface}
+          accessibilityState={{ disabled: isStoppingTracking }}
           disabled={isStoppingTracking}
-          icon="close"
-          iconColor={colors.onSurface}
-          loading={isStoppingTracking}
-          mode="contained-tonal"
-          onPress={stopTrackingAndClose}
-          size={22}
-          style={[styles.iconButton, getMapControlButtonStyle(40, colors.surface, colors.outlineVariant)]}
-          testID="activity-close-button"
-        />
+          onPress={(event) => {
+            if (isActivityHeaderButtonTap(event)) {
+              stopTrackingAndClose();
+            }
+          }}
+          style={getActivityHeaderButtonStyle(colors.surface, colors.outlineVariant)}
+          testID="activity-close-button">
+          {isStoppingTracking ? (
+            <ActivityIndicator size={18} color={colors.onSurface} />
+          ) : (
+            <Icon source="close" size={22} color={colors.onSurface} />
+          )}
+        </Pressable>
       )}
       <ConfirmDialog
         visible={isConfirmDialogVisible}
@@ -123,14 +134,6 @@ export default function CloseBtn() {
 }
 
 const styles = StyleSheet.create({
-  iconButton: {
-    alignItems: 'center',
-    borderRadius: 20,
-    justifyContent: 'center',
-    margin: 0,
-    minHeight: 40,
-    minWidth: 40,
-  },
   iosHeaderButton: {
     alignItems: 'center',
     height: 44,

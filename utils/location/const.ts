@@ -3,6 +3,9 @@ import type { LocationObject } from 'expo-location';
 import type * as TaskManager from 'expo-task-manager';
 
 export const LOCATION_TRACKING = 'location-tracking';
+export const BACKGROUND_LOCATION_ERROR_COPY = {
+  taskFailed: 'Ошибка фонового отслеживания геопозиции',
+} as const;
 
 export interface TaskManagerLocationEvent {
   data: { locations: LocationObject[] };

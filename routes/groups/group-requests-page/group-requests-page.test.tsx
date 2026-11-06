@@ -4,6 +4,7 @@ import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import GroupRequestsPage from './group-requests-page';
+import { GROUPS_COPY } from '../const';
 
 const mockGetGroup = jest.fn();
 const mockGetMembers = jest.fn();
@@ -61,8 +62,8 @@ describe('GroupRequestsPage', () => {
     expect(mockGetMembers).toHaveBeenCalledWith({ groupId: 'group-1', status: 'pending' }, { skip: false });
 
     const user = userEvent.setup();
-    await user.press(screen.getByText('Approve'));
-    await user.press(screen.getByText('Decline'));
+    await user.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].approve));
+    await user.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].decline));
 
     expect(mockUpdateMember).toHaveBeenNthCalledWith(1, { groupId: 'group-1', userId: 'pending-1', status: 'active' });
     expect(mockUpdateMember).toHaveBeenNthCalledWith(2, {
@@ -76,8 +77,8 @@ describe('GroupRequestsPage', () => {
     mockGetGroup.mockReturnValue({ data: undefined, isLoading: false, isError: true, refetch: mockRefetch });
     await renderWithProviders(<GroupRequestsPage />);
 
-    expect(screen.getByText('Could not load groups')).toBeOnTheScreen();
-    fireEvent.press(screen.getByText('Retry'));
+    expect(screen.getByText(GROUPS_COPY[LANGUAGES.english].loadError)).toBeOnTheScreen();
+    fireEvent.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].retry));
     expect(mockRefetch).toHaveBeenCalledTimes(1);
     expect(mockGetMembers).toHaveBeenCalledWith({ groupId: 'group-1', status: 'pending' }, { skip: true });
   });
@@ -85,7 +86,7 @@ describe('GroupRequestsPage', () => {
   it('reports an approval failure', async () => {
     mockUpdateMember.mockReturnValue({ unwrap: jest.fn().mockRejectedValue(new Error('offline')) });
     await renderWithProviders(<GroupRequestsPage />);
-    await userEvent.press(screen.getByText('Approve'));
+    await userEvent.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].approve));
 
     await waitFor(() => expect(mockErrorToast).toHaveBeenCalledWith(expect.any(String), expect.any(Error)));
   });

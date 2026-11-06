@@ -1,3 +1,4 @@
+import { getActivitySettings } from '@R/slices/activity-settings/types';
 import {
   addDurationAndLocationToKmSplits,
   resetLastKm,
@@ -15,7 +16,6 @@ import {
   setLocationsFromBackground,
   setLocationsWhenContinued,
 } from '@R/slices/location/location';
-import { getActivitySettings } from '@R/slices/settings/types';
 import { store } from '@R/store';
 import { getCurrentActivityDuration } from '@U/activity-duration';
 import { speakActivityReminder, speakCompletedKilometer } from '@U/speech/activity-voice';
@@ -94,7 +94,7 @@ export function saveMetricsToStoreTaskManager(
     activityVoiceIdentifier,
     activityReminderEnabled,
     activityReminders,
-  } = getActivitySettings(store.getState().settings);
+  } = getActivitySettings(store.getState().activitySettings);
   const speedInKmPerHour = getSpeedInKmPerHour(currentDistance, currentDuration);
   const maxSpeedInKmPerHour = getMaxTrackingSpeedForSport(sport);
 

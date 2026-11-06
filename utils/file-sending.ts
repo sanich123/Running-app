@@ -11,6 +11,7 @@ import {
 } from '@R/services/photos/photos';
 import { store } from '@R/store';
 import { errorToast } from '@S/error-toast/error-toast';
+import { FILE_SENDING_ERROR_COPY } from './file-sending/const';
 import {
   MAX_MEDIA_FILE_SIZE,
   MAX_VIDEO_DURATION_SECONDS,
@@ -79,8 +80,8 @@ export async function waitForMediaUploadReview<T extends UploadedPhotoResponse>(
         const isRussian = store.getState().settings.language === LANGUAGES.russian;
         errorToast(
           isRussian
-            ? 'Медиа отправлено модератору. Загрузка продолжится после проверки'
-            : 'Media sent to moderation. Upload will continue after review',
+            ? FILE_SENDING_ERROR_COPY.videoModerationNotice.russian
+            : FILE_SENDING_ERROR_COPY.videoModerationNotice.english,
         );
       }
       const approvedButUnpublished = response.items.filter(({ status, url }) => status === 'approved' && !url);
@@ -124,12 +125,12 @@ export async function compressMediaFile(
   const { fileName, extension, isVideo, mimeType } = getMediaFileInfo(fileSrc, metadata);
 
   if (isVideo && !isSupportedVideoFormat(extension, mimeType)) {
-    errorToast('Поддерживаются только видео MP4, MOV и WebM');
+    errorToast(FILE_SENDING_ERROR_COPY.invalidVideoFormat);
     return null;
   }
 
   if (!isVideo && !mimeType.startsWith('image/') && !isSupportedImageExtension(extension)) {
-    errorToast('Такое разрешение нельзя использовать для изображения');
+    errorToast(FILE_SENDING_ERROR_COPY.invalidImageFormat);
     return null;
   }
 
@@ -137,7 +138,10 @@ export async function compressMediaFile(
     if (control?.signal?.aborted) return null;
     const compression = (isVideo ? compressVideo(fileSrc, control) : compressImage(fileSrc)).catch((error: unknown) => {
       if (!control?.signal?.aborted) {
-        errorToast(isVideo ? 'Ошибка во время сжатия видео' : 'Ошибка во время сжатия изображения', error);
+        errorToast(
+          isVideo ? FILE_SENDING_ERROR_COPY.compressionFailed.video : FILE_SENDING_ERROR_COPY.compressionFailed.image,
+          error,
+        );
       }
       return null;
     });
@@ -155,7 +159,10 @@ export async function compressMediaFile(
     };
   } catch (error) {
     if (!control?.signal?.aborted) {
-      errorToast(isVideo ? 'Ошибка во время сжатия видео' : 'Ошибка во время сжатия изображения', error);
+      errorToast(
+        isVideo ? FILE_SENDING_ERROR_COPY.compressionFailed.video : FILE_SENDING_ERROR_COPY.compressionFailed.image,
+        error,
+      );
     }
     return null;
   }
@@ -204,7 +211,7 @@ export async function uploadMediaFile(
     return (await uploadRequest(formData, control)) ?? null;
   } catch (error) {
     if (!control?.signal?.aborted && control?.notifyOnError !== false) {
-      errorToast('Не удалось загрузить медиафайл', error);
+      errorToast(FILE_SENDING_ERROR_COPY.uploadFailed, error);
     }
     return null;
   }
@@ -231,7 +238,7 @@ export async function uploadMediaFiles(
     });
     return (await uploadRequest(formData, control)) ?? null;
   } catch (error) {
-    if (!control?.signal?.aborted) errorToast('Не удалось загрузить медиафайлы', error);
+    if (!control?.signal?.aborted) errorToast(FILE_SENDING_ERROR_COPY.uploadsFailed, error);
     return null;
   }
 }
@@ -275,7 +282,7 @@ export async function getAccessToGallery(
       ...options,
     });
   } catch (error) {
-    errorToast('Не удалось открыть галерею', error);
+    errorToast(FILE_SENDING_ERROR_COPY.galleryOpenFailed, error);
   }
 }
 
@@ -299,15 +306,15 @@ async function compressVideo(fileSrc: MediaSource, control?: MediaUploadControl)
     const videoInfo = await getWebVideoInfo(fileSrc);
     if (control?.signal?.aborted) return null;
     if (!Number.isFinite(videoInfo.duration)) {
-      errorToast('Не удалось определить длительность видео');
+      errorToast(FILE_SENDING_ERROR_COPY.videoDurationUnavailable);
       return null;
     }
     if (videoInfo.duration > MAX_VIDEO_DURATION_SECONDS) {
-      errorToast('Длительность видео должна быть не более 1 минуты');
+      errorToast(FILE_SENDING_ERROR_COPY.videoDurationExceeded);
       return null;
     }
     if (videoInfo.size > MAX_MEDIA_FILE_SIZE) {
-      errorToast('Размер видео должен быть не более 50 МБ');
+      errorToast(FILE_SENDING_ERROR_COPY.videoSizeExceeded);
       return null;
     }
 
@@ -318,11 +325,11 @@ async function compressVideo(fileSrc: MediaSource, control?: MediaUploadControl)
   const sourceMetadata = await getVideoMetaData(String(fileSrc));
   if (control?.signal?.aborted) return null;
   if (!Number.isFinite(sourceMetadata.duration) || sourceMetadata.duration <= 0) {
-    errorToast('Не удалось определить длительность видео');
+    errorToast(FILE_SENDING_ERROR_COPY.videoDurationUnavailable);
     return null;
   }
   if (sourceMetadata.duration > MAX_VIDEO_DURATION_SECONDS) {
-    errorToast('Длительность видео должна быть не более 1 минуты');
+    errorToast(FILE_SENDING_ERROR_COPY.videoDurationExceeded);
     return null;
   }
 
@@ -358,7 +365,7 @@ async function compressVideo(fileSrc: MediaSource, control?: MediaUploadControl)
   const compressedMetadata = await getVideoMetaData(String(compressedFile));
   if (control?.signal?.aborted) return null;
   if (compressedMetadata.size > MAX_MEDIA_FILE_SIZE) {
-    errorToast('Размер видео должен быть не более 50 МБ');
+    errorToast(FILE_SENDING_ERROR_COPY.videoSizeExceeded);
     return null;
   }
 

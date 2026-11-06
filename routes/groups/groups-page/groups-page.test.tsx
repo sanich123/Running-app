@@ -129,7 +129,7 @@ describe('GroupsPage', () => {
     await renderWithProviders(<GroupsPage />);
     const user = userEvent.setup();
 
-    await user.press(screen.getByText('My groups'));
+    await user.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].myGroups));
     await user.press(screen.getByTestId('groups-sport-filter'));
     await user.press(screen.getByTestId('groups-sport-filter-walk'));
     await waitFor(() =>
@@ -159,7 +159,7 @@ describe('GroupsPage', () => {
       refetch: jest.fn(),
     });
     await renderWithProviders(<GroupsPage />);
-    await userEvent.press(screen.getByText('My groups'));
+    await userEvent.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].myGroups));
 
     expect(screen.getByText(GROUP_FIXTURE.name)).toBeOnTheScreen();
     expect(screen.queryByText(pendingGroup.name)).toBeNull();
@@ -178,7 +178,7 @@ describe('GroupsPage', () => {
     await renderWithProviders(<GroupsPage />);
 
     expect(screen.getByText('503, Service unavailable')).toBeOnTheScreen();
-    fireEvent.press(screen.getByText('Retry'));
+    fireEvent.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].retry));
     expect(refetch).toHaveBeenCalledTimes(1);
   });
 
@@ -197,7 +197,7 @@ describe('GroupsPage', () => {
     await waitFor(() =>
       expect(mockGetGroupsQuery).toHaveBeenLastCalledWith({ scope: 'all', search: 'unknown', sport: undefined }),
     );
-    expect(screen.getByText('No groups found')).toBeOnTheScreen();
+    expect(screen.getByText(GROUPS_COPY[LANGUAGES.english].noResults)).toBeOnTheScreen();
     await user.press(screen.getByTestId('clear-groups-search'));
     await waitFor(() =>
       expect(mockGetGroupsQuery).toHaveBeenLastCalledWith({ scope: 'all', search: '', sport: undefined }),
@@ -235,11 +235,13 @@ describe('GroupsPage', () => {
     await renderWithProviders(<GroupsPage />);
     const user = userEvent.setup();
 
-    expect(screen.getByText('Все')).toBeOnTheScreen();
+    expect(screen.getByText(GROUPS_COPY[LANGUAGES.russian].allActivities)).toBeOnTheScreen();
     await user.press(screen.getByTestId('groups-sport-filter'));
     const walkFilter = screen.getByTestId('groups-sport-filter-walk');
     await user.press(walkFilter);
-    await waitFor(() => expect(screen.getByTestId('groups-sport-filter').props.accessibilityLabel).toBe('Ходьба'));
+    await waitFor(() =>
+      expect(screen.getByTestId('groups-sport-filter').props.accessibilityLabel).toBe(GROUP_SPORT_LABELS.walk.ru),
+    );
     await waitFor(() =>
       expect(mockGetGroupsQuery).toHaveBeenLastCalledWith({ scope: 'all', search: '', sport: 'walk' }),
     );
@@ -266,7 +268,7 @@ describe('GroupsPage', () => {
     await renderWithProviders(<GroupsPage />);
 
     expect(screen.getByText('500, Внутренняя ошибка')).toBeOnTheScreen();
-    fireEvent.press(screen.getByText('Повторить'));
+    fireEvent.press(screen.getByText(GROUPS_COPY[LANGUAGES.russian].retry));
     expect(refetch).toHaveBeenCalledTimes(1);
   });
 });

@@ -1,4 +1,5 @@
 import { errorToast } from '@S/error-toast/error-toast';
+import { MIGRATION_ERROR_COPY } from './const';
 import { sendArchiveToServer, sendArchiveToServerWeb, MigrationArchiveCancelledError } from './send-tools';
 
 jest.mock('@S/error-toast/error-toast', () => ({ errorToast: jest.fn() }));
@@ -215,9 +216,13 @@ describe('Strava archive upload transport', () => {
     xhr.responseText = JSON.stringify({ message: 'Размер архива превышает допустимый лимит' });
     xhr.onload?.();
 
-    await expect(promise).rejects.toThrow('Ошибка передачи архива: Размер архива превышает допустимый лимит');
-    expect(setIsError).toHaveBeenCalledWith('Ошибка передачи архива: Размер архива превышает допустимый лимит');
-    expect(errorToast).toHaveBeenCalledWith('Ошибка передачи архива', expect.any(Error));
+    await expect(promise).rejects.toThrow(
+      `${MIGRATION_ERROR_COPY.archiveTransferPrefix}: Размер архива превышает допустимый лимит`,
+    );
+    expect(setIsError).toHaveBeenCalledWith(
+      `${MIGRATION_ERROR_COPY.archiveTransferPrefix}: Размер архива превышает допустимый лимит`,
+    );
+    expect(errorToast).toHaveBeenCalledWith(MIGRATION_ERROR_COPY.archiveTransfer, expect.any(Error));
   });
 
   it('uses the HTTP status when the job-start response is not JSON', async () => {
@@ -239,8 +244,8 @@ describe('Strava archive upload transport', () => {
       accessToken: 'access-token',
     });
 
-    await expect(promise).rejects.toThrow('Ошибка передачи архива: Сервер вернул статус 503');
-    expect(setIsError).toHaveBeenCalledWith('Ошибка передачи архива: Сервер вернул статус 503');
+    await expect(promise).rejects.toThrow(`${MIGRATION_ERROR_COPY.archiveTransferPrefix}: Сервер вернул статус 503`);
+    expect(setIsError).toHaveBeenCalledWith(`${MIGRATION_ERROR_COPY.archiveTransferPrefix}: Сервер вернул статус 503`);
     expect(setIsSendingArchive).toHaveBeenLastCalledWith(false);
     expect(setIsWaitingForServer).toHaveBeenLastCalledWith(false);
     expect(setUploadProgress).toHaveBeenCalledWith(0);
@@ -296,9 +301,13 @@ describe('Strava archive upload transport', () => {
     xhr.upload.onprogress?.({ lengthComputable: true, loaded: 40, total: 100 } as ProgressEvent);
     xhr.ontimeout?.();
 
-    await expect(promise).rejects.toThrow('Ошибка передачи архива: Истекло время ожидания загрузки архива');
-    expect(setIsError).toHaveBeenCalledWith('Ошибка передачи архива: Истекло время ожидания загрузки архива');
-    expect(errorToast).toHaveBeenCalledWith('Ошибка передачи архива', expect.any(Error));
+    await expect(promise).rejects.toThrow(
+      `${MIGRATION_ERROR_COPY.archiveTransferPrefix}: Истекло время ожидания загрузки архива`,
+    );
+    expect(setIsError).toHaveBeenCalledWith(
+      `${MIGRATION_ERROR_COPY.archiveTransferPrefix}: Истекло время ожидания загрузки архива`,
+    );
+    expect(errorToast).toHaveBeenCalledWith(MIGRATION_ERROR_COPY.archiveTransfer, expect.any(Error));
   });
 
   it('rejects a successful upload response without a migration job id', async () => {
@@ -324,8 +333,12 @@ describe('Strava archive upload transport', () => {
     xhr.responseText = '{}';
     xhr.onload?.();
 
-    await expect(promise).rejects.toThrow('Ошибка передачи архива: Сервер не вернул идентификатор задачи миграции');
-    expect(setIsError).toHaveBeenCalledWith('Ошибка передачи архива: Сервер не вернул идентификатор задачи миграции');
+    await expect(promise).rejects.toThrow(
+      `${MIGRATION_ERROR_COPY.archiveTransferPrefix}: Сервер не вернул идентификатор задачи миграции`,
+    );
+    expect(setIsError).toHaveBeenCalledWith(
+      `${MIGRATION_ERROR_COPY.archiveTransferPrefix}: Сервер не вернул идентификатор задачи миграции`,
+    );
   });
 
   it('joins server validation messages and falls back to the status when no message is present', async () => {

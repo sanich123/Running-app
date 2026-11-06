@@ -1,4 +1,4 @@
-import { screen, userEvent } from '@testing-library/react-native';
+import { act, screen, userEvent } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
 import {
   setIsAppShuted,
@@ -9,7 +9,7 @@ import {
 import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { ACTIVITY_ERROR_MSG } from './const';
+import { ACTIVITY_ERROR_MSG, NO_SPEED_ALERT_TIME } from './const';
 import ActivityErrorMsg from './error-msg';
 
 describe('Activity-error-msg', () => {
@@ -23,6 +23,27 @@ describe('Activity-error-msg', () => {
     expect(screen.getByText(/12:34:56/)).toBeOnTheScreen();
     await user.press(screen.getByTestId('dismiss-too-much-speed'));
     expect(screen.queryByTestId('dismiss-too-much-speed')).not.toBeOnTheScreen();
+  });
+
+  it('formats the abnormal point time for English', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
+    mockStore.dispatch(setIsTooMuchSpeed(true));
+    mockStore.dispatch(setTooMuchSpeed(60));
+    mockStore.dispatch(setTooMuchSpeedTimestamp(new Date(2026, 7, 16, 12, 34, 56).getTime()));
+    await renderWithProviders(<ActivityErrorMsg />, { store: mockStore });
+
+    expect(screen.getByText(/12:34:56/)).toBeOnTheScreen();
+
+    act(() => mockStore.dispatch(changeLanguage(LANGUAGES.russian)));
+  });
+
+  it('shows a placeholder when the abnormal point has no timestamp', async () => {
+    mockStore.dispatch(setIsTooMuchSpeed(true));
+    mockStore.dispatch(setTooMuchSpeed(60));
+    mockStore.dispatch(setTooMuchSpeedTimestamp(null));
+    await renderWithProviders(<ActivityErrorMsg />, { store: mockStore });
+
+    expect(screen.getByText(new RegExp(NO_SPEED_ALERT_TIME))).toBeOnTheScreen();
   });
 
   it('should correctly render error message in russian, when initially', async () => {

@@ -7,7 +7,7 @@ import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import GroupEventForm from './group-event-form';
-import { GROUPS_COPY } from '../../const';
+import { GROUPS_COPY, GROUP_SPORT_LABELS } from '../../const';
 
 const mockCreateEvent = jest.fn();
 const mockErrorToast = jest.fn();
@@ -125,7 +125,7 @@ describe('GroupEventForm', () => {
     await renderWithProviders(<GroupEventForm groupId="group-1" groupSports={['run']} copy={copy} />);
 
     expect(screen.queryByText(copy.eventSport)).not.toBeOnTheScreen();
-    expect(screen.queryByText('Running')).not.toBeOnTheScreen();
+    expect(screen.queryByText(GROUP_SPORT_LABELS.run.en)).not.toBeOnTheScreen();
   });
 
   it('uses the first group sport for an event when the group supports multiple sports', async () => {

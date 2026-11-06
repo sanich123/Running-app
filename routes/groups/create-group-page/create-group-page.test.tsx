@@ -76,7 +76,7 @@ describe('CreateGroupPage', () => {
     const user = userEvent.setup();
 
     await user.press(screen.getByTestId('create-group-submit'));
-    expect(mockErrorToast).toHaveBeenCalledWith('Enter a group name');
+    expect(mockErrorToast).toHaveBeenCalledWith(GROUPS_COPY[LANGUAGES.english].nameRequired);
     expect(mockCreateGroup).not.toHaveBeenCalled();
   });
 
@@ -100,7 +100,7 @@ describe('CreateGroupPage', () => {
         }),
       ),
     );
-    expect(mockErrorToast).toHaveBeenCalledWith('Could not save changes', expect.any(Error));
+    expect(mockErrorToast).toHaveBeenCalledWith(GROUPS_COPY[LANGUAGES.english].saveError, expect.any(Error));
   });
 
   it('disables submission while the create request is loading', async () => {
@@ -144,12 +144,12 @@ describe('CreateGroupPage', () => {
     await renderWithProviders(<CreateGroupPage />);
     const user = userEvent.setup();
 
-    await user.press(screen.getByLabelText('Add photo'));
+    await user.press(screen.getByLabelText(GROUPS_COPY[LANGUAGES.english].addPhoto));
     await waitFor(() =>
       expect(mockUploadMediaFile).toHaveBeenCalledWith('file:///compressed-group-photo.jpg', { scope: 'group' }),
     );
     await user.type(screen.getByTestId('group-name-input'), 'Global running team');
-    await user.press(screen.getByText('This group is for everyone, everywhere'));
+    await user.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].worldwide));
     await user.press(screen.getByTestId('create-group-submit'));
 
     await waitFor(() =>
@@ -173,10 +173,10 @@ describe('CreateGroupPage', () => {
     await renderWithProviders(<CreateGroupPage />);
     const user = userEvent.setup();
 
-    await user.press(screen.getByLabelText('Add photo'));
+    await user.press(screen.getByLabelText(GROUPS_COPY[LANGUAGES.english].addPhoto));
     await user.type(screen.getByTestId('group-name-input'), 'City runners');
     await waitFor(() =>
-      expect(mockErrorToast).toHaveBeenCalledWith('Could not upload the group photo', expect.any(Error)),
+      expect(mockErrorToast).toHaveBeenCalledWith(GROUPS_COPY[LANGUAGES.english].photoUploadError, expect.any(Error)),
     );
     expect(screen.getByTestId('create-group-submit')).not.toBeDisabled();
     expect(mockCreateGroup).not.toHaveBeenCalled();

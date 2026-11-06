@@ -1,7 +1,8 @@
 import isEmail from 'validator/lib/isEmail';
 import type { InputModeOptions, ReturnKeyTypeOptions } from 'react-native';
 import type { Control, FieldValues, Path, PathValue, ValidateResult } from 'react-hook-form';
-import { LANGUAGES } from '@const/enums';
+import { CUSTOM_TEXT_INPUT_VALIDATION_COPY } from './const';
+import type { LANGUAGES } from '@const/enums';
 export interface CustomTextInputProps<T extends FieldValues> {
   label?: string;
   control?: Control<T>;
@@ -90,27 +91,24 @@ export interface CustomTextInputProps<T extends FieldValues> {
   compact?: boolean;
 }
 
-export const getPasswordValidation = (language: LANGUAGES) => ({
-  required: language === LANGUAGES.english ? 'Required' : 'Обязательно для заполнения',
-  validate: (value: string) => {
-    if (value.match(/[а-яёА-ЯЁ]/)) {
-      return language === LANGUAGES.english
-        ? 'Password must contain Latin characters only'
-        : 'Пароль должен состоять только из латинских символов';
-    }
-    if (value.length < 8) {
-      return language === LANGUAGES.english
-        ? 'Password must be at least 8 characters long'
-        : 'Длина пароля должна быть не менее 8 символов';
-    }
-    if (value.length >= 32) {
-      return language === LANGUAGES.english
-        ? 'Password must be no more than 32 characters long'
-        : 'Длина пароля должна быть не более 32 символов';
-    }
-    return true;
-  },
-});
+export const getPasswordValidation = (language: LANGUAGES) => {
+  const copy = CUSTOM_TEXT_INPUT_VALIDATION_COPY[language];
+  return {
+    required: copy.required,
+    validate: (value: string) => {
+      if (value.match(/[а-яёА-ЯЁ]/)) {
+        return copy.passwordLatinOnly;
+      }
+      if (value.length < 8) {
+        return copy.passwordMinimumLength;
+      }
+      if (value.length >= 32) {
+        return copy.passwordMaximumLength;
+      }
+      return true;
+    },
+  };
+};
 
 const RUSSIAN_EMAIL_DOMAIN_SUFFIXES = ['.ru', '.рф', '.xn--p1ai'] as const;
 
@@ -123,17 +121,18 @@ export function isRussianEmailAddress(email: string) {
   return RUSSIAN_EMAIL_DOMAIN_SUFFIXES.some((suffix) => domain.endsWith(suffix));
 }
 
-export const getEmailValidation = (language: LANGUAGES) => ({
-  required: language === LANGUAGES.english ? 'Required' : 'Обязательно для заполнения',
-  validate: (value: string) => {
-    if (!isEmail(value)) {
-      return language === LANGUAGES.english
-        ? 'Enter a valid email address'
-        : 'Адрес электронной почты должен быть правильным';
-    }
-    return true;
-  },
-});
+export const getEmailValidation = (language: LANGUAGES) => {
+  const copy = CUSTOM_TEXT_INPUT_VALIDATION_COPY[language];
+  return {
+    required: copy.required,
+    validate: (value: string) => {
+      if (!isEmail(value)) {
+        return copy.invalidEmail;
+      }
+      return true;
+    },
+  };
+};
 
 export const getRegistrationEmailValidation = (language: LANGUAGES) => {
   const validation = getEmailValidation(language);
@@ -143,9 +142,7 @@ export const getRegistrationEmailValidation = (language: LANGUAGES) => {
       const emailError = validation.validate(value);
       if (emailError !== true) return emailError;
       if (!isRussianEmailAddress(value)) {
-        return language === LANGUAGES.english
-          ? 'For registration, use an email address from a Russian provider (.ru or .рф)'
-          : 'Для регистрации используйте адрес российского почтового оператора (.ru или .рф)';
+        return CUSTOM_TEXT_INPUT_VALIDATION_COPY[language].russianProviderRequired;
       }
       return true;
     },

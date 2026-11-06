@@ -1,6 +1,7 @@
 import { File as ExpoFile } from 'expo-file-system';
 import { fetch as nitroFetch } from 'react-native-nitro-fetch';
 import { errorToast } from '@S/error-toast/error-toast';
+import { MIGRATION_ERROR_COPY } from './const';
 import {
   nativeArchiveUploadTransport,
   webArchiveUploadTransport,
@@ -16,7 +17,7 @@ const activeUploadCancellers = new Map<string, () => void>();
 
 class MigrationArchiveTransferError extends Error {
   constructor(message: string) {
-    super(`Ошибка передачи архива: ${message}`);
+    super(`${MIGRATION_ERROR_COPY.archiveTransferPrefix}: ${message}`);
     this.name = 'MigrationArchiveTransferError';
   }
 }
@@ -123,7 +124,7 @@ async function sendArchive({ totalBytes, transport, fileUri, file, ...options }:
       ? error
       : new MigrationArchiveTransferError(getMigrationErrorMessage(error));
     options.setIsError(transferError.message);
-    errorToast('Ошибка передачи архива', transferError);
+    errorToast(MIGRATION_ERROR_COPY.archiveTransfer, transferError);
     throw transferError;
   } finally {
     if (jobId) activeUploadCancellers.delete(jobId);

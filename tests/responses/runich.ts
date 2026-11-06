@@ -28,6 +28,37 @@ export const MOCK_SERVER_PROFILE = {
   id: '70b1b296-e364-4638-87a6-516d537d5cdc',
 } as const;
 
+export const MOCK_SERVER_SUBSCRIPTION = {
+  userId: 'user-123',
+  isPremium: true,
+  status: 'active',
+  provider: null,
+  productId: null,
+  startsAt: '2026-01-01T00:00:00.000Z',
+  expiresAt: '2027-01-01T00:00:00.000Z',
+  cancelAtPeriodEnd: false,
+} as const;
+
+export const MOCK_SERVER_MIGRATION_JOB = {
+  jobId: 'completed-job',
+  status: 'completed',
+  uploadBytesReceived: 100,
+  uploadBytesTotal: 100,
+  queuePosition: null,
+  queueAhead: 0,
+  queueSize: 0,
+  totalActivities: 2,
+  processedActivities: 2,
+  importedActivities: 2,
+  skippedActivities: 0,
+  errorMessage: null,
+  createdAt: '2026-10-18T10:00:00.000Z',
+  startedAt: '2026-10-18T10:00:00.000Z',
+  finishedAt: '2026-10-18T10:01:00.000Z',
+} as const;
+
+export const MOCK_SERVER_NOTIFICATION_UNREAD_COUNT = { count: 3 } as const;
+
 export const MOCK_SERVER_ACTIVITY = {
   description: 'Mock activity for the Runich feed',
   title: 'Tempo run #2',
@@ -98,6 +129,19 @@ export const MOCK_SERVER_LOCATIONS = {
     },
   ],
   kilometresSplit: [],
+} as const;
+
+export const MOCK_SERVER_CHART_DATA = {
+  locations: [
+    { timestamp: 1_000, coords: { latitude: 0, longitude: 0, altitude: 100, timestamp: 1_000 } },
+    { timestamp: 121_000, coords: { latitude: 0, longitude: 0.005, altitude: 110, timestamp: 121_000 } },
+    { timestamp: 241_000, coords: { latitude: 0, longitude: 0.01, altitude: 120, timestamp: 241_000 } },
+  ],
+  heartRateSamples: [
+    { timestamp: 1_000, beatsPerMinute: 110 },
+    { timestamp: 121_000, beatsPerMinute: 130 },
+    { timestamp: 241_000, beatsPerMinute: 150 },
+  ],
 } as const;
 
 export const MOCK_SERVER_LIKES = [

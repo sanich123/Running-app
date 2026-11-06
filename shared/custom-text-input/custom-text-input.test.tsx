@@ -1,8 +1,10 @@
 import { act, fireEvent, screen, userEvent } from '@testing-library/react-native';
 import { useForm } from 'react-hook-form';
+import { LANGUAGES } from '@const/enums';
 import { setIsDisabledWhenLogining } from '@R/slices/logining/logining';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { CUSTOM_TEXT_INPUT_VALIDATION_COPY } from './const';
 import CustomTextInput from './custom-text-input';
 
 function TextInputHarness({
@@ -93,7 +95,7 @@ describe('custom text input', () => {
 
     await fireEvent.changeText(input, '');
 
-    expect(await screen.findByText('Обязательно для заполнения')).toBeOnTheScreen();
+    expect(await screen.findByText(CUSTOM_TEXT_INPUT_VALIDATION_COPY[LANGUAGES.russian].required)).toBeOnTheScreen();
   });
 
   it('supports a standalone placeholder without a field label', async () => {

@@ -16,7 +16,13 @@ import {
 } from '@U/location/location-journal';
 import { getLocationProvider, stripLocationProvider } from '@U/location/location-provider';
 import { getMetricsTaskManager, saveMetricsToStoreTaskManager } from './utils';
-import { BACKGROUND_NOTIFICATION, DISTANCE_INTERVAL, LOCATION_TRACKING, TIME_INTERVAL } from '../const';
+import {
+  BACKGROUND_LOCATION_ERROR_COPY,
+  BACKGROUND_NOTIFICATION,
+  DISTANCE_INTERVAL,
+  LOCATION_TRACKING,
+  TIME_INTERVAL,
+} from '../const';
 import type { TaskManagerLocationEvent } from '../const';
 import type { LocationObject } from 'expo-location';
 
@@ -143,7 +149,7 @@ export async function stopLocationTracking() {
 
 TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLocationEvent) => {
   if (error) {
-    return errorToast('Ошибка фонового отслеживания геопозиции', error);
+    return errorToast(BACKGROUND_LOCATION_ERROR_COPY.taskFailed, error);
   }
 
   if (!data?.locations?.length) {

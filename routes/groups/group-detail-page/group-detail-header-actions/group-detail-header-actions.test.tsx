@@ -1,22 +1,23 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
+import { http, HttpResponse } from 'msw';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
-import { mockStore } from '@T/utils/mock-store';
+import { BASE_URL } from '@T/utils/handlers';
+import { createMockStore } from '@T/utils/mock-store';
+import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import GroupDetailHeaderActions from './group-detail-header-actions';
 import { GROUPS_COPY } from '../../const';
 import { GROUP_FIXTURE } from '../../test-fixtures';
 import type { GroupDetails } from '@R/services/groups/types';
+import type { AppStore } from '@T/utils/mock-store';
 
-const mockDeleteGroup = jest.fn();
-const mockDeleteMutation = jest.fn();
 const mockPush = jest.fn();
 const mockReplace = jest.fn();
 const mockSuccessToast = jest.fn();
 const mockErrorToast = jest.fn();
 
 jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush, replace: mockReplace }) }));
-jest.mock('@R/services/groups/groups', () => ({ useDeleteGroupMutation: () => mockDeleteMutation() }));
 jest.mock('@S/success-toast/success-toast', () => ({
   successToast: (...args: unknown[]) => mockSuccessToast(...args),
 }));
@@ -31,17 +32,24 @@ const group: GroupDetails = {
   canManage: true,
   pendingRequestCount: 2,
 };
+let groupStore: AppStore;
 
 describe('GroupDetailHeaderActions', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockStore.dispatch(changeLanguage(LANGUAGES.english));
-    mockDeleteGroup.mockReturnValue({ unwrap: jest.fn().mockResolvedValue(undefined) });
-    mockDeleteMutation.mockReturnValue([mockDeleteGroup, { isLoading: false }]);
+    groupStore = createMockStore();
+    groupStore.dispatch(changeLanguage(LANGUAGES.english));
   });
 
   it('shows closed-group requests and deletes a group from its menu', async () => {
-    await renderWithProviders(<GroupDetailHeaderActions group={group} isActiveMember />);
+    let deletedGroupId: string | undefined;
+    server.use(
+      http.delete(`${BASE_URL}/groups/${group.id}`, () => {
+        deletedGroupId = group.id;
+        return new HttpResponse(null, { status: 204 });
+      }),
+    );
+    await renderWithProviders(<GroupDetailHeaderActions group={group} isActiveMember />, { store: groupStore });
     const user = userEvent.setup();
     const copy = GROUPS_COPY[LANGUAGES.english];
 
@@ -54,7 +62,7 @@ describe('GroupDetailHeaderActions', () => {
     await user.press(screen.getByText(copy.deleteGroupConfirm));
 
     await waitFor(() => {
-      expect(mockDeleteGroup).toHaveBeenCalledWith(group.id);
+      expect(deletedGroupId).toBe(group.id);
       expect(mockReplace).toHaveBeenCalledWith('/groups');
     });
     expect(mockPush).toHaveBeenCalledWith(`/groups/${group.id}/requests`);
@@ -63,7 +71,9 @@ describe('GroupDetailHeaderActions', () => {
   });
 
   it('hides join requests for open groups', async () => {
-    await renderWithProviders(<GroupDetailHeaderActions group={{ ...group, privacy: 'open' }} isActiveMember />);
+    await renderWithProviders(<GroupDetailHeaderActions group={{ ...group, privacy: 'open' }} isActiveMember />, {
+      store: groupStore,
+    });
 
     expect(screen.queryByLabelText(GROUPS_COPY[LANGUAGES.english].manageRequests)).toBeNull();
   });

@@ -1,8 +1,10 @@
 import type React from 'react';
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
+import { LANGUAGES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { listSavedOfflineMaps } from '@U/offline-map-library';
 import OfflineMapPage from './offline-map-page';
+import { MAPS_PAGE_COPY } from '../const';
 
 const mockGetPack = jest.fn();
 const mockBack = jest.fn();
@@ -88,7 +90,7 @@ describe('OfflineMapPage', () => {
     mockGetPack.mockResolvedValue(undefined);
     await renderWithProviders(<OfflineMapPage />);
 
-    expect(await screen.findByText('Не удалось открыть офлайн-карту')).toBeOnTheScreen();
-    expect(mockErrorToast).toHaveBeenCalledWith('Не удалось открыть офлайн-карту', expect.any(Error));
+    expect(await screen.findByText(MAPS_PAGE_COPY[LANGUAGES.russian].mapOpenFailed)).toBeOnTheScreen();
+    expect(mockErrorToast).toHaveBeenCalledWith(MAPS_PAGE_COPY[LANGUAGES.russian].mapOpenFailed, expect.any(Error));
   });
 });

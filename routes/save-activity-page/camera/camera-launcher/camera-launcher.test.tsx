@@ -1,6 +1,8 @@
 import { screen } from '@testing-library/react-native';
+import { LANGUAGES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
 import CameraLauncher from './camera-launcher';
+import { CAMERA_TEXT } from '../const';
 import type * as MockNativeViewTools from '@T/utils/mock-native-view';
 import type { MockNativeViewProps } from '@T/utils/mock-native-view';
 
@@ -21,7 +23,7 @@ describe('camera', () => {
 
   it('shows a permission loader while camera permission is being resolved', async () => {
     await renderWithProviders(<CameraLauncher />);
-    expect(screen.getByText('Подготавливаем камеру…')).toBeOnTheScreen();
+    expect(screen.getByText(CAMERA_TEXT[LANGUAGES.russian].permissionLoading)).toBeOnTheScreen();
   });
 
   it('shows the camera controls after permission is granted', async () => {

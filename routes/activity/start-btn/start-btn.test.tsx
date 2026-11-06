@@ -11,6 +11,7 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import * as initialPosition from '@U/get-initial-position';
 import * as backgroundLocation from '@U/location/expo-task-manager/background-location';
 import * as pedometer from '@U/pedometer/pedometer';
+import { ACTIVITY_TRACKING_ERROR_COPY } from '../const';
 import { ACTIVITY_START_BTN, ACTIVITY_START_BTN_TEST_ID } from './const';
 import ActivityStartBtn from './start-btn';
 
@@ -182,7 +183,7 @@ describe('Activity start btn', () => {
     await renderWithProviders(<ActivityStartBtn isReadyToRecordLocation />);
     await userEvent.press(screen.getByTestId(ACTIVITY_START_BTN_TEST_ID));
 
-    await waitFor(() => expect(errorToast).toHaveBeenCalledWith('Не удалось запустить отслеживание геопозиции', error));
+    await waitFor(() => expect(errorToast).toHaveBeenCalledWith(ACTIVITY_TRACKING_ERROR_COPY.start, error));
     expect(mockStore.getState().location.activityStatus).toBe(STATUSES.initial);
   });
 });

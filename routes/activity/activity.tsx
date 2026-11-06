@@ -29,9 +29,9 @@ export default function Activity() {
     <>
       <Stack.Screen
         options={{
-          headerTransparent: true,
+          headerTransparent: isMapVisible,
           headerShadowVisible: false,
-          headerStyle: { backgroundColor: 'transparent' },
+          headerStyle: { backgroundColor: isMapVisible ? 'transparent' : colors.surfaceVariant },
           headerLeft: () => <CloseBtn />,
           headerRight: () => (
             <View style={[styles.headerActions, Platform.OS === 'ios' && styles.iosHeaderActions]}>
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   map: {
-    height: Platform.OS === 'ios' ? '80%' : '75%',
+    height: Platform.OS === 'ios' ? '83%' : '78%',
     width: '100%',
   },
   mapLayer: {
@@ -103,12 +103,12 @@ const styles = StyleSheet.create({
     opacity: 0,
   },
   metricsLayout: {
-    height: Platform.OS === 'ios' ? '20%' : '25%',
+    height: Platform.OS === 'ios' ? '17%' : '22%',
     width: '100%',
     paddingHorizontal: 18,
     paddingTop: 16,
     paddingBottom: 8,
-    marginTop: 8,
+    marginTop: 4,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
   },
