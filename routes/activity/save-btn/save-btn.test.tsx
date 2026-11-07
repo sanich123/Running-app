@@ -48,6 +48,7 @@ function createFinishedActivityDraft(routeLocations = [MOCK_LOCATION], routeJour
 }
 
 const mockBack = jest.fn();
+const mockDismissTo = jest.fn();
 const mockReplace = jest.fn();
 let mockManualActivityMode = 'tracked';
 let mockManualActivityId = 'someId';
@@ -63,7 +64,7 @@ let mockManualActivityParams = {
 };
 jest.mock('expo-router', () => ({
   router: { replace: jest.fn() },
-  useRouter: () => ({ back: mockBack, replace: mockReplace }),
+  useRouter: () => ({ back: mockBack, dismissTo: mockDismissTo, replace: mockReplace }),
   useLocalSearchParams: () => mockManualActivityParams,
   useGlobalSearchParams: () => mockManualActivityParams,
 }));
@@ -74,6 +75,7 @@ describe('Activity save btn', () => {
     mockStore.dispatch(resetActivityDraft());
     mockStore.dispatch(resetFinishedActivity());
     mockBack.mockClear();
+    mockDismissTo.mockClear();
     mockReplace.mockClear();
     jest.mocked(errorToast).mockClear();
     mockStore.dispatch(clearUnsyncedActivities());
@@ -279,7 +281,7 @@ describe('Activity save btn', () => {
     await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
     await userEvent.press(screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID));
 
-    await waitFor(() => expect(mockReplace).toHaveBeenCalledWith(ROUTES.root));
+    await waitFor(() => expect(mockDismissTo).toHaveBeenCalledWith(ROUTES.root));
     await act(async () => {
       jest.advanceTimersByTime(0);
       await Promise.resolve();
@@ -321,7 +323,7 @@ describe('Activity save btn', () => {
       resolveActivitySave(HttpResponse.json({ id: 'saved-activity-id' }, { status: 201 }));
       await Promise.resolve();
     });
-    await waitFor(() => expect(mockReplace).toHaveBeenCalledWith(ROUTES.root));
+    await waitFor(() => expect(mockDismissTo).toHaveBeenCalledWith(ROUTES.root));
     await act(async () => {
       jest.advanceTimersByTime(0);
       await Promise.resolve();
@@ -331,7 +333,7 @@ describe('Activity save btn', () => {
     expect(mockStore.getState().activity.pendingRawRouteUploads).toHaveLength(0);
   });
 
-  it('returns to the previous screen after saving a manual activity', async () => {
+  it('returns to the feed after saving a manual activity', async () => {
     mockStore.dispatch(setMockUserId('someUserId'));
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     mockManualActivityMode = 'manual';
@@ -345,7 +347,7 @@ describe('Activity save btn', () => {
     await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
     expect(screen.getByText(ACTIVITY_SAVE_BTN.russian.save)).toBeOnTheScreen();
     await userEvent.press(screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID));
-    await waitFor(() => expect(mockBack).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(mockDismissTo).toHaveBeenCalledWith(ROUTES.root));
   });
 
   it('returns to the feed after saving a tracked activity', async () => {
@@ -360,7 +362,7 @@ describe('Activity save btn', () => {
     await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
     expect(screen.getByText(ACTIVITY_SAVE_BTN.russian.save)).toBeOnTheScreen();
     await userEvent.press(screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID));
-    await waitFor(() => expect(mockReplace).toHaveBeenCalledWith(ROUTES.root));
+    await waitFor(() => expect(mockDismissTo).toHaveBeenCalledWith(ROUTES.root));
   });
 
   it('sends the recorded steps in a tracked activity payload', async () => {
@@ -435,7 +437,7 @@ describe('Activity save btn', () => {
     await renderWithProviders(<ActivitySaveBtn />, { store: mockStore });
 
     await userEvent.press(screen.getByTestId(ACTIVITY_SAVE_BTN_TEST_ID));
-    await waitFor(() => expect(mockReplace).toHaveBeenCalledWith(ROUTES.root));
+    await waitFor(() => expect(mockDismissTo).toHaveBeenCalledWith(ROUTES.root));
     expect((activityBody?.locations as unknown[]) ?? []).toHaveLength(MAX_SAVED_ROUTE_LOCATIONS);
 
     await act(async () => {

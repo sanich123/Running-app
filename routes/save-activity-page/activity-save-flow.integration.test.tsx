@@ -36,6 +36,7 @@ type RouteParams = Record<string, string>;
 jest.mock('expo-router', () => {
   const routeParams: Record<string, string> = {};
   const back = jest.fn();
+  const dismissTo = jest.fn();
   const replace = jest.fn();
   const push = jest.fn((route: { params?: Record<string, string> }) => {
     if (route.params) {
@@ -50,6 +51,7 @@ jest.mock('expo-router', () => {
     usePathname: () => `/activity/${routeParams.id ?? 'bad3520c-c795-439c-ae9b-474625b4b200'}`,
     useRouter: () => ({
       back,
+      dismissTo,
       replace,
       push,
       setParams: (params: Record<string, string>) => Object.assign(routeParams, params),
@@ -61,6 +63,7 @@ jest.mock('expo-router', () => {
       Object.assign(routeParams, params);
     },
     __back: back,
+    __dismissTo: dismissTo,
     __replace: replace,
     __push: push,
   };
@@ -87,11 +90,13 @@ const mockExpoRouter = jest.requireMock('expo-router') as {
   __getRouteParams: () => RouteParams;
   __setRouteParams: (params: RouteParams) => void;
   __back: jest.Mock;
+  __dismissTo: jest.Mock;
   __replace: jest.Mock;
   __push: jest.Mock;
 };
 const mockRouteParams = mockExpoRouter.__getRouteParams();
 const mockBack = mockExpoRouter.__back;
+const mockDismissTo = mockExpoRouter.__dismissTo;
 const mockReplace = mockExpoRouter.__replace;
 const mockPush = mockExpoRouter.__push;
 
@@ -207,6 +212,7 @@ describe('activity save flows', () => {
     resetActivityFlowState();
     setMockRouteParams({});
     mockBack.mockClear();
+    mockDismissTo.mockClear();
     mockReplace.mockClear();
     mockPush.mockClear();
     mockStartLocationTracking.mockClear();
@@ -262,7 +268,7 @@ describe('activity save flows', () => {
         speed: getSpeedInMinsInKm(12.5, duration).paceAsNumber,
         locations: [],
       });
-      expect(mockBack).toHaveBeenCalledTimes(1);
+      expect(mockDismissTo).toHaveBeenCalledWith('/');
     });
   });
 
@@ -337,7 +343,7 @@ describe('activity save flows', () => {
         latitude: MOCK_LOCATION.coords.latitude,
         longitude: MOCK_LOCATION.coords.longitude,
       });
-      expect(mockReplace).toHaveBeenCalledWith('/');
+      expect(mockDismissTo).toHaveBeenCalledWith('/');
     });
   });
 

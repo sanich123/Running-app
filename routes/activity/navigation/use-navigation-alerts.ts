@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as Haptics from 'expo-haptics';
+import { Platform } from 'react-native';
 import { LANGUAGES } from '@const/enums';
 import {
   getNavigationAlertDistanceMeters,
@@ -86,7 +87,11 @@ export default function useNavigationAlerts({
 
     if (shouldVibrate) {
       lastHapticAlertAt.current = alertTimestamp;
-      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => undefined);
+      const hapticAlert =
+        Platform.OS === 'android'
+          ? Haptics.performAndroidHapticsAsync(Haptics.AndroidHaptics.Long_Press)
+          : Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+      void hapticAlert.catch(() => undefined);
     }
     if (!shouldSpeak) return;
 

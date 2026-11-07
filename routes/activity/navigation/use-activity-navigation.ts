@@ -18,7 +18,7 @@ export default function useActivityNavigation(isLocationReady: boolean) {
     navigationAlertDistanceMeters,
     navigationAlertRepeatIntervalMinutes,
     navigationAlertsMuted,
-    navigationHapticsEnabled,
+    navigationHapticsEnabled = true,
   } = useAppSelector(({ activitySettings }) => activitySettings);
   const activitySettingsLabels = ACTIVITY_SETTINGS[language];
   const mapsPageCopy = MAPS_PAGE_COPY[language];
