@@ -5,7 +5,6 @@ import {
   setNavigationAlertDistanceMeters,
   setNavigationAlertRepeatIntervalMinutes,
   setNavigationAlertsMuted,
-  setNavigationHapticsEnabled,
 } from '@R/slices/activity-settings/activity-settings';
 import {
   getNavigationAlertDistanceMeters,
@@ -20,12 +19,9 @@ export default function NavigationSettingsPanel() {
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ settings }) => settings);
-  const {
-    navigationAlertDistanceMeters,
-    navigationAlertRepeatIntervalMinutes,
-    navigationAlertsMuted,
-    navigationHapticsEnabled,
-  } = useAppSelector(({ activitySettings }) => activitySettings);
+  const { navigationAlertDistanceMeters, navigationAlertRepeatIntervalMinutes, navigationAlertsMuted } = useAppSelector(
+    ({ activitySettings }) => activitySettings,
+  );
   const labels = NAVIGATION_SETTINGS_COPY[language];
   const alertDistance = getNavigationAlertDistanceMeters(navigationAlertDistanceMeters);
   const repeatInterval = getNavigationAlertRepeatIntervalMinutes(navigationAlertRepeatIntervalMinutes);
@@ -156,26 +152,6 @@ export default function NavigationSettingsPanel() {
         </View>
         <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
           {labels.voiceAlertsDescription}
-        </Text>
-      </View>
-      <Divider />
-      <View style={styles.alertsSetting}>
-        <View style={styles.alertsRow}>
-          <Text variant="titleSmall" style={{ color: colors.onSurface }}>
-            {labels.hapticAlertsTitle}
-          </Text>
-          <Switch
-            accessibilityLabel={labels.hapticAlertsTitle}
-            color={colors.primary}
-            value={navigationHapticsEnabled}
-            onValueChange={(enabled) => {
-              dispatch(setNavigationHapticsEnabled(enabled));
-            }}
-            testID="navigation-haptics-enabled"
-          />
-        </View>
-        <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
-          {labels.hapticAlertsDescription}
         </Text>
       </View>
     </View>

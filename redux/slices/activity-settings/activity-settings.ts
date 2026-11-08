@@ -26,9 +26,6 @@ const activitySettings = createSlice({
     setNavigationAlertsMuted: (state, action) => {
       state.navigationAlertsMuted = action.payload;
     },
-    setNavigationHapticsEnabled: (state, action) => {
-      state.navigationHapticsEnabled = action.payload;
-    },
     setSaveCameraPhotosToGallery: (state, action) => {
       state.saveCameraPhotosToGallery = action.payload;
     },
@@ -49,7 +46,6 @@ export const {
   setNavigationAlertDistanceMeters,
   setNavigationAlertRepeatIntervalMinutes,
   setNavigationAlertsMuted,
-  setNavigationHapticsEnabled,
   setSaveCameraPhotosToGallery,
   addActivityReminder,
   removeActivityReminder,

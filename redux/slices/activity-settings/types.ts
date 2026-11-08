@@ -49,7 +49,7 @@ export const ACTIVITY_SETTINGS_INITIAL_STATE: ActivitySettings = {
   navigationAlertDistanceMeters: DEFAULT_NAVIGATION_ALERT_DISTANCE_METERS,
   navigationAlertRepeatIntervalMinutes: DEFAULT_NAVIGATION_ALERT_REPEAT_INTERVAL_MINUTES,
   navigationAlertsMuted: false,
-  navigationHapticsEnabled: true,
+  navigationHapticsEnabled: false,
   saveCameraPhotosToGallery: false,
 };
 

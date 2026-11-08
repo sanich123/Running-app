@@ -29,7 +29,9 @@ describe('NavigationSettingsPanel', () => {
     expect(screen.getByText(NAVIGATION_SETTINGS_COPY[LANGUAGES.russian].title)).toBeOnTheScreen();
     expect(screen.getByTestId('navigation-alert-distance-value')).toHaveTextContent('50 м');
     expect(screen.getByTestId('navigation-alert-repeat-interval-value')).toHaveTextContent('1 мин');
+    expect(screen.queryByTestId('navigation-haptics-enabled')).toBeNull();
     expect(mockStore.getState().activitySettings.navigationAlertsMuted).toBe(false);
+    expect(mockStore.getState().activitySettings.navigationHapticsEnabled).toBe(false);
 
     await user.press(screen.getByTestId('increase-navigation-alert-distance'));
     expect(mockStore.getState().activitySettings.navigationAlertDistanceMeters).toBe(60);
