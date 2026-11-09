@@ -13,8 +13,6 @@ import { LABELS, ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { COLORS } from '@const/theme-colors';
 import { useAppSelector } from '@R/typed-hooks';
-import NotificationRuntime from '@Routes/notifications/notification-runtime/notification-runtime';
-import PushTokenRuntime from '@Routes/notifications/push-token-runtime/push-token-runtime';
 import HealthConnectAutoSync from '@Routes/watch-import/health-connect-auto-sync/health-connect-auto-sync';
 import FeedHeaderTitle from '@S/feed-header-title/feed-header-title';
 import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
@@ -22,6 +20,7 @@ import useAppInitialization from '@U/hooks/use-app-initialization';
 import BottomSheetProvider from '../bottom-sheet-provider/bottom-sheet-provider';
 import { LazyUsersSettingsIcons, PUBLIC_ROUTES } from '../const';
 import LazyHeader from '../lazy-header/lazy-header';
+import NATIVE_RUNTIMES from '../native-runtimes';
 import NavigationBar from '../navigation-bar/navigation-bar';
 import { getRootScreenContentStyle } from '../screen-content-style';
 import SubscriptionStatusRuntime from '../subscription-status-runtime/subscription-status-runtime';
@@ -59,8 +58,9 @@ export default function AppShell() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <KeyboardProvider>
-        <NotificationRuntime />
-        <PushTokenRuntime />
+        {NATIVE_RUNTIMES.map(({ id, component: Runtime }) => (
+          <Runtime key={id} />
+        ))}
         <StatusBar style="auto" />
         {Platform.OS === 'android' ? <NavigationBar /> : null}
         <PaperProvider
