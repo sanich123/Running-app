@@ -24,6 +24,7 @@ export default {
       typedRoutes: true,
       tsconfigPaths: true,
       reactCompiler: true,
+      chunking: { mode: 'granular' },
     },
     assetBundlePatterns: ['**/*'],
     ios: {
