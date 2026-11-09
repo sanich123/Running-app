@@ -1,3 +1,4 @@
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import {
   MaterialDesignIcons,
   type MaterialDesignIconsIconName,
@@ -15,9 +16,7 @@ import { COLORS } from '@const/theme-colors';
 import { useAppSelector } from '@R/typed-hooks';
 import HealthConnectAutoSync from '@Routes/watch-import/health-connect-auto-sync/health-connect-auto-sync';
 import FeedHeaderTitle from '@S/feed-header-title/feed-header-title';
-import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
 import useAppInitialization from '@U/hooks/use-app-initialization';
-import BottomSheetProvider from '../bottom-sheet-provider/bottom-sheet-provider';
 import { LazyUsersSettingsIcons, PUBLIC_ROUTES } from '../const';
 import LazyHeader from '../lazy-header/lazy-header';
 import NATIVE_RUNTIMES from '../native-runtimes';
@@ -79,9 +78,7 @@ export default function AppShell() {
               />
             ),
           }}>
-          <BottomSheetProvider
-            enabled={hasSession && !PUBLIC_ROUTES.has(pathname)}
-            fallback={<FullPageActivityLoader />}>
+          <BottomSheetModalProvider>
             <SubscriptionStatusRuntime />
             <HealthConnectAutoSync />
             <Stack
@@ -257,7 +254,7 @@ export default function AppShell() {
                 }}
               />
             </Stack>
-          </BottomSheetProvider>
+          </BottomSheetModalProvider>
         </PaperProvider>
       </KeyboardProvider>
     </GestureHandlerRootView>
