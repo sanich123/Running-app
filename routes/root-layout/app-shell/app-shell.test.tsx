@@ -144,6 +144,17 @@ describe('AppShell', () => {
     expect(screen.getByTestId('app-shell-sign-in-redirect')).toHaveProp('accessibilityLabel', `/${ROUTES.signIn}`);
   });
 
+  it('preserves the requested route when redirecting unauthenticated admin users', async () => {
+    mockPathname.mockReturnValue(`/${ROUTES.admin}`);
+
+    await render(<AppShell />);
+
+    expect(screen.getByTestId('app-shell-sign-in-redirect')).toHaveProp('accessibilityLabel', {
+      pathname: `/${ROUTES.signIn}`,
+      params: { returnTo: `/${ROUTES.admin}` },
+    });
+  });
+
   it('keeps a refresh-token session on private routes and applies the Android shell', async () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
     mockAppState.settings.theme = 'dark';
