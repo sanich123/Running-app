@@ -94,7 +94,7 @@ export default {
     },
     extra: {
       eas: { projectId: '413aa829-bbae-467c-9201-4688b894f2f7' },
-      yandexClientId: '9579493850f04422939ad16ef2be37ee',
+      yandexClientId: process.env.YANDEX_NATIVE_CLIENT_ID,
       vkIdClientId: process.env.VK_NATIVE_CLIENT_ID,
     },
     plugins: [
