@@ -115,7 +115,7 @@ export default {
           largeIcon: './assets/images/runich-logo.png',
         },
       ],
-      ['expo-router', { origin: ROUTER_ORIGIN }],
+      ['expo-router', { origin: ROUTER_ORIGIN, asyncRoutes: { web: false } }],
       'expo-font',
       'expo-video',
       'expo-secure-store',
