@@ -98,6 +98,7 @@ export function createMediaUploadFormData({
   formData.append('file', createUploadFile({ file, originalName, extension, isVideo, mimeType }) as never);
   if (uploadOptions.scope) formData.append('scope', uploadOptions.scope);
   if (uploadOptions.feedbackId) formData.append('feedbackId', uploadOptions.feedbackId);
+  if (uploadOptions.groupId) formData.append('groupId', uploadOptions.groupId);
   return formData;
 }
 

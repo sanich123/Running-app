@@ -1,6 +1,8 @@
 import { screen } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
+import { SPORTS_BTNS_VALUES } from '@const/sports';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { ACTIVITY_LABELS, VIDEO_BRAND_NAME, VIDEO_BRAND_UNAVAILABLE_METRIC } from './const';
 import VideoBrandOverlay from './video-brand-overlay';
 import type { ReplayCopy } from '../../types';
 
@@ -43,8 +45,8 @@ describe('video brand overlay', () => {
   it('renders Russian running metrics and formats elapsed time and pace', async () => {
     await renderWithProviders(<VideoBrandOverlay {...defaults} />);
 
-    expect(screen.getByText('RUNICH')).toBeOnTheScreen();
-    expect(screen.getByText('БЕГ')).toBeOnTheScreen();
+    expect(screen.getByText(VIDEO_BRAND_NAME)).toBeOnTheScreen();
+    expect(screen.getByText(ACTIVITY_LABELS[LANGUAGES.russian][SPORTS_BTNS_VALUES.run])).toBeOnTheScreen();
     expect(screen.getByText('1,25 км')).toBeOnTheScreen();
     expect(screen.getByText('1:02:03')).toBeOnTheScreen();
     expect(screen.getByText('6:40 мин/км')).toBeOnTheScreen();
@@ -74,7 +76,7 @@ describe('video brand overlay', () => {
       />,
     );
 
-    expect(screen.getByText('CYCLING')).toBeOnTheScreen();
+    expect(screen.getByText(ACTIVITY_LABELS[LANGUAGES.english][SPORTS_BTNS_VALUES.bike])).toBeOnTheScreen();
     expect(screen.getByText('12.00 km')).toBeOnTheScreen();
     expect(screen.getByText('10.8 km/h')).toBeOnTheScreen();
     expect(screen.getByText('1:02')).toBeOnTheScreen();
@@ -98,13 +100,13 @@ describe('video brand overlay', () => {
     expect(screen.getByText('YOGA')).toBeOnTheScreen();
     expect(screen.getByText('0.00 km')).toBeOnTheScreen();
     expect(screen.getByText('0:00')).toBeOnTheScreen();
-    expect(screen.getByText('—')).toBeOnTheScreen();
+    expect(screen.getByText(VIDEO_BRAND_UNAVAILABLE_METRIC)).toBeOnTheScreen();
   });
 
   it('uses the Russian default workout label when sport is missing', async () => {
     await renderWithProviders(<VideoBrandOverlay {...defaults} sport={undefined} currentSpeed={3} />);
 
-    expect(screen.getByText('ТРЕНИРОВКА')).toBeOnTheScreen();
+    expect(screen.getByText(ACTIVITY_LABELS[LANGUAGES.russian][SPORTS_BTNS_VALUES.workout])).toBeOnTheScreen();
     expect(screen.getByText('10,8 км/ч')).toBeOnTheScreen();
   });
 
@@ -120,7 +122,7 @@ describe('video brand overlay', () => {
       />,
     );
 
-    expect(screen.getByText('WORKOUT')).toBeOnTheScreen();
+    expect(screen.getByText(ACTIVITY_LABELS[LANGUAGES.english][SPORTS_BTNS_VALUES.workout])).toBeOnTheScreen();
     expect(screen.getByText('10.8 km/h')).toBeOnTheScreen();
     expect(screen.getByText(/2026/)).toBeOnTheScreen();
   });

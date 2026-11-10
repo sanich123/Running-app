@@ -44,6 +44,10 @@ export function useNotificationRuntime() {
         );
         dispatch(likesApi.util.invalidateTags([{ type: Tags.likes, id: data.targetId }]));
         router.push(`/${ROUTES.activity}/${data.targetId}` as never);
+      } else if (data.targetType === 'group-post' && typeof data.targetId === 'string') {
+        router.push(`/groups/${data.targetId}` as never);
+      } else if (data.targetType === 'group-event' && typeof data.targetId === 'string') {
+        router.push(`/groups/${data.targetId}?tab=events` as never);
       } else router.push(`/${ROUTES.notifications}` as never);
       Notifications.clearLastNotificationResponse();
     };

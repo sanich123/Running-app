@@ -1,8 +1,12 @@
 import * as Speech from 'expo-speech';
 import { SPORTS_BTNS_VALUES } from '@const/sports';
 import { setSport } from '@R/slices/activity/activity';
+import {
+  addActivityReminder,
+  setActivityReminderEnabled,
+  setActivityVoiceEnabled,
+} from '@R/slices/activity-settings/activity-settings';
 import { setLocationsWhenContinued, startDurationTimer } from '@R/slices/location/location';
-import { addActivityReminder, setActivityReminderEnabled, setActivityVoiceEnabled } from '@R/slices/settings/settings';
 import { resetStore, store } from '@R/store';
 import { MOCK_LOCATION } from '@T/mocks/mock-location';
 import {

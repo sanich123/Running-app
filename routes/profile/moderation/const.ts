@@ -19,6 +19,7 @@ export const MODERATION_DASHBOARD_COPY = {
       media: 'Photo or video',
       media_upload: 'New media check',
       user: 'Profile',
+      group: 'Group',
     },
     reasons: {
       threats: 'Threats',
@@ -101,6 +102,7 @@ export const MODERATION_DASHBOARD_COPY = {
       media: 'Фото или видео',
       media_upload: 'Новая проверка медиа',
       user: 'Профиль',
+      group: 'Группа',
     },
     reasons: {
       threats: 'Угрозы',

@@ -1,31 +1,22 @@
-import { act, fireEvent, screen } from '@testing-library/react-native';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
+import { http, HttpResponse } from 'msw';
 import { Platform } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import {
-  useGetActivityByActivityIdQuery,
-  useGetAllActivityMediaByUserIdInfiniteQuery,
-} from '@R/services/activity/activity';
 import { TEST_URLS } from '@T/mocks/const';
+import { MOCK_SERVER_ACTIVITY } from '@T/responses/runich';
+import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
+import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { VIDEO_EXTENSIONS } from './const';
 import PhotoViewer from './photo-viewer';
 import type { MockNativeViewProps } from '@T/utils/mock-native-view';
 import type * as MockNativeViewTools from '@T/utils/mock-native-view';
 
 const mockUseLocalSearchParams = useLocalSearchParams as jest.Mock;
-const mockUseActivity = useGetActivityByActivityIdQuery as jest.Mock;
-const mockUsePhotos = useGetAllActivityMediaByUserIdInfiniteQuery as jest.Mock;
 jest.mock('expo-router', () => ({
   useLocalSearchParams: jest.fn(),
   useRouter: jest.fn(() => ({ back: jest.fn() })),
-}));
-jest.mock('@R/services/activity/activity', () => ({
-  useGetActivityByActivityIdQuery: jest.fn(() => ({ data: undefined })),
-  useGetAllActivityMediaByUserIdInfiniteQuery: jest.fn(() => ({
-    data: undefined,
-    fetchNextPage: jest.fn(),
-    isFetching: false,
-  })),
 }));
 jest.mock('@S/custom-image/custom-image', () => ({
   __esModule: true,
@@ -57,6 +48,7 @@ jest.mock('react-native-pager-view', () => {
 describe('photo viewer', () => {
   beforeEach(() => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
+    mockStore.dispatch(setMockUserId('viewer-id'));
   });
 
   it('decodes a web image URL before rendering it', async () => {
@@ -85,25 +77,30 @@ describe('photo viewer', () => {
       userId: 'other-user',
       take: '4',
     });
-    mockUseActivity.mockReturnValue({
-      data: {
-        mapPhotoUrl: 'https://cdn.example.com/map.jpg',
-        media: [
-          { url: TEST_URLS.routeRunPhoto, blurhash: 'blurhash' },
-          { url: 'mp4', blurhash: null },
-        ],
-      },
-    });
-    mockUsePhotos.mockReturnValue({ data: undefined, fetchNextPage: jest.fn(), isFetching: false });
+    server.use(
+      http.get(`${BASE_URL}/activity/activityId/550e8400-e29b-41d4-a716-446655440000`, () =>
+        HttpResponse.json({
+          ...MOCK_SERVER_ACTIVITY,
+          id: '550e8400-e29b-41d4-a716-446655440000',
+          userId: 'photo-owner',
+          mapPhotoUrl: 'https://cdn.example.com/map.jpg',
+          media: [
+            { url: TEST_URLS.routeRunPhoto, thumbnail: null, blurhash: 'blurhash' },
+            { url: 'mp4', thumbnail: null, blurhash: null },
+          ],
+        }),
+      ),
+      http.get(`${BASE_URL}/activity/other-user/media`, () => HttpResponse.json({ media: [], hasMore: false })),
+    );
 
     await renderWithProviders(<PhotoViewer />);
 
-    expect(screen.getByTestId('photo-viewer-pager').props.initialPage).toBe(1);
+    expect((await screen.findByTestId('photo-viewer-pager')).props.initialPage).toBe(1);
     expect(screen.getAllByTestId('photo-viewer-image').map((element) => element.props.children)).toContain(
       TEST_URLS.routeRunPhoto,
     );
     const video = screen.getByTestId('photo-viewer-video');
-    expect(video.props.children).toBe('mp4');
+    expect(video.props.children).toBe(VIDEO_EXTENSIONS[8]);
     expect(video.props.accessibilityHint).toBe('active');
 
     const pager = screen.getByTestId('photo-viewer-pager');
@@ -118,19 +115,20 @@ describe('photo viewer', () => {
 
   it('fits landscape native photos to the display width without cropping them', async () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
+    mockStore.dispatch(setMockUserId('photo-owner-landscape'));
     mockUseLocalSearchParams.mockReturnValue({ photoUrl: '0', indexOfPhoto: '0', take: '2' });
-    mockUseActivity.mockReturnValue({ data: undefined });
-    mockUsePhotos.mockReturnValue({
-      data: {
-        pages: [{ media: [{ url: 'https://cdn.example.com/landscape.jpg', blurhash: null }], hasMore: false }],
-      },
-      fetchNextPage: jest.fn(),
-      isFetching: false,
-    });
+    server.use(
+      http.get(`${BASE_URL}/activity/photo-owner-landscape/media`, () =>
+        HttpResponse.json({
+          media: [{ url: 'https://cdn.example.com/landscape.jpg', thumbnail: null, blurhash: null }],
+          hasMore: false,
+        }),
+      ),
+    );
 
     await renderWithProviders(<PhotoViewer />);
 
-    const image = screen.getByTestId('photo-viewer-image');
+    const image = await screen.findByTestId('photo-viewer-image');
     expect(image).toHaveProp('contentFit', 'contain');
     await fireEvent(image, 'load', { source: { width: 1600, height: 900 } });
     expect(image).toHaveProp('contentFit', 'contain');
@@ -138,101 +136,120 @@ describe('photo viewer', () => {
 
   it('keeps portrait native photos covering the viewer after dimensions load', async () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
+    mockStore.dispatch(setMockUserId('photo-owner-portrait'));
     mockUseLocalSearchParams.mockReturnValue({ photoUrl: '0', indexOfPhoto: '0', take: '2' });
-    mockUseActivity.mockReturnValue({ data: undefined });
-    mockUsePhotos.mockReturnValue({
-      data: {
-        pages: [{ media: [{ url: 'https://cdn.example.com/portrait.jpg', blurhash: null }], hasMore: false }],
-      },
-      fetchNextPage: jest.fn(),
-      isFetching: false,
-    });
+    server.use(
+      http.get(`${BASE_URL}/activity/photo-owner-portrait/media`, () =>
+        HttpResponse.json({
+          media: [{ url: 'https://cdn.example.com/portrait.jpg', thumbnail: null, blurhash: null }],
+          hasMore: false,
+        }),
+      ),
+    );
 
     await renderWithProviders(<PhotoViewer />);
 
-    const image = screen.getByTestId('photo-viewer-image');
+    const image = await screen.findByTestId('photo-viewer-image');
     await fireEvent(image, 'load', { source: { width: 900, height: 1600 } });
     expect(image).toHaveProp('contentFit', 'cover');
   });
 
   it('renders native user photos without an activity map offset', async () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
+    mockStore.dispatch(setMockUserId('photo-owner-normal'));
     mockUseLocalSearchParams.mockReturnValue({ photoUrl: '0', indexOfPhoto: '0', take: '2' });
-    mockUseActivity.mockReturnValue({ data: undefined });
-    mockUsePhotos.mockReturnValue({
-      data: {
-        pages: [
-          {
-            media: [
-              { url: TEST_URLS.routePhoto, blurhash: 'blurhash' },
-              { url: 'webm', blurhash: null },
-            ],
-            hasMore: false,
-            nextCursor: null,
-          },
-        ],
-      },
-      fetchNextPage: jest.fn(),
-      isFetching: false,
-    });
+    server.use(
+      http.get(`${BASE_URL}/activity/photo-owner-normal/media`, () =>
+        HttpResponse.json({
+          media: [
+            { url: TEST_URLS.routePhoto, thumbnail: null, blurhash: 'blurhash' },
+            { url: 'webm', thumbnail: null, blurhash: null },
+          ],
+          hasMore: false,
+          nextCursor: null,
+        }),
+      ),
+    );
 
     await renderWithProviders(<PhotoViewer />);
 
-    expect(screen.getByTestId('photo-viewer-pager').props.initialPage).toBe(0);
+    expect((await screen.findByTestId('photo-viewer-pager')).props.initialPage).toBe(0);
     expect(screen.getAllByTestId('photo-viewer-image').map((element) => element.props.children)).toContain(
       TEST_URLS.routePhoto,
     );
-    expect(screen.getAllByTestId('photo-viewer-video').map((element) => element.props.children)).toContain('webm');
+    expect(screen.getAllByTestId('photo-viewer-video').map((element) => element.props.children)).toContain(
+      VIDEO_EXTENSIONS[13],
+    );
   });
 
   it('does not render a pager when a valid activity has no media', async () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'ios' });
+    const activityId = '550e8400-e29b-41d4-a716-446655440001';
     mockUseLocalSearchParams.mockReturnValue({
-      photoUrl: '550e8400-e29b-41d4-a716-446655440000',
+      photoUrl: activityId,
       indexOfPhoto: '0',
     });
-    mockUseActivity.mockReturnValue({ data: {} });
-    mockUsePhotos.mockReturnValue({ data: undefined, fetchNextPage: jest.fn(), isFetching: false });
+    const requests: string[] = [];
+    server.use(
+      http.get(`${BASE_URL}/activity/activityId/${activityId}`, () => {
+        requests.push('activity');
+        return HttpResponse.json({ ...MOCK_SERVER_ACTIVITY, media: [] });
+      }),
+    );
 
     await renderWithProviders(<PhotoViewer />);
 
+    await waitFor(() => expect(requests).toHaveLength(1));
     expect(screen.queryByTestId('photo-viewer-pager')).not.toBeOnTheScreen();
   });
 
   it('shows activity media stage icons to viewers', async () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'ios' });
+    const activityId = '550e8400-e29b-41d4-a716-446655440002';
     mockUseLocalSearchParams.mockReturnValue({
-      photoUrl: '550e8400-e29b-41d4-a716-446655440000',
+      photoUrl: activityId,
       indexOfPhoto: '0',
     });
-    mockUsePhotos.mockReturnValue({ data: undefined, fetchNextPage: jest.fn(), isFetching: false });
-    mockUseActivity.mockReturnValue({
-      data: {
-        userId: 'photo-owner',
-        media: [{ url: TEST_URLS.reviewPhoto, mediaReviewStatus: 'review_required' }],
-      },
-    });
+    server.use(
+      http.get(`${BASE_URL}/activity/activityId/${activityId}`, () =>
+        HttpResponse.json({
+          ...MOCK_SERVER_ACTIVITY,
+          id: '550e8400-e29b-41d4-a716-446655440000',
+          userId: 'photo-owner',
+          media: [
+            { url: TEST_URLS.reviewPhoto, thumbnail: null, blurhash: null, mediaReviewStatus: 'review_required' },
+          ],
+        }),
+      ),
+    );
 
     await act(async () => mockStore.dispatch(setMockUserId('viewer-id')));
     await renderWithProviders(<PhotoViewer />);
-    expect(screen.getByTestId('media-moderation-placeholder')).toBeOnTheScreen();
+    expect(await screen.findByTestId('media-moderation-placeholder')).toBeOnTheScreen();
   });
 
   it('hides activity media stage icons from the owner in the photo viewer', async () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'ios' });
+    const activityId = '550e8400-e29b-41d4-a716-446655440003';
     mockUseLocalSearchParams.mockReturnValue({
-      photoUrl: '550e8400-e29b-41d4-a716-446655440000',
+      photoUrl: activityId,
       indexOfPhoto: '0',
     });
-    mockUsePhotos.mockReturnValue({ data: undefined, fetchNextPage: jest.fn(), isFetching: false });
-    mockUseActivity.mockReturnValue({
-      data: {
-        userId: 'photo-owner',
-        media: [{ url: TEST_URLS.reviewPhoto, mediaReviewStatus: 'review_required' }],
-      },
-    });
+    server.use(
+      http.get(`${BASE_URL}/activity/activityId/${activityId}`, () =>
+        HttpResponse.json({
+          ...MOCK_SERVER_ACTIVITY,
+          id: '550e8400-e29b-41d4-a716-446655440000',
+          userId: 'photo-owner',
+          media: [
+            { url: TEST_URLS.reviewPhoto, thumbnail: null, blurhash: null, mediaReviewStatus: 'review_required' },
+          ],
+        }),
+      ),
+    );
     await act(async () => mockStore.dispatch(setMockUserId('photo-owner')));
     await renderWithProviders(<PhotoViewer />);
+    await screen.findByTestId('photo-viewer-image');
     expect(screen.queryByTestId('media-moderation-placeholder')).not.toBeOnTheScreen();
   });
 });

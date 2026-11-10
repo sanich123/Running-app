@@ -5,11 +5,14 @@ import { Stack } from 'expo-router';
 import { useTheme } from 'react-native-paper';
 import { STATUSES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
+import ActivityRoutesButton from '@Routes/activity/activity-routes-button/activity-routes-button';
 import ActivitySettingsButton from '@Routes/activity/activity-settings/activity-settings-button/activity-settings-button';
 import CloseBtn from '@Routes/activity/close-btn/close-btn';
+import ActivityErrorMsg from '@Routes/activity/error-msg/error-msg';
 import IconChooseSport from '@Routes/activity/icon-choose-sport/icon-choose-sport';
 import Map from '@Routes/activity/map/map';
 import Metrics from '@Routes/activity/metrics/metrics';
+import NavigationProvider from '@Routes/activity/navigation/navigation-provider/navigation-provider';
 import PauseBtn from '@Routes/activity/pause-btn/pause-btn';
 import ShowMapBtn from '@Routes/activity/show-map-btn/show-map-btn';
 import StartBtn from '@Routes/activity/start-btn/start-btn';
@@ -26,49 +29,66 @@ export default function Activity() {
     <>
       <Stack.Screen
         options={{
+          headerTransparent: isMapVisible,
+          headerShadowVisible: false,
+          headerStyle: { backgroundColor: isMapVisible ? 'transparent' : colors.surfaceVariant },
           headerLeft: () => <CloseBtn />,
-          headerRight: () => <ActivitySettingsButton />,
+          headerRight: () => (
+            <View style={[styles.headerActions, Platform.OS === 'ios' && styles.iosHeaderActions]}>
+              <ActivityRoutesButton />
+              <ActivitySettingsButton />
+            </View>
+          ),
         }}
       />
-      <SafeAreaView style={[styles.layout, { backgroundColor: colors.surfaceVariant }]} edges={['bottom']}>
-        <View style={styles.map}>
-          <View
-            testID="activity-map-layer"
-            style={[styles.mapLayer, !isMapVisible && styles.hiddenMapLayer]}
-            pointerEvents={isMapVisible ? 'auto' : 'none'}>
-            <Map onLocationReadinessChange={setIsLocationReadyForRecording} />
-          </View>
-          {activityStatus !== STATUSES.initial ? <Metrics /> : null}
-        </View>
-        <View style={[styles.metricsLayout, { backgroundColor: colors.surfaceVariant }]}>
-          <View style={styles.metrics}>
-            {activityStatus === STATUSES.initial ? (
-              <IconChooseSport
-                disabled={!isLocationReadyForRecording || isLocationLoading || isTrackingActionInProgress}
-              />
+      <NavigationProvider isLocationReady={isLocationReadyForRecording}>
+        <SafeAreaView style={[styles.layout, { backgroundColor: colors.surfaceVariant }]} edges={['bottom']}>
+          <View style={styles.map}>
+            <View
+              testID="activity-map-layer"
+              style={[styles.mapLayer, !isMapVisible && styles.hiddenMapLayer]}
+              pointerEvents={isMapVisible ? 'auto' : 'none'}>
+              <Map onLocationReadinessChange={setIsLocationReadyForRecording} />
+            </View>
+            {activityStatus !== STATUSES.initial ? (
+              <>
+                <ActivityErrorMsg />
+                <Metrics />
+              </>
             ) : null}
-            {activityStatus === STATUSES.paused ? <PauseBtn /> : null}
-            <StartBtn
-              isReadyToRecordLocation={isLocationReadyForRecording}
-              isGettingLocation={isLocationLoading}
-              onTrackingActionInProgressChange={setIsTrackingActionInProgress}
-            />
-            {activityStatus !== STATUSES.initial ? <ShowMapBtn /> : null}
           </View>
-        </View>
-      </SafeAreaView>
+          <View style={[styles.metricsLayout, { backgroundColor: colors.surfaceVariant }]}>
+            <View style={styles.metrics}>
+              {activityStatus === STATUSES.initial ? (
+                <IconChooseSport
+                  disabled={!isLocationReadyForRecording || isLocationLoading || isTrackingActionInProgress}
+                />
+              ) : null}
+              {activityStatus === STATUSES.paused ? <PauseBtn /> : null}
+              <StartBtn
+                isReadyToRecordLocation={isLocationReadyForRecording}
+                isGettingLocation={isLocationLoading}
+                onTrackingActionInProgressChange={setIsTrackingActionInProgress}
+              />
+              {activityStatus !== STATUSES.initial ? <ShowMapBtn /> : null}
+            </View>
+          </View>
+        </SafeAreaView>
+      </NavigationProvider>
     </>
   );
 }
 
 const styles = StyleSheet.create({
+  headerActions: { alignItems: 'center', flexDirection: 'row', gap: 0 },
+  iosHeaderActions: { gap: 12 },
   layout: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
   map: {
-    height: Platform.OS === 'ios' ? '80%' : '75%',
+    height: Platform.OS === 'ios' ? '83%' : '78%',
     width: '100%',
   },
   mapLayer: {
@@ -83,12 +103,12 @@ const styles = StyleSheet.create({
     opacity: 0,
   },
   metricsLayout: {
-    height: Platform.OS === 'ios' ? '20%' : '25%',
+    height: Platform.OS === 'ios' ? '17%' : '22%',
     width: '100%',
     paddingHorizontal: 18,
     paddingTop: 16,
     paddingBottom: 8,
-    marginTop: 8,
+    marginTop: 4,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
   },

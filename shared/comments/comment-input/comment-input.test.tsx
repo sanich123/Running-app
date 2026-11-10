@@ -1,10 +1,11 @@
 import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
+import { LANGUAGES } from '@const/enums';
 import { setCommentActivityId, setCommentToUpdate, setIdOfUpdatingComment } from '@R/slices/comment/comment';
 import { BASE_URL } from '@T/utils/handlers';
 import { server } from '@T/utils/server';
 import CommentInput from './comment-input';
-import { COMMENT_ICON_TEST_ID, COMMENT_INPUT_TEST_ID } from './const';
+import { COMMENT_ICON_TEST_ID, COMMENT_INPUT_TEST_ID, COMMENT_INPUT } from './const';
 import { mockStore, setMockUserId } from '../../../tests/utils/mock-store';
 import { renderWithProviders } from '../../../tests/utils/test-utils';
 
@@ -74,7 +75,7 @@ describe('Comment input', () => {
       }),
     );
     await renderWithProviders(<CommentInput commentId="edit-comment" commentToUpdate="Old text" />);
-    expect(screen.getByText('Редактирование комментария')).toBeOnTheScreen();
+    expect(screen.getByText(COMMENT_INPUT[LANGUAGES.russian].editingLabel)).toBeOnTheScreen();
     const input = screen.getByTestId(COMMENT_INPUT_TEST_ID);
     await user.clear(input);
     await user.type(input, '  Updated text  ');

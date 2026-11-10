@@ -35,4 +35,5 @@ export interface LocationInitialState {
   kilometresSplit: LastKmSplit[];
   locationsWithPauses: LocationObject[][];
   locationsFromBackground: LocationObject[];
+  navigationTrackId: string | null;
 }

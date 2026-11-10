@@ -1,5 +1,5 @@
-export type UserReportTargetType = 'activity' | 'comment' | 'media' | 'user';
-export type ContentReportTargetType = UserReportTargetType | 'media_upload';
+export type UserReportTargetType = 'activity' | 'comment' | 'media' | 'user' | 'group';
+type ContentReportTargetType = UserReportTargetType | 'media_upload';
 
 export type ContentReportReason =
   'threats' | 'harassment' | 'hate_speech' | 'sexual_content' | 'violence' | 'spam' | 'other';
@@ -11,7 +11,7 @@ export interface SubmitContentReportRequest {
   details?: string;
 }
 
-export type ContentReportStatus = 'open' | 'in_review' | 'resolved' | 'rejected' | 'appealed';
+type ContentReportStatus = 'open' | 'in_review' | 'resolved' | 'rejected' | 'appealed';
 export type ModerationActionType =
   | 'hide_content'
   | 'remove_content'
@@ -41,7 +41,7 @@ export interface ModerationReportItem {
   reviewedAt: string | null;
 }
 
-export interface ModerationReportAction {
+interface ModerationReportAction {
   id: string;
   reportId: string;
   actorId: string | null;

@@ -5,6 +5,7 @@ import { appStorage } from '@U/storage/storage';
 import { createProfileListenerMiddleware } from './middleware/profile-listener';
 import { runichApi } from './runich-api/runich-api';
 import activity from './slices/activity/activity';
+import activitySettings from './slices/activity-settings/activity-settings';
 import auth from './slices/auth/auth';
 import { configureAuthPersistence, readPersistedAuth } from './slices/auth/persistence';
 import comment from './slices/comment/comment';
@@ -24,20 +25,21 @@ const getStoredStateWithAuth = async (
   config: Parameters<typeof reduxPersistGetStoredState>[0],
 ): Promise<PersistedState> => {
   const persistedAuth = await readPersistedAuth();
-  const persistedState = (await reduxPersistGetStoredState(config)) as PersistedState & Record<string, unknown>;
+  const persistedState = (await reduxPersistGetStoredState(config)) as PersistedState;
   return (persistedAuth === undefined ? persistedState : { ...persistedState, auth: persistedAuth }) as PersistedState;
 };
 
 const persistConfig = {
   key: 'root',
   storage: appStorage,
-  whitelist: ['settings', 'activity', 'trackingRecovery', 'auth', 'subscription'],
+  whitelist: ['settings', 'activitySettings', 'activity', 'trackingRecovery', 'auth', 'subscription'],
   getStoredState: getStoredStateWithAuth,
 };
 
 const appReducer = combineReducers({
   network,
   settings,
+  activitySettings,
   subscription,
   location,
   activity,

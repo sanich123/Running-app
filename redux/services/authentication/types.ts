@@ -19,6 +19,16 @@ export interface VerifyLoginData {
   code: string;
 }
 
+export interface ProviderAccessToken {
+  accessToken: string;
+}
+
+export interface NativeVkAuthCode {
+  code: string;
+  deviceId: string;
+  codeVerifier: string;
+}
+
 export interface VerifyPasswordChangeCodeData extends EmailData {
   confirmationCode: string;
 }

@@ -1,6 +1,6 @@
 export type AdminRole = 'moderator' | 'email_sender' | 'access_manager' | 'superuser';
 
-export type AdminPermission = 'moderation.manage' | 'email.send' | 'admin.roles.manage';
+type AdminPermission = 'moderation.manage' | 'email.send' | 'admin.roles.manage';
 
 export interface AdminAccess {
   roles: AdminRole[];

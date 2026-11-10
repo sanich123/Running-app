@@ -92,7 +92,13 @@ export default function LoginRegisterBtn({
               .then(async (session) => {
                 dispatch(setAuthSession(session));
                 await flushAuthPersistence();
-                replace(returnTo === `/${ROUTES.admin}` ? returnTo : ROUTES.root);
+                if (returnTo === `/${ROUTES.admin}`) {
+                  replace(returnTo);
+                } else if (typeof returnTo === 'string' && /^\/groups\/[0-9a-f-]+\/requests$/i.test(returnTo)) {
+                  replace(returnTo as never);
+                } else {
+                  replace(ROUTES.root);
+                }
               })
               .catch((error) => errorToast('', error))
               .finally(() => dispatch(setIsDisabledWhenLogining(false)));

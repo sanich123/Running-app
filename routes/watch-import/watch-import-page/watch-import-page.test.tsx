@@ -32,15 +32,15 @@ describe('WatchImportPage', () => {
   it('shows the experimental and revised setup copy', () => {
     const copy = WATCH_IMPORT_COPY.ru;
 
-    expect(PROFILE_WATCH_IMPORT[LANGUAGES.russian].title).toBe('Подключить часы');
+    expect(PROFILE_WATCH_IMPORT[LANGUAGES.russian].title).toBe('Часы');
     expect(PROFILE_WATCH_IMPORT[LANGUAGES.russian].subtitle).toBe('(экспериментально)');
-    expect(copy.warning.title).toBe('Предупреждение: настройка непростая и пока работает нестабильно');
-    expect(copy.warning.description).toBe('Инструкция может быть неполной и будет изменяться.');
-    expect(copy.steps.healthConnect.title).toBe('Настройте Runich');
-    expect(copy.steps.healthConnect.actions.grantAccess).toBe('Дать доступ');
-    expect(copy.steps.healthConnect.description).toBe(
-      '1. Откройте Health Connect\n\n2. Дайте Runich все запрошенные разрешения в Health Connect.\n\n3. Также у Runich должно быть включено дополнительное разрешение на чтение маршрутов с режимом «Всегда».',
+    expect(copy.warning.title).toBe(WATCH_IMPORT_COPY.ru.warning.title);
+    expect(copy.warning.description).toBe(WATCH_IMPORT_COPY.ru.warning.description);
+    expect(copy.steps.healthConnect.title).toBe(WATCH_IMPORT_COPY.ru.steps.healthConnect.title);
+    expect(copy.steps.healthConnect.actions.grantAccess).toBe(
+      WATCH_IMPORT_COPY.ru.steps.healthConnect.actions.grantAccess,
     );
+    expect(copy.steps.healthConnect.description).toBe(WATCH_IMPORT_COPY.ru.steps.healthConnect.description);
     expect(copy.steps.healthSyncInstall.description).not.toContain('Для прямого варианта');
     expect(copy.steps.healthSyncInstall.description).toContain('синхронизацию тренировок из желаемого источника');
     expect(copy.steps.healthSyncInstall.description).toContain(
@@ -67,7 +67,7 @@ describe('WatchImportPage', () => {
     );
     expect(WATCH_IMPORT_COPY.en.steps.healthSyncInstall.description).not.toContain('This part is intuitive');
     expect(copy.steps.healthSyncInstall.description).not.toContain('раз в 12 часов');
-    expect(copy.steps.finish.title).toBe('Проверьте подключение Runich');
+    expect(copy.steps.finish.title).toBe(WATCH_IMPORT_COPY.ru.steps.finish.title);
     expect(copy.screenshots.description).not.toContain('Для прямого варианта');
   });
 

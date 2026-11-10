@@ -20,4 +20,5 @@ export const ACTIVITY_INITIAL_STATE: ActivityState = {
   finishedActivity: FINISHED_ACTIVITY_INITIAL_STATE,
   ...ACTIVITY_DRAFT_INITIAL_STATE,
   unsyncedActivities: [],
+  pendingRawRouteUploads: [],
 };

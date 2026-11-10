@@ -1,5 +1,7 @@
 import { screen } from '@testing-library/react-native';
+import { LANGUAGES } from '@const/enums';
 import { setCommentToUpdate, setIdOfUpdatingComment } from '@R/slices/comment/comment';
+import { EMPTY_STATE_COPY } from '@S/empty-state/const';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import CommentsListModal from './comments-list-modal';
@@ -40,7 +42,7 @@ describe('comments list modal', () => {
     await renderWithProviders(<CommentsListModal commentsModalRef={{ current: null }} />);
     expect(screen.queryByTestId('comments-list')).not.toBeOnTheScreen();
     expect(screen.getByTestId('comments-skeleton')).toBeOnTheScreen();
-    expect(screen.queryByText('Комментариев пока нет')).not.toBeOnTheScreen();
+    expect(screen.queryByText(EMPTY_STATE_COPY[LANGUAGES.russian].comments.title)).not.toBeOnTheScreen();
     expect(screen.getByTestId('comments-composer')).toBeOnTheScreen();
     expect(screen.getByTestId('comments-composer-keyboard-sticky').props.offset).toEqual({ opened: -8 });
     expect(screen.getByTestId('comments-input')).toBeOnTheScreen();

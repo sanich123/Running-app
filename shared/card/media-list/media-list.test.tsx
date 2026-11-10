@@ -8,6 +8,7 @@ import { clearSubscriptionSnapshot, setSubscriptionSnapshot } from '@R/slices/su
 import { EMOTIONS_BTNS_VALUES } from '@Routes/save-activity-page/emotion-btns/const';
 import * as errorToastModule from '@S/error-toast/error-toast';
 import * as infoToastModule from '@S/info-toast/info-toast';
+import { REPORT_CONTENT_COPY } from '@S/moderation/report-content-dialog/const';
 import { DEFAULT_ACTIVITY_CARD, TEST_URLS } from '@T/mocks/const';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
@@ -475,7 +476,7 @@ describe('media list', () => {
 
       await user.press(screen.getByTestId('media-actions-menu-reported-media'));
       await user.press(await screen.findByTestId('report-media-reported-media'));
-      await user.press(screen.getByText('Отправить'));
+      await user.press(screen.getByText(REPORT_CONTENT_COPY[LANGUAGES.russian].submit));
 
       await waitFor(() =>
         expect(receivedReports).toEqual([{ targetType: 'media', targetId: 'reported-media', reason: 'harassment' }]),

@@ -1,7 +1,9 @@
 import { screen, userEvent } from '@testing-library/react-native';
 import * as Linking from 'expo-linking';
+import { LANGUAGES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
 import UpdateAppPage from './update-app-page';
+import { UPDATE_APP_TEXT } from '../const';
 
 const mockOpenURL = jest.spyOn(Linking, 'openURL').mockResolvedValue(true);
 
@@ -14,9 +16,7 @@ describe('UpdateAppPage', () => {
     const user = userEvent.setup();
     await renderWithProviders(<UpdateAppPage />);
 
-    expect(
-      screen.getByText('Версия приложения устарела. Обновите приложение, чтобы продолжить работу.'),
-    ).toBeOnTheScreen();
-    await user.press(screen.getByText('Перейти в маркет'));
+    expect(screen.getByText(UPDATE_APP_TEXT[LANGUAGES.russian].description)).toBeOnTheScreen();
+    await user.press(screen.getByText(UPDATE_APP_TEXT[LANGUAGES.russian].action));
   });
 });

@@ -8,7 +8,11 @@ import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { activityApi, useGetFavoriteActivitiesInfiniteQuery } from './activity';
+import {
+  activityApi,
+  useGetActivitiesWithRoutesInfiniteQuery,
+  useGetFavoriteActivitiesInfiniteQuery,
+} from './activity';
 import { runichApi } from '../../runich-api/runich-api';
 import { statisticsApi } from '../statistics/statistics';
 
@@ -25,7 +29,54 @@ function FavoriteActivitiesPaginationProbe() {
   return null;
 }
 
+function RouteActivitiesPaginationProbe() {
+  const { isSuccess, fetchNextPage } = useGetActivitiesWithRoutesInfiniteQuery({
+    month: 10,
+    search: 'run',
+    timeZone: 'Europe/Moscow',
+  });
+  const fetchedNextPage = useRef(false);
+
+  useEffect(() => {
+    if (!isSuccess || fetchedNextPage.current) return;
+    fetchedNextPage.current = true;
+    void fetchNextPage();
+  }, [fetchNextPage, isSuccess]);
+
+  return null;
+}
+
 describe('activity cache invalidation', () => {
+  it('requests route workouts with search and date filters, then follows the cursor', async () => {
+    const requestedUrls: URL[] = [];
+    server.use(
+      http.get(`${BASE_URL}/activity/with-routes`, ({ request }) => {
+        const url = new URL(request.url);
+        requestedUrls.push(url);
+        const cursor = url.searchParams.get('cursor');
+        return HttpResponse.json({
+          activities: [],
+          availableFilters: { years: [2026], months: [10], days: [31] },
+          hasMore: cursor === null,
+          nextCursor: cursor === null ? 'route-page-cursor' : null,
+        });
+      }),
+    );
+    mockStore.dispatch(runichApi.util.resetApiState());
+    const { unmount } = await renderWithProviders(createElement(RouteActivitiesPaginationProbe), {
+      store: mockStore,
+    });
+
+    await waitFor(() => expect(requestedUrls).toHaveLength(2));
+
+    expect(requestedUrls[0]?.searchParams.get('search')).toBe('run');
+    expect(requestedUrls[0]?.searchParams.get('month')).toBe('10');
+    expect(requestedUrls[0]?.searchParams.get('timeZone')).toBe('Europe/Moscow');
+    expect(requestedUrls[0]?.searchParams.get('cursor')).toBeNull();
+    expect(requestedUrls[1]?.searchParams.get('cursor')).toBe('route-page-cursor');
+    unmount();
+  });
+
   it('requests the next favorite activity page with the returned cursor', async () => {
     const requestedCursors: (string | null)[] = [];
     server.use(

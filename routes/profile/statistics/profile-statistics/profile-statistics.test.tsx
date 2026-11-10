@@ -2,6 +2,7 @@ import { screen, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
+import { MONTH_STATISTICS } from '@S/month-metric/const';
 import { MOCK_SERVER_IDS, MOCK_SERVER_STATISTICS } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
@@ -9,6 +10,7 @@ import { errorResponse, loadingResponse } from '@T/utils/response-states';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ProfileStatistics from './profile-statistics';
+import { PROFILE_SECTIONS } from '../../const';
 
 describe('ProfileStatistics', () => {
   beforeEach(() => mockStore.dispatch(changeLanguage(LANGUAGES.english)));
@@ -21,7 +23,7 @@ describe('ProfileStatistics', () => {
   it('renders success state', async () => {
     await renderWithProviders(<ProfileStatistics whosProfile={MOCK_SERVER_IDS.userId} />);
     expect(await screen.findByText(`${MOCK_SERVER_STATISTICS.all.totalItems}`)).toBeOnTheScreen();
-    expect(screen.queryByText('Training summary')).not.toBeOnTheScreen();
+    expect(screen.queryByText(PROFILE_SECTIONS[LANGUAGES.english].trainingSummary)).not.toBeOnTheScreen();
   });
   it('does not render metrics when the user has no activities', async () => {
     server.use(
@@ -33,7 +35,7 @@ describe('ProfileStatistics', () => {
     await renderWithProviders(<ProfileStatistics whosProfile={MOCK_SERVER_IDS.userId} />);
 
     await waitFor(() => expect(screen.queryByTestId('month-statistics-skeleton')).not.toBeOnTheScreen());
-    expect(screen.queryByText('Activities')).not.toBeOnTheScreen();
+    expect(screen.queryByText(MONTH_STATISTICS[LANGUAGES.english].activities)).not.toBeOnTheScreen();
   });
   it('renders error state', async () => {
     server.use(http.get(`${BASE_URL}/statistics/${MOCK_SERVER_IDS.userId}/all`, errorResponse));

@@ -10,6 +10,7 @@ import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { MIGRATION_ERROR_COPY } from '@U/migration-strava/const';
 import { MIGRATION_STATES } from './const';
 import MigrationFromStrava from './migration-from-strava';
 import type { ActivityMigrationJobResponse } from '@R/runich-api/types';
@@ -50,10 +51,7 @@ jest.mock('expo-router', () => {
     ),
     useRouter: () => ({ replace: mockReplace }),
     useIsFocused: () => true,
-    useNavigation: () => ({
-      addListener: () => () => undefined,
-      isFocused: () => true,
-    }),
+    useNavigation: () => ({ addListener: () => () => undefined }),
   };
 });
 
@@ -88,7 +86,7 @@ describe('migration from strava', () => {
 
     await user.press(screen.getByTestId('migration-choose'));
 
-    await waitFor(() => expect(errorToast).toHaveBeenCalledWith('Ошибка миграции из Strava', error));
+    await waitFor(() => expect(errorToast).toHaveBeenCalledWith(MIGRATION_ERROR_COPY.page, error));
     errorToast.mockRestore();
   });
 
@@ -250,7 +248,7 @@ describe('migration from strava', () => {
   });
 
   it('shows server confirmation instead of a transfer error after all bytes arrive', async () => {
-    mockStore.dispatch(setMigrationError('Ошибка передачи архива: Read timed out'));
+    mockStore.dispatch(setMigrationError(`${MIGRATION_ERROR_COPY.archiveTransferPrefix}: Read timed out`));
     mockStore.dispatch(
       setMigrationJob({
         jobId: 'job-id',
@@ -306,7 +304,7 @@ describe('migration from strava', () => {
       finishedAt: null,
     };
     server.use(http.get(`${BASE_URL}/activity/migration-strava/jobs/job-id`, () => HttpResponse.json(processingJob)));
-    mockStore.dispatch(setMigrationError('Ошибка передачи архива: Read timed out'));
+    mockStore.dispatch(setMigrationError(`${MIGRATION_ERROR_COPY.archiveTransferPrefix}: Read timed out`));
     mockStore.dispatch(
       setMigrationJob({
         ...processingJob,
@@ -485,7 +483,7 @@ describe('migration from strava', () => {
   it('shows an explicit transfer error and closes it with the close button', async () => {
     const user = userEvent.setup();
     await renderMigrationPage();
-    const errorMessage = 'Ошибка передачи архива: Сервер вернул статус 413';
+    const errorMessage = `${MIGRATION_ERROR_COPY.archiveTransferPrefix}: Сервер вернул статус 413`;
 
     await act(async () => {
       mockStore.dispatch(setMigrationError(errorMessage));
@@ -512,7 +510,7 @@ describe('migration from strava', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     await renderMigrationPage();
 
-    expect(screen.getByText('Миграция из Strava')).toBeOnTheScreen();
+    expect(screen.getByText(MIGRATION_STATES[LANGUAGES.russian].title)).toBeOnTheScreen();
     expect(screen.getByTestId('migration-choose')).toBeOnTheScreen();
   });
 });

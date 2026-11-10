@@ -1,7 +1,7 @@
 import { createContext } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 
-export interface VideoPlaybackContextValue {
+interface VideoPlaybackContextValue {
   activeVideoId: string | null;
   setActiveVideoId: Dispatch<SetStateAction<string | null>>;
 }

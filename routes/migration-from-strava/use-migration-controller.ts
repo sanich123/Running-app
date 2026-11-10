@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useNavigation } from 'expo-router';
+import { useIsFocused, useNavigation } from 'expo-router';
 import {
   acceptMigrationJob,
   resetMigration,
@@ -15,6 +15,7 @@ import {
 } from '@R/slices/migration/migration';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
+import { MIGRATION_ERROR_COPY } from '@U/migration-strava/const';
 import { startStravaMigration } from '@U/migration-strava/migration-archive';
 import { cancelActiveMigrationUpload } from '@U/migration-strava/send-tools';
 import useMigrationState from './hooks';
@@ -25,7 +26,8 @@ export default function useMigrationController() {
   const { userId, accessToken } = useAppSelector(({ auth }) => auth);
   const state = useMigrationState();
   const navigation = useNavigation();
-  const isFocusedRef = useRef(false);
+  const isFocused = useIsFocused();
+  const isFocusedRef = useRef(isFocused);
   const cancelMigrationRef = useRef<MigrationCancelHandler>(null);
   const [isCancelAvailable, setIsCancelAvailable] = useState(false);
   const [isForegroundUploadSession, setIsForegroundUploadSession] = useState(false);
@@ -38,7 +40,6 @@ export default function useMigrationController() {
       isFocusedRef.current = false;
       setIsForegroundUploadSession(false);
     });
-    isFocusedRef.current = navigation.isFocused();
 
     return () => {
       unsubscribeFocus();
@@ -85,7 +86,7 @@ export default function useMigrationController() {
         accessToken,
       });
     } catch (error) {
-      errorToast('Ошибка миграции из Strava', error);
+      errorToast(MIGRATION_ERROR_COPY.page, error);
     }
   }, [accessToken, dispatch, handleCancelReady, userId]);
 

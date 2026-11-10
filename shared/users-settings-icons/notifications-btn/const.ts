@@ -1,0 +1,1 @@
+export const NOTIFICATIONS_OVERFLOW_LABEL = '99+';

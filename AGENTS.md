@@ -32,6 +32,7 @@
 ## Callback handlers
 
 - Keep a callback inline in its event handler when it is used by only one handler. Extract it into a named variable only when it is shared by multiple handlers.
+- When a guard reports an error and stops the function, prefer `return errorToast(message);` over a separate `errorToast(message); return;` when the function's return type permits it; this saves a line.
 
 ## Redux selectors
 

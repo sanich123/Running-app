@@ -3,14 +3,17 @@ import { http, HttpResponse } from 'msw';
 import { Platform } from 'react-native';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
+import { EMPTY_STATE_COPY } from '@S/empty-state/const';
 import { MOCK_SERVER_STATISTICS, MOCK_SERVER_IDS } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { DASHBOARD_LABELS, DASHBOARD_MONTHS } from './const';
 import Dashboard from './dashboard';
 
 const mockPush = jest.fn();
+const englishLabels = DASHBOARD_LABELS[LANGUAGES.english];
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush }),
@@ -32,29 +35,31 @@ describe('statistics dashboard', () => {
     await renderWithProviders(<Dashboard />);
 
     expect(await screen.findByTestId('dashboard-line-chart')).toBeOnTheScreen();
-    await waitFor(() => expect(screen.getByText('Открыть месяц')).toBeOnTheScreen());
+    await waitFor(() => expect(screen.getByText(DASHBOARD_LABELS[LANGUAGES.russian].openMonth)).toBeOnTheScreen());
     fireEvent.press(screen.getByTestId('dashboard-day-2026-08-04'));
 
     expect(screen.getByText('вторник, 4 августа')).toBeOnTheScreen();
-    expect(screen.getByText('Открыть месяц')).toBeOnTheScreen();
+    expect(screen.getByText(DASHBOARD_LABELS[LANGUAGES.russian].openMonth)).toBeOnTheScreen();
   });
 
   it('shows English labels for the year controls', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     await renderWithProviders(<Dashboard />);
 
-    expect(await screen.findByLabelText('Previous year')).toBeOnTheScreen();
-    expect(screen.getByLabelText('Next year')).toBeOnTheScreen();
+    expect(await screen.findByLabelText(englishLabels.previousYear)).toBeOnTheScreen();
+    expect(screen.getByLabelText(englishLabels.nextYear)).toBeOnTheScreen();
   });
 
   it('changes the metric and navigates to the selected month', async () => {
     await renderWithProviders(<Dashboard />);
 
-    fireEvent.press(await screen.findByText('Время', { exact: true }));
-    await waitFor(() => expect(screen.getAllByText('Время').length).toBeGreaterThan(0));
+    fireEvent.press(await screen.findByText(DASHBOARD_LABELS[LANGUAGES.russian].duration, { exact: true }));
+    await waitFor(() =>
+      expect(screen.getAllByText(DASHBOARD_LABELS[LANGUAGES.russian].duration).length).toBeGreaterThan(0),
+    );
 
-    await waitFor(() => expect(screen.getByText('Открыть месяц')).toBeOnTheScreen());
-    fireEvent.press(screen.getByText('Открыть месяц'));
+    await waitFor(() => expect(screen.getByText(DASHBOARD_LABELS[LANGUAGES.russian].openMonth)).toBeOnTheScreen());
+    fireEvent.press(screen.getByText(DASHBOARD_LABELS[LANGUAGES.russian].openMonth));
     await waitFor(() => expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('/month-statistic')));
   });
 
@@ -67,7 +72,9 @@ describe('statistics dashboard', () => {
     await act(async () => chart.props.data[4].onPress());
 
     expect(mockPush).not.toHaveBeenCalled();
-    expect(screen.getByTestId('dashboard-selected-month').props.accessibilityLabel).toBe('Май, Открыть месяц');
+    expect(screen.getByTestId('dashboard-selected-month').props.accessibilityLabel).toBe(
+      `${DASHBOARD_MONTHS[LANGUAGES.russian][4]}, ${DASHBOARD_LABELS[LANGUAGES.russian].openMonth}`,
+    );
     const updatedChart = screen.getByTestId('dashboard-line-chart');
     expect(updatedChart.props.data[4].dataPointRadius).toBe(10);
     expect(updatedChart.props.data[7].dataPointRadius).toBeUndefined();
@@ -98,7 +105,7 @@ describe('statistics dashboard', () => {
     );
     await renderWithProviders(<Dashboard />);
 
-    expect(await screen.findByText('Активностей пока нет')).toBeOnTheScreen();
+    expect(await screen.findByText(EMPTY_STATE_COPY[LANGUAGES.russian].activities.title)).toBeOnTheScreen();
     expect(screen.queryByTestId('dashboard-line-chart')).toBeNull();
   });
 
@@ -137,9 +144,9 @@ describe('statistics dashboard', () => {
     await renderWithProviders(<Dashboard />);
 
     expect(await screen.findByText('2026')).toBeOnTheScreen();
-    await waitFor(() => expect(screen.getAllByText('Бег').length).toBeGreaterThan(0));
-    fireEvent.press(screen.getAllByText('Бег')[0]);
-    expect(screen.getAllByText('Бег').length).toBeGreaterThan(0);
+    await waitFor(() => expect(screen.getAllByText(DASHBOARD_LABELS[LANGUAGES.russian].run).length).toBeGreaterThan(0));
+    fireEvent.press(screen.getAllByText(DASHBOARD_LABELS[LANGUAGES.russian].run)[0]);
+    expect(screen.getAllByText(DASHBOARD_LABELS[LANGUAGES.russian].run).length).toBeGreaterThan(0);
   });
 
   it('shows step and calorie metrics when annual totals are non-zero', async () => {
@@ -157,8 +164,8 @@ describe('statistics dashboard', () => {
     );
     await renderWithProviders(<Dashboard />);
 
-    expect(await screen.findByText('Шаги', { exact: true })).toBeOnTheScreen();
-    expect(screen.getByText('Калории', { exact: true })).toBeOnTheScreen();
+    expect(await screen.findByText(DASHBOARD_LABELS[LANGUAGES.russian].steps, { exact: true })).toBeOnTheScreen();
+    expect(screen.getByText(DASHBOARD_LABELS[LANGUAGES.russian].calories, { exact: true })).toBeOnTheScreen();
   });
 
   it('hides step and calorie metrics when annual totals are zero', async () => {
@@ -177,7 +184,7 @@ describe('statistics dashboard', () => {
     await renderWithProviders(<Dashboard />);
 
     expect(await screen.findByTestId('dashboard-line-chart')).toBeOnTheScreen();
-    expect(screen.queryByText('Шаги', { exact: true })).toBeNull();
-    expect(screen.queryByText('Калории', { exact: true })).toBeNull();
+    expect(screen.queryByText(DASHBOARD_LABELS[LANGUAGES.russian].steps, { exact: true })).toBeNull();
+    expect(screen.queryByText(DASHBOARD_LABELS[LANGUAGES.russian].calories, { exact: true })).toBeNull();
   });
 });

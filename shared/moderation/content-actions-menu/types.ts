@@ -1,4 +1,4 @@
-export interface ContentActionsMenuItem {
+interface ContentActionsMenuItem {
   label: string;
   testID: string;
   leadingIcon: string;

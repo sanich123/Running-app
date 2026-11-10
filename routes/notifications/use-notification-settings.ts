@@ -77,8 +77,7 @@ export function useNotificationSettings() {
 
   const enablePush = async () => {
     if (!isAndroidPhysicalDevice(Platform.OS, Device.isDevice)) {
-      errorToast(copy.pushUnavailable);
-      return;
+      return errorToast(copy.pushUnavailable);
     }
     try {
       await Notifications.setNotificationChannelAsync(NOTIFICATION_PUSH_CONFIG.channelId, {

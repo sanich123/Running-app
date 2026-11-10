@@ -19,7 +19,7 @@ import type { ActivityHeartRateSample } from '@S/card/types';
 export type HealthStore = 'health-connect' | 'healthkit';
 export type HealthAvailability = 'available' | 'not-supported' | 'provider-not-available' | 'provider-update-required';
 
-export interface WatchWorkoutLocation {
+interface WatchWorkoutLocation {
   timestamp?: number;
   coords: {
     latitude: number;
@@ -75,7 +75,7 @@ export class HealthConnectReadError extends Error {
   }
 }
 
-export interface WatchWorkoutDiagnostics {
+interface WatchWorkoutDiagnostics {
   dataOrigin?: string;
   sessionRecordId?: string;
   routeStatus: WatchWorkoutRouteStatus;

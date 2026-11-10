@@ -1,11 +1,17 @@
 import { createRef, type ComponentRef } from 'react';
 import { screen } from '@testing-library/react-native';
 import type { View } from 'react-native';
-import { EMOTIONS_BTNS_VALUES } from '@Routes/save-activity-page/emotion-btns/const';
+import { LANGUAGES } from '@const/enums';
+import { EMOTIONS_BTNS_VALUES, EMOTION_BTNS } from '@Routes/save-activity-page/emotion-btns/const';
+import { CARD_METRICS } from '@S/card/metrics/const';
 import { TEST_URLS } from '@T/mocks/const';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { MAP_SPORT_TO_TITLE } from '@U/icon-utils';
 import ShareActivityImage from './share-activity-image';
+
+const metricCopy = CARD_METRICS[LANGUAGES.russian];
+const emotionCopy = EMOTION_BTNS[LANGUAGES.russian];
 
 describe('share activity image', () => {
   it('renders the branded activity card with date and metrics over a map', async () => {
@@ -49,14 +55,14 @@ describe('share activity image', () => {
     expect(screen.getByText('5.00 км')).toBeOnTheScreen();
     expect(screen.getByTestId('map-emotion-icon')).toBeOnTheScreen();
     expect(screen.queryByTestId('share-emotion-icon')).not.toBeOnTheScreen();
-    expect(screen.queryByText('Класс')).not.toBeOnTheScreen();
+    expect(screen.queryByText(emotionCopy.fineLabel)).not.toBeOnTheScreen();
     expect(screen.getByText('208 м')).toBeOnTheScreen();
     expect(screen.getByText('1234')).toBeOnTheScreen();
     expect(screen.getByText('742 ккал')).toBeOnTheScreen();
-    expect(screen.getByText('Время')).toBeOnTheScreen();
-    expect(screen.getByText('Дистанция')).toBeOnTheScreen();
-    expect(screen.getByText('Набор выс.')).toBeOnTheScreen();
-    expect(screen.getByText('Калории')).toBeOnTheScreen();
+    expect(screen.getByText(metricCopy.time)).toBeOnTheScreen();
+    expect(screen.getByText(metricCopy.distance)).toBeOnTheScreen();
+    expect(screen.getByText(metricCopy.elevation)).toBeOnTheScreen();
+    expect(screen.getByText(metricCopy.calories)).toBeOnTheScreen();
     expect(screen.getByText('Москва')).toBeOnTheScreen();
     expect(screen.getByText('18°C')).toBeOnTheScreen();
     expect(screen.getByText('6 м/с')).toBeOnTheScreen();
@@ -72,7 +78,7 @@ describe('share activity image', () => {
         cardRef={createRef<ComponentRef<typeof View>>()}
       />,
     );
-    expect(screen.getByText('бег')).toBeOnTheScreen();
+    expect(screen.getByText(MAP_SPORT_TO_TITLE.run[LANGUAGES.russian])).toBeOnTheScreen();
     expect(screen.queryByText('not-a-date')).not.toBeOnTheScreen();
   });
 
@@ -88,8 +94,8 @@ describe('share activity image', () => {
       />,
     );
 
-    expect(screen.getByText('Скорость')).toBeOnTheScreen();
+    expect(screen.getByText(metricCopy.speed)).toBeOnTheScreen();
     expect(screen.getByText('60.0 км/ч')).toBeOnTheScreen();
-    expect(screen.queryByText('Темп')).not.toBeOnTheScreen();
+    expect(screen.queryByText(metricCopy.pace)).not.toBeOnTheScreen();
   });
 });

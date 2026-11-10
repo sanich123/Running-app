@@ -1,8 +1,10 @@
 import { createRef } from 'react';
 import type { PropsWithChildren } from 'react';
 import { screen } from '@testing-library/react-native';
+import { LANGUAGES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ActivityLocationInfoModal from './activity-location-info-modal';
+import { ACTIVITY_SETTINGS } from '../const';
 
 jest.mock('@gorhom/bottom-sheet', () => {
   const { ScrollView, View } = require('react-native');
@@ -19,6 +21,6 @@ describe('ActivityLocationInfoModal', () => {
     await renderWithProviders(<ActivityLocationInfoModal modalRef={createRef()} />);
 
     expect(screen.getByTestId('activity-location-info-details')).toBeOnTheScreen();
-    expect(screen.getByText('Геопозиция и отслеживание тренировки')).toBeOnTheScreen();
+    expect(screen.getByText(ACTIVITY_SETTINGS[LANGUAGES.russian].locationTrackingTitle)).toBeOnTheScreen();
   });
 });

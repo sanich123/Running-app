@@ -1,4 +1,5 @@
 import { errorToast } from '@S/error-toast/error-toast';
+import { FILE_SENDING_ERROR_COPY } from './const';
 import {
   compressMediaFile,
   createVideoThumbnail,
@@ -150,9 +151,9 @@ export async function uploadMediaBatchWithThumbnails(
     const isActivityUpload = (uploadOptions.scope ?? 'activity') === 'activity';
     const reviewedFiles = isActivityUpload ? uploadedFiles : await waitForMediaUploadReview(uploadedFiles, control);
     if (reviewedFiles.some(({ status }) => status === 'rejected')) {
-      errorToast('Модератор отклонил часть медиафайлов');
+      errorToast(FILE_SENDING_ERROR_COPY.mediaRejected);
     } else if (reviewedFiles.some(({ status }) => status === 'failed')) {
-      errorToast('Не удалось проверить часть медиафайлов. Они не будут прикреплены');
+      errorToast(FILE_SENDING_ERROR_COPY.mediaReviewFailed);
     }
 
     const uploadedMedia: (UploadedMedia | null)[] = emptyResult();

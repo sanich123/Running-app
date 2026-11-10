@@ -1,5 +1,5 @@
 import type { DashboardLabels, DashboardMetric } from '../types';
-export interface DashboardChartPoint {
+interface DashboardChartPoint {
   value: number;
   label: string;
   dataPointRadius?: number;

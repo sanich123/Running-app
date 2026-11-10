@@ -11,13 +11,13 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { TIMEOUT_MESSAGE } from '@Routes/activity/location-indicator/const';
 import { getMaxTrackingSpeedForSport } from '@U/location/location-utils';
 import { useGlobalActivitySportParams } from '../activity-params';
-import { ACTIVITY_ERROR_MSG } from './const';
+import { ACTIVITY_ERROR_MSG, NO_SPEED_ALERT_TIME } from './const';
 import ActivityMotionStatus from '../motion-status/activity-motion-status/activity-motion-status';
 
 export default function ErrorMsg() {
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
-  const { isAppShutedByPhone, isTooMuchSpeed, tooMuchSpeed, tooMuchSpeedTimestamp } = useAppSelector(
+  const { isAppShutedByPhone, isTooMuchSpeed, tooMuchSpeed, tooMuchSpeedTimestamp, isMapVisible } = useAppSelector(
     ({ location }) => location,
   );
   const { sport } = useGlobalActivitySportParams();
@@ -29,7 +29,7 @@ export default function ErrorMsg() {
         second: '2-digit',
         hour12: false,
       })
-    : '--:--:--';
+    : NO_SPEED_ALERT_TIME;
 
   useEffect(() => {
     if (isAppShutedByPhone) {
@@ -39,7 +39,7 @@ export default function ErrorMsg() {
   }, [isAppShutedByPhone, dispatch]);
 
   return (
-    <View style={styles.errorMsg}>
+    <View style={[styles.errorMsg, isMapVisible ? styles.aboveMetrics : styles.hiddenWithMetrics]}>
       {isAppShutedByPhone ? (
         <View
           style={[styles.message, { backgroundColor: colors.primaryContainer, borderColor: colors.outlineVariant }]}>
@@ -48,7 +48,7 @@ export default function ErrorMsg() {
             <Text variant="titleSmall" style={{ color: colors.onPrimaryContainer }}>
               {ACTIVITY_ERROR_MSG[language].recoveryTitle}
             </Text>
-            <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+            <Text numberOfLines={2} variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
               {ACTIVITY_ERROR_MSG[language].errorMsg}
             </Text>
           </View>
@@ -69,7 +69,7 @@ export default function ErrorMsg() {
             <Text variant="titleSmall" style={{ color: colors.onTertiaryContainer }}>
               {ACTIVITY_ERROR_MSG[language].speedTitle}
             </Text>
-            <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+            <Text numberOfLines={2} variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
               {ACTIVITY_ERROR_MSG[language].tooMuchSpeed(
                 tooMuchSpeed,
                 getMaxTrackingSpeedForSport(sport),
@@ -97,23 +97,25 @@ export default function ErrorMsg() {
 
 const styles = StyleSheet.create({
   errorMsg: {
-    alignItems: 'center',
+    alignItems: 'stretch',
+    gap: 6,
     position: 'absolute',
-    top: 0,
-    width: '100%',
+    left: 0,
+    right: 0,
     zIndex: 2,
   },
+  aboveMetrics: { bottom: '12%' },
+  hiddenWithMetrics: { display: 'none' },
   message: {
     alignItems: 'flex-start',
-    borderRadius: 18,
+    borderRadius: 14,
     borderWidth: 1,
     flexDirection: 'row',
-    gap: 10,
+    gap: 8,
     alignSelf: 'stretch',
-    marginHorizontal: 12,
-    marginTop: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    marginHorizontal: 0,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
   },
-  messageContent: { flex: 1, gap: 3 },
+  messageContent: { flex: 1, gap: 2 },
 });

@@ -1,6 +1,6 @@
 import * as Speech from 'expo-speech';
 import { LANGUAGES } from '@const/enums';
-import type { ActivitySettings, ActivityVoiceMetric } from '@R/slices/settings/types';
+import type { ActivitySettings, ActivityVoiceMetric } from '@R/slices/activity-settings/types';
 
 const SPEECH_LOCALES = {
   [LANGUAGES.english]: 'en-US',
@@ -22,6 +22,18 @@ interface KilometerVoiceAnnouncement {
 
 interface KilometerVoiceText extends KilometerVoiceAnnouncement {
   enabledMetrics: ActivityVoiceMetric[];
+}
+
+export function stopActivitySpeech() {
+  try {
+    void Speech.stop().catch(() => undefined);
+  } catch {
+    // Speech cancellation must never interrupt location tracking.
+  }
+}
+
+function replaceCurrentSpeech() {
+  stopActivitySpeech();
 }
 
 export function formatDurationForSpeech(milliseconds: number, language: LANGUAGES) {
@@ -77,6 +89,7 @@ export function speakCompletedKilometer(announcement: KilometerVoiceAnnouncement
   const text = buildKilometerAnnouncement({ ...announcement, enabledMetrics: settings.activityVoiceMetrics });
 
   try {
+    replaceCurrentSpeech();
     Speech.speak(text, {
       language: SPEECH_LOCALES[announcement.language],
       voice: settings.activityVoiceIdentifier ?? undefined,
@@ -88,12 +101,13 @@ export function speakCompletedKilometer(announcement: KilometerVoiceAnnouncement
   }
 }
 
-export function speakActivityReminder(text: string, language: LANGUAGES, voiceIdentifier: string | null) {
+export function speakActivityMessage(text: string, language: LANGUAGES, voiceIdentifier: string | null) {
   if (!text.trim()) {
     return;
   }
 
   try {
+    replaceCurrentSpeech();
     Speech.speak(text, {
       language: SPEECH_LOCALES[language],
       voice: voiceIdentifier ?? undefined,
@@ -103,4 +117,8 @@ export function speakActivityReminder(text: string, language: LANGUAGES, voiceId
   } catch {
     // Text-to-speech must never interrupt location tracking.
   }
+}
+
+export function speakActivityReminder(text: string, language: LANGUAGES, voiceIdentifier: string | null) {
+  speakActivityMessage(text, language, voiceIdentifier);
 }

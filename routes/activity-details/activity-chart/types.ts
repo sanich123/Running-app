@@ -15,8 +15,6 @@ export interface ActivityChartProps {
 
 export type ActivityChartMetric = 'heartRate' | 'pace' | 'speed' | 'elevation';
 export type HeartRateZone = 1 | 2 | 3 | 4 | 5;
-export type HeartRateZoneBasis = 'heartRateReserve' | 'age' | 'activityMaximum';
-
 export type HeartRateZoneSettings =
   | { basis: 'heartRateReserve'; maximumHeartRate: number; restingHeartRate: number }
   | { basis: 'age' | 'activityMaximum'; maximumHeartRate: number };

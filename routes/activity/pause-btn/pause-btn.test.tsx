@@ -8,6 +8,7 @@ import { MOCK_LOCATION } from '@T/mocks/mock-location';
 import { mockStore, resetMockLocation } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import * as backgroundLocation from '@U/location/expo-task-manager/background-location';
+import { ACTIVITY_TRACKING_ERROR_COPY } from '../const';
 import PauseBtn from './pause-btn';
 
 let mockOnPress: (() => Promise<void>) | undefined;
@@ -71,9 +72,7 @@ describe('pause btn', () => {
     await renderWithProviders(<PauseBtn />);
     await userEvent.press(screen.getByTestId('activity-pause-toggle'));
 
-    await waitFor(() =>
-      expect(errorToast).toHaveBeenCalledWith('Не удалось остановить отслеживание геопозиции', error),
-    );
+    await waitFor(() => expect(errorToast).toHaveBeenCalledWith(ACTIVITY_TRACKING_ERROR_COPY.stop, error));
     expect(mockStore.getState().location.activityStatus).toBe(STATUSES.started);
   });
 
@@ -85,7 +84,7 @@ describe('pause btn', () => {
     await renderWithProviders(<PauseBtn />);
     await userEvent.press(screen.getByTestId('activity-pause-toggle'));
 
-    await waitFor(() => expect(errorToast).toHaveBeenCalledWith('Не удалось запустить отслеживание геопозиции', error));
+    await waitFor(() => expect(errorToast).toHaveBeenCalledWith(ACTIVITY_TRACKING_ERROR_COPY.start, error));
     expect(mockStore.getState().location.activityStatus).toBe(STATUSES.paused);
   });
 

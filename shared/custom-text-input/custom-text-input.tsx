@@ -1,15 +1,18 @@
 import { HelperText, TextInput, useTheme } from 'react-native-paper';
 import type { FieldValues } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
+import { LANGUAGES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
+import { CUSTOM_TEXT_INPUT_VALIDATION_COPY } from './const';
 import type { CustomTextInputProps } from './types';
 
 export default function CustomTextInput<T extends FieldValues>({
   control,
   fieldName,
-  validation = { required: 'Обязательно для заполнения' },
+  validation = { required: CUSTOM_TEXT_INPUT_VALIDATION_COPY[LANGUAGES.russian].required },
   label,
+  placeholder,
   autoCapitalize = 'none',
   maxLength,
   returnKeyType = 'done',
@@ -23,6 +26,7 @@ export default function CustomTextInput<T extends FieldValues>({
   replaceCommaToDot = false,
   onSubmitEditing,
   accessibilityLabel,
+  testID,
   compact = false,
 }: CustomTextInputProps<T>) {
   const { isDisabledWhenLogining } = useAppSelector(({ logining }) => logining);
@@ -37,7 +41,7 @@ export default function CustomTextInput<T extends FieldValues>({
         <>
           <TextInput
             label={compact ? undefined : label}
-            placeholder={compact ? label : undefined}
+            placeholder={placeholder ?? (compact ? label : undefined)}
             autoCapitalize={autoCapitalize}
             autoCorrect={false}
             autoComplete={autoComplete}
@@ -89,7 +93,7 @@ export default function CustomTextInput<T extends FieldValues>({
             textColor={colors.onSurface}
             maxLength={maxLength}
             accessibilityLabel={accessibilityLabel}
-            testID={label}
+            testID={testID ?? label}
             disabled={shouldBeDisabled}
             returnKeyLabel={returnKeyLabel}
             returnKeyType={returnKeyType}

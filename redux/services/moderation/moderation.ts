@@ -71,22 +71,6 @@ export const moderationApi = runichApi.injectEndpoints({
         Tags.friends,
       ],
     }),
-    unblockUser: mutation<void, string>({
-      query: (blockedUserId) => ({
-        url: `/${moderation}/blocks/${blockedUserId}`,
-        method: Methods.delete,
-      }),
-      invalidatesTags: [
-        Tags.profile,
-        Tags.activities,
-        Tags.comments,
-        Tags.commentCounts,
-        Tags.commentLikes,
-        Tags.likes,
-        Tags.users,
-        Tags.friends,
-      ],
-    }),
   }),
 });
 
@@ -98,5 +82,4 @@ export const {
   useGetModerationAppealsQuery,
   useDecideModerationAppealMutation,
   useBlockUserMutation,
-  useUnblockUserMutation,
 } = moderationApi;

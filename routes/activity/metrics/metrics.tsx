@@ -2,11 +2,10 @@ import { View, StyleSheet, Platform } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import { formatDuration } from '@U/time-formatter';
-import { MAP_METRICS } from './const';
-import { getLiveLastKmMetric, getLiveMainMetric, getLiveTopMetric } from './utils';
 import { useActivitySportParams } from '../activity-params';
-import ActivityErrorMsg from '../error-msg/error-msg';
+import { MAP_METRICS } from './const';
 import MetricsItem from './metrics-item/metrics-item';
+import { getLiveLastKmMetric, getLiveMainMetric, getLiveTopMetric } from './utils';
 
 export default function Metrics() {
   const { colors } = useTheme();
@@ -23,45 +22,42 @@ export default function Metrics() {
   const topMetric = getLiveTopMetric({ sport, altitude, steps, language });
 
   return (
-    <>
-      <ActivityErrorMsg />
-      <View style={[styles.layout, { backgroundColor: colors.surfaceVariant, height: isMapVisible ? '12%' : '100%' }]}>
+    <View style={[styles.layout, { backgroundColor: colors.surfaceVariant, height: isMapVisible ? '12%' : '100%' }]}>
+      <MetricsItem
+        isMapVisible={isMapVisible}
+        title={`${MAP_METRICS[language].time}:`}
+        metric={formattedDuration}
+        isCentral={false}
+      />
+      {!isMapVisible ? (
         <MetricsItem
           isMapVisible={isMapVisible}
-          title={`${MAP_METRICS[language].time}:`}
-          metric={formattedDuration}
+          title={`${topMetric.title}:`}
+          metric={topMetric.metric}
           isCentral={false}
         />
-        {!isMapVisible ? (
-          <MetricsItem
-            isMapVisible={isMapVisible}
-            title={`${topMetric.title}:`}
-            metric={topMetric.metric}
-            isCentral={false}
-          />
-        ) : null}
+      ) : null}
+      <MetricsItem
+        isMapVisible={isMapVisible}
+        title={primaryMetric.title + ':'}
+        metric={primaryMetric.metric}
+        isCentral
+      />
+      {!isMapVisible ? (
         <MetricsItem
           isMapVisible={isMapVisible}
-          title={primaryMetric.title + ':'}
-          metric={primaryMetric.metric}
-          isCentral
-        />
-        {!isMapVisible ? (
-          <MetricsItem
-            isMapVisible={isMapVisible}
-            title={`${MAP_METRICS[language].lastKm}:`}
-            metric={lastKmMetric}
-            isCentral={false}
-          />
-        ) : null}
-        <MetricsItem
-          isMapVisible={isMapVisible}
-          title={`${MAP_METRICS[language].distance}:`}
-          metric={`${formattedDistance} ${`${MAP_METRICS[language].km}`}`}
+          title={`${MAP_METRICS[language].lastKm}:`}
+          metric={lastKmMetric}
           isCentral={false}
         />
-      </View>
-    </>
+      ) : null}
+      <MetricsItem
+        isMapVisible={isMapVisible}
+        title={`${MAP_METRICS[language].distance}:`}
+        metric={`${formattedDistance} ${`${MAP_METRICS[language].km}`}`}
+        isCentral={false}
+      />
+    </View>
   );
 }
 

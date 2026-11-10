@@ -1,5 +1,13 @@
 import { act, waitFor } from '@testing-library/react-native';
-import { Tags } from '@R/runich-api/const';
+import { http, HttpResponse } from 'msw';
+import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
+import { useGetCommentsByActivityIdInfiniteQuery } from '@R/services/comments/comments';
+import { useGetLikesByActivityIdInfiniteQuery } from '@R/services/likes/likes';
+import { useGetUnreadNotificationCountQuery } from '@R/services/notifications/notifications';
+import { MOCK_SERVER_ACTIVITY } from '@T/responses/runich';
+import { BASE_URL } from '@T/utils/handlers';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
+import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import NotificationRuntime from './notification-runtime';
 
@@ -8,21 +16,6 @@ let mockResponseHandler: ((response: never) => void) | undefined;
 let mockReceivedHandler: (() => void) | undefined;
 
 jest.mock('expo-router', () => ({ __esModule: true, router: { push: jest.fn() } }));
-jest.mock('@R/services/activity/activity', () => ({
-  activityApi: {
-    util: { invalidateTags: jest.fn((tags: unknown[]) => ({ type: 'activity/invalidate', payload: tags })) },
-  },
-}));
-jest.mock('@R/services/comments/comments', () => ({
-  commentsApi: {
-    util: { invalidateTags: jest.fn((tags: unknown[]) => ({ type: 'comments/invalidate', payload: tags })) },
-  },
-}));
-jest.mock('@R/services/likes/likes', () => ({
-  likesApi: {
-    util: { invalidateTags: jest.fn((tags: unknown[]) => ({ type: 'likes/invalidate', payload: tags })) },
-  },
-}));
 jest.mock('expo-notifications', () => ({
   __esModule: true,
   setNotificationHandler: jest.fn(),
@@ -31,23 +24,8 @@ jest.mock('expo-notifications', () => ({
   getLastNotificationResponse: jest.fn(),
   clearLastNotificationResponse: jest.fn(),
 }));
-jest.mock('@R/services/notifications/notifications', () => ({
-  notificationsApi: {
-    endpoints: { markNotificationRead: { initiate: jest.fn() } },
-    util: { invalidateTags: jest.fn() },
-  },
-}));
 
 const mockRouterPush = (jest.requireMock('expo-router') as { router: { push: jest.Mock } }).router.push;
-const activityInvalidate = (
-  jest.requireMock('@R/services/activity/activity') as { activityApi: { util: { invalidateTags: jest.Mock } } }
-).activityApi.util.invalidateTags;
-const commentsInvalidate = (
-  jest.requireMock('@R/services/comments/comments') as { commentsApi: { util: { invalidateTags: jest.Mock } } }
-).commentsApi.util.invalidateTags;
-const likesInvalidate = (
-  jest.requireMock('@R/services/likes/likes') as { likesApi: { util: { invalidateTags: jest.Mock } } }
-).likesApi.util.invalidateTags;
 const notificationMocks = jest.requireMock('expo-notifications') as {
   setNotificationHandler: jest.Mock;
   addNotificationResponseReceivedListener: jest.Mock;
@@ -55,31 +33,22 @@ const notificationMocks = jest.requireMock('expo-notifications') as {
   getLastNotificationResponse: jest.Mock;
   clearLastNotificationResponse: jest.Mock;
 };
-const apiMocks = (
-  jest.requireMock('@R/services/notifications/notifications') as {
-    notificationsApi: {
-      endpoints: { markNotificationRead: { initiate: jest.Mock } };
-      util: { invalidateTags: jest.Mock };
-    };
-  }
-).notificationsApi;
-const mockMarkRead = apiMocks.endpoints.markNotificationRead.initiate;
-const mockInvalidate = apiMocks.util.invalidateTags;
 const mockResponseSubscriptionRemove = jest.fn();
 const mockReceivedSubscriptionRemove = jest.fn();
+
+function ApiSubscriptions() {
+  useGetActivityByActivityIdQuery({ activityId: 'activity-1', viewerId: 'viewer-1' });
+  useGetCommentsByActivityIdInfiniteQuery({ activityId: 'activity-1' });
+  useGetLikesByActivityIdInfiniteQuery({ activityId: 'activity-1' });
+  useGetUnreadNotificationCountQuery();
+  return null;
+}
 
 describe('NotificationRuntime', () => {
   beforeEach(() => {
     mockRouterPush.mockReset();
-    activityInvalidate.mockClear();
-    commentsInvalidate.mockClear();
-    likesInvalidate.mockClear();
     mockResponseSubscriptionRemove.mockReset();
     mockReceivedSubscriptionRemove.mockReset();
-    mockMarkRead.mockReset().mockImplementation((id: string) => ({ type: 'notifications/markRead', payload: id }));
-    mockInvalidate
-      .mockReset()
-      .mockImplementation((tags: unknown[]) => ({ type: 'notifications/invalidate', payload: tags }));
     notificationMocks.setNotificationHandler.mockReset();
     notificationMocks.clearLastNotificationResponse.mockReset();
     notificationMocks.addNotificationResponseReceivedListener.mockReset().mockImplementation((handler) => {
@@ -97,6 +66,34 @@ describe('NotificationRuntime', () => {
   });
 
   it('routes a tapped activity push, marks it read, invalidates on received push, and removes listeners', async () => {
+    let activityRequests = 0;
+    let commentRequests = 0;
+    let likeRequests = 0;
+    let unreadCountRequests = 0;
+    const markedNotificationIds: string[] = [];
+    server.use(
+      http.get(`${BASE_URL}/activity/activityId/activity-1`, () => {
+        activityRequests += 1;
+        return HttpResponse.json({ ...MOCK_SERVER_ACTIVITY, id: 'activity-1' });
+      }),
+      http.get(`${BASE_URL}/comment/activity-1`, () => {
+        commentRequests += 1;
+        return HttpResponse.json({ comments: [], hasMore: false, nextCursor: null });
+      }),
+      http.get(`${BASE_URL}/like/activity-1`, () => {
+        likeRequests += 1;
+        return HttpResponse.json({ likes: [], hasMore: false, nextCursor: null, currentUserLike: null });
+      }),
+      http.get(`${BASE_URL}/notification/unread-count`, () => {
+        unreadCountRequests += 1;
+        return HttpResponse.json({ count: 2 });
+      }),
+      http.patch(`${BASE_URL}/notification/notification-1/read`, () => {
+        markedNotificationIds.push('notification-1');
+        return HttpResponse.json({ updated: 1 });
+      }),
+    );
+    mockStore.dispatch(setMockUserId('viewer-1'));
     mockLastResponse = {
       notification: {
         request: {
@@ -105,19 +102,21 @@ describe('NotificationRuntime', () => {
         },
       },
     };
-    const { unmount } = await renderWithProviders(<NotificationRuntime />);
+    const { unmount } = await renderWithProviders(
+      <>
+        <ApiSubscriptions />
+        <NotificationRuntime />
+      </>,
+      { store: mockStore },
+    );
 
-    await waitFor(() => expect(mockRouterPush).toHaveBeenCalledWith('/activity/activity-1'));
-    expect(mockMarkRead).toHaveBeenCalledWith('notification-1');
-    expect(activityInvalidate).toHaveBeenCalledWith([{ type: Tags.activities, id: 'activity-1' }]);
-    expect(commentsInvalidate).toHaveBeenCalledWith([
-      { type: Tags.comments, id: 'activity-1' },
-      { type: Tags.commentCounts, id: 'activity-1' },
-    ]);
-    expect(likesInvalidate).toHaveBeenCalledWith([{ type: Tags.likes, id: 'activity-1' }]);
-    expect(activityInvalidate.mock.invocationCallOrder[0]).toBeLessThan(mockRouterPush.mock.invocationCallOrder[0]);
-    expect(commentsInvalidate.mock.invocationCallOrder[0]).toBeLessThan(mockRouterPush.mock.invocationCallOrder[0]);
-    expect(likesInvalidate.mock.invocationCallOrder[0]).toBeLessThan(mockRouterPush.mock.invocationCallOrder[0]);
+    await waitFor(() => {
+      expect(mockRouterPush).toHaveBeenCalledWith('/activity/activity-1');
+      expect(markedNotificationIds).toEqual(['notification-1']);
+      expect(activityRequests).toBeGreaterThanOrEqual(2);
+      expect(commentRequests).toBeGreaterThanOrEqual(2);
+      expect(likeRequests).toBeGreaterThanOrEqual(2);
+    });
     expect(notificationMocks.clearLastNotificationResponse).toHaveBeenCalledTimes(1);
     const handler = notificationMocks.setNotificationHandler.mock.calls[0][0] as {
       handleNotification: () => Promise<unknown>;
@@ -131,8 +130,15 @@ describe('NotificationRuntime', () => {
 
     mockResponseHandler?.(mockLastResponse as never);
     expect(mockRouterPush).toHaveBeenCalledTimes(1);
-    mockReceivedHandler?.();
-    expect(mockInvalidate).toHaveBeenCalled();
+    await act(async () => {
+      mockReceivedHandler?.();
+    });
+    await waitFor(() => {
+      expect(unreadCountRequests).toBeGreaterThanOrEqual(2);
+    });
+    expect(activityRequests).toBeGreaterThanOrEqual(2);
+    expect(commentRequests).toBeGreaterThanOrEqual(2);
+    expect(likeRequests).toBeGreaterThanOrEqual(2);
     await act(async () => {
       unmount();
     });
@@ -148,7 +154,6 @@ describe('NotificationRuntime', () => {
     };
     await renderWithProviders(<NotificationRuntime />);
     await waitFor(() => expect(mockRouterPush).toHaveBeenCalledWith('/notifications'));
-    expect(mockMarkRead).not.toHaveBeenCalled();
     expect(notificationMocks.clearLastNotificationResponse).toHaveBeenCalledTimes(1);
   });
 });

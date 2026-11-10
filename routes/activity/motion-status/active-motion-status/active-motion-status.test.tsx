@@ -57,7 +57,7 @@ describe('Activity-motion-status', () => {
     });
 
     expect(screen.getByText(ACTIVITY_MOTION_STATUS.russian.title)).toBeOnTheScreen();
-    expect(screen.getByText(ACTIVITY_MOTION_STATUS.russian.basedOn('акселерометра'))).toBeOnTheScreen();
+    expect(screen.queryByText(/Вывод сделан на основании/)).not.toBeOnTheScreen();
 
     const user = userEvent.setup();
     await user.press(screen.getByTestId('dismiss-no-movement'));

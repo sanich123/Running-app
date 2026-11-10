@@ -37,27 +37,24 @@ export const MEDIA_MODERATION_PLACEHOLDER_STATUS_CONFIG = {
     title: 'queued',
     detail: 'detail',
     isStage: true,
-    stageIcon: 'timer-sand',
     statusIcon: 'clock-outline',
   },
   [MEDIA_REVIEW_STATUSES.processing]: {
     title: 'processing',
     detail: 'detail',
     isStage: true,
-    stageIcon: 'cog-sync-outline',
     statusIcon: 'clock-outline',
   },
   [MEDIA_REVIEW_STATUSES.reviewRequired]: {
     title: 'reviewRequired',
     detail: 'detail',
     isStage: true,
-    stageIcon: 'shield-search',
     statusIcon: 'clock-outline',
   },
   [MEDIA_REVIEW_STATUSES.approved]: {
     title: 'approved',
     detail: 'detail',
-    isStage: false,
+    isStage: true,
     statusIcon: 'clock-outline',
   },
   [MEDIA_REVIEW_STATUSES.rejected]: {
@@ -78,5 +75,6 @@ export const MEDIA_MODERATION_PLACEHOLDER_STATUS_CONFIG = {
     title: keyof (typeof MEDIA_MODERATION_PLACEHOLDER_COPY)[LANGUAGES.english];
     detail: 'detail' | 'retry';
     statusIcon: string;
-  } & ({ isStage: true; stageIcon: string } | { isStage: false; stageIcon?: never })
+    isStage: boolean;
+  }
 >;

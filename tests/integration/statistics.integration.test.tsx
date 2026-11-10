@@ -1,8 +1,9 @@
 import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
-import { ROUTES } from '@const/enums';
+import { LANGUAGES, ROUTES } from '@const/enums';
 import { useGetAnnualStatisticsByUserIdQuery } from '@R/services/statistics/statistics';
 import CalendarActivities from '@Routes/statistic/calendar/calendar-activities/calendar-activities';
+import { CALENDAR_ACTIVITIES_COPY } from '@Routes/statistic/calendar/const';
 import Charts from '@Routes/statistic/charts/charts';
 import MonthStatistics from '@Routes/statistic/month-statistics/month-statistics';
 import { MOCK_SERVER_ACTIVITY, MOCK_SERVER_IDS } from '@T/responses/runich';
@@ -74,7 +75,7 @@ describe('statistics integration flows', () => {
   it('opens monthly statistics and displays the activity calendar', async () => {
     await renderWithProviders(<MonthStatistics />);
     expect(await screen.findByText(/август 2026|August 2026/i)).toBeOnTheScreen();
-    expect(await screen.findByText('Нажмите на день, чтобы открыть тренировку')).toBeOnTheScreen();
+    expect(await screen.findByText(CALENDAR_ACTIVITIES_COPY[LANGUAGES.russian].openWorkoutHint)).toBeOnTheScreen();
     expect(screen.getByTestId(`calendar-activities-${MOCK_SERVER_IDS.activityId}`)).toBeOnTheScreen();
   });
 

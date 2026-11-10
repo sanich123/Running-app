@@ -14,7 +14,7 @@ import { getEmailValidation, getPasswordValidation, getRegistrationEmailValidati
 import { SignInPageStates } from '@U/validate-email-password';
 import AuthDivider from './auth-divider/auth-divider';
 import AuthStepIntro from './auth-step-intro/auth-step-intro';
-import { SIGN_IN_FIELD_LABELS, SIGN_IN_FOOTER_TEXT, SIGN_IN_SEO } from './const';
+import { SIGN_IN_ACCESS_DENIED_COPY, SIGN_IN_FIELD_LABELS, SIGN_IN_FOOTER_TEXT, SIGN_IN_SEO } from './const';
 import EmailRegistrationRestriction from './email-registration-restriction/email-registration-restriction';
 import LegalConsents from './legal-consents/legal-consents';
 import LoginRegisterBtn from './login-register-btn/login-register-btn';
@@ -63,9 +63,7 @@ export default function SignIn() {
         <Surface mode="flat" style={styles.inputsWrapper}>
           {accessDenied === 'true' ? (
             <Text variant="bodyMedium" style={styles.accessDenied}>
-              {language === 'russian'
-                ? 'У этого аккаунта нет прав для входа в админку. Попросите администратора выдать вам соответствующие права.'
-                : 'This account does not have admin access. Ask an administrator to grant you the required permissions.'}
+              {SIGN_IN_ACCESS_DENIED_COPY[language]}
             </Text>
           ) : null}
           <AuthStepIntro authStep={currentAuthStep} />

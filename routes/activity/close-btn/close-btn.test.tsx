@@ -1,4 +1,5 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { LANGUAGES, STATUSES } from '@const/enums';
 import { setDurationAt } from '@R/slices/location/location';
 import { changeLanguage } from '@R/slices/settings/settings';
@@ -6,6 +7,7 @@ import * as errorToastModule from '@S/error-toast/error-toast';
 import { mockStore, resetMockLocation } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import * as backgroundLocation from '@U/location/expo-task-manager/background-location';
+import { ACTIVITY_TRACKING_ERROR_COPY } from '../const';
 import ActivityCloseBtn from './close-btn';
 import { ACTIVITY_CLOSE_BTN } from './const';
 
@@ -29,18 +31,30 @@ describe('Activity close btn', () => {
 
   it('should correctly renders in english', async () => {
     await renderWithProviders(<ActivityCloseBtn />, { store: mockStore });
-    expect(screen.getByText(ACTIVITY_CLOSE_BTN.russian.btnText)).toBeDefined();
+    const closeButton = screen.getByTestId('activity-close-button');
+    expect(closeButton.props.accessibilityLabel).toBe(ACTIVITY_CLOSE_BTN.russian.btnText);
+    const closeButtonStyle = StyleSheet.flatten(closeButton.props.style);
+    if (Platform.OS === 'ios') {
+      expect(closeButtonStyle.backgroundColor).toBeUndefined();
+      expect(closeButtonStyle.width).toBe(44);
+      expect(closeButtonStyle.height).toBe(44);
+    } else {
+      expect(closeButtonStyle.backgroundColor).not.toBe('transparent');
+      expect(closeButtonStyle.borderWidth).toBeGreaterThan(0);
+    }
   });
   it('should correctly renders in russian', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     await renderWithProviders(<ActivityCloseBtn />, { store: mockStore });
-    expect(screen.getByText(ACTIVITY_CLOSE_BTN.russian.btnText)).toBeDefined();
+    expect(screen.getByTestId('activity-close-button').props.accessibilityLabel).toBe(
+      ACTIVITY_CLOSE_BTN.russian.btnText,
+    );
   });
   it('should correctly show alert message, when duration is greater than 0', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
     mockStore.dispatch(setDurationAt(10000));
     await renderWithProviders(<ActivityCloseBtn />, { store: mockStore });
-    const closeBtn = screen.getByText(ACTIVITY_CLOSE_BTN.english.btnText);
+    const closeBtn = screen.getByTestId('activity-close-button');
     await userEvent.press(closeBtn);
     expect(mockStore.getState().location.activityStatus).toEqual(STATUSES.paused);
     expect(await screen.findByText(ACTIVITY_CLOSE_BTN.english.alertAccept)).toBeOnTheScreen();
@@ -51,7 +65,7 @@ describe('Activity close btn', () => {
     mockCanGoBack.mockReturnValue(true);
     mockStore.dispatch(resetMockLocation());
     await renderWithProviders(<ActivityCloseBtn />, { store: mockStore });
-    await userEvent.press(screen.getByText(ACTIVITY_CLOSE_BTN.english.btnText));
+    await userEvent.press(screen.getByTestId('activity-close-button'));
     expect(mockBack).toHaveBeenCalledTimes(1);
   });
 
@@ -60,7 +74,7 @@ describe('Activity close btn', () => {
     mockCanGoBack.mockReturnValue(true);
     mockStore.dispatch(setDurationAt(10000));
     await renderWithProviders(<ActivityCloseBtn />, { store: mockStore });
-    await userEvent.press(screen.getByText(ACTIVITY_CLOSE_BTN.english.btnText));
+    await userEvent.press(screen.getByTestId('activity-close-button'));
     await userEvent.press(await screen.findByText(ACTIVITY_CLOSE_BTN.english.alertAccept));
     expect(mockBack).toHaveBeenCalledTimes(1);
   });
@@ -72,7 +86,7 @@ describe('Activity close btn', () => {
     mockStore.dispatch(resetMockLocation());
     await renderWithProviders(<ActivityCloseBtn />, { store: mockStore });
 
-    await userEvent.press(screen.getByText(ACTIVITY_CLOSE_BTN.english.btnText));
+    await userEvent.press(screen.getByTestId('activity-close-button'));
 
     expect(mockReplace).toHaveBeenCalledWith('/');
     expect(mockBack).not.toHaveBeenCalled();
@@ -85,7 +99,7 @@ describe('Activity close btn', () => {
     });
     const stopSpy = jest.spyOn(backgroundLocation, 'stopLocationTracking').mockReturnValue(stopPromise);
     await renderWithProviders(<ActivityCloseBtn />);
-    const closeButton = screen.getByText(ACTIVITY_CLOSE_BTN.english.btnText);
+    const closeButton = screen.getByTestId('activity-close-button');
 
     await userEvent.press(closeButton);
     await userEvent.press(closeButton);
@@ -101,11 +115,9 @@ describe('Activity close btn', () => {
     jest.spyOn(backgroundLocation, 'stopLocationTracking').mockRejectedValue(error);
     const errorToast = jest.spyOn(errorToastModule, 'errorToast').mockImplementation(() => undefined);
     await renderWithProviders(<ActivityCloseBtn />);
-    await userEvent.press(screen.getByText(ACTIVITY_CLOSE_BTN.english.btnText));
+    await userEvent.press(screen.getByTestId('activity-close-button'));
 
-    await waitFor(() =>
-      expect(errorToast).toHaveBeenCalledWith('Не удалось остановить отслеживание геопозиции', error),
-    );
+    await waitFor(() => expect(errorToast).toHaveBeenCalledWith(ACTIVITY_TRACKING_ERROR_COPY.stop, error));
     expect(mockBack).not.toHaveBeenCalled();
     expect(mockReplace).not.toHaveBeenCalled();
     expect(mockStore.getState().location.activityStatus).toBe(STATUSES.initial);

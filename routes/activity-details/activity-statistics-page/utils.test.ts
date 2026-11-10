@@ -1,4 +1,5 @@
 import { LANGUAGES } from '@const/enums';
+import { ACTIVITY_STATISTICS_PAGE_COPY } from './const';
 import { buildActivityStatisticSections } from './utils';
 import type { ActivityResponse } from '@R/runich-api/types';
 
@@ -78,8 +79,8 @@ describe('buildActivityStatisticSections', () => {
       LANGUAGES.english,
     );
 
-    expect(sections.map(({ title }) => title)).toContain('Speed');
-    expect(sections.map(({ title }) => title)).not.toContain('Pace');
+    expect(sections.map(({ title }) => title)).toContain(ACTIVITY_STATISTICS_PAGE_COPY[LANGUAGES.english].speed);
+    expect(sections.map(({ title }) => title)).not.toContain(ACTIVITY_STATISTICS_PAGE_COPY[LANGUAGES.english].pace);
     expect(sections.find(({ title }) => title === 'Technique')?.metrics.map(({ label }) => label)).toEqual(['Steps']);
   });
 

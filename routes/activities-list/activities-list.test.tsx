@@ -1,30 +1,31 @@
 import { screen } from '@testing-library/react-native';
+import { http, HttpResponse } from 'msw';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { EMPTY_STATE_COPY } from '@S/empty-state/const';
+import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
+import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ActivitiesList from './activities-list';
 
-const mockUseActivitiesQuery = jest.fn();
 jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({ ids: ['ids=activity-1', 'activity-2, activity-3'] }),
 }));
-jest.mock('@R/services/activity/activity', () => ({
-  ...jest.requireActual('@R/services/activity/activity'),
-  useGetSeveralActivitiesByTheirIdsQuery: (...args: unknown[]) => mockUseActivitiesQuery(...args),
-}));
 
 describe('ActivitiesList', () => {
-  beforeEach(() => {
-    mockUseActivitiesQuery.mockReturnValue({ isSuccess: true, isLoading: false, isError: false, data: [] });
-  });
-
   it('parses route ids and shows the empty state when no activities were found', async () => {
+    const requestedIds: string[] = [];
+    server.use(
+      http.get(`${BASE_URL}/activity/activityIds`, ({ request }) => {
+        requestedIds.push(new URL(request.url).searchParams.get('ids') ?? '');
+        return HttpResponse.json([]);
+      }),
+    );
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     await renderWithProviders(<ActivitiesList />);
 
-    expect(mockUseActivitiesQuery).toHaveBeenCalledWith({ ids: 'activity-1,activity-2,activity-3' });
-    expect(screen.getByText(EMPTY_STATE_COPY[LANGUAGES.russian].activities.title)).toBeOnTheScreen();
+    expect(requestedIds).toContain('activity-1,activity-2,activity-3');
+    expect(await screen.findByText(EMPTY_STATE_COPY[LANGUAGES.russian].activities.title)).toBeOnTheScreen();
   });
 });

@@ -1,29 +1,16 @@
 import { act, waitFor } from '@testing-library/react-native';
+import { http, HttpResponse } from 'msw';
 import { AppState } from 'react-native';
 import type { AppStateStatus } from 'react-native';
 import { resetAuthSlice } from '@R/slices/auth/auth';
 import { changeNetworkState, NETWORK_INITIAL_STATE } from '@R/slices/network/network';
 import { clearSubscriptionSnapshot } from '@R/slices/subscription/subscription';
+import { MOCK_SERVER_SUBSCRIPTION } from '@T/responses/runich';
+import { BASE_URL } from '@T/utils/handlers';
 import { setMockUserId, mockStore } from '@T/utils/mock-store';
+import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import SubscriptionStatusSync from './subscription-status-sync';
-import type { CurrentSubscriptionResponse } from '@R/services/subscription/types';
-
-const mockUseSubscriptionQuery = jest.fn();
-jest.mock('@R/services/subscription/subscription', () => ({
-  useGetCurrentSubscriptionQuery: (...args: unknown[]) => mockUseSubscriptionQuery(...args),
-}));
-
-const subscription: CurrentSubscriptionResponse = {
-  userId: 'user-123',
-  isPremium: true,
-  status: 'active',
-  provider: null,
-  productId: null,
-  startsAt: '2026-01-01T00:00:00.000Z',
-  expiresAt: '2027-01-01T00:00:00.000Z',
-  cancelAtPeriodEnd: false,
-};
 
 describe('subscription status sync', () => {
   let appStateListener: ((state: AppStateStatus) => void) | undefined;
@@ -36,7 +23,6 @@ describe('subscription status sync', () => {
     mockStore.dispatch(changeNetworkState(NETWORK_INITIAL_STATE.networkState));
     appStateListener = undefined;
     removeListener = jest.fn();
-    mockUseSubscriptionQuery.mockReturnValue({ data: undefined, isSuccess: false, refetch: jest.fn() });
     jest.spyOn(AppState, 'addEventListener').mockImplementation(((
       _event: string,
       listener: (state: AppStateStatus) => void,
@@ -54,12 +40,16 @@ describe('subscription status sync', () => {
   });
 
   it('skips the server query without an authenticated user', async () => {
+    const requests: string[] = [];
+    server.use(
+      http.get(`${BASE_URL}/subscription/me`, ({ request }) => {
+        requests.push(request.url);
+        return HttpResponse.json(MOCK_SERVER_SUBSCRIPTION);
+      }),
+    );
     const { unmount } = await renderWithProviders(<SubscriptionStatusSync />);
 
-    expect(mockUseSubscriptionQuery).toHaveBeenCalledWith(
-      undefined,
-      expect.objectContaining({ skip: true, refetchOnMountOrArgChange: true, refetchOnReconnect: true }),
-    );
+    expect(requests).toEqual([]);
     expect(mockStore.getState().subscription.isPremium).toBe(false);
     appStateListener?.('active');
     expect(removeListener).not.toHaveBeenCalled();
@@ -68,16 +58,18 @@ describe('subscription status sync', () => {
   });
 
   it('persists successful status and refreshes on reconnection and foreground activation', async () => {
+    let requestCount = 0;
+    server.use(
+      http.get(`${BASE_URL}/subscription/me`, () => {
+        requestCount += 1;
+        return HttpResponse.json(MOCK_SERVER_SUBSCRIPTION);
+      }),
+    );
     mockStore.dispatch(setMockUserId('user-123'));
-    const refetch = jest.fn();
-    mockUseSubscriptionQuery.mockReturnValue({ data: subscription, isSuccess: true, refetch });
     const { unmount } = await renderWithProviders(<SubscriptionStatusSync />);
 
-    await waitFor(() => expect(mockStore.getState().subscription).toMatchObject(subscription));
-    expect(mockUseSubscriptionQuery).toHaveBeenCalledWith(
-      undefined,
-      expect.objectContaining({ skip: false, refetchOnMountOrArgChange: true, refetchOnReconnect: true }),
-    );
+    await waitFor(() => expect(mockStore.getState().subscription).toMatchObject(MOCK_SERVER_SUBSCRIPTION));
+    expect(requestCount).toBe(1);
 
     await act(async () => {
       mockStore.dispatch(
@@ -88,12 +80,12 @@ describe('subscription status sync', () => {
         }),
       );
     });
-    expect(refetch).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(requestCount).toBe(2));
 
     appStateListener?.('background');
-    expect(refetch).toHaveBeenCalledTimes(1);
+    expect(requestCount).toBe(2);
     appStateListener?.('active');
-    expect(refetch).toHaveBeenCalledTimes(2);
+    await waitFor(() => expect(requestCount).toBe(3));
 
     await unmount();
     expect(removeListener).toHaveBeenCalled();

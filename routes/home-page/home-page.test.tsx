@@ -4,6 +4,7 @@ import { http, HttpResponse } from 'msw';
 import { ROUTES } from '@const/enums';
 import { setAuthTokens } from '@R/slices/auth/auth';
 import { ERROR_COMPONENT_TEST_ID } from '@S/error-component/const';
+import { WEEK_STATISTICS } from '@S/infinite-scroll-list/week-statistics/const';
 import { MOCK_SERVER_ACTIVITY, MOCK_SERVER_IDS } from '@T/responses/runich';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
@@ -49,7 +50,7 @@ describe('HomePage', () => {
   it('renders loading state', async () => {
     server.use(http.get(`${BASE_URL}/activity/home`, loadingResponse));
     await renderWithProviders(<HomePage />);
-    expect(screen.getByText('Ваш недельный отчет')).toBeOnTheScreen();
+    expect(screen.getByText(WEEK_STATISTICS.russian.report)).toBeOnTheScreen();
     expect(screen.getByTestId('home-feed-switcher')).toBeOnTheScreen();
     expect(screen.getByTestId('home-feed-skeleton')).toBeOnTheScreen();
     expect(screen.getByTestId('cross-platform-scroll-view')).toBeOnTheScreen();

@@ -14,7 +14,7 @@ import { errorResponse, loadingResponse } from '@T/utils/response-states';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ActivityActionsMenu from './activity-actions-menu/activity-actions-menu';
-import { ACTIVITY_ACTIONS_MENU } from './activity-actions-menu/const';
+import { ACTIVITY_ACTIONS_MENU, ACTIVITY_DELETE_CONFIRMATION } from './activity-actions-menu/const';
 import ActivityDetails from './activity-details';
 import { REPORT_CONTENT_COPY } from '../../shared/moderation/report-content-dialog/const';
 
@@ -23,28 +23,14 @@ const mockPush = jest.fn();
 const originalPlatformOS = Platform.OS;
 
 jest.mock('expo-router', () => {
-  const React = jest.requireActual('react');
-  const { Fragment } = React;
-  const { Pressable, Text, View } = jest.requireActual('react-native');
-  const Toolbar = Object.assign(({ children }: { children?: ReactNode }) => React.createElement(View, null, children), {
-    Menu: ({ children, accessibilityLabel }: { children?: ReactNode; accessibilityLabel?: string }) =>
-      React.createElement(View, { accessibilityLabel }, children),
-    MenuAction: ({ children, onPress }: { children?: ReactNode; onPress?: () => void }) =>
-      React.createElement(
-        Pressable,
-        { accessibilityRole: 'button', onPress },
-        React.createElement(Text, null, children),
-      ),
-  });
-
-  return {
-    Stack: {
-      Screen: ({ options, children }: { options: { headerRight?: () => ReactNode }; children?: ReactNode }) => {
-        mockHeaderRight.current = options.headerRight;
-        return React.createElement(Fragment, null, children);
-      },
-      Toolbar,
+  const routerMock = require('@T/utils/expo-router-toolbar-mock').createExpoRouterToolbarMock({
+    initiallyOpen: true,
+    onHeaderRight: (headerRight: (() => ReactNode) | undefined) => {
+      mockHeaderRight.current = headerRight;
     },
+  });
+  return {
+    ...routerMock,
     useLocalSearchParams: () => ({ id: MOCK_SERVER_IDS.activityId }),
     usePathname: () => `/activity/${MOCK_SERVER_IDS.activityId}`,
     useRouter: () => ({ push: mockPush, back: jest.fn() }),
@@ -146,8 +132,8 @@ describe('ActivityDetails', () => {
     await renderWithProviders(<ActivityDetails />);
     await screen.findByTestId('full-view-card');
 
-    expect(screen.getByLabelText('Действия с тренировкой')).toBeOnTheScreen();
-    await user.press(screen.getByText('Редактировать'));
+    expect(screen.getByLabelText(ACTIVITY_ACTIONS_MENU[LANGUAGES.russian].accessibilityLabel)).toBeOnTheScreen();
+    await user.press(screen.getByText(ACTIVITY_ACTIONS_MENU[LANGUAGES.russian].edit));
     expect(mockPush).toHaveBeenCalledWith(
       expect.objectContaining({
         pathname: expect.stringContaining('manual-activity'),
@@ -155,8 +141,9 @@ describe('ActivityDetails', () => {
       }),
     );
 
-    await user.press(screen.getByText('Удалить'));
-    expect(screen.getByText('Удалить активность?')).toBeOnTheScreen();
+    await user.press(screen.getByLabelText(ACTIVITY_ACTIONS_MENU[LANGUAGES.russian].accessibilityLabel));
+    await user.press(screen.getByText(ACTIVITY_ACTIONS_MENU[LANGUAGES.russian].delete));
+    expect(screen.getByText(ACTIVITY_DELETE_CONFIRMATION[LANGUAGES.russian].deleteActivity)).toBeOnTheScreen();
   });
 
   it('offers reporting in the native iOS activity menu for another user', async () => {
@@ -170,7 +157,7 @@ describe('ActivityDetails', () => {
 
     expect(screen.getByLabelText(ACTIVITY_ACTIONS_MENU[LANGUAGES.russian].accessibilityLabel)).toBeOnTheScreen();
     await user.press(screen.getByText(ACTIVITY_ACTIONS_MENU[LANGUAGES.russian].report));
-    expect(screen.getAllByText(REPORT_CONTENT_COPY[LANGUAGES.russian].title)).toHaveLength(2);
+    expect(screen.getByText(REPORT_CONTENT_COPY[LANGUAGES.russian].title)).toBeOnTheScreen();
   });
 
   it('renders error state', async () => {

@@ -1,4 +1,5 @@
 import { uploadMediaWithThumbnail } from '@U/file-sending/utils';
+import { SAVE_ACTIVITY_MEDIA_ERROR_COPY } from './const';
 import { uploadActivityMedia } from './utils';
 
 jest.mock('@U/file-sending/utils', () => ({
@@ -15,7 +16,7 @@ describe('save activity media utils', () => {
     expect(uploadMediaWithThumbnail).toHaveBeenCalledWith(
       'activity.jpg',
       { scope: 'activity' },
-      'Не удалось добавить медиа к активности',
+      SAVE_ACTIVITY_MEDIA_ERROR_COPY.addMediaFailed,
       {},
     );
   });

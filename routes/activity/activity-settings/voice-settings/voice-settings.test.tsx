@@ -1,6 +1,7 @@
 import { act, screen } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
-import { setActivityVoiceEnabled, setActivityVoiceMetrics, changeLanguage } from '@R/slices/settings/settings';
+import { setActivityVoiceEnabled, setActivityVoiceMetrics } from '@R/slices/activity-settings/activity-settings';
+import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { ACTIVITY_SETTINGS } from '../const';
@@ -22,7 +23,7 @@ describe('VoiceSettings', () => {
     await act(async () =>
       screen.getByTestId('activity-voice-enabled').props.onChange({ nativeEvent: { value: false } }),
     );
-    expect(mockStore.getState().settings.activityVoiceEnabled).toBe(false);
+    expect(mockStore.getState().activitySettings.activityVoiceEnabled).toBe(false);
     expect(screen.queryByTestId('activity-voice-metric-pace')).toBeNull();
 
     await act(async () =>
@@ -31,6 +32,6 @@ describe('VoiceSettings', () => {
     await act(async () =>
       screen.getByTestId('activity-voice-metric-elevation').props.onChange({ nativeEvent: { value: false } }),
     );
-    expect(mockStore.getState().settings.activityVoiceMetrics).toEqual(['pace', 'movingTime']);
+    expect(mockStore.getState().activitySettings.activityVoiceMetrics).toEqual(['pace', 'movingTime']);
   });
 });

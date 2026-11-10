@@ -164,6 +164,24 @@ describe('ProfilePage', () => {
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.profile}/${ROUTES.profilePrivacySettings}`);
   });
 
+  it('keeps maps and routes available on mobile', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'ios' });
+    await renderWithProviders(<ProfilePage />);
+    await screen.findByText(`${MOCK_SERVER_PROFILE.name} ${MOCK_SERVER_PROFILE.surname}`);
+
+    expect(screen.getByTestId('profile-maps-button')).toBeOnTheScreen();
+    expect(screen.getByTestId('profile-routes-button')).toBeOnTheScreen();
+  });
+
+  it('hides maps and routes on web', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
+    await renderWithProviders(<ProfilePage />);
+    await screen.findByText(`${MOCK_SERVER_PROFILE.name} ${MOCK_SERVER_PROFILE.surname}`);
+
+    expect(screen.queryByTestId('profile-maps-button')).not.toBeOnTheScreen();
+    expect(screen.queryByTestId('profile-routes-button')).not.toBeOnTheScreen();
+  });
+
   it('opens the profile photo in a modal', async () => {
     const user = userEvent.setup();
     server.use(

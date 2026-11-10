@@ -24,6 +24,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { RESPONSIVE_DIALOG_STYLE } from '@S/responsive-dialog-style';
 import { successToast } from '@S/success-toast/success-toast';
+import { ADMIN_ACCESS_COPY } from './const';
 import type { AdminRole, AdminUser } from '@R/services/admin/types';
 
 const ROLE_ORDER: AdminRole[] = ['moderator', 'email_sender', 'access_manager', 'superuser'];
@@ -41,64 +42,7 @@ export default function AdminAccessManagement({ isSuperuser }: { isSuperuser: bo
   const auditQuery = useGetAdminAccessAuditQuery({ take: 30 });
   const [grantRole] = useGrantAdminRoleMutation();
   const [revokeRole] = useRevokeAdminRoleMutation();
-  const copy =
-    language === LANGUAGES.russian
-      ? {
-          title: 'Права пользователей',
-          search: 'Найти пользователя по email',
-          find: 'Найти',
-          clearSearch: 'Очистить поиск',
-          noUsers: 'Пользователи не найдены.',
-          noRoles: 'Нет назначенных прав',
-          edit: 'Изменить права',
-          dialogTitle: 'Права доступа',
-          choosePermissions: 'Выберите права для пользователя',
-          selfEditDisabled: 'Нельзя изменить собственные права.',
-          save: 'Сохранить',
-          cancel: 'Отмена',
-          saved: 'Права сохранены.',
-          loadError: 'Не удалось загрузить пользователей.',
-          retry: 'Повторить',
-          audit: 'История изменений прав',
-          noAudit: 'Изменений пока нет.',
-          roles: {
-            moderator: 'Модерация контента',
-            email_sender: 'Отправка email',
-            access_manager: 'Управление правами',
-            superuser: 'Суперпользователь',
-          },
-          error: 'Не удалось изменить права.',
-          grant: 'Выдал',
-          revoke: 'Отозвал',
-        }
-      : {
-          title: 'User access',
-          search: 'Find a user by email',
-          find: 'Search',
-          clearSearch: 'Clear search',
-          noUsers: 'No users found.',
-          noRoles: 'No assigned permissions',
-          edit: 'Edit permissions',
-          dialogTitle: 'Access rights',
-          choosePermissions: 'Choose permissions for this user',
-          selfEditDisabled: 'You cannot change your own permissions.',
-          save: 'Save',
-          cancel: 'Cancel',
-          saved: 'Permissions saved.',
-          loadError: 'Could not load users.',
-          retry: 'Retry',
-          audit: 'Access change history',
-          noAudit: 'No changes yet.',
-          roles: {
-            moderator: 'Content moderation',
-            email_sender: 'Send email',
-            access_manager: 'Manage access',
-            superuser: 'Superuser',
-          },
-          error: 'Could not change access.',
-          grant: 'Granted by',
-          revoke: 'Revoked by',
-        };
+  const copy = ADMIN_ACCESS_COPY[language];
   const roles = isSuperuser ? ROLE_ORDER : ROLE_ORDER.slice(0, 2);
   const users = usersQuery.currentData ?? [];
   const changedRoles = selectedUser
@@ -252,7 +196,7 @@ export default function AdminAccessManagement({ isSuperuser }: { isSuperuser: bo
                     disabled={isSaving}
                     onPress={() =>
                       setDraftRoles((current) =>
-                        isEnabled ? current.filter((item) => item !== role) : [...current, role],
+                        isEnabled ? current.filter((selectedRole) => selectedRole !== role) : [...current, role],
                       )
                     }
                     testID={`admin-role-${role}-${selectedUser?.id}`}

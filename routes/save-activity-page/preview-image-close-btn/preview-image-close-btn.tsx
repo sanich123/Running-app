@@ -33,8 +33,7 @@ export default function PreviewImageCloseBtn({
       const isPersistedMedia = isPersistedActivityMedia || Boolean(mediaItem.id);
       if (isPersistedMedia) {
         if (!activityId || !mediaItem.id) {
-          errorToast('Не удалось определить фото или видео активности');
-          return;
+          return errorToast('Не удалось определить фото или видео активности');
         }
         await deleteActivityMedia({ activityId, mediaId: mediaItem.id }).unwrap();
       } else {

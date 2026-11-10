@@ -1,8 +1,10 @@
 import { createContext, useContext } from 'react';
 import type { LocationPermissionsProps } from '../types';
 import type { MapControlsProps } from './map-controls/types';
+import type { OfflineBounds } from '@Routes/maps-page/const';
 
 export interface ActivityMapContextValue {
+  readVisibleBounds?: () => Promise<OfflineBounds | null>;
   mapControls: MapControlsProps;
   locationPermissions: LocationPermissionsProps;
   batteryOptimization: {

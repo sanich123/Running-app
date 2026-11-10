@@ -1,3 +1,4 @@
+import type { ReactElement, ReactNode } from 'react';
 import { screen, userEvent } from '@testing-library/react-native';
 import { processColor } from 'react-native';
 import { LANGUAGES } from '@const/enums';
@@ -44,6 +45,64 @@ const chartSeries: ActivityChartSeries[] = [
   },
 ];
 
+jest.mock('@expo/ui/swift-ui', () => {
+  const React = jest.requireActual('react');
+  const { Pressable, Text, View } = jest.requireActual('react-native');
+  return {
+    Button: ({
+      label,
+      onPress,
+      testID,
+      modifiers,
+    }: {
+      label: string;
+      onPress: () => void;
+      testID: string;
+      modifiers?: { disabled?: boolean }[];
+    }) =>
+      React.createElement(
+        Pressable,
+        { onPress, testID, disabled: modifiers?.some(({ disabled }) => disabled) },
+        React.createElement(Text, null, label),
+      ),
+    HStack: ({
+      children,
+      testID,
+      modifiers,
+    }: {
+      children: ReactNode;
+      testID?: string;
+      modifiers?: { accessibilityLabel?: string }[];
+    }) =>
+      React.createElement(
+        View,
+        {
+          testID,
+          accessibilityLabel: modifiers?.find(({ accessibilityLabel }) => accessibilityLabel)?.accessibilityLabel,
+        },
+        children,
+      ),
+    Host: ({ children }: { children: ReactNode }) => React.createElement(View, null, children),
+    Image: ({ systemName }: { systemName: string }) => React.createElement(Text, null, systemName),
+    Menu: ({ children, label, testID }: { children: ReactNode; label: ReactElement; testID: string }) => {
+      const [visible, setVisible] = React.useState(false);
+      return React.createElement(
+        View,
+        null,
+        React.createElement(Pressable, { accessibilityRole: 'button', testID, onPress: () => setVisible(true) }, label),
+        visible ? children : null,
+      );
+    },
+    Text: ({ children, testID }: { children: ReactNode; testID?: string }) =>
+      React.createElement(Text, { testID }, children),
+  };
+});
+jest.mock('@expo/ui/swift-ui/modifiers', () => ({
+  accessibilityLabel: (accessibilityLabel: string) => ({ accessibilityLabel }),
+  disabled: (isDisabled: boolean) => ({ disabled: isDisabled }),
+  foregroundStyle: (color: string) => ({ color }),
+}));
+
 describe('ActivityTimeChart', () => {
   const labels = HOME_ACTIVITY_FULL_VIEW[LANGUAGES.english];
 
@@ -62,12 +121,9 @@ describe('ActivityTimeChart', () => {
     expect(screen.getByLabelText(`${labels.chartRightAxis}: ${labels.paceAxisLabel}`)).toBeOnTheScreen();
     expect(screen.queryByText(labels.chartLeftAxis)).not.toBeOnTheScreen();
     expect(screen.queryByText(labels.chartRightAxis)).not.toBeOnTheScreen();
-    expect(screen.getByTestId('activity-chart-right-selector')).toHaveStyle({ alignItems: 'flex-end' });
-    expect(screen.getByTestId('activity-chart-right-value')).toHaveStyle({
-      justifyContent: 'flex-end',
-      width: '100%',
-    });
-    expect(screen.getByTestId('activity-chart-right-label')).toHaveStyle({ flexShrink: 1 });
+    expect(screen.getByTestId('activity-chart-right-selector')).toBeOnTheScreen();
+    expect(screen.getByTestId('activity-chart-right-value')).toBeOnTheScreen();
+    expect(screen.getByTestId('activity-chart-right-label')).toBeOnTheScreen();
 
     await user.press(screen.getByTestId('activity-chart-right-selector'));
     await user.press(screen.getByTestId('activity-chart-right-metric-elevation'));

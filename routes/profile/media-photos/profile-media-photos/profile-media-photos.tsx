@@ -117,7 +117,7 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
                       <MediaModerationPlaceholder
                         status={item.mediaReviewStatus}
                         blurhash={item.blurhash}
-                        borderRadius={10}
+                        borderRadius={0}
                         compact
                         hideTitle={widthOfScreen / 4 < 130}
                         showStatus={false}
@@ -189,7 +189,7 @@ export default function ProfileMediaPhotos({ userId }: { userId: string }) {
                   <MediaModerationPlaceholder
                     status={item.mediaReviewStatus}
                     blurhash={item.blurhash}
-                    borderRadius={10}
+                    borderRadius={0}
                     compact
                     hideTitle={widthOfScreen / 4 < 130}
                     showStatus={false}
@@ -231,12 +231,10 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 10,
     overflow: 'hidden',
   },
   imageWrapper: {
     position: 'relative',
-    borderRadius: 10,
     overflow: 'hidden',
   },
   deleteButton: {

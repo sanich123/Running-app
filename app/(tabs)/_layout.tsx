@@ -25,31 +25,38 @@ export default function TabLayout() {
     pathname.includes(ROUTES.changePassword) ||
     pathname === `/${ROUTES.activity}`;
   const isActivityRoute = pathname === `/${ROUTES.activity}` || pathname.endsWith(`/${ROUTES.activity}`);
+  const isRouteLibraryRoute = pathname === `/${ROUTES.routes}` || pathname === `/${ROUTES.addTrack}`;
 
-  const renderTabIcon = (source: string, focusedSource: string, focused: boolean, color?: string) => (
+  const renderTabIcon = (
+    source: string,
+    focusedSource: string,
+    focused: boolean,
+    options?: { color?: string; size?: number; highlighted?: boolean; testID?: string },
+  ) => (
     <View
+      testID={options?.testID}
       style={{
         alignItems: 'center',
         justifyContent: 'center',
         width: 52,
-        height: 40,
-        borderRadius: 20,
-        backgroundColor: focused ? colors.primaryContainer : 'transparent',
+        height: options?.highlighted ? 48 : 40,
+        borderRadius: options?.highlighted ? 24 : 20,
+        backgroundColor: options?.highlighted ? 'transparent' : focused ? colors.primaryContainer : 'transparent',
       }}>
       <Icon
         source={focused ? focusedSource : source}
-        color={color ?? (focused ? colors.primary : colors.secondary)}
-        size={30}
+        color={options?.color ?? (focused ? colors.primary : colors.secondary)}
+        size={options?.size ?? 30}
       />
     </View>
   );
   useEffect(() => {
     const isTracking = trackingRecoveryStatus === STATUSES.started || trackingRecoveryStatus === STATUSES.continued;
 
-    if (isTracking && !isActivityRoute) {
+    if (isTracking && !isActivityRoute && !isRouteLibraryRoute) {
       replace(`/${ROUTES.activity}`);
     }
-  }, [isActivityRoute, replace, trackingRecoveryStatus]);
+  }, [isActivityRoute, isRouteLibraryRoute, replace, trackingRecoveryStatus]);
 
   if (Platform.OS === 'ios') {
     return (
@@ -76,11 +83,25 @@ export default function TabLayout() {
           <NativeTabs.Trigger.Label hidden />
         </NativeTabs.Trigger>
         <NativeTabs.Trigger
+          name={ROUTES.groups}
+          accessibilityLabel={labels.groups}
+          disableAutomaticContentInsets={false}
+          contentStyle={{ backgroundColor: colors.background }}>
+          <NativeTabs.Trigger.Icon
+            sf={{ default: 'person.3', selected: 'person.3.fill' }}
+            md={{ default: 'groups', selected: 'groups' }}
+          />
+          <NativeTabs.Trigger.Label hidden />
+        </NativeTabs.Trigger>
+        <NativeTabs.Trigger
           name={ROUTES.activity}
           accessibilityLabel={labels.activity}
           disableAutomaticContentInsets={false}
           contentStyle={{ backgroundColor: colors.background }}>
-          <NativeTabs.Trigger.Icon sf="figure.run" md="directions_run" />
+          <NativeTabs.Trigger.Icon
+            sf={{ default: 'record.circle', selected: 'record.circle' }}
+            selectedColor={colors.error}
+          />
           <NativeTabs.Trigger.Label hidden />
         </NativeTabs.Trigger>
         <NativeTabs.Trigger
@@ -138,12 +159,30 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name={ROUTES.groups}
+        options={{
+          tabBarAccessibilityLabel: labels.groups,
+          headerShown: false,
+          title: labels.groups,
+          tabBarIcon: ({ focused }) =>
+            renderTabIcon('account-group-outline', 'account-group-outline', focused, {
+              color: focused ? colors.onPrimaryContainer : colors.secondary,
+            }),
+        }}
+      />
+      <Tabs.Screen
         name={ROUTES.activity}
         options={{
           href: Platform.OS === 'web' ? null : undefined,
           tabBarAccessibilityLabel: labels.activity,
           headerShown: false,
-          tabBarIcon: ({ focused }) => renderTabIcon('run', 'run-fast', focused),
+          tabBarIcon: ({ focused }) =>
+            renderTabIcon('record-circle-outline', 'record-circle', focused, {
+              color: colors.error,
+              highlighted: true,
+              size: 38,
+              testID: 'workout-record-tab-icon',
+            }),
         }}
       />
       <Tabs.Screen

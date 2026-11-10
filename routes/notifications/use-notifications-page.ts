@@ -29,6 +29,10 @@ export function useNotificationsPage() {
   const navigateToNotification = (item: NotificationItem) => {
     if (item.targetType === 'activity' || item.targetType === 'comment') {
       push(`/${ROUTES.activity}/${item.targetId}` as never);
+    } else if (item.targetType === 'group-post') {
+      push(`/groups/${item.targetId}` as never);
+    } else if (item.targetType === 'group-event') {
+      push(`/groups/${item.targetId}?tab=events` as never);
     }
   };
 

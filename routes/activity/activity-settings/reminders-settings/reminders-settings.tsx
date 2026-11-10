@@ -3,8 +3,12 @@ import type { ComponentPropsWithRef } from 'react';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { Keyboard, Platform, StyleSheet, TextInput, View } from 'react-native';
 import { Button, IconButton, Switch, Text, useTheme } from 'react-native-paper';
-import { addActivityReminder, removeActivityReminder, setActivityReminderEnabled } from '@R/slices/settings/settings';
-import { getActivitySettings } from '@R/slices/settings/types';
+import {
+  addActivityReminder,
+  removeActivityReminder,
+  setActivityReminderEnabled,
+} from '@R/slices/activity-settings/activity-settings';
+import { getActivitySettings } from '@R/slices/activity-settings/types';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { ActivitySettingsTextInput, ACTIVITY_SETTINGS, createActivityReminderId } from '../const';
 import type { ReminderSettingsProps } from '../types';
@@ -12,9 +16,9 @@ import type { ReminderSettingsProps } from '../types';
 export default function RemindersSettings({ scrollToReminderFields }: ReminderSettingsProps) {
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
-  const settings = useAppSelector(({ settings: state }) => state);
-  const { language } = settings;
-  const { activityReminderEnabled, activityReminders } = getActivitySettings(settings);
+  const { language } = useAppSelector(({ settings }) => settings);
+  const activitySettings = useAppSelector(({ activitySettings: state }) => state);
+  const { activityReminderEnabled, activityReminders } = getActivitySettings(activitySettings);
   const [intervalInput, setIntervalInput] = useState('');
   const [reminderTextInput, setReminderTextInput] = useState('');
   const reminderTextInputRef = useRef<{ focus: () => void }>(null);

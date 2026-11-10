@@ -1,3 +1,4 @@
+import { WORKOUT_IMPORT_COPY } from './const';
 import {
   formatImportSelectedLabel,
   formatWorkoutCountNotice,
@@ -135,7 +136,7 @@ describe('watch import diagnostics helpers', () => {
     }
 
     expect(getBooleanLabel(undefined, true)).toBe('неизвестно');
-    expect(getBooleanLabel(undefined, false)).toBe('unknown');
+    expect(getBooleanLabel(undefined, false)).toBe(WORKOUT_IMPORT_COPY.en.diagnostics.unknownStage);
     expect(getBooleanLabel(true, true)).toBe('да');
     expect(getBooleanLabel(true, false)).toBe('yes');
     expect(getBooleanLabel(false, true)).toBe('нет');

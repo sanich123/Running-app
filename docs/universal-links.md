@@ -5,9 +5,11 @@ Production and Stage app links use the web hosts below:
 - `https://runich-app.ru/login-from-url`
 - `https://runich-app.ru/activity`
 - `https://runich-app.ru/admin`
+- `https://runich-app.ru/groups/{groupId}`
 - `https://stage-web.runich-app.ru/login-from-url`
 - `https://stage-web.runich-app.ru/activity`
 - `https://stage-web.runich-app.ru/admin`
+- `https://stage-web.runich-app.ru/groups/{groupId}`
 
 Android verification is served by `public/.well-known/assetlinks.json` on both Timeweb hosts. iOS verification is served by `public/.well-known/apple-app-site-association`; both hosts must serve it directly over HTTPS. The app config registers both hosts as iOS Associated Domains and Android verified links.
 

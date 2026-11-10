@@ -102,6 +102,9 @@ const location = createSlice({
     setLastPosition: (state, action) => {
       state.lastPosition = action.payload;
     },
+    setNavigationTrackId: (state, action: PayloadAction<string | null>) => {
+      state.navigationTrackId = action.payload;
+    },
     setIsTooMuchSpeed: (state, action) => {
       state.isTooMuchSpeed = action.payload;
     },
@@ -166,6 +169,7 @@ export const {
   setEmptyLastArrayWhenPaused,
   setLocationsWhenContinued,
   setLastPosition,
+  setNavigationTrackId,
   setIsTooMuchSpeed,
   setTooMuchSpeed,
   setTooMuchSpeedTimestamp,

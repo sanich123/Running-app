@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { IconButton, Text, useTheme } from 'react-native-paper';
-import { LANGUAGES, ROUTES } from '@const/enums';
+import { ROUTES } from '@const/enums';
 import { useGetAnnualStatisticsByUserIdQuery } from '@R/services/statistics/statistics';
 import { useAppSelector } from '@R/typed-hooks';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
@@ -175,7 +175,7 @@ export default function Dashboard() {
                 iconColor={colors.onSurfaceVariant}
                 onPress={() => changeYear(-1)}
                 disabled={availableYears.indexOf(displayedYear) <= 0}
-                accessibilityLabel={language === LANGUAGES.russian ? 'Предыдущий год' : 'Previous year'}
+                accessibilityLabel={labels.previousYear}
               />
               <Text variant="titleMedium" style={styles.yearValue}>
                 {displayedYear}
@@ -186,7 +186,7 @@ export default function Dashboard() {
                 iconColor={colors.onSurfaceVariant}
                 onPress={() => changeYear(1)}
                 disabled={availableYears.indexOf(displayedYear) === availableYears.length - 1}
-                accessibilityLabel={language === LANGUAGES.russian ? 'Следующий год' : 'Next year'}
+                accessibilityLabel={labels.nextYear}
               />
             </View>
           </View>

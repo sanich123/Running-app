@@ -6,7 +6,7 @@ import { LANGUAGES } from '@const/enums';
 import UserAvatar from '@S/avatar/user-avatar/user-avatar';
 import { CARD_METRICS } from '@S/card/metrics/const';
 import { isRunningActivity } from '@U/location/location-utils';
-import { ACTIVITY_LABELS } from './const';
+import { ACTIVITY_LABELS, VIDEO_BRAND_NAME, VIDEO_BRAND_UNAVAILABLE_METRIC } from './const';
 import { formatWorkoutTime, formatRunningPace } from './utils';
 import type { VideoBrandOverlayProps } from './types';
 
@@ -55,7 +55,7 @@ export default function VideoBrandOverlay({
   const displaySpeed = isCoverFrame && workoutDuration > 0 ? (distance * 1000) / workoutDuration : currentSpeed;
   const speedLabel =
     displaySpeed === null || displaySpeed <= 0
-      ? '—'
+      ? VIDEO_BRAND_UNAVAILABLE_METRIC
       : isRunningActivity(sport ?? '')
         ? formatRunningPace(displaySpeed, copy.paceUnit ?? (language === LANGUAGES.english ? 'min/km' : 'мин/км'))
         : `${(displaySpeed * 3.6).toLocaleString(language === LANGUAGES.english ? 'en-US' : 'ru-RU', {
@@ -76,7 +76,7 @@ export default function VideoBrandOverlay({
               resizeMode="contain"
               style={styles.coverBrandIcon}
             />
-            <Text style={styles.coverBrandName}>RUNICH</Text>
+            <Text style={styles.coverBrandName}>{VIDEO_BRAND_NAME}</Text>
             <View style={styles.coverIdentity}>
               <UserAvatar
                 size={48}
@@ -141,7 +141,7 @@ export default function VideoBrandOverlay({
               resizeMode="contain"
               style={styles.brandIcon}
             />
-            <Text style={styles.brandName}>RUNICH</Text>
+            <Text style={styles.brandName}>{VIDEO_BRAND_NAME}</Text>
           </View>
           <View style={styles.bottomCard}>
             <View style={styles.activityRow}>

@@ -5,7 +5,7 @@ import { LANGUAGES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import CalendarDateEmpty from '../../calendar-date-empty/calendar-date-empty';
 import CalendarDateWithActivity from '../../calendar-date-with-activity/calendar-date-with-activity';
-import { REDUCED_DAY_NAME_EN, REDUCED_DAY_NAME_RU } from '../const';
+import { CALENDAR_ACTIVITIES_COPY, REDUCED_DAY_NAME_EN, REDUCED_DAY_NAME_RU } from '../const';
 import { getCalendarGridDays } from '../util';
 import type { CalendarStatisticsProps } from '../types';
 
@@ -39,7 +39,7 @@ export default function CalendarActivities({ year, month, selectedType, monthSta
             <View style={[styles.hint, { backgroundColor: colors.primaryContainer }]}>
               <Icon source="gesture-tap" size={17} color={colors.onPrimaryContainer} />
               <Text variant="bodySmall" style={[styles.hintText, { color: colors.onPrimaryContainer }]}>
-                {language === 'russian' ? 'Нажмите на день, чтобы открыть тренировку' : 'Tap a day to open a workout'}
+                {CALENDAR_ACTIVITIES_COPY[language].openWorkoutHint}
               </Text>
             </View>
           </View>

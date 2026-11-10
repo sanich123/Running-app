@@ -1,6 +1,6 @@
 import { act, fireEvent, screen } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
-import { setActivityReminderEnabled } from '@R/slices/settings/settings';
+import { setActivityReminderEnabled } from '@R/slices/activity-settings/activity-settings';
 import { mockStore, resetMockActivityReminders } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { ACTIVITY_SETTINGS } from '../const';
@@ -25,7 +25,7 @@ describe('RemindersSettings', () => {
     });
     fireEvent.press(screen.getByTestId('activity-reminder-install'));
 
-    expect(mockStore.getState().settings.activityReminders).toEqual([
+    expect(mockStore.getState().activitySettings.activityReminders).toEqual([
       expect.objectContaining({ intervalMinutes: 20, text: 'Пора попить воды.' }),
     ]);
   });

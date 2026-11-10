@@ -27,7 +27,7 @@ interface ActivityAdditionalInfo {
   timeZone: string;
 }
 
-export interface ActivityMediaInput {
+interface ActivityMediaInput {
   url?: string;
   thumbnail?: string | null;
   blurhash?: string | null;
@@ -78,6 +78,12 @@ export interface DeleteActivityMediaRequest {
 export interface GetActivityLocationsRequest {
   activityId: string;
   replay?: boolean;
+  raw?: boolean;
+}
+
+export interface UploadRawActivityLocationsRequest {
+  activityId: string;
+  locations: LocationObject[];
 }
 
 export interface GetActivityMediaRequest {
@@ -87,6 +93,14 @@ export interface GetActivityMediaRequest {
 
 export interface GetActivitiesByIdsRequest {
   ids: string;
+}
+
+export interface GetActivitiesWithRoutesRequest {
+  search?: string;
+  month?: number;
+  day?: number;
+  year?: number;
+  timeZone: string;
 }
 
 export interface SetActivityFavoriteRequest {

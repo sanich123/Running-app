@@ -2,12 +2,15 @@ import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { Platform, StyleSheet } from 'react-native';
 import { MAX_MOBILE_WIDTH } from '@const/const';
-import { ROUTES } from '@const/enums';
+import { LANGUAGES, ROUTES } from '@const/enums';
 import { runichApi } from '@R/runich-api/runich-api';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { SETTINGS } from './const';
+import { DELETE_ACCOUNT } from './delete-account/const';
+import { LANGUAGE_SWITCHER_COPY } from './language-switcher/const';
 import SettingsPage from './settings-page';
 
 jest.mock('expo-device', () => ({
@@ -28,10 +31,10 @@ describe('settings page', () => {
 
   it('renders the settings actions in the scrollable page', async () => {
     await renderWithProviders(<SettingsPage />);
-    expect(screen.getByText('Язык')).toBeOnTheScreen();
-    expect(screen.getByText('Удалить аккаунт')).toBeOnTheScreen();
-    expect(screen.getByText('Выйти')).toBeOnTheScreen();
-    expect(screen.getByText('О приложении')).toBeOnTheScreen();
+    expect(screen.getByText(LANGUAGE_SWITCHER_COPY[LANGUAGES.russian].title)).toBeOnTheScreen();
+    expect(screen.getByText(DELETE_ACCOUNT[LANGUAGES.russian].action)).toBeOnTheScreen();
+    expect(screen.getByText(SETTINGS[LANGUAGES.russian].logout)).toBeOnTheScreen();
+    expect(screen.getByText(SETTINGS[LANGUAGES.russian].aboutApp)).toBeOnTheScreen();
     expect(screen.getByText(/Версия приложения: /)).toBeOnTheScreen();
     expect(screen.getByText(/Устройство: /)).toBeOnTheScreen();
     expect(screen.getByText(/Операционная система: /)).toBeOnTheScreen();

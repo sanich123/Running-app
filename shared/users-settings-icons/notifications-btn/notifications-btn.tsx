@@ -5,6 +5,7 @@ import { Badge, Icon, TouchableRipple, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { notificationsApi, useGetUnreadNotificationCountQuery } from '@R/services/notifications/notifications';
 import { useAppDispatch } from '@R/typed-hooks';
+import { NOTIFICATIONS_OVERFLOW_LABEL } from './const';
 import { notificationsBtnStyles as styles } from './styles';
 
 export default function NotificationsBtn() {
@@ -72,7 +73,7 @@ export default function NotificationsBtn() {
             testID="notificationsBadge"
             size={16}
             style={[styles.badge, { backgroundColor: colors.primary, color: colors.onPrimary }]}>
-            {unreadCount > 99 ? '99+' : unreadCount}
+            {unreadCount > 99 ? NOTIFICATIONS_OVERFLOW_LABEL : unreadCount}
           </Badge>
         ) : null}
       </View>

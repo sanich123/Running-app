@@ -275,6 +275,4 @@ export const PROFILE_PRIVACY_SETTING_SECTIONS = [
   { title: 'activitySectionTitle', fields: ACTIVITY_SETTING_FIELDS },
 ] as const;
 
-export const PROFILE_PRIVACY_SETTING_FIELDS = [...PROFILE_SETTING_FIELDS, ...ACTIVITY_SETTING_FIELDS] as const;
-
-export type ProfilePrivacySettingKey = (typeof PROFILE_PRIVACY_SETTING_FIELDS)[number]['key'];
+export type ProfilePrivacySettingKey = (typeof PROFILE_PRIVACY_SETTING_SECTIONS)[number]['fields'][number]['key'];

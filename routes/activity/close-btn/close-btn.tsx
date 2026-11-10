@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { SymbolView } from 'expo-symbols';
+import { Platform, Pressable, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Button, useTheme } from 'react-native-paper';
+import { ActivityIndicator, Icon, useTheme } from 'react-native-paper';
 import { ROUTES, STATUSES } from '@const/enums';
 import {
   resetLastKm,
@@ -9,10 +10,18 @@ import {
   setDurationAt,
   setActivityStatus,
   setEmptyLastArrayWhenPaused,
+  setNavigationTrackId,
   stopDurationTimer,
 } from '@R/slices/location/location';
 import { clearTrackingRecovery } from '@R/slices/tracking-recovery/tracking-recovery';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import {
+  ACTIVITY_HEADER_BUTTON_SIZE,
+  ACTIVITY_TRACKING_ERROR_COPY,
+  IOS_ACTIVITY_HEADER_ICON_COLOR,
+  getActivityHeaderButtonStyle,
+  isActivityHeaderButtonTap,
+} from '@Routes/activity/const';
 import ConfirmDialog from '@S/confirm-dialog/confirm-dialog';
 import { errorToast } from '@S/error-toast/error-toast';
 import { getCurrentActivityDuration } from '@U/activity-duration';
@@ -37,6 +46,7 @@ export default function CloseBtn() {
     dispatch(setActivityStatus(STATUSES.initial));
     dispatch(resetLastKm());
     dispatch(resetLocationsFromBackground());
+    dispatch(setNavigationTrackId(null));
     if (canGoBack()) {
       back();
     } else {
@@ -64,7 +74,7 @@ export default function CloseBtn() {
         closeActivity();
       }
     } catch (error) {
-      errorToast('Не удалось остановить отслеживание геопозиции', error);
+      errorToast(ACTIVITY_TRACKING_ERROR_COPY.stop, error);
     } finally {
       setIsStoppingTracking(false);
     }
@@ -72,16 +82,42 @@ export default function CloseBtn() {
 
   return (
     <>
-      <Button
-        mode="text"
-        compact
-        style={styles.layout}
-        onPress={stopTrackingAndClose}
-        loading={isStoppingTracking}
-        disabled={isStoppingTracking}
-        textColor={colors.onSurfaceVariant}>
-        {ACTIVITY_CLOSE_BTN[language].btnText}
-      </Button>
+      {Platform.OS === 'ios' ? (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={ACTIVITY_CLOSE_BTN[language].btnText}
+          accessibilityState={{ disabled: isStoppingTracking }}
+          android_ripple={{ color: colors.onSurface, radius: ACTIVITY_HEADER_BUTTON_SIZE / 2 }}
+          disabled={isStoppingTracking}
+          onPress={stopTrackingAndClose}
+          style={styles.iosHeaderButton}
+          testID="activity-close-button">
+          {isStoppingTracking ? (
+            <ActivityIndicator size={18} color={IOS_ACTIVITY_HEADER_ICON_COLOR} />
+          ) : (
+            <SymbolView name="xmark" size={20} tintColor={IOS_ACTIVITY_HEADER_ICON_COLOR} weight="semibold" />
+          )}
+        </Pressable>
+      ) : (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={ACTIVITY_CLOSE_BTN[language].btnText}
+          accessibilityState={{ disabled: isStoppingTracking }}
+          disabled={isStoppingTracking}
+          onPress={(event) => {
+            if (isActivityHeaderButtonTap(event)) {
+              stopTrackingAndClose();
+            }
+          }}
+          style={getActivityHeaderButtonStyle(colors.surface, colors.outlineVariant)}
+          testID="activity-close-button">
+          {isStoppingTracking ? (
+            <ActivityIndicator size={18} color={colors.onSurface} />
+          ) : (
+            <Icon source="close" size={22} color={colors.onSurface} />
+          )}
+        </Pressable>
+      )}
       <ConfirmDialog
         visible={isConfirmDialogVisible}
         title={ACTIVITY_CLOSE_BTN[language].alertName}
@@ -98,11 +134,10 @@ export default function CloseBtn() {
 }
 
 const styles = StyleSheet.create({
-  layout: {
-    display: 'flex',
+  iosHeaderButton: {
     alignItems: 'center',
+    height: 44,
     justifyContent: 'center',
-    padding: 5,
-    borderRadius: 10,
+    width: 44,
   },
 });

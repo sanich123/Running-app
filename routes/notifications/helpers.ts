@@ -13,6 +13,8 @@ const MODERATION_REPORT_TARGET_LABELS: Record<string, Record<NotificationLocale,
   profile: { russian: 'профиль', english: 'profile' },
   профиль: { russian: 'профиль', english: 'profile' },
   user: { russian: 'профиль', english: 'profile' },
+  group: { russian: 'группу', english: 'group' },
+  группу: { russian: 'группу', english: 'group' },
 };
 
 const MODERATION_REPORT_REASON_LABELS: Record<string, Record<NotificationLocale, string>> = {
@@ -65,6 +67,10 @@ export function getNotificationDisplayCopy(
       return { title: title(copy.commentTitle), body: item.content || copy.commentBody };
     case 'comment-like':
       return { title: title(copy.commentLikeTitle), body: item.content || copy.commentLikeBody };
+    case 'group-post':
+      return { title: title(copy.groupPostTitle), body: item.content || copy.groupPostBody };
+    case 'group-event':
+      return { title: title(copy.groupEventTitle), body: item.content || copy.groupEventBody };
     case 'moderation-report-received': {
       const labels = getModerationReportLabels(item.content, locale);
       const body = copy.moderationReportReceivedBody
@@ -144,6 +150,10 @@ export function getNotificationIcon(type: string): string | undefined {
       return 'flag-outline';
     case 'moderation-report-decision':
       return 'shield-check-outline';
+    case 'group-post':
+      return 'message-text-outline';
+    case 'group-event':
+      return 'calendar-star';
     default:
       return undefined;
   }

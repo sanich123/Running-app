@@ -1,3 +1,4 @@
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import {
   MaterialDesignIcons,
   type MaterialDesignIconsIconName,
@@ -13,15 +14,12 @@ import { LABELS, ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { COLORS } from '@const/theme-colors';
 import { useAppSelector } from '@R/typed-hooks';
-import NotificationRuntime from '@Routes/notifications/notification-runtime/notification-runtime';
-import PushTokenRuntime from '@Routes/notifications/push-token-runtime/push-token-runtime';
 import HealthConnectAutoSync from '@Routes/watch-import/health-connect-auto-sync/health-connect-auto-sync';
 import FeedHeaderTitle from '@S/feed-header-title/feed-header-title';
-import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
 import useAppInitialization from '@U/hooks/use-app-initialization';
-import BottomSheetProvider from '../bottom-sheet-provider/bottom-sheet-provider';
 import { LazyUsersSettingsIcons, PUBLIC_ROUTES } from '../const';
 import LazyHeader from '../lazy-header/lazy-header';
+import NATIVE_RUNTIMES from '../native-runtimes';
 import NavigationBar from '../navigation-bar/navigation-bar';
 import { getRootScreenContentStyle } from '../screen-content-style';
 import SubscriptionStatusRuntime from '../subscription-status-runtime/subscription-status-runtime';
@@ -32,6 +30,7 @@ export default function AppShell() {
   const { theme } = useAppSelector(({ settings }) => settings);
   const { accessToken, refreshToken } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ settings }) => settings);
+  const labels = LABELS[language];
   const pathname = usePathname();
   const hasSession = Boolean(accessToken || refreshToken);
   const colorScheme = theme ?? systemColorScheme;
@@ -47,8 +46,8 @@ export default function AppShell() {
     return (
       <Redirect
         href={
-          pathname === `/${ROUTES.admin}`
-            ? { pathname: `/${ROUTES.signIn}`, params: { returnTo: `/${ROUTES.admin}` } }
+          pathname === `/${ROUTES.admin}` || /^\/groups\/[0-9a-f-]+\/requests$/i.test(pathname)
+            ? { pathname: `/${ROUTES.signIn}`, params: { returnTo: pathname } }
             : `/${ROUTES.signIn}`
         }
       />
@@ -58,8 +57,9 @@ export default function AppShell() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <KeyboardProvider>
-        <NotificationRuntime />
-        <PushTokenRuntime />
+        {NATIVE_RUNTIMES.map(({ id, component: Runtime }) => (
+          <Runtime key={id} />
+        ))}
         <StatusBar style="auto" />
         {Platform.OS === 'android' ? <NavigationBar /> : null}
         <PaperProvider
@@ -78,9 +78,7 @@ export default function AppShell() {
               />
             ),
           }}>
-          <BottomSheetProvider
-            enabled={hasSession && !PUBLIC_ROUTES.has(pathname)}
-            fallback={<FullPageActivityLoader />}>
+          <BottomSheetModalProvider>
             <SubscriptionStatusRuntime />
             <HealthConnectAutoSync />
             <Stack
@@ -134,6 +132,9 @@ export default function AppShell() {
                 },
               })}>
               <Stack.Screen name={ROUTES.tabs} options={{ headerShown: false, title: 'Главная', animation: 'none' }} />
+              <Stack.Screen name={ROUTES.maps} options={{ title: labels.maps }} />
+              <Stack.Screen name={ROUTES.routes} options={{ title: labels.routes }} />
+              <Stack.Screen name={ROUTES.favoriteActivities} options={{ title: LABELS[language].favoriteActivities }} />
               <Stack.Screen name={ROUTES.admin} options={{ title: LABELS[language].admin }} />
               <Stack.Screen name={ROUTES.notifications} options={{ title: LABELS[language].notifications }} />
               <Stack.Screen name={ROUTES.signIn} options={{ headerShown: false, animation: 'none' }} />
@@ -253,7 +254,7 @@ export default function AppShell() {
                 }}
               />
             </Stack>
-          </BottomSheetProvider>
+          </BottomSheetModalProvider>
         </PaperProvider>
       </KeyboardProvider>
     </GestureHandlerRootView>

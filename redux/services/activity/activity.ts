@@ -9,12 +9,15 @@ import type {
   DeleteActivityMediaRequest,
   GetActivityLocationsRequest,
   GetActivitiesByIdsRequest,
+  GetActivitiesWithRoutesRequest,
   GetActivityMediaRequest,
   WatchWorkoutsImportRequest,
   SetActivityFavoriteRequest,
+  UploadRawActivityLocationsRequest,
 } from './types';
 import type {
   ActivitiesResponse,
+  ActivitiesWithRoutesResponse,
   ActivityListItemResponse,
   ActivityMutationResponse,
   ActivityMediaMutationResponse,
@@ -37,15 +40,6 @@ const ACTIVITY_PAGE_SIZE = 20;
 export const activityApi = runichApi.injectEndpoints({
   overrideExisting: true,
   endpoints: ({ query, mutation, infiniteQuery }) => ({
-    getActivitiesByUserId: infiniteQuery<ActivitiesResponse, { id: string }, string>({
-      infiniteQueryOptions: {
-        initialPageParam: '',
-        getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
-      },
-      query: ({ queryArg: { id }, pageParam }) =>
-        `/activity/${id}${createSearchParams({ take: ACTIVITY_PAGE_SIZE, cursor: pageParam || undefined })}`,
-      providesTags: [Tags.activities],
-    }),
     getFavoriteActivities: infiniteQuery<ActivitiesResponse, void, string>({
       infiniteQueryOptions: {
         initialPageParam: '',
@@ -56,13 +50,17 @@ export const activityApi = runichApi.injectEndpoints({
         createSearchParams({ take: ACTIVITY_PAGE_SIZE, cursor: pageParam || undefined }),
       providesTags: [Tags.activities],
     }),
-    getActivitiesByUserIdWithFriendsActivities: infiniteQuery<ActivitiesResponse, { id: string }, string>({
+    getActivitiesWithRoutes: infiniteQuery<ActivitiesWithRoutesResponse, GetActivitiesWithRoutesRequest, string>({
       infiniteQueryOptions: {
         initialPageParam: '',
         getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
       },
-      query: ({ queryArg: { id }, pageParam }) =>
-        `/activity/${id}/all${createSearchParams({ take: ACTIVITY_PAGE_SIZE, cursor: pageParam || undefined })}`,
+      query: ({ queryArg, pageParam }) =>
+        `/${Routes.activity}/${Routes.withRoutes}${createSearchParams({
+          ...queryArg,
+          take: ACTIVITY_PAGE_SIZE,
+          cursor: pageParam || undefined,
+        })}`,
       providesTags: [Tags.activities],
     }),
     getHomeActivityFeeds: infiniteQuery<HomeActivityFeedsResponse, void, HomeFeedCursors | null>({
@@ -102,9 +100,16 @@ export const activityApi = runichApi.injectEndpoints({
       providesTags: (result, error, { activityId }) => [Tags.activities, { type: Tags.activities, id: activityId }],
     }),
     getLocationsByActivityId: query<ActivityLocationsResponse | null, GetActivityLocationsRequest>({
-      query: ({ activityId, replay }: GetActivityLocationsRequest) =>
-        `/activity/${activityId}/locations${createSearchParams({ replay: replay || undefined })}`,
+      query: ({ activityId, replay, raw }: GetActivityLocationsRequest) =>
+        `/activity/${activityId}/locations${createSearchParams({ replay: replay || undefined, raw: raw || undefined })}`,
       providesTags: [Tags.activities],
+    }),
+    uploadRawActivityLocations: mutation<void, UploadRawActivityLocationsRequest>({
+      query: ({ activityId, locations }) => ({
+        url: `/activity/${activityId}/locations/raw`,
+        method: Methods.post,
+        body: { locations },
+      }),
     }),
     getActivityChartData: query<ActivityChartDataResponse | null, { activityId: string; viewerId: string }>({
       query: ({ activityId }) => '/activity/' + activityId + '/chart-data',
@@ -183,18 +188,19 @@ export const {
   useUpdateActivityInfoMutation,
   useAppendActivityMediaMutation,
   useDeleteActivityMediaMutation,
-  useGetActivitiesByUserIdInfiniteQuery,
+  useGetActivitiesWithRoutesInfiniteQuery,
   useGetFavoriteActivitiesInfiniteQuery,
   useSetActivityFavoriteMutation,
   useGetAllActivityMediaByUserIdInfiniteQuery,
-  useGetActivitiesByUserIdWithFriendsActivitiesInfiniteQuery,
   useGetHomeActivityFeedsInfiniteQuery,
   useGetActivityByActivityIdQuery,
   useGetLocationsByActivityIdQuery,
+  useLazyGetLocationsByActivityIdQuery,
   useGetActivityChartDataQuery,
   useGetStravaMigrationStatusQuery,
   useGetCurrentStravaMigrationStatusQuery,
   useAddActivityByUserIdMutation,
+  useUploadRawActivityLocationsMutation,
   useImportWatchWorkoutsMutation,
   useDeleteActivityByIdMutation,
   useGetSeveralActivitiesByTheirIdsQuery,

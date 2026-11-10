@@ -59,16 +59,23 @@ export default function ActivityDetails() {
         }}>
         {shouldShowToolbarMenu ? (
           <Stack.Toolbar placement="right">
-            <Stack.Toolbar.Menu icon="ellipsis" accessibilityLabel={menuText.accessibilityLabel}>
+            <Stack.Toolbar.Menu
+              icon="ellipsis"
+              accessibilityLabel={menuText.accessibilityLabel}
+              tintColor={colors.primary}>
               {isActivityOwner ? (
-                <>
-                  <Stack.Toolbar.MenuAction icon="pencil" onPress={editActivityAction}>
+                [
+                  <Stack.Toolbar.MenuAction key="edit" icon="pencil" onPress={editActivityAction}>
                     {menuText.edit}
-                  </Stack.Toolbar.MenuAction>
-                  <Stack.Toolbar.MenuAction icon="trash" destructive onPress={deleteActivityAction.onPress}>
+                  </Stack.Toolbar.MenuAction>,
+                  <Stack.Toolbar.MenuAction
+                    key="delete"
+                    icon="trash"
+                    destructive
+                    onPress={deleteActivityAction.onPress}>
                     {menuText.delete}
-                  </Stack.Toolbar.MenuAction>
-                </>
+                  </Stack.Toolbar.MenuAction>,
+                ]
               ) : (
                 <Stack.Toolbar.MenuAction icon="flag" onPress={() => setIsReportVisible(true)}>
                   {menuText.report}

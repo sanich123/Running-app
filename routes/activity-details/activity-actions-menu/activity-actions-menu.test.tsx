@@ -26,9 +26,9 @@ describe('activity actions menu', () => {
     await renderWithProviders(<ActivityActionsMenu activity={activity} />);
 
     await user.press(screen.getByTestId('activity-actions-menu-trigger'));
-    expect(screen.getByLabelText('Действия с тренировкой')).toBeOnTheScreen();
-    expect(screen.getByText('Редактировать')).toBeOnTheScreen();
-    expect(screen.getByText('Удалить')).toBeOnTheScreen();
+    expect(screen.getByLabelText(ACTIVITY_ACTIONS_MENU[LANGUAGES.russian].accessibilityLabel)).toBeOnTheScreen();
+    expect(screen.getByText(ACTIVITY_ACTIONS_MENU[LANGUAGES.russian].edit)).toBeOnTheScreen();
+    expect(screen.getByText(ACTIVITY_ACTIONS_MENU[LANGUAGES.russian].delete)).toBeOnTheScreen();
   });
 
   it('lets another user report the activity from the actions menu', async () => {

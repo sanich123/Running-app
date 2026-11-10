@@ -1,12 +1,20 @@
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { Platform, TextInput } from 'react-native';
 import { LANGUAGES } from '@const/enums';
-import type { ActivityVoiceMetric } from '@R/slices/settings/types';
+import type { ActivityVoiceMetric } from '@R/slices/activity-settings/types';
 
 export const ACTIVITY_SETTINGS = {
   [LANGUAGES.english]: {
     title: 'Activity settings',
     open: 'Activity settings',
+    showImportedRoute: 'Show imported route on map',
+    hideImportedRoute: 'Hide imported route from map',
+    finishNavigation: 'Finish route navigation',
+    downloadOfflineMapForRoute: 'Download offline map around this route',
+    finishNavigationConfirmTitle: 'Reset route navigation?',
+    finishNavigationConfirmMessage: 'The selected track will be removed from the map. Workout recording will continue.',
+    finishNavigationConfirmAction: 'Finish',
+    finishNavigationCancel: 'Continue',
     voiceAnnouncementsDescription: 'Announce completed kilometres during recording',
     voiceAnnouncementsEnabled: 'Enable voice announcements',
     voice: 'Voice',
@@ -36,6 +44,14 @@ export const ACTIVITY_SETTINGS = {
   [LANGUAGES.russian]: {
     title: 'Настройки активности',
     open: 'Настройки активности',
+    showImportedRoute: 'Показать импортированный трек на карте',
+    hideImportedRoute: 'Скрыть импортированный трек с карты',
+    finishNavigation: 'Завершить навигацию по треку',
+    downloadOfflineMapForRoute: 'Скачать офлайн-карту в районе трека',
+    finishNavigationConfirmTitle: 'Сбросить навигацию по треку?',
+    finishNavigationConfirmMessage: 'Трек будет убран с карты. Запись тренировки продолжится.',
+    finishNavigationConfirmAction: 'Завершить',
+    finishNavigationCancel: 'Продолжить',
     voiceAnnouncementsDescription: 'Озвучивать завершённые километры во время записи',
     voiceAnnouncementsEnabled: 'Включить голосовые объявления',
     voice: 'Голос',

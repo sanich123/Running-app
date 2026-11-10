@@ -21,26 +21,7 @@ export const ACTIVITY_VISIBILITY_LABELS = {
   },
 } as const;
 
-export const ACTIVITY_VISIBILITY_DESCRIPTIONS = {
-  [LANGUAGES.english]: {
-    public: 'Visible to all users',
-    followers: 'Visible to you and your followers',
-    private: 'Visible only to you',
-  },
-  [LANGUAGES.russian]: {
-    public: 'Видна всем пользователям',
-    followers: 'Видна вам и вашим подписчикам',
-    private: 'Видна только вам',
-  },
-} as const;
-
 export const ACTIVITY_VISIBILITY_SECTION_LABELS = {
   [LANGUAGES.english]: 'Who can see the workout?',
   [LANGUAGES.russian]: 'Кто видит тренировку?',
-} as const;
-
-export const ACTIVITY_VISIBILITY_ICONS = {
-  public: 'earth',
-  followers: 'account-multiple-outline',
-  private: 'lock-outline',
 } as const;

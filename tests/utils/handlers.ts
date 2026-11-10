@@ -1,5 +1,15 @@
 import { http, HttpResponse } from 'msw';
-import { MOCK_SERVER_ACTIVITY, MOCK_SERVER_IDS, MOCK_SERVER_PROFILE } from '@T/responses/runich';
+import { MOCK_GROUP_DETAILS, MOCK_GROUP_PAGE } from '@T/responses/groups';
+import {
+  MOCK_SERVER_ACTIVITIES,
+  MOCK_SERVER_ACTIVITY,
+  MOCK_SERVER_CHART_DATA,
+  MOCK_SERVER_IDS,
+  MOCK_SERVER_MIGRATION_JOB,
+  MOCK_SERVER_NOTIFICATION_UNREAD_COUNT,
+  MOCK_SERVER_PROFILE,
+  MOCK_SERVER_SUBSCRIPTION,
+} from '@T/responses/runich';
 import {
   getActivityByActivityId,
   getAllActivitiesByUserId,
@@ -47,6 +57,56 @@ import { addUser } from './endpoints/user';
 export const BASE_URL = process.env.EXPO_PUBLIC_BASE_URL ?? 'http://localhost:3000';
 
 export const handlers = [
+  http.get(`${BASE_URL}/groups`, ({ request }) => {
+    const scope = new URL(request.url).searchParams.get('scope');
+    return HttpResponse.json(scope === 'mine' ? [] : [MOCK_GROUP_DETAILS]);
+  }),
+  http.get(`${BASE_URL}/subscription/me`, () => HttpResponse.json(MOCK_SERVER_SUBSCRIPTION)),
+  http.get(`${BASE_URL}/notification/unread-count`, () => HttpResponse.json(MOCK_SERVER_NOTIFICATION_UNREAD_COUNT)),
+  http.get(`${BASE_URL}/notification`, () =>
+    HttpResponse.json({ notifications: [], hasMore: false, nextCursor: null }),
+  ),
+  http.patch(`${BASE_URL}/notification/:notificationId/read`, () => HttpResponse.json({ updated: 1 })),
+  http.patch(`${BASE_URL}/notification/read-all`, () => HttpResponse.json({ updated: 0 })),
+  http.get(`${BASE_URL}/notification/push-token`, () => HttpResponse.json({ enabled: false })),
+  http.post(`${BASE_URL}/notification/push-token`, () => HttpResponse.json({ enabled: true })),
+  http.delete(`${BASE_URL}/notification/push-token`, () => HttpResponse.json({ enabled: false, updated: 1 })),
+  http.get(`${BASE_URL}/activity/migration-strava/current`, () => HttpResponse.json(MOCK_SERVER_MIGRATION_JOB)),
+  http.get(`${BASE_URL}/groups/:groupId`, ({ params }) =>
+    HttpResponse.json({ ...MOCK_GROUP_DETAILS, id: `${params.groupId}` }),
+  ),
+  http.get(`${BASE_URL}/groups/:groupId/members`, ({ request }) =>
+    HttpResponse.json(new URL(request.url).searchParams.has('limit') ? MOCK_GROUP_PAGE : MOCK_GROUP_PAGE.items),
+  ),
+  http.get(`${BASE_URL}/groups/:groupId/statistics/month`, () => HttpResponse.json(MOCK_GROUP_PAGE)),
+  http.get(`${BASE_URL}/groups/:groupId/posts`, () => HttpResponse.json(MOCK_GROUP_PAGE)),
+  http.get(`${BASE_URL}/groups/:groupId/events`, ({ request }) =>
+    HttpResponse.json(new URL(request.url).searchParams.has('limit') ? MOCK_GROUP_PAGE : MOCK_GROUP_PAGE.items),
+  ),
+  http.post(`${BASE_URL}/groups/:groupId/join`, ({ params }) =>
+    HttpResponse.json({
+      ...MOCK_GROUP_DETAILS,
+      id: `${params.groupId}`,
+      currentMembership: {
+        status: MOCK_GROUP_DETAILS.privacy === 'closed' ? 'pending' : 'active',
+        role: 'member',
+        notificationPreference: 'all',
+        feedPreference: 'all',
+      },
+    }),
+  ),
+  http.delete(`${BASE_URL}/groups/:groupId/membership`, () => new HttpResponse(null, { status: 204 })),
+  http.patch(`${BASE_URL}/groups/:groupId/members/:userId`, async ({ params, request }) => {
+    const body = (await request.json()) as Record<string, unknown>;
+    return HttpResponse.json({ userId: params.userId, ...body, role: 'member' });
+  }),
+  http.delete(`${BASE_URL}/groups/:groupId`, () => new HttpResponse(null, { status: 204 })),
+  http.post(`${BASE_URL}/groups`, () => HttpResponse.json({ ...MOCK_GROUP_DETAILS, id: 'new-group' }, { status: 201 })),
+  http.patch(`${BASE_URL}/groups/:groupId`, ({ params }) =>
+    HttpResponse.json({ ...MOCK_GROUP_DETAILS, id: `${params.groupId}` }),
+  ),
+  http.post(`${BASE_URL}/groups/:groupId/posts`, () => HttpResponse.json({ id: 'new-post' }, { status: 201 })),
+  http.post(`${BASE_URL}/groups/:groupId/events`, () => HttpResponse.json({ id: 'new-event' }, { status: 201 })),
   http.get(`${BASE_URL}/admin/access`, () => HttpResponse.json({ roles: [], permissions: [], isSuperuser: false })),
   http.get(`${BASE_URL}/user/${MOCK_SERVER_IDS.userId}/profile`, getServerProfile),
   http.get(`${BASE_URL}/profile/filter`, getServerUsers),
@@ -54,6 +114,11 @@ export const handlers = [
   http.get(`${BASE_URL}/activity/${MOCK_SERVER_IDS.userId}/all`, getServerActivities),
   http.get(`${BASE_URL}/activity/${MOCK_SERVER_IDS.userId}/media`, getServerPhotos),
   http.get(`${BASE_URL}/activity/activityId/${MOCK_SERVER_IDS.activityId}`, getServerActivity),
+  http.get(`${BASE_URL}/activity/activityId/:activityId`, ({ params }) =>
+    HttpResponse.json({ ...MOCK_SERVER_ACTIVITY, id: `${params.activityId}` }),
+  ),
+  http.get(`${BASE_URL}/activity/activityIds`, () => HttpResponse.json(MOCK_SERVER_ACTIVITIES.activities)),
+  http.get(`${BASE_URL}/activity/:activityId/chart-data`, () => HttpResponse.json(MOCK_SERVER_CHART_DATA)),
   http.get(`${BASE_URL}/activity/${MOCK_SERVER_IDS.activityId}/locations`, getServerLocations),
   http.get(`${BASE_URL}/like/${MOCK_SERVER_IDS.activityId}`, getServerLikes),
   http.get(`${BASE_URL}/comment/${MOCK_SERVER_IDS.activityId}`, getServerComments),
@@ -70,6 +135,7 @@ export const handlers = [
   ),
   http.post(`${BASE_URL}/auth/confirm-email`, () => HttpResponse.json({ accessToken: 'test-access-token' })),
   http.post(`${BASE_URL}/auth/logout`, () => new HttpResponse(null, { status: 204 })),
+  http.post(`${BASE_URL}/email/feedback`, () => HttpResponse.json({})),
   http.post(`${BASE_URL}/activity/someUserId`, postActivitySuccess),
   http.post(`${BASE_URL}/activity/someWrongUserId`, postActivityFailure),
   http.get(`${BASE_URL}/activity/activityId/someActivityId`, getActivityByActivityId),

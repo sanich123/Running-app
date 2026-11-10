@@ -8,6 +8,7 @@ import { MOCK_SERVER_IDS, MOCK_SERVER_PROFILE } from '@T/responses/runich';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import ActivityRouteReplay from './activity-route-replay';
+import { ACTIVITY_ROUTE_REPLAY_TEXT } from './const';
 import type { ActivityLocation } from '@S/card/types';
 
 const mockSetCamera = jest.fn();
@@ -56,8 +57,8 @@ describe('activity route replay controls', () => {
 
     const toggleButton = screen.getByTestId('activity-route-replay-toggle');
 
-    expect(screen.queryByText('Поставить воспроизведение на паузу')).not.toBeOnTheScreen();
-    expect(toggleButton.props.accessibilityLabel).toBe('Начать воспроизведение маршрута');
+    expect(screen.queryByText(ACTIVITY_ROUTE_REPLAY_TEXT[LANGUAGES.russian].pause)).not.toBeOnTheScreen();
+    expect(toggleButton.props.accessibilityLabel).toBe(ACTIVITY_ROUTE_REPLAY_TEXT[LANGUAGES.russian].play);
     expect(screen.getByTestId('activity-route-replay-seekbar')).toBeOnTheScreen();
   });
 

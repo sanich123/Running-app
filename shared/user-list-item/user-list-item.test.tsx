@@ -55,9 +55,9 @@ describe('User list item', () => {
       <UserListItem name="Runner" surname="Pending" userId="pending-user" profilePhotoReviewStatus="review_required" />,
     );
 
-    const moderationButton = screen.getByTestId(`${UserProfileAvatarTestIds.moderationStatus}-container-outer-layer`);
+    const moderationButton = screen.getByTestId(UserProfileAvatarTestIds.moderationStatus);
     expect(StyleSheet.flatten(moderationButton.props.style)).toEqual(
-      expect.objectContaining({ height: 28, top: 0, width: 28 }),
+      expect.objectContaining({ height: 28, top: 0, width: 28, alignItems: 'flex-start' }),
     );
   });
 

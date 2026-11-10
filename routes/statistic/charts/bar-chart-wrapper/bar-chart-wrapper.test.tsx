@@ -3,6 +3,7 @@ import { ROUTES } from '@const/enums';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import BarChartWrapper from './bar-chart-wrapper';
+import { BAR_CHART_EMPTY_COPY } from './const';
 import type * as MockNativeViewTools from '@T/utils/mock-native-view';
 import type { MockNativeViewProps } from '@T/utils/mock-native-view';
 
@@ -26,7 +27,7 @@ describe('bar chart wrapper', () => {
   it('renders an empty-state label when there are no values', async () => {
     await renderWithProviders(<BarChartWrapper metricsArr={[]} year={2026} title="Distance" />);
 
-    expect(screen.getByText('Нет данных за этот период')).toBeOnTheScreen();
+    expect(screen.getByText(BAR_CHART_EMPTY_COPY)).toBeOnTheScreen();
   });
 
   it('widens the top-label container for multi-digit values', async () => {

@@ -1,5 +1,6 @@
 import type { ReactElement } from 'react';
 import { LANGUAGES } from '@const/enums';
+import { METRICS_TITLES } from './const';
 import { reduceMonthMetrics } from './utils';
 import type { MonthMetrics } from './types';
 
@@ -13,7 +14,7 @@ describe('reduce month metrics', () => {
     expect(result.distance.items[0].value).toBe(12);
     expect(result.distance.items[1].value).toBe(0);
     expect(result.amount.items[0].value).toBe(2);
-    expect(result.duration.title).toBe('Time');
+    expect(result.duration.title).toBe(METRICS_TITLES[LANGUAGES.english].duration);
     expect(result.distance.items[0].topLabelComponent()).toBeTruthy();
     expect(result.distance.items[1].topLabelComponent()).toBeTruthy();
   });

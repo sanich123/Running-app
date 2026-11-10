@@ -1,6 +1,8 @@
 import { screen, userEvent } from '@testing-library/react-native';
+import { LANGUAGES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
 import Charts from './charts';
+import { METRICS_TITLES } from './const';
 import type { MonthMetrics } from './types';
 
 jest.mock('./bar-chart-wrapper/bar-chart-wrapper', () => ({
@@ -26,11 +28,11 @@ describe('charts', () => {
         months={[{ totalDistance: 8, totalDuration: 30, totalItems: 1 }] as unknown as MonthMetrics}
       />,
     );
-    expect(screen.getByText('Километры')).toBeOnTheScreen();
+    expect(screen.getByText(METRICS_TITLES[LANGUAGES.russian].distance)).toBeOnTheScreen();
     expect(screen.getByTestId('chart-data')).toHaveTextContent('Километры:8');
 
     await userEvent.press(screen.getByTestId('choose-duration'));
-    expect(screen.getByText('Время')).toBeOnTheScreen();
+    expect(screen.getByText(METRICS_TITLES[LANGUAGES.russian].duration)).toBeOnTheScreen();
     expect(screen.getByTestId('chart-data')).toHaveTextContent('Время:30');
   });
 });

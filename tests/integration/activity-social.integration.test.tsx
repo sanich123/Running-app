@@ -149,7 +149,9 @@ describe('activity and social integration flows', () => {
     );
     expect(await screen.findByText('Вдохновляет на свою пробежку.')).toBeOnTheScreen();
 
-    await user.press(await screen.findByTestId('commentLikeBtn'));
+    const commentLikeButton = await screen.findByTestId('commentLikeBtn');
+    await waitFor(() => expect(commentLikeButton.props.accessibilityState?.disabled).toBe(false));
+    await user.press(commentLikeButton);
     await waitFor(() => expect(commentLikeBody).toEqual({ commentId: MOCK_SERVER_IDS.commentId }));
     expect(await screen.findByTestId('commentLikeBtn-active')).toBeOnTheScreen();
 

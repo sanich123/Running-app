@@ -5,7 +5,6 @@ import { ROUTES } from '@const/enums';
 import type * as AppShellModule from './app-shell';
 
 const mockPathname = jest.fn(() => '/private-route');
-const mockBottomSheetEnabled = jest.fn();
 const mockNavigationBar = jest.fn();
 const mockStackOptions = jest.fn();
 let mockRouteName = 'home';
@@ -96,18 +95,6 @@ jest.mock('react-native-keyboard-controller', () => {
   return { KeyboardProvider: View };
 });
 
-jest.mock('../bottom-sheet-provider/bottom-sheet-provider', () => {
-  const React = jest.requireActual('react');
-  const { View } = jest.requireActual('react-native');
-  return {
-    __esModule: true,
-    default: ({ children, enabled }: { children?: React.ReactNode; enabled: boolean }) => {
-      mockBottomSheetEnabled(enabled);
-      return React.createElement(View, null, children);
-    },
-  };
-});
-
 jest.mock('../navigation-bar/navigation-bar', () => ({
   __esModule: true,
   default: () => {
@@ -139,7 +126,6 @@ describe('AppShell', () => {
   beforeEach(() => {
     mockRouteName = 'home';
     mockPathname.mockReturnValue('/private-route');
-    mockBottomSheetEnabled.mockClear();
     mockNavigationBar.mockClear();
     mockStackOptions.mockClear();
     mockAppState.settings.theme = null;
@@ -158,6 +144,17 @@ describe('AppShell', () => {
     expect(screen.getByTestId('app-shell-sign-in-redirect')).toHaveProp('accessibilityLabel', `/${ROUTES.signIn}`);
   });
 
+  it('preserves the requested route when redirecting unauthenticated admin users', async () => {
+    mockPathname.mockReturnValue(`/${ROUTES.admin}`);
+
+    await render(<AppShell />);
+
+    expect(screen.getByTestId('app-shell-sign-in-redirect')).toHaveProp('accessibilityLabel', {
+      pathname: `/${ROUTES.signIn}`,
+      params: { returnTo: `/${ROUTES.admin}` },
+    });
+  });
+
   it('keeps a refresh-token session on private routes and applies the Android shell', async () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
     mockAppState.settings.theme = 'dark';
@@ -166,7 +163,6 @@ describe('AppShell', () => {
     await render(<AppShell />);
 
     expect(screen.queryByTestId('app-shell-sign-in-redirect')).toBeNull();
-    expect(mockBottomSheetEnabled).toHaveBeenCalledWith(true);
     expect(mockNavigationBar).toHaveBeenCalledTimes(1);
     expect(mockStackOptions).toHaveBeenCalled();
     expect(mockStackOptions).toHaveBeenCalledWith(expect.objectContaining({ headerBackVisible: false }));
@@ -193,7 +189,6 @@ describe('AppShell', () => {
     await render(<AppShell />);
 
     expect(screen.queryByTestId('app-shell-sign-in-redirect')).toBeNull();
-    expect(mockBottomSheetEnabled).toHaveBeenCalledWith(false);
     expect(mockNavigationBar).not.toHaveBeenCalled();
     expect(mockStackOptions).toHaveBeenCalled();
   });

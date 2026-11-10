@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { screen, userEvent } from '@testing-library/react-native';
 import { ROUTES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { NOT_FOUND_SCREEN_COPY } from './const';
 import NotFoundScreen from '../../app/+not-found';
 
 const mockNavigate = jest.fn();
@@ -22,7 +23,7 @@ describe('NotFoundScreen', () => {
     const user = userEvent.setup();
     mockNavigate.mockClear();
     await renderWithProviders(<NotFoundScreen />);
-    expect(screen.getByText('This screen does not exist.')).toBeOnTheScreen();
+    expect(screen.getByText(NOT_FOUND_SCREEN_COPY.title)).toBeOnTheScreen();
     await user.press(screen.getByTestId('not-found-link'));
     expect(mockNavigate).toHaveBeenCalledWith(`/${ROUTES.signIn}`);
   });

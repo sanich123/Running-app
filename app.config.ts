@@ -1,3 +1,5 @@
+import { ANDROID_UNIVERSAL_LINK_FILTERS } from './config/universal-links';
+
 const IS_DEV = process.env.APP_VARIANT === 'development';
 const IS_STAGE = process.env.EXPO_PUBLIC_BASE_URL === 'https://stage.runich-app.ru';
 const ROUTER_ORIGIN = IS_STAGE ? 'https://stage-web.runich-app.ru' : 'https://runich-app.ru';
@@ -8,7 +10,7 @@ export default {
     name: IS_DEV ? 'runich(dev)' : 'runich',
     slug: 'running-app',
     scheme: IS_DEV ? 'runich-dev' : 'runich',
-    version: '1.3.2',
+    version: '1.4.0',
     orientation: 'portrait',
     runtimeVersion: { policy: 'appVersion' },
     icon: IS_DEV ? './assets/images/icon-dev.png' : './assets/images/icon.png',
@@ -22,6 +24,7 @@ export default {
       typedRoutes: true,
       tsconfigPaths: true,
       reactCompiler: true,
+      chunking: { mode: 'granular' },
     },
     assetBundlePatterns: ['**/*'],
     ios: {
@@ -53,80 +56,7 @@ export default {
       bundleIdentifier: IS_DEV ? 'com.sanich123.runningapp.dev' : 'com.sanich123.runningapp',
     },
     android: {
-      intentFilters: [
-        {
-          action: 'VIEW',
-          autoVerify: true,
-          data: [
-            {
-              scheme: 'https',
-              host: 'runich-app.ru',
-              pathPrefix: '/login-from-url',
-            },
-          ],
-          category: ['BROWSABLE', 'DEFAULT'],
-        },
-        {
-          action: 'VIEW',
-          autoVerify: true,
-          data: [
-            {
-              scheme: 'https',
-              host: 'stage-web.runich-app.ru',
-              pathPrefix: '/login-from-url',
-            },
-          ],
-          category: ['BROWSABLE', 'DEFAULT'],
-        },
-        {
-          action: 'VIEW',
-          autoVerify: true,
-          data: [
-            {
-              scheme: 'https',
-              host: 'runich-app.ru',
-              pathPrefix: '/activity',
-            },
-          ],
-          category: ['BROWSABLE', 'DEFAULT'],
-        },
-        {
-          action: 'VIEW',
-          autoVerify: true,
-          data: [
-            {
-              scheme: 'https',
-              host: 'stage-web.runich-app.ru',
-              pathPrefix: '/activity',
-            },
-          ],
-          category: ['BROWSABLE', 'DEFAULT'],
-        },
-        {
-          action: 'VIEW',
-          autoVerify: true,
-          data: [
-            {
-              scheme: 'https',
-              host: 'runich-app.ru',
-              pathPrefix: '/admin',
-            },
-          ],
-          category: ['BROWSABLE', 'DEFAULT'],
-        },
-        {
-          action: 'VIEW',
-          autoVerify: true,
-          data: [
-            {
-              scheme: 'https',
-              host: 'stage-web.runich-app.ru',
-              pathPrefix: '/admin',
-            },
-          ],
-          category: ['BROWSABLE', 'DEFAULT'],
-        },
-      ],
+      intentFilters: ANDROID_UNIVERSAL_LINK_FILTERS,
       adaptiveIcon: {
         foregroundImage: './assets/images/adaptive-icon.png',
         backgroundColor: '#292929',
@@ -162,9 +92,14 @@ export default {
       favicon: './assets/images/favicon.png',
       output: 'single',
     },
-    extra: { eas: { projectId: '413aa829-bbae-467c-9201-4688b894f2f7' } },
+    extra: {
+      eas: { projectId: '413aa829-bbae-467c-9201-4688b894f2f7' },
+      yandexClientId: process.env.YANDEX_NATIVE_CLIENT_ID,
+      vkIdClientId: process.env.VK_NATIVE_CLIENT_ID,
+    },
     plugins: [
       './custom.plugin',
+      './config/native-auth-plugin',
       'react-native-nitro-fetch',
       'react-native-health-connect',
       'react-native-compressor',

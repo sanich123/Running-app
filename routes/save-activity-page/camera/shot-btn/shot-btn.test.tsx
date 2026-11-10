@@ -1,12 +1,16 @@
 import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
 import * as MediaLibrary from 'expo-media-library';
+import { http, HttpResponse } from 'msw';
 import { LANGUAGES } from '@const/enums';
+import { setSaveCameraPhotosToGallery } from '@R/slices/activity-settings/activity-settings';
 import { resetAuthSlice } from '@R/slices/auth/auth';
-import { changeLanguage, setSaveCameraPhotosToGallery } from '@R/slices/settings/settings';
+import { changeLanguage } from '@R/slices/settings/settings';
 import * as errorToastModule from '@S/error-toast/error-toast';
 import { TEST_URLS } from '@T/mocks/const';
+import { BASE_URL } from '@T/utils/handlers';
 import { createMockMutableRef } from '@T/utils/mock-ref';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
+import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { deleteUploadedMedia } from '@U/file-sending';
 import ShotBtn from './shot-btn';
@@ -16,14 +20,11 @@ import type { CameraView } from 'expo-camera';
 jest.mock('expo-media-library', () => ({ Asset: { create: jest.fn().mockResolvedValue({}) } }));
 jest.mock('@U/file-sending', () => ({ deleteUploadedMedia: jest.fn().mockResolvedValue(true) }));
 jest.mock('@S/error-toast/error-toast', () => ({ errorToast: jest.fn() }));
-const mockAppendActivityMedia = jest.fn();
-jest.mock('@R/services/activity/activity', () => ({
-  ...jest.requireActual('@R/services/activity/activity'),
-  useAppendActivityMediaMutation: () => [mockAppendActivityMedia],
-}));
 jest.mock('../../utils', () => ({ uploadActivityMediaBatch: jest.fn() }));
 
 const mockUploadActivityMediaBatch = uploadActivityMediaBatch as jest.Mock;
+let appendMediaRequest: { activityId: string; body: unknown } | undefined;
+let appendMediaResponse: object;
 
 describe('shot btn', () => {
   beforeEach(() => {
@@ -31,7 +32,14 @@ describe('shot btn', () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     mockStore.dispatch(setSaveCameraPhotosToGallery(false));
     mockUploadActivityMediaBatch.mockReset();
-    mockAppendActivityMedia.mockReset();
+    appendMediaRequest = undefined;
+    appendMediaResponse = { success: true, media: [] };
+    server.use(
+      http.post(`${BASE_URL}/activity/:activityId/media`, async ({ params, request }) => {
+        appendMediaRequest = { activityId: String(params.activityId), body: await request.json() };
+        return HttpResponse.json(appendMediaResponse);
+      }),
+    );
     (MediaLibrary.Asset.create as jest.Mock).mockReset().mockResolvedValue({});
   });
 
@@ -106,9 +114,7 @@ describe('shot btn', () => {
     const uploadedPhoto = { url: TEST_URLS.temporaryPhoto, thumbnail: 'https://temporary/photo-thumb.jpg' };
     const persistedPhoto = { id: 'media-id', activityId: 'activity-id', ...uploadedPhoto };
     mockUploadActivityMediaBatch.mockResolvedValue([uploadedPhoto]);
-    mockAppendActivityMedia.mockReturnValue({
-      unwrap: jest.fn().mockResolvedValue({ success: true, media: [persistedPhoto] }),
-    });
+    appendMediaResponse = { success: true, media: [persistedPhoto] };
     const takePictureAsync = jest.fn().mockResolvedValue({ uri: TEST_URLS.cameraPhotoUri });
     await renderWithProviders(
       <ShotBtn
@@ -122,7 +128,7 @@ describe('shot btn', () => {
     await user.press(screen.getByTestId('camera-shot-button'));
 
     await waitFor(() => expect(setPhotos).toHaveBeenCalledWith([persistedPhoto]));
-    expect(mockAppendActivityMedia).toHaveBeenCalledWith({ id: 'activity-id', media: [uploadedPhoto] });
+    expect(appendMediaRequest).toEqual({ activityId: 'activity-id', body: { media: [uploadedPhoto] } });
     expect(deleteUploadedMedia).not.toHaveBeenCalled();
     expect(mockStore.getState().activity.media).toContainEqual(persistedPhoto);
   });
@@ -133,7 +139,6 @@ describe('shot btn', () => {
     mockStore.dispatch(setMockUserId('shot-user'));
     const uploadedPhoto = { url: TEST_URLS.temporaryPhoto, thumbnail: null };
     mockUploadActivityMediaBatch.mockResolvedValue([uploadedPhoto]);
-    mockAppendActivityMedia.mockReturnValue({ unwrap: jest.fn().mockResolvedValue({ success: true, media: [] }) });
     const takePictureAsync = jest.fn().mockResolvedValue({ uri: TEST_URLS.cameraPhotoUri });
     await renderWithProviders(
       <ShotBtn

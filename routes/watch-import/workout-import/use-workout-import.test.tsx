@@ -1,11 +1,14 @@
 import type { PropsWithChildren } from 'react';
 import { act, renderHook, waitFor } from '@testing-library/react-native';
+import { http, HttpResponse } from 'msw';
 import { Provider } from 'react-redux';
 import { AppState } from 'react-native';
 import type { AppStateStatus } from 'react-native';
 import { resetAuthSlice } from '@R/slices/auth/auth';
 import * as errorToastModule from '@S/error-toast/error-toast';
+import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
+import { server } from '@T/utils/server';
 import { getAutoSyncKey, getConnectionKey, getWorkoutId, HIDDEN_WORKOUTS_KEY } from './helpers';
 import type * as WorkoutImportModule from './use-workout-import';
 import type { WatchWorkout } from '../../../modules/runich-health/src/RunichHealth';
@@ -14,7 +17,6 @@ const mockGetAvailability = jest.fn();
 const mockGetPermissions = jest.fn();
 const mockRequestPermissions = jest.fn();
 const mockReadWorkouts = jest.fn();
-const mockImportWorkouts = jest.fn();
 const mockGetItemAsync = jest.fn();
 const mockSetItemAsync = jest.fn();
 
@@ -26,9 +28,6 @@ jest.mock('../../../modules/runich-health/src/RunichHealth', () => ({
     readWorkouts: mockReadWorkouts,
   },
   HealthConnectReadError: class HealthConnectReadError extends Error {},
-}));
-jest.mock('@R/services/activity/activity', () => ({
-  useImportWatchWorkoutsMutation: () => [mockImportWorkouts, { isLoading: false }],
 }));
 jest.mock('expo-secure-store', () => ({
   getItemAsync: mockGetItemAsync,
@@ -58,9 +57,17 @@ function Wrapper({ children }: PropsWithChildren) {
 
 describe('useWorkoutImport', () => {
   let appStateListener: ((state: AppStateStatus) => void) | undefined;
+  let importedWorkoutBatches: { url: string; body: unknown }[];
 
   beforeEach(() => {
     jest.clearAllMocks();
+    importedWorkoutBatches = [];
+    server.use(
+      http.post(`${BASE_URL}/activity/:userId/watch-import`, async ({ request }) => {
+        importedWorkoutBatches.push({ url: new URL(request.url).pathname, body: await request.json() });
+        return HttpResponse.json({ imported: 1, skipped: 0, activities: [] });
+      }),
+    );
     mockGetAvailability.mockResolvedValue('available');
     mockGetPermissions.mockResolvedValue({
       available: true,
@@ -73,9 +80,6 @@ describe('useWorkoutImport', () => {
       details: { exerciseSession: true, distance: true, steps: true, heartRate: true },
     });
     mockReadWorkouts.mockResolvedValue([workout]);
-    mockImportWorkouts.mockReturnValue({
-      unwrap: jest.fn().mockResolvedValue({ imported: 1, skipped: 0, activities: [] }),
-    });
     mockGetItemAsync.mockResolvedValue(null);
     mockSetItemAsync.mockResolvedValue(undefined);
     appStateListener = undefined;
@@ -106,7 +110,7 @@ describe('useWorkoutImport', () => {
     await waitFor(() => expect(result.current.workouts).toHaveLength(1));
 
     expect(mockReadWorkouts).toHaveBeenCalledTimes(1);
-    expect(mockImportWorkouts).not.toHaveBeenCalled();
+    expect(importedWorkoutBatches).toHaveLength(0);
     expect(result.current.selectedWorkouts).toHaveLength(1);
   });
 
@@ -123,17 +127,19 @@ describe('useWorkoutImport', () => {
       await result.current.importSelected();
     });
 
-    expect(mockImportWorkouts).toHaveBeenCalledWith(
-      expect.objectContaining({
-        id: 'user-1',
-        workouts: [
-          expect.objectContaining({
-            sourceActivityId: workout.sourceActivityId,
-            heartRateSamples: workout.heartRateSamples,
-          }),
-        ],
-      }),
-    );
+    expect(importedWorkoutBatches).toEqual([
+      {
+        url: '/activity/user-1/watch-import',
+        body: {
+          workouts: [
+            expect.objectContaining({
+              sourceActivityId: workout.sourceActivityId,
+              heartRateSamples: workout.heartRateSamples,
+            }),
+          ],
+        },
+      },
+    ]);
     expect(result.current.uploadDiagnostics).toMatchObject({
       outcome: 'success',
       sourceHeartRateSampleCount: 2,
@@ -151,7 +157,7 @@ describe('useWorkoutImport', () => {
 
   it('marks workout heart-rate samples as sent but not uploaded when the request fails', async () => {
     jest.spyOn(errorToastModule, 'errorToast').mockImplementation(() => undefined);
-    mockImportWorkouts.mockReturnValue({ unwrap: jest.fn().mockRejectedValue({ status: 500 }) });
+    server.use(http.post(`${BASE_URL}/activity/:userId/watch-import`, () => new HttpResponse(null, { status: 500 })));
     const { result } = await renderHook(() => useWorkoutImport({ enabled: false }), { wrapper: Wrapper });
 
     await act(async () => {
@@ -184,7 +190,7 @@ describe('useWorkoutImport', () => {
     );
     const { result } = await renderHook(() => useWorkoutImport({ autoSync: true }), { wrapper: Wrapper });
 
-    await waitFor(() => expect(mockImportWorkouts).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(importedWorkoutBatches).toHaveLength(1));
     expect(result.current.isConnected).toBe(true);
     expect(result.current.autoSyncEnabled).toBe(true);
 
@@ -193,7 +199,7 @@ describe('useWorkoutImport', () => {
       appStateListener?.('active');
     });
 
-    await waitFor(() => expect(mockImportWorkouts).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(importedWorkoutBatches).toHaveLength(2));
   });
 
   it('does not initialize Health Connect when disabled', async () => {
@@ -215,7 +221,7 @@ describe('useWorkoutImport', () => {
     expect(mockSetItemAsync).toHaveBeenCalledWith(getConnectionKey('user-1'), 'true');
     expect(mockSetItemAsync).toHaveBeenCalledWith(getAutoSyncKey('user-1'), 'true');
     expect(mockReadWorkouts).toHaveBeenCalledTimes(1);
-    expect(mockImportWorkouts).toHaveBeenCalledTimes(1);
+    expect(importedWorkoutBatches).toHaveLength(1);
   });
 
   it('persists changes to the auto-sync switch', async () => {
@@ -285,7 +291,7 @@ describe('useWorkoutImport', () => {
     expect(result.current.workouts).toEqual([]);
     expect(result.current.selectedWorkouts).toEqual([]);
     expect(result.current.uploadDiagnostics?.skipReason).toBe('no-workouts');
-    expect(mockImportWorkouts).not.toHaveBeenCalled();
+    expect(importedWorkoutBatches).toHaveLength(0);
   });
 
   it('continues reading workouts when the saved hidden list is malformed', async () => {

@@ -1,13 +1,18 @@
 import { View, StyleSheet } from 'react-native';
 import { Icon, IconButton, Text, useTheme } from 'react-native-paper';
-import { useAddActivityByUserIdMutation } from '@R/services/activity/activity';
-import { clearUnsyncedActivities, removeFirstUnsyncedActivity } from '@R/slices/activity/activity';
+import { useAddActivityByUserIdMutation, useUploadRawActivityLocationsMutation } from '@R/services/activity/activity';
+import {
+  clearPendingRawRouteUploads,
+  clearUnsyncedActivities,
+  removeFirstUnsyncedActivity,
+} from '@R/slices/activity/activity';
 import { clearTrackingRecovery } from '@R/slices/tracking-recovery/tracking-recovery';
 import { useAppSelector, useAppDispatch } from '@R/typed-hooks';
 import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
 import { successToast } from '@S/success-toast/success-toast';
+import { uploadRawRouteAndQueueOnFailure } from '@U/activity-track/upload-raw-route';
 import { MAX_SAVED_ROUTE_LOCATIONS } from '@U/location/const';
-import { readLocationJournal, removeLocationJournal } from '@U/location/location-journal';
+import { deactivateLocationJournal, readLocationJournal, removeLocationJournal } from '@U/location/location-journal';
 import { getReducedLocations } from '@U/location/location-utils';
 import { UNSYNCED_ACTIVITIES_TEXT } from '../const';
 
@@ -16,11 +21,90 @@ export default function UnsendedActivitiesIndicator() {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const copy = UNSYNCED_ACTIVITIES_TEXT[language];
-  const { unsyncedActivities } = useAppSelector(({ activity }) => activity);
+  const { unsyncedActivities = [], pendingRawRouteUploads = [] } = useAppSelector(({ activity }) => activity);
   const trackingRecovery = useAppSelector(({ trackingRecovery }) => trackingRecovery);
   const [sendActivity, { isLoading }] = useAddActivityByUserIdMutation();
+  const [uploadRawLocations, { isLoading: isRouteUploadLoading }] = useUploadRawActivityLocationsMutation();
+  const pendingCount = unsyncedActivities.length + pendingRawRouteUploads.length;
 
-  return (
+  async function sendPending() {
+    const pendingActivity = unsyncedActivities[0];
+    if (pendingActivity) {
+      const journalId = pendingActivity.routeJournalId ?? null;
+      const routeLocations = journalId ? (readLocationJournal(journalId)?.locations ?? []) : [];
+      if (journalId && !routeLocations.length) {
+        return errorToast('', copy.restoreRouteError);
+      }
+
+      await sendActivity({
+        id: pendingActivity.id,
+        body: {
+          ...pendingActivity.body,
+          locations: getReducedLocations(routeLocations, MAX_SAVED_ROUTE_LOCATIONS),
+        },
+      })
+        .unwrap()
+        .then((savedActivity) => {
+          if (journalId && routeLocations.length) {
+            deactivateLocationJournal(journalId);
+            if (trackingRecovery.journalId === journalId) dispatch(clearTrackingRecovery());
+            void uploadRawRouteAndQueueOnFailure({
+              pendingUpload: {
+                activityId: savedActivity.id,
+                routeJournalId: journalId,
+                title: pendingActivity.body.title,
+                date: pendingActivity.body.date ?? new Date().toISOString(),
+                sport: pendingActivity.body.sport,
+              },
+              locations: routeLocations,
+              dispatch,
+              uploadRawLocations,
+            })
+              .then(() => {
+                successToast(copy.routeSuccess);
+              })
+              .catch((error: unknown) => errorToast(copy.routeError, getErrorMessageFromError(error)));
+          }
+          dispatch(removeFirstUnsyncedActivity());
+          successToast(copy.success);
+        })
+        .catch((error: unknown) => errorToast('', getErrorMessageFromError(error)));
+      return;
+    }
+
+    const pendingRouteUpload = pendingRawRouteUploads[0];
+    const locations = readLocationJournal(pendingRouteUpload.routeJournalId)?.locations ?? [];
+    if (!locations.length) {
+      return errorToast('', copy.restoreRouteError);
+    }
+
+    await uploadRawRouteAndQueueOnFailure({
+      pendingUpload: pendingRouteUpload,
+      locations,
+      dispatch,
+      uploadRawLocations,
+    })
+      .then(() => {
+        successToast(copy.routeSuccess);
+      })
+      .catch((error: unknown) => errorToast(copy.routeError, getErrorMessageFromError(error)));
+  }
+
+  function removePendingItems() {
+    const shouldClearRecovery =
+      unsyncedActivities.some(
+        ({ routeJournalId }) => routeJournalId && routeJournalId === trackingRecovery.journalId,
+      ) || pendingRawRouteUploads.some(({ routeJournalId }) => routeJournalId === trackingRecovery.journalId);
+    unsyncedActivities.forEach(({ routeJournalId }) => {
+      if (routeJournalId) removeLocationJournal(routeJournalId);
+    });
+    pendingRawRouteUploads.forEach(({ routeJournalId }) => removeLocationJournal(routeJournalId));
+    if (shouldClearRecovery) dispatch(clearTrackingRecovery());
+    dispatch(clearUnsyncedActivities());
+    dispatch(clearPendingRawRouteUploads());
+  }
+
+  return pendingCount > 0 ? (
     <View style={[styles.container, { backgroundColor: colors.primaryContainer, borderColor: colors.outlineVariant }]}>
       <View style={styles.content}>
         <View style={[styles.iconContainer, { backgroundColor: colors.primary }]}>
@@ -28,10 +112,10 @@ export default function UnsendedActivitiesIndicator() {
         </View>
         <View style={styles.copy}>
           <Text variant="titleMedium" style={{ color: colors.onPrimaryContainer }}>
-            {copy.title(unsyncedActivities.length)}
+            {copy.title(pendingCount)}
           </Text>
           <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
-            {isLoading ? copy.sending : copy.pending}
+            {isLoading || isRouteUploadLoading ? copy.sending : copy.pending}
           </Text>
         </View>
       </View>
@@ -42,61 +126,25 @@ export default function UnsendedActivitiesIndicator() {
           mode="contained-tonal"
           iconColor={colors.primary}
           containerColor={colors.surface}
-          loading={isLoading}
-          onPress={async () => {
-            const pendingActivity = unsyncedActivities?.[0];
-            if (pendingActivity) {
-              const journalId = pendingActivity.routeJournalId ?? null;
-              const routeLocations = journalId ? (readLocationJournal(journalId)?.locations ?? []) : [];
-              if (journalId && !routeLocations.length) {
-                errorToast('', copy.restoreRouteError);
-                return;
-              }
-
-              await sendActivity({
-                id: pendingActivity.id,
-                body: {
-                  ...pendingActivity.body,
-                  locations: getReducedLocations(routeLocations, MAX_SAVED_ROUTE_LOCATIONS),
-                },
-              })
-                .unwrap()
-                .then(() => {
-                  if (journalId) removeLocationJournal(journalId);
-                  if (journalId && trackingRecovery.journalId === journalId) dispatch(clearTrackingRecovery());
-                  dispatch(removeFirstUnsyncedActivity());
-                  successToast(copy.success);
-                })
-                .catch((error) => errorToast('', getErrorMessageFromError(error)));
-            }
-          }}
-          disabled={isLoading}
+          loading={isLoading || isRouteUploadLoading}
+          disabled={isLoading || isRouteUploadLoading}
+          onPress={sendPending}
           accessibilityLabel={copy.send}
         />
-
         <IconButton
           icon="delete-outline"
           testID="delete-unsynced-activities"
           mode="contained-tonal"
           iconColor={colors.error}
           containerColor={colors.errorContainer}
-          loading={isLoading}
-          disabled={isLoading}
-          onPress={() => {
-            const shouldClearRecovery = unsyncedActivities.some(
-              ({ routeJournalId }) => routeJournalId && routeJournalId === trackingRecovery.journalId,
-            );
-            unsyncedActivities.forEach(({ routeJournalId }) => {
-              if (routeJournalId) removeLocationJournal(routeJournalId);
-            });
-            if (shouldClearRecovery) dispatch(clearTrackingRecovery());
-            dispatch(clearUnsyncedActivities());
-          }}
+          loading={isLoading || isRouteUploadLoading}
+          disabled={isLoading || isRouteUploadLoading}
+          onPress={removePendingItems}
           accessibilityLabel={copy.remove}
         />
       </View>
     </View>
-  );
+  ) : null;
 }
 
 const styles = StyleSheet.create({

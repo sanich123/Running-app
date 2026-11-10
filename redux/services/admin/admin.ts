@@ -4,7 +4,7 @@ import type { AdminAccess, AdminAccessAuditItem, AdminRole, AdminUser } from './
 
 const { admin } = Routes;
 
-export const adminApi = runichApi.injectEndpoints({
+const adminApi = runichApi.injectEndpoints({
   overrideExisting: true,
   endpoints: ({ query, mutation }) => ({
     getAdminAccess: query<AdminAccess, void>({
