@@ -47,7 +47,7 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
         paragraphs: ['Объем данных зависит от выбранных функций:'],
         bullets: [
           'аккаунт: внутренний идентификатор, email, подтверждение email и способ авторизации;',
-          'OAuth: email и поля базового профиля, полученные от VK ID или Яндекс ID, — имя, фамилия, город и фото, если они предоставлены. Идентификатор OAuth используется для текущей авторизации и сопоставления аккаунта.',
+          'Данные для входа через VK ID, Яндекс ID или Sign in with Apple: подтверждённый email, имя и фамилия, если они предоставлены, и идентификатор аккаунта у провайдера. Apple может скрыть личный адрес и передать адрес-посредник. Идентификатор используется для входа и сопоставления аккаунта; пароли и токены провайдеров в профиле не сохраняются.',
           'профиль: имя, фамилия, город, пол, дата рождения, вид спорта, описание, фото, вес, рост и возраст. Все поля являются необязательными и указываются по желанию пользователя;',
           'тренировки и маршруты: вид спорта, дата, дистанция, длительность, темп/скорость, шаги, описание, видимость, фото/видео, временные точки, координаты, высота и другие параметры, переданные устройством;',
           'данные здоровья, импортируемые из Apple Health (HealthKit) на iOS или Health Connect на Android: сведения о тренировке, дистанция, шаги и маршрут; Android также может передавать отдельные измерения пульса и активные калории. Подробный состав и обработка описаны в разделе 6;',
@@ -57,7 +57,7 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '3. Цели обработки',
         paragraphs: [
-          'Данные нужны для регистрации, входа по email, VK ID или Яндекс ID, восстановления доступа и работы функций Runich: записи тренировок, маршрутов, статистики, профиля и пользовательского контента.',
+          'Данные нужны для регистрации и входа по email, VK ID, Яндекс ID или Apple ID, восстановления доступа и работы функций Runich: записи тренировок, маршрутов, статистики, профиля и пользовательского контента.',
           'Геолокация используется только для записи активной тренировки; вес, рост, возраст и пол заполняются добровольно и могут использоваться для оценки калорийности тренировки, но не нужны для регистрации.',
           'Технические данные используются для безопасности, предотвращения злоупотреблений, устранения ошибок, поддержки и исполнения требований закона.',
         ],
@@ -65,7 +65,7 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '4. OAuth и email',
         paragraphs: [
-          'При авторизации через VK ID или Яндекс ID используются email и поля базового профиля для создания или поиска аккаунта и его заполнения. Пароли и OAuth-токены провайдеров не сохраняются в профиле и не используются для иных целей. Регистрация по email доступна только с адресом российского почтового оператора в доменной зоне .ru или .рф; адреса с иностранными доменными именами для регистрации не принимаются.',
+          'При авторизации через VK ID, Яндекс ID или Sign in with Apple подтверждённый email и идентификатор аккаунта провайдера используются для создания или поиска аккаунта; имя и фамилия добавляются, если провайдер их передал. Apple может скрыть личный email и передать адрес-посредник. Пароли и токены провайдеров в профиле не сохраняются и не используются для иных целей. Самостоятельная регистрация по email доступна только с адресом российского почтового оператора в доменной зоне .ru или .рф; это ограничение не относится к адресам, которые передают провайдеры входа.',
         ],
       },
       {
@@ -102,7 +102,7 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '9. Подрядчики и передача',
         paragraphs: [
-          'Для работы Runich могут привлекаться VK ID и Яндекс ID, почтовый провайдер, провайдеры API, базы данных, файлов и резервных копий, карт и CDN. Каждый получает только необходимый объем данных. Государственным органам данные передаются только по закону.',
+          'Для работы Runich могут привлекаться VK ID, Яндекс ID и Apple для входа, почтовый провайдер, провайдеры API, базы данных, файлов и резервных копий, карт и CDN. Каждый получает только необходимый объем данных. Государственным органам данные передаются только по закону.',
           `По вопросам обработки данных, удаления аккаунта, доступа, исправления или отзыва согласия можно обратиться по адресу: ${LEGAL_OPERATOR.email}.`,
         ],
       },
@@ -159,7 +159,7 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '2. Аккаунт',
         paragraphs: [
-          'Пользователь указывает достоверный email, сохраняет доступ к нему и отвечает за действия в аккаунте. Нельзя создавать аккаунты для обмана, обхода ограничений, выдачи себя за другого человека или доступа к чужим данным. Вход доступен по email и паролю либо через VK ID/Яндекс ID.',
+          'Пользователь указывает достоверный email, сохраняет доступ к нему и отвечает за действия в аккаунте. Нельзя создавать аккаунты для обмана, обхода ограничений, выдачи себя за другого человека или доступа к чужим данным. Вход доступен по email и паролю либо через VK ID, Яндекс ID или Apple ID.',
         ],
       },
       {
@@ -290,7 +290,7 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
         paragraphs: ['Depending on the selected features:'],
         bullets: [
           'account: internal Runich identifier, email, email verification and authentication method;',
-          'OAuth: email and basic-profile fields received from VK ID or Yandex ID — name, surname, city and photo when provided. The OAuth identifier is used for current authentication and account matching;',
+          'Sign-in data from VK ID, Yandex ID or Sign in with Apple: verified email, first and last name when provided, and the provider account identifier. Apple may hide the user’s personal address and provide a relay email. The identifier is used to authenticate and match the account; provider passwords and tokens are not stored in the profile;',
           'profile: name, surname, city, optional gender, date of birth, sport, bio, photo, weight, height and age;',
           'workouts and routes: sport, date, distance, duration, pace/speed, steps, description, visibility, photos/videos, timestamps, coordinates, altitude and other parameters supplied by the device;',
           'health data imported from Apple Health (HealthKit) on iOS or Health Connect on Android: workout details, distance, steps and route; Android may also provide heart-rate samples and active calories. Section 6 describes the exact data and processing;',
@@ -300,7 +300,7 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '3. Purposes',
         paragraphs: [
-          'Data is needed for registration, sign-in by email, VK ID or Yandex ID, access recovery and Runich features: workout and route recording, statistics, profiles and user content.',
+          'Data is needed for registration and sign-in by email, VK ID, Yandex ID or Apple ID, access recovery and Runich features: workout and route recording, statistics, profiles and user content.',
           'Location is used only to record an active workout; weight, height, age and gender are voluntary and may be used to estimate workout calories, but they are not required for registration.',
           'Technical data is used for security, abuse prevention, troubleshooting, support and compliance with legal requirements.',
         ],
@@ -308,7 +308,7 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '4. OAuth and email',
         paragraphs: [
-          'When you sign in through VK ID or Yandex ID, email and basic-profile fields are used to create or find an account and fill its profile. Provider passwords and OAuth tokens are not stored in the profile or used for unrelated purposes. Email registration is available only with an address from a Russian email provider in the .ru or .рф domain zone; addresses with foreign domain names are not accepted for registration.',
+          'When you sign in through VK ID, Yandex ID or Sign in with Apple, the verified email and provider account identifier are used to create or find an account; name fields are added when the provider shares them. Apple may hide the personal email and provide a relay address. Provider passwords and tokens are not stored in the profile or used for unrelated purposes. Direct email registration is available only with an address from a Russian email provider in the .ru or .рф domain zone; this restriction does not apply to email addresses provided by sign-in providers.',
         ],
       },
       {
@@ -345,7 +345,7 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '9. Processors and transfers',
         paragraphs: [
-          'Runich may use VK ID and Yandex ID, a mail provider, API, database, file and backup, map and CDN providers. Each receives only the amount of data necessary for its task. Data is disclosed to public authorities only as required by law.',
+          'Runich may use VK ID, Yandex ID and Apple for sign-in, a mail provider, API, database, file and backup, map and CDN providers. Each receives only the amount of data necessary for its task. Data is disclosed to public authorities only as required by law.',
           `For questions about processing, account deletion, access, correction or withdrawal of consent, contact: ${LEGAL_OPERATOR.email}.`,
         ],
       },
@@ -402,7 +402,7 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '2. Account',
         paragraphs: [
-          'The user provides a valid email, keeps access to it and is responsible for activity in the account. Accounts must not be created for fraud, bypassing restrictions, impersonating another person or accessing someone else’s data. Sign-in is available by email and password or through VK ID/Yandex ID.',
+          'The user provides a valid email, keeps access to it and is responsible for activity in the account. Accounts must not be created for fraud, bypassing restrictions, impersonating another person or accessing someone else’s data. Sign-in is available by email and password or through VK ID, Yandex ID or Apple ID.',
         ],
       },
       {

@@ -6824,6 +6824,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-apple-authentication@npm:~58.0.2":
+  version: 58.0.2
+  resolution: "expo-apple-authentication@npm:58.0.2"
+  peerDependencies:
+    expo: "*"
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/ff06e5c41a2fdb3f18ee79120f2089caec93bf478a95a7303f6ca6c2ef2b451acc4a68f0d5f9b671742b205fa749fd82f076e69c68f5d81afd91468df2e29f5b
+  languageName: node
+  linkType: hard
+
 "expo-application@npm:~58.1.2":
   version: 58.1.2
   resolution: "expo-application@npm:58.1.2"
@@ -6887,6 +6898,15 @@ __metadata:
     expo: "*"
     react-native: "*"
   checksum: 10c0/7f1214baaf7bf21b19a803304bec6db68fc060a7a9bca05aba3779279666ed79844298809f9f3e77dec92231fca6b21ecf923f37d38bbcadc1db6dd06bac2138
+  languageName: node
+  linkType: hard
+
+"expo-crypto@npm:~58.0.7":
+  version: 58.0.7
+  resolution: "expo-crypto@npm:58.0.7"
+  peerDependencies:
+    expo: "*"
+  checksum: 10c0/cb80a5fa143b2c9102f97edc478829f6bd0a85a9926a8fb712de1d4ef41ffdac362a25d2fb0c76c2b6588bf17dc5818a731f790e602e237567987bf166bbaa26
   languageName: node
   linkType: hard
 
@@ -12713,9 +12733,11 @@ __metadata:
     eslint-plugin-react-refresh: "npm:^0.5.7"
     eslint-plugin-unused-imports: "npm:^4.4.1"
     expo: "npm:~58.0.23"
+    expo-apple-authentication: "npm:~58.0.2"
     expo-build-properties: "npm:~58.0.12"
     expo-camera: "npm:~58.0.14"
     expo-constants: "npm:~58.0.15"
+    expo-crypto: "npm:~58.0.7"
     expo-dev-client: "npm:~58.0.18"
     expo-device: "npm:~58.0.5"
     expo-document-picker: "npm:~58.0.4"

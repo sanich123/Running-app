@@ -42,6 +42,8 @@ jobs:
           yarn web:export:stage
           test -s dist/index.html
           test -s dist/.well-known/assetlinks.json
+          test -s dist/.well-known/apple-app-site-association
+          node -e "JSON.parse(require('node:fs').readFileSync('dist/.well-known/apple-app-site-association', 'utf8'))"
           test -s dist/robots.txt
 
       - name: Deploy the exact export over SSH
@@ -103,6 +105,7 @@ jobs:
           chmod -R a+rX "$WEB_ROOT/$RELEASE"
           test -s "$WEB_ROOT/$RELEASE/index.html"
           test -s "$WEB_ROOT/$RELEASE/.well-known/assetlinks.json"
+          test -s "$WEB_ROOT/$RELEASE/.well-known/apple-app-site-association"
 
           previous=''
           if [ -L "$WEB_ROOT/current" ]; then
@@ -119,7 +122,10 @@ jobs:
             && curl --fail --silent --show-error --max-time 15 \
               --resolve "$WEB_DOMAIN:443:127.0.0.1" "https://$WEB_DOMAIN/" >/dev/null \
             && curl --fail --silent --show-error --max-time 15 \
-              --resolve "$WEB_DOMAIN:443:127.0.0.1" "https://$WEB_DOMAIN/.well-known/assetlinks.json" >/dev/null; then
+              --resolve "$WEB_DOMAIN:443:127.0.0.1" "https://$WEB_DOMAIN/.well-known/assetlinks.json" >/dev/null \
+            && curl --fail --silent --show-error --max-time 15 \
+              --resolve "$WEB_DOMAIN:443:127.0.0.1" "https://$WEB_DOMAIN/.well-known/apple-app-site-association" \
+              -o /dev/null -w '%{http_code}' | grep -qx '200'; then
             printf '%s\n' "$DEPLOY_SHA" > "$WEB_ROOT/.deployed-sha"
             echo "Stage web is healthy at commit $DEPLOY_SHA: https://$WEB_DOMAIN"
           else

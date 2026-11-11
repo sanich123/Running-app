@@ -28,6 +28,8 @@ export default {
     },
     assetBundlePatterns: ['**/*'],
     ios: {
+      usesAppleSignIn: true,
+      icon: './assets/images/runich-app-icon.icon',
       associatedDomains: ['applinks:runich-app.ru', 'applinks:stage-web.runich-app.ru'],
       entitlements: {
         'com.apple.developer.networking.wifi-info': true,
@@ -53,7 +55,7 @@ export default {
         NSHealthShareUsageDescription:
           'Runich использует завершенные тренировки из Apple Health, чтобы сохранить их в вашем аккаунте',
       },
-      bundleIdentifier: IS_DEV ? 'com.sanich123.runningapp.dev' : 'com.sanich123.runningapp',
+      bundleIdentifier: IS_DEV ? 'com.sanich123.runich.dev' : 'com.sanich123.runich',
     },
     android: {
       intentFilters: ANDROID_UNIVERSAL_LINK_FILTERS,
@@ -107,6 +109,7 @@ export default {
       'expo-image',
       'expo-sharing',
       'expo-localization',
+      'expo-apple-authentication',
       [
         'expo-notifications',
         {

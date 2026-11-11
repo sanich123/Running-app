@@ -1,0 +1,26 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": [
+          "82Y4JR9G4R.com.sanich123.runich",
+          "82Y4JR9G4R.com.sanich123.runich.dev"
+        ],
+        "components": [
+          {
+            "/": "/login-from-url*"
+          },
+          {
+            "/": "/activity*"
+          },
+          {
+            "/": "/admin*"
+          },
+          {
+            "/": "/groups*"
+          }
+        ]
+      }
+    ]
+  }
+}

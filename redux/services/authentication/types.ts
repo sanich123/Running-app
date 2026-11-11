@@ -29,6 +29,13 @@ export interface NativeVkAuthCode {
   codeVerifier: string;
 }
 
+export interface NativeAppleAuthToken {
+  identityToken: string;
+  nonce: string;
+  givenName?: string;
+  familyName?: string;
+}
+
 export interface VerifyPasswordChangeCodeData extends EmailData {
   confirmationCode: string;
 }

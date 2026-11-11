@@ -70,10 +70,18 @@ export const SOCIAL_AUTH_TEXT = {
   [LANGUAGES.english]: {
     yandex: 'Yandex',
     vk: 'VK',
+    apple: 'Apple',
+    signingIn: 'Signing in…',
+    signingInWith: 'Signing in with',
+    appleLoginFailed: 'Could not sign in with Apple',
   },
   [LANGUAGES.russian]: {
     yandex: 'Яндекс',
     vk: 'VK',
+    apple: 'Apple',
+    signingIn: 'Входим…',
+    signingInWith: 'Входим через',
+    appleLoginFailed: 'Не удалось войти через Apple',
   },
 } as const;
 
