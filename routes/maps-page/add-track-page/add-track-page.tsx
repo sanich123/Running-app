@@ -1,8 +1,9 @@
-import { FlatList, StyleSheet, View } from 'react-native';
+import { FlatList, Platform, StyleSheet, View } from 'react-native';
 import { Stack } from 'expo-router';
 import { ActivityIndicator, Button, IconButton, Searchbar, Text, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
 import EmptyState from '@S/empty-state/empty-state';
+import { getHeaderIconSource, HEADER_ICON_SIZE, IOS_HEADER_ICON_COLOR } from '@S/header-icon-source';
 import ActivityRouteCard from './activity-route-card/activity-route-card';
 import DateFilters from './date-filters/date-filters';
 import useAddTrackPage from './use-add-track-page';
@@ -41,7 +42,8 @@ export default function AddTrackPage() {
             isSearchOpen ? (
               <Searchbar
                 autoFocus
-                iconColor={colors.primary}
+                icon={getHeaderIconSource('magnify', 'magnifyingglass')}
+                iconColor={Platform.OS === 'ios' ? IOS_HEADER_ICON_COLOR : colors.primary}
                 mode="bar"
                 placeholder={copy.searchActivities}
                 searchAccessibilityLabel={copy.searchActivities}
@@ -50,7 +52,9 @@ export default function AddTrackPage() {
                 onChangeText={setSearchQuery}
                 right={() => (
                   <IconButton
-                    icon="close"
+                    icon={getHeaderIconSource('close', 'xmark')}
+                    iconColor={Platform.OS === 'ios' ? IOS_HEADER_ICON_COLOR : colors.primary}
+                    size={HEADER_ICON_SIZE}
                     accessibilityLabel={copy.cancel}
                     onPress={() => {
                       setSearchQuery('');
@@ -79,7 +83,9 @@ export default function AddTrackPage() {
           headerRight: () =>
             isSearchOpen ? null : (
               <IconButton
-                icon="magnify"
+                icon={getHeaderIconSource('magnify', 'magnifyingglass')}
+                iconColor={Platform.OS === 'ios' ? IOS_HEADER_ICON_COLOR : colors.primary}
+                size={HEADER_ICON_SIZE}
                 accessibilityLabel={copy.searchActivities}
                 onPress={() => setIsSearchOpen(true)}
                 style={styles.headerActionButton}

@@ -11,6 +11,15 @@ export const HEALTH_SYNC_SOURCE_SCREENSHOT_URL =
 export const HEALTH_SYNC_CONFIG_SCREENSHOT_URL =
   'https://healthsync.app/wp-content/uploads/2023/09/Health-Sync-activity-source-configure.webp';
 
+export const IOS_WATCH_IMPORT_COPY = {
+  en: {
+    title: 'Connect Apple Health',
+  },
+  ru: {
+    title: 'Подключить Apple Health',
+  },
+} as const;
+
 export const WATCH_IMPORT_COPY = {
   en: {
     title: 'Workout import',

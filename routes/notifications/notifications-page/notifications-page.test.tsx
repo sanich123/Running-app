@@ -249,7 +249,7 @@ describe('NotificationsPage', () => {
     }
   });
 
-  it('loads the next cursor page and opens notification settings', async () => {
+  it('loads the next cursor page', async () => {
     const requestedCursors: string[] = [];
     const first = {
       id: 'notification-page-1',
@@ -281,8 +281,6 @@ describe('NotificationsPage', () => {
 
     await renderWithProviders(<NotificationsPage />);
     await screen.findByText(NOTIFICATION_COPY.russian.genericTitle);
-    await fireEvent.press(screen.getByTestId('notificationSettingsHeaderButton'));
-    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.settings}/${ROUTES.notificationSettings}`);
     await fireEvent(screen.getByTestId('notificationsList'), 'onEndReached');
     await screen.findByTestId('notification-notification-page-2');
     expect(requestedCursors).toEqual(['', 'cursor-1']);

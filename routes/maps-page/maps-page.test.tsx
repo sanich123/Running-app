@@ -1,4 +1,5 @@
 import { screen, userEvent } from '@testing-library/react-native';
+import { Platform } from 'react-native';
 import { ROUTES } from '@const/enums';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
@@ -45,11 +46,17 @@ const savedTrack = {
 };
 
 describe('maps page', () => {
+  const originalPlatformOS = Platform.OS;
+
   beforeEach(() => {
     mockPush.mockReset();
     mockGetPacks.mockReset().mockResolvedValue([]);
     mockListSavedOfflineMaps.mockReset().mockResolvedValue([]);
     mockListTracks.mockReset().mockResolvedValue([savedTrack]);
+  });
+
+  afterEach(() => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: originalPlatformOS });
   });
 
   it('opens the routes page with saved tracks', async () => {
@@ -79,12 +86,35 @@ describe('maps page', () => {
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.addTrack}`);
   });
 
-  it('opens offline map creation from the maps page', async () => {
+  it.each([
+    ['iOS', 'ios'],
+    ['Android', 'android'],
+  ] as const)('opens offline map creation on %s', async (_, platformOS) => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: platformOS });
     const user = userEvent.setup();
     await renderWithProviders(<MapsPage mode="maps" />);
 
-    await user.press(screen.getByTestId('maps-add-action'));
+    const addAction =
+      platformOS === 'ios' ? screen.getByLabelText(copy.createOfflineMap) : screen.getByTestId('maps-add-action');
+    await user.press(addAction);
 
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.createOfflineMap}`);
+  });
+
+  it('defaults to the offline maps page', async () => {
+    await renderWithProviders(<MapsPage />);
+
+    expect(await screen.findByText(copy.noOfflineMaps)).toBeOnTheScreen();
+  });
+
+  it('opens the Android routes menu and adds a saved workout route', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
+    const user = userEvent.setup();
+    await renderWithProviders(<MapsPage mode="routes" />);
+
+    await user.press(screen.getByTestId('routes-add-action'));
+    await user.press(await screen.findByTestId('routes-add-from-workouts'));
+
+    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.addTrack}`);
   });
 });

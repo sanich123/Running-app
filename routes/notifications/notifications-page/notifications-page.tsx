@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { FlatList, Platform, Pressable, ScrollView, View, useWindowDimensions } from 'react-native';
-import { Stack } from 'expo-router';
 import { Button, Dialog, IconButton, Portal, Text, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { RESPONSIVE_DIALOG_STYLE } from '@S/responsive-dialog-style';
@@ -34,7 +33,6 @@ export default function NotificationsPage() {
     markAllNotificationsRead,
     notifications,
     navigateToNotification,
-    openNotificationSettings,
     refetch,
     unreadCount,
   } = useNotificationsPage();
@@ -49,19 +47,6 @@ export default function NotificationsPage() {
 
   return (
     <View style={[styles.page, { backgroundColor: colors.background }]}>
-      <Stack.Screen
-        options={{
-          headerRight: () => (
-            <IconButton
-              testID="notificationSettingsHeaderButton"
-              icon="bell-cog-outline"
-              iconColor={colors.primary}
-              accessibilityLabel={copy.settings}
-              onPress={openNotificationSettings}
-            />
-          ),
-        }}
-      />
       <View
         testID="notificationsContent"
         style={[

@@ -7,6 +7,7 @@ import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
 import { LazyUsersSettingsIcons } from '@Routes/app-routes/const';
 import FeedHeaderTitle from '@S/feed-header-title/feed-header-title';
+import { IOS_HEADER_ICON_COLOR } from '@S/header-icon-source';
 
 export default function StatisticsStack() {
   const { colors } = useTheme();
@@ -17,7 +18,7 @@ export default function StatisticsStack() {
       screenOptions={{
         contentStyle: { backgroundColor: colors.background },
         headerStyle: { backgroundColor: colors.surface },
-        headerTintColor: colors.onSurface,
+        headerTintColor: Platform.OS === 'ios' ? IOS_HEADER_ICON_COLOR : colors.onSurface,
         headerTitleStyle: {
           color: colors.primary,
           fontFamily: FONT_FAMILIES.semiBold,

@@ -1,11 +1,13 @@
 import { fireEvent, screen, userEvent } from '@testing-library/react-native';
+import { Platform } from 'react-native';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { WORKOUT_IMPORT_COPY } from '../workout-import/const';
 import { getWorkoutId } from '../workout-import/helpers';
-import type * as WorkoutImportContentModule from './workout-import-content';
 import type { WatchWorkout } from '../../../modules/runich-health/src/RunichHealth';
+import type * as WorkoutImportContentModule from './workout-import-content';
 
 const mockUseWorkoutImport = jest.fn();
+const originalPlatformOS = Platform.OS;
 
 jest.mock('../workout-import/use-workout-import', () => ({
   useWorkoutImport: (...args: unknown[]) => mockUseWorkoutImport(...args),
@@ -67,6 +69,11 @@ function createWorkoutImportState(overrides: Record<string, unknown> = {}) {
 describe('WorkoutImportContent', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
+  });
+
+  afterEach(() => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: originalPlatformOS });
   });
 
   it('lets the user open the provider page or retry after a provider update is required', async () => {

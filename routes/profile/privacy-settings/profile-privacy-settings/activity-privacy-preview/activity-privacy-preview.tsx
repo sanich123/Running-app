@@ -1,9 +1,9 @@
 import { Image } from 'expo-image';
 import { StyleSheet, View } from 'react-native';
 import { Icon, Text, useTheme } from 'react-native-paper';
+import { PROFILE_PREVIEW_PHOTO, PROFILE_PRIVACY_SETTINGS } from '../../const';
 import ActivityPreviewGraph from './activity-preview-graph/activity-preview-graph';
 import { ACTIVITY_PREVIEW_HEART_RATE_ZONES, ACTIVITY_PREVIEW_METRIC_COLORS } from './const';
-import { PROFILE_PREVIEW_PHOTO, PROFILE_PRIVACY_SETTINGS } from '../../const';
 import type { ActivityPrivacyPreviewMetricOption } from './activity-preview-graph/types';
 import type { ActivityPrivacyPreviewProps } from './types';
 
@@ -14,6 +14,7 @@ export default function ActivityPrivacyPreview({
   allowActivityPaceViewing,
   allowActivityReplayViewing,
   allowActivitySharing,
+  hideHeading = false,
   language,
 }: ActivityPrivacyPreviewProps) {
   const { colors } = useTheme();
@@ -41,13 +42,19 @@ export default function ActivityPrivacyPreview({
   const visibleMetrics = metricOptions.filter(({ isVisible }) => isVisible);
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background, borderColor: colors.outlineVariant }]}>
-      <View style={styles.heading}>
-        <Text variant="titleSmall">{copy.activityPreviewTitle}</Text>
-        <Text variant="labelSmall" style={{ color: colors.onSurfaceVariant }}>
-          {copy.activityPreviewHint}
-        </Text>
-      </View>
+    <View
+      style={[
+        hideHeading ? styles.accordionContent : styles.container,
+        { backgroundColor: colors.background, borderColor: colors.outlineVariant },
+      ]}>
+      {!hideHeading ? (
+        <View style={styles.heading}>
+          <Text variant="titleSmall">{copy.activityPreviewTitle}</Text>
+          <Text variant="labelSmall" style={{ color: colors.onSurfaceVariant }}>
+            {copy.activityPreviewHint}
+          </Text>
+        </View>
+      ) : null}
 
       <View style={[styles.activityCard, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}>
         <View style={[styles.activityHeader, { borderBottomColor: colors.outlineVariant }]}>
@@ -252,6 +259,7 @@ export default function ActivityPrivacyPreview({
 
 const styles = StyleSheet.create({
   container: { borderRadius: 12, borderWidth: 1, gap: 8, marginTop: 4, padding: 10 },
+  accordionContent: { gap: 8, padding: 10 },
   heading: { gap: 2 },
   activityCard: { borderRadius: 10, borderWidth: 1, gap: 0, overflow: 'hidden' },
   activityHeader: {

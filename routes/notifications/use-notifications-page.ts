@@ -68,8 +68,6 @@ export function useNotificationsPage() {
     }
   };
 
-  const openNotificationSettings = () => push(`/${ROUTES.settings}/${ROUTES.notificationSettings}` as never);
-
   return {
     busyId,
     copy,
@@ -85,7 +83,6 @@ export function useNotificationsPage() {
     notifications,
     navigateToNotification,
     openNotification,
-    openNotificationSettings,
     refetch,
     unreadCount,
   };

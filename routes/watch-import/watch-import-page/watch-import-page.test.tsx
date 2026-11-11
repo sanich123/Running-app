@@ -1,4 +1,5 @@
 import { screen, userEvent } from '@testing-library/react-native';
+import { Platform } from 'react-native';
 import { LANGUAGES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { PROFILE_WATCH_IMPORT } from '../../profile/const';
@@ -8,6 +9,7 @@ import type * as WatchImportModule from './watch-import-page';
 const mockOpenExternalLink = jest.fn();
 const mockRequestPermissions = jest.fn();
 const mockGetPermissions = jest.fn();
+const originalPlatformOS = Platform.OS;
 
 jest.mock('expo-router', () => ({
   Stack: { Screen: () => null },
@@ -22,6 +24,7 @@ const WatchImportPage = require('./watch-import-page').default as typeof WatchIm
 
 describe('WatchImportPage', () => {
   beforeEach(() => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
     mockOpenExternalLink.mockReset();
     mockGetPermissions.mockReset();
     mockRequestPermissions.mockReset();
@@ -29,10 +32,15 @@ describe('WatchImportPage', () => {
     mockRequestPermissions.mockResolvedValue({ available: true, granted: true });
   });
 
+  afterEach(() => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: originalPlatformOS });
+  });
+
   it('shows the experimental and revised setup copy', () => {
     const copy = WATCH_IMPORT_COPY.ru;
 
     expect(PROFILE_WATCH_IMPORT[LANGUAGES.russian].title).toBe('Часы');
+    expect(PROFILE_WATCH_IMPORT[LANGUAGES.russian].iosTitle).toBe('Подключить часы');
     expect(PROFILE_WATCH_IMPORT[LANGUAGES.russian].subtitle).toBe('(экспериментально)');
     expect(copy.warning.title).toBe(WATCH_IMPORT_COPY.ru.warning.title);
     expect(copy.warning.description).toBe(WATCH_IMPORT_COPY.ru.warning.description);

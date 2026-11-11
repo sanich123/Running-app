@@ -11,6 +11,7 @@ interface ContentActionsMenuItem {
 export interface ContentActionsMenuProps {
   accessibilityLabel: string;
   iconColor?: string;
+  triggerBackgroundColor?: string;
   testID: string;
   reportLabel: string;
   reportTestID: string;

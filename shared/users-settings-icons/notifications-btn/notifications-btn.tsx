@@ -5,6 +5,7 @@ import { Badge, Icon, TouchableRipple, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { notificationsApi, useGetUnreadNotificationCountQuery } from '@R/services/notifications/notifications';
 import { useAppDispatch } from '@R/typed-hooks';
+import { getHeaderIconSource, HEADER_ICON_SIZE, IOS_HEADER_ICON_COLOR } from '@S/header-icon-source';
 import { NOTIFICATIONS_OVERFLOW_LABEL } from './const';
 import { notificationsBtnStyles as styles } from './styles';
 
@@ -19,7 +20,7 @@ export default function NotificationsBtn() {
     skipPollingIfUnfocused: true,
   });
   const wasFocused = useRef(isFocused);
-  const iconSize = Platform.OS === 'ios' ? 22 : 26;
+  const iconSize = Platform.OS === 'ios' ? HEADER_ICON_SIZE : 26;
   const buttonRadius = (iconSize + 16) / 2;
 
   useEffect(() => {
@@ -67,7 +68,11 @@ export default function NotificationsBtn() {
         if (distanceFromCenter <= hitRadius) openNotifications();
       }}>
       <View pointerEvents="none" style={styles.contents}>
-        <Icon source="bell-outline" color={colors.primary} size={iconSize} />
+        <Icon
+          source={getHeaderIconSource('bell-outline', 'bell')}
+          color={Platform.OS === 'ios' ? IOS_HEADER_ICON_COLOR : colors.primary}
+          size={iconSize}
+        />
         {unreadCount > 0 ? (
           <Badge
             testID="notificationsBadge"

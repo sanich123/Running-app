@@ -16,6 +16,7 @@ import { COLORS } from '@const/theme-colors';
 import { useAppSelector } from '@R/typed-hooks';
 import HealthConnectAutoSync from '@Routes/watch-import/health-connect-auto-sync/health-connect-auto-sync';
 import FeedHeaderTitle from '@S/feed-header-title/feed-header-title';
+import { IOS_HEADER_ICON_COLOR } from '@S/header-icon-source';
 import useAppInitialization from '@U/hooks/use-app-initialization';
 import { LazyUsersSettingsIcons, PUBLIC_ROUTES } from '../const';
 import LazyHeader from '../lazy-header/lazy-header';
@@ -124,7 +125,7 @@ export default function AppShell() {
                         )
                       : undefined,
                 headerStyle: { backgroundColor: appColors.surface },
-                headerTintColor: appColors.onSurface,
+                headerTintColor: Platform.OS === 'ios' ? IOS_HEADER_ICON_COLOR : appColors.onSurface,
                 headerTitleStyle: {
                   color: appColors.primary,
                   fontFamily: FONT_FAMILIES.semiBold,
@@ -224,6 +225,10 @@ export default function AppShell() {
               <Stack.Screen
                 name={`${ROUTES.settings}/${ROUTES.notificationSettings}/${ROUTES.index}`}
                 options={{ title: LABELS[language].notificationSettings }}
+              />
+              <Stack.Screen
+                name={`${ROUTES.settings}/${ROUTES.profilePrivacySettings}/${ROUTES.index}`}
+                options={{ title: LABELS[language].profilePrivacySettings }}
               />
               <Stack.Screen
                 name={`${ROUTES.users}/${ROUTES.index}`}

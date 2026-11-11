@@ -5,7 +5,7 @@ import { LazyWatchImportPage } from '@Routes/app-routes/const';
 import FullPageActivityLoader from '@S/full-page-activity-loader/full-page-activity-loader';
 
 export default function WatchImportRoute() {
-  if (Platform.OS !== 'android') return null;
+  if (Platform.OS === 'web') return null;
 
   return (
     <Suspense fallback={<FullPageActivityLoader />}>

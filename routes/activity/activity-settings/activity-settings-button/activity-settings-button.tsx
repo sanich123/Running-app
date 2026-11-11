@@ -30,7 +30,7 @@ export default function ActivitySettingsButton() {
           onPress={openActivitySettings}
           style={styles.iosHeaderButton}
           testID="activity-settings-button">
-          <SymbolView name="gearshape" size={23} tintColor={IOS_ACTIVITY_HEADER_ICON_COLOR} weight="medium" />
+          <SymbolView name="gearshape" size={24} tintColor={IOS_ACTIVITY_HEADER_ICON_COLOR} weight="medium" />
         </Pressable>
       ) : (
         <Pressable

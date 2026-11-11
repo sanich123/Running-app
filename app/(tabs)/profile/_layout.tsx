@@ -6,6 +6,7 @@ import { LABELS, ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
 import FeedHeaderTitle from '@S/feed-header-title/feed-header-title';
+import { IOS_HEADER_ICON_COLOR } from '@S/header-icon-source';
 
 export default function ProfileStack() {
   const { colors } = useTheme();
@@ -33,7 +34,7 @@ export default function ProfileStack() {
                 ) : null
             : undefined,
         headerStyle: { backgroundColor: colors.surface },
-        headerTintColor: colors.onSurface,
+        headerTintColor: Platform.OS === 'ios' ? IOS_HEADER_ICON_COLOR : colors.onSurface,
         headerTitleStyle: {
           color: colors.primary,
           fontFamily: FONT_FAMILIES.semiBold,
@@ -46,10 +47,6 @@ export default function ProfileStack() {
       <Stack.Screen
         name={`${ROUTES.profileSettings}/${ROUTES.index}`}
         options={{ title: LABELS[language].profileSettings }}
-      />
-      <Stack.Screen
-        name={`${ROUTES.profilePrivacySettings}/${ROUTES.index}`}
-        options={{ title: LABELS[language].profilePrivacySettings }}
       />
     </Stack>
   );

@@ -9,6 +9,7 @@ import Card from '@S/card/activity-card/activity-card';
 import ConfirmDialog from '@S/confirm-dialog/confirm-dialog';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
 import ErrorComponent from '@S/error-component/error-component';
+import { IOS_HEADER_ICON_COLOR } from '@S/header-icon-source';
 import ReportContentDialog from '@S/moderation/report-content-dialog/report-content-dialog';
 import ActivityActionsMenu from './activity-actions-menu/activity-actions-menu';
 import { ACTIVITY_ACTIONS_MENU } from './activity-actions-menu/const';
@@ -62,7 +63,7 @@ export default function ActivityDetails() {
             <Stack.Toolbar.Menu
               icon="ellipsis"
               accessibilityLabel={menuText.accessibilityLabel}
-              tintColor={colors.primary}>
+              tintColor={IOS_HEADER_ICON_COLOR}>
               {isActivityOwner ? (
                 [
                   <Stack.Toolbar.MenuAction key="edit" icon="pencil" onPress={editActivityAction}>

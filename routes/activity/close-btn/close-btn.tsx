@@ -95,7 +95,7 @@ export default function CloseBtn() {
           {isStoppingTracking ? (
             <ActivityIndicator size={18} color={IOS_ACTIVITY_HEADER_ICON_COLOR} />
           ) : (
-            <SymbolView name="xmark" size={20} tintColor={IOS_ACTIVITY_HEADER_ICON_COLOR} weight="semibold" />
+            <SymbolView name="xmark" size={24} tintColor={IOS_ACTIVITY_HEADER_ICON_COLOR} weight="semibold" />
           )}
         </Pressable>
       ) : (

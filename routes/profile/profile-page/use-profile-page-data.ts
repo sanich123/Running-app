@@ -58,7 +58,7 @@ export default function useProfilePageData() {
     shouldShowCommunitySection: canViewFollowLists,
     shouldShowFollowAction: !isOwnProfile && profile?.allowNewFollowers !== false,
     shouldShowStatistics: canViewStatistics,
-    shouldShowWatchImport: Platform.OS === 'android' && canEditProfile,
-    shouldShowPrivacySettings: canEditProfile,
+    shouldShowWatchImport: Platform.OS !== 'web' && canEditProfile,
+    shouldShowOwnerTools: canEditProfile,
   };
 }

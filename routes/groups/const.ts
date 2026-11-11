@@ -129,10 +129,7 @@ export const GROUPS_COPY = {
     saveError: 'Could not save changes',
     share: 'Share group',
     groupActions: 'Group actions',
-    groupNotificationSettings: 'Group notification settings',
     groupNotificationSettingsTitle: 'Group notifications',
-    groupNotificationDeliveryHint:
-      'Group notifications use the delivery methods enabled in notification settings from the bell icon: in-app, email, and push.',
     createContent: 'Create a post or event',
     editGroup: 'Edit group',
     editGroupTitle: 'Edit group',
@@ -253,10 +250,7 @@ export const GROUPS_COPY = {
     saveError: 'Не удалось сохранить изменения',
     share: 'Поделиться группой',
     groupActions: 'Действия с группой',
-    groupNotificationSettings: 'Настройки уведомлений групп',
     groupNotificationSettingsTitle: 'Уведомления групп',
-    groupNotificationDeliveryHint:
-      'Уведомления о записях и событиях приходят через способы доставки, включённые в настройках по значку колокольчика: в приложении, по почте и push.',
     createContent: 'Создать запись или событие',
     editGroup: 'Изменить группу',
     editGroupTitle: 'Изменение группы',

@@ -1,8 +1,10 @@
+import { Platform } from 'react-native';
 import { Stack } from 'expo-router';
 import { useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import FeedHeaderTitle from '@S/feed-header-title/feed-header-title';
+import { IOS_HEADER_ICON_COLOR } from '@S/header-icon-source';
 import UsersSettingsIcons from '@S/users-settings-icons/users-settings-icons';
 
 export default function HomeStack() {
@@ -13,7 +15,7 @@ export default function HomeStack() {
       screenOptions={{
         contentStyle: { backgroundColor: colors.background },
         headerStyle: { backgroundColor: colors.surface },
-        headerTintColor: colors.onSurface,
+        headerTintColor: Platform.OS === 'ios' ? IOS_HEADER_ICON_COLOR : colors.onSurface,
         headerTitleStyle: {
           color: colors.primary,
           fontFamily: FONT_FAMILIES.semiBold,

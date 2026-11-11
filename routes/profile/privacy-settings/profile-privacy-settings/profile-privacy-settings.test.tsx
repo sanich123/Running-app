@@ -63,7 +63,7 @@ describe('ProfilePrivacySettings', () => {
     expect(screen.queryByTestId('privacy-setting-emailNotifications')).not.toBeOnTheScreen();
     expect(screen.queryByText(EMAIL_NOTIFICATIONS_COPY[LANGUAGES.english].fullTitle)).not.toBeOnTheScreen();
     expect(MediaLibrary.requestPermissionsAsync).not.toHaveBeenCalled();
-    expect(screen.getByText(PROFILE_PRIVACY_SETTINGS[LANGUAGES.english].profileSearchDescription)).toBeOnTheScreen();
+    expect(screen.getByText(PROFILE_PRIVACY_SETTINGS[LANGUAGES.english].profileSearch)).toBeOnTheScreen();
   });
 
   it('groups activity totals under profile privacy', () => {
@@ -207,6 +207,7 @@ describe('ProfilePrivacySettings', () => {
         { allowActivityPaceViewing: false },
       ]),
     );
+    await fireEvent.press(screen.getByTestId('activity-preview-accordion'));
     expect(
       within(screen.getByTestId('privacy-activity-preview-graph')).getByText(
         englishPrivacyCopy.activityPreviewGraphHidden,

@@ -1,17 +1,13 @@
 import { StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Dialog, Portal, Switch, Text, useTheme } from 'react-native-paper';
+import { ActivityIndicator, Switch, Text, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
-import SettingsRow from '@Routes/settings-page/settings-row/settings-row';
-import { RESPONSIVE_DIALOG_STYLE } from '@S/responsive-dialog-style';
 import { GROUPS_COPY } from '../const';
 import { useGroupNotificationPreferences } from './use-group-notification-preferences';
-import type { GroupNotificationSettingsProps } from './types';
 
-export default function GroupNotificationSettings({ visible, onDismiss }: GroupNotificationSettingsProps) {
+export default function GroupNotificationSettings() {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
-  const groupCopy = GROUPS_COPY[language];
-  const { groupNotificationDeliveryHint, groupNotificationSettingsTitle } = groupCopy;
+  const { groupNotificationSettingsTitle } = GROUPS_COPY[language];
   const {
     canUpdate,
     copy,
@@ -25,52 +21,47 @@ export default function GroupNotificationSettings({ visible, onDismiss }: GroupN
   const { groupEventsNotifications, groupPostsNotifications } = copy;
 
   return (
-    <Portal>
-      <Dialog visible={visible} onDismiss={onDismiss} style={RESPONSIVE_DIALOG_STYLE}>
-        <Dialog.Title>{groupNotificationSettingsTitle}</Dialog.Title>
-        <Dialog.Content>
-          <Text variant="bodyMedium" style={[styles.hint, { color: colors.onSurfaceVariant }]}>
-            {groupNotificationDeliveryHint}
-          </Text>
-          <View style={styles.settings}>
-            {isLoading ? (
-              <ActivityIndicator testID="group-notification-settings-loading" />
-            ) : (
-              <>
-                <SettingsRow
-                  title={groupPostsNotifications}
-                  leading={
-                    <Switch
-                      testID="group-post-notifications-switch"
-                      accessibilityLabel={groupPostsNotifications}
-                      value={groupPostsEnabled}
-                      disabled={!canUpdate || isUpdating}
-                      onValueChange={(enabled) => void toggleGroupPosts(enabled)}
-                    />
-                  }
-                />
-                <SettingsRow
-                  title={groupEventsNotifications}
-                  leading={
-                    <Switch
-                      testID="group-event-notifications-switch"
-                      accessibilityLabel={groupEventsNotifications}
-                      value={groupEventsEnabled}
-                      disabled={!canUpdate || isUpdating}
-                      onValueChange={(enabled) => void toggleGroupEvents(enabled)}
-                    />
-                  }
-                />
-              </>
-            )}
+    <View style={styles.group} testID="group-notification-settings">
+      <Text variant="titleSmall" style={[styles.groupTitle, { color: colors.primary }]}>
+        {groupNotificationSettingsTitle}
+      </Text>
+      {isLoading ? (
+        <ActivityIndicator testID="group-notification-settings-loading" />
+      ) : (
+        <>
+          <View style={styles.setting}>
+            <Text variant="bodyMedium" style={styles.copy}>
+              {groupPostsNotifications}
+            </Text>
+            <Switch
+              testID="group-post-notifications-switch"
+              accessibilityLabel={groupPostsNotifications}
+              value={groupPostsEnabled}
+              disabled={!canUpdate || isUpdating}
+              onValueChange={(enabled) => void toggleGroupPosts(enabled)}
+            />
           </View>
-        </Dialog.Content>
-      </Dialog>
-    </Portal>
+          <View style={styles.setting}>
+            <Text variant="bodyMedium" style={styles.copy}>
+              {groupEventsNotifications}
+            </Text>
+            <Switch
+              testID="group-event-notifications-switch"
+              accessibilityLabel={groupEventsNotifications}
+              value={groupEventsEnabled}
+              disabled={!canUpdate || isUpdating}
+              onValueChange={(enabled) => void toggleGroupEvents(enabled)}
+            />
+          </View>
+        </>
+      )}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  hint: { lineHeight: 20 },
-  settings: { gap: 8, marginTop: 16 },
+  group: { gap: 14 },
+  groupTitle: { fontWeight: '600' },
+  setting: { alignItems: 'center', flexDirection: 'row', gap: 12 },
+  copy: { flex: 1, minWidth: 0 },
 });

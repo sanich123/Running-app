@@ -5,6 +5,7 @@ import { ACTIVITY_VISIBILITY } from '@const/activity-visibility';
 import { ROUTES } from '@const/enums';
 import { resetActivityDraft, resetFinishedActivity } from '@R/slices/activity/activity';
 import { useAppDispatch } from '@R/typed-hooks';
+import { getHeaderIconSource, HEADER_ICON_SIZE, IOS_HEADER_ICON_COLOR } from '@S/header-icon-source';
 import { createActivityBtnStyles as styles } from './styles';
 
 export default function CreateActivityBtn() {
@@ -15,9 +16,9 @@ export default function CreateActivityBtn() {
   return (
     <IconButton
       testID="createActivityIcon"
-      icon="plus"
-      iconColor={colors.primary}
-      size={Platform.OS === 'ios' ? 22 : 26}
+      icon={getHeaderIconSource('plus', 'plus')}
+      iconColor={Platform.OS === 'ios' ? IOS_HEADER_ICON_COLOR : colors.primary}
+      size={Platform.OS === 'ios' ? HEADER_ICON_SIZE : 26}
       style={styles.iconButton}
       onPress={() => {
         dispatch(resetActivityDraft());

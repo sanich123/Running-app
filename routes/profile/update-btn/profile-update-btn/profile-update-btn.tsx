@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { useGlobalSearchParams, useRouter } from 'expo-router';
 import { Button, Text, useTheme } from 'react-native-paper';
 import { useGetUserProfileByUserIdQuery, useUpdateProfileByUserIdMutation } from '@R/services/profile/profile';
@@ -8,6 +8,7 @@ import {
   type ProfileSettingsSearchParams,
 } from '@Routes/profile/profile-settings/profile-settings-params';
 import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
+import { IOS_HEADER_ICON_COLOR } from '@S/header-icon-source';
 import { UPDATE_BTN } from '../const';
 
 export default function ProfileUpdateBtn() {
@@ -39,7 +40,7 @@ export default function ProfileUpdateBtn() {
       disabled={isSaving}
       style={styles.layout}>
       {!isSaving && (
-        <Text variant="titleMedium" style={{ color: colors.primary }}>
+        <Text variant="titleMedium" style={{ color: Platform.OS === 'ios' ? IOS_HEADER_ICON_COLOR : colors.primary }}>
           {UPDATE_BTN[language].update}
         </Text>
       )}

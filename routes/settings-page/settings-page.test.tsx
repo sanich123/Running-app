@@ -32,6 +32,8 @@ describe('settings page', () => {
   it('renders the settings actions in the scrollable page', async () => {
     await renderWithProviders(<SettingsPage />);
     expect(screen.getByText(LANGUAGE_SWITCHER_COPY[LANGUAGES.russian].title)).toBeOnTheScreen();
+    expect(screen.getByTestId('privacy-settings-row')).toBeOnTheScreen();
+    expect(screen.getByTestId('notification-settings-row')).toBeOnTheScreen();
     expect(screen.getByText(DELETE_ACCOUNT[LANGUAGES.russian].action)).toBeOnTheScreen();
     expect(screen.getByText(SETTINGS[LANGUAGES.russian].logout)).toBeOnTheScreen();
     expect(screen.getByText(SETTINGS[LANGUAGES.russian].aboutApp)).toBeOnTheScreen();

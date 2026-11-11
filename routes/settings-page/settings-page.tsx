@@ -46,6 +46,18 @@ export default function SettingsPage() {
       }}>
       <LanguageSwitcher />
       <ChangeTheme />
+      <SettingsRow
+        testID="privacy-settings-row"
+        icon="shield-lock-outline"
+        title={labels.privacySettings}
+        onPress={() => push(`/${ROUTES.settings}/${ROUTES.profilePrivacySettings}` as never)}
+      />
+      <SettingsRow
+        testID="notification-settings-row"
+        icon="bell-outline"
+        title={labels.notificationSettings}
+        onPress={() => push(`/${ROUTES.settings}/${ROUTES.notificationSettings}` as never)}
+      />
       <MigrationBtn />
       <FeedbackBtn />
       {adminAccess && adminAccess.permissions.length > 0 ? (

@@ -5,6 +5,7 @@ import { Text, useTheme } from 'react-native-paper';
 import { LABELS } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
+import { IOS_HEADER_ICON_COLOR } from '@S/header-icon-source';
 
 export default function GroupsLayout() {
   const { colors } = useTheme();
@@ -48,7 +49,7 @@ export default function GroupsLayout() {
               )
             : undefined,
         headerTitleAlign: 'left',
-        headerTintColor: colors.onSurface,
+        headerTintColor: Platform.OS === 'ios' ? IOS_HEADER_ICON_COLOR : colors.onSurface,
         headerTitleStyle: { color: colors.primary, fontFamily: FONT_FAMILIES.semiBold, fontSize: 16 },
         title: LABELS[language].groups,
       })}>

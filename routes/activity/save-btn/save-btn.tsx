@@ -1,6 +1,7 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { useTheme, Text, Button } from 'react-native-paper';
 import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from '@const/activity-save-btn';
+import { IOS_HEADER_ICON_COLOR } from '@S/header-icon-source';
 import { useSaveActivity } from './use-save-activity';
 
 export default function SaveBtn() {
@@ -16,7 +17,9 @@ export default function SaveBtn() {
       onPress={onSave}
       disabled={isSaveDisabled}>
       {!isSaving ? (
-        <Text variant="titleMedium" style={{ color: colors.onSurfaceVariant }}>
+        <Text
+          variant="titleMedium"
+          style={{ color: Platform.OS === 'ios' ? IOS_HEADER_ICON_COLOR : colors.onSurfaceVariant }}>
           {textOnBtn}
         </Text>
       ) : null}

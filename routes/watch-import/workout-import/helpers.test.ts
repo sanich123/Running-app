@@ -17,8 +17,8 @@ import {
   getWorkoutId,
   splitWatchWorkoutsIntoBatches,
 } from './helpers';
-import type { ReadDiagnostics, UploadDiagnostics, UploadSkipReason } from './types';
 import type { WatchWorkout } from '../../../modules/runich-health/src/RunichHealth';
+import type { ReadDiagnostics, UploadDiagnostics, UploadSkipReason } from './types';
 
 const workout: WatchWorkout = {
   source: 'health-connect',
@@ -250,7 +250,7 @@ describe('watch import diagnostics helpers', () => {
     expect(getReadDiagnosticItems(reading, true)).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ tone: 'default', value: 'выполняется' }),
-        expect.objectContaining({ value: 'чтение списка активностей' }),
+        expect.objectContaining({ value: 'чтение списка тренировок' }),
         expect.objectContaining({ value: '4' }),
       ]),
     );

@@ -9,7 +9,6 @@ import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { NOTIFICATION_COPY } from '../constants';
 import NotificationSettingsPage from './notification-settings-page';
 
 const originalPlatformOS = Object.getOwnPropertyDescriptor(Platform, 'OS');
@@ -100,7 +99,6 @@ describe('NotificationSettingsPage', () => {
     expect(screen.getByTestId('email-notifications-switch')).toBeOnTheScreen();
     expect(screen.queryByTestId('group-post-notifications-switch')).toBeNull();
     expect(screen.queryByTestId('group-event-notifications-switch')).toBeNull();
-    expect(screen.getByText(NOTIFICATION_COPY[LANGUAGES.russian].settingsIntro)).toBeOnTheScreen();
     await waitFor(() => expect(pushSwitch.props.disabled).toBe(false));
     expect(notificationMocks.requestPermissionsAsync).not.toHaveBeenCalled();
     await fireEvent(pushSwitch, 'valueChange', true);

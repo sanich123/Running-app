@@ -8,10 +8,10 @@ export const ROUTE_STATUS_LABELS = {
 } as const;
 
 export const READ_STAGE_LABELS = {
-  availability: ['проверка Health Connect', 'checking Health Connect'],
-  'exercise-sessions': ['чтение списка активностей', 'reading exercise sessions'],
-  'workout-measurements': ['чтение расстояния, шагов и пульса', 'reading distance, steps, and heart rate'],
-  'exercise-route': ['запрос доступа к маршруту', 'requesting route access'],
+  availability: ['проверка хранилища здоровья', 'checking health store'],
+  'exercise-sessions': ['чтение списка тренировок', 'reading workouts'],
+  'workout-measurements': ['чтение данных тренировок', 'reading workout data'],
+  'exercise-route': ['чтение маршрута тренировки', 'reading workout route'],
   complete: ['чтение завершено', 'read complete'],
 } as const;
 
@@ -30,6 +30,11 @@ export const WORKOUT_IMPORT_COPY = {
     title: 'Импорт тренировок',
     intro:
       'Каждый раз, когда вы заходите в Runich, приложение синхронизирует импортированные тренировки из Health Connect. Основные проблемы, которые у меня возникали, были связаны с выгрузкой тренировок в Health Connect, а не с чтением из него. Как правило, если вы видите тренировку с маршрутом в Health Connect, она либо автоматически синхронизируется в Runich, либо ниже есть кнопка для ручной синхронизации. Также ниже есть диагностическая информация о том, какие тренировки Runich видит в Health Connect.',
+    iosIntro: 'Runich импортирует тренировки и маршруты из Apple Health за последние 30 дней.',
+    iosUnavailable: 'Apple Health недоступно на этом устройстве.',
+    iosConnect: 'Разрешить Runich читать тренировки в Apple Health',
+    iosConnected: 'Apple Health подключено',
+    iosNoWorkouts: 'Завершённых тренировок в Apple Health за последние 30 дней нет.',
     updateProvider: 'Обновите Health Connect через Google Play, затем вернитесь сюда и повторите подключение.',
     openGooglePlay: 'Открыть Google Play',
     retry: 'Проверить ещё раз',
@@ -87,7 +92,7 @@ export const WORKOUT_IMPORT_COPY = {
       heartRateAccessNote:
         'Если разрешение есть, но измерений нет, проверьте, настроена ли выгрузка пульса из приложения-источника в Health Connect.',
       routeAccessNote: 'Доступ к GPS-маршруту запрашивается отдельно для каждой тренировки.',
-      statusError: 'Ошибка проверки/разрешения Health Connect',
+      statusError: 'Ошибка проверки/разрешения хранилища здоровья',
       lastRead: 'Последнее чтение',
       range: 'период',
       status: 'статус',
@@ -127,6 +132,11 @@ export const WORKOUT_IMPORT_COPY = {
     title: 'Workout import',
     intro:
       'Each time you open Runich, the app syncs imported workouts from Health Connect. The main problems I encountered were related to exporting workouts to Health Connect, not reading them from it. If you see a workout with a route in Health Connect, it will usually either sync to Runich automatically or you can use the manual sync button below. Diagnostic information below also shows which workouts Runich can see in Health Connect.',
+    iosIntro: 'Runich imports workouts and routes saved in Apple Health from the last 30 days.',
+    iosUnavailable: 'Apple Health is not available on this device.',
+    iosConnect: 'Allow Runich to read workouts in Apple Health',
+    iosConnected: 'Apple Health connected',
+    iosNoWorkouts: 'No completed workouts in Apple Health from the last 30 days.',
     updateProvider: 'Update Health Connect through Google Play, then return here and connect again.',
     openGooglePlay: 'Open Google Play',
     retry: 'Check again',
@@ -184,7 +194,7 @@ export const WORKOUT_IMPORT_COPY = {
       heartRateAccessNote:
         'If permission is granted but no samples are found, check whether the source app is configured to export heart rate to Health Connect.',
       routeAccessNote: 'GPS route access is requested separately for each workout.',
-      statusError: 'Health Connect status/permission error',
+      statusError: 'Health store status/permission error',
       lastRead: 'Last read',
       range: 'range',
       status: 'status',

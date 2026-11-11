@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Button, Card, Checkbox, Switch, Text, useTheme } from 'react-native-paper';
 import { renderHealthConnectLinks } from '../health-connect-link/utils';
 import { WORKOUT_IMPORT_COPY } from '../workout-import/const';
@@ -9,6 +9,7 @@ import { useWorkoutImport } from '../workout-import/use-workout-import';
 
 export default function WorkoutImportContent({ autoSync = false }: { autoSync?: boolean }) {
   const { colors } = useTheme();
+  const isIOS = Platform.OS === 'ios';
   const {
     availability,
     autoSyncEnabled,
@@ -46,7 +47,7 @@ export default function WorkoutImportContent({ autoSync = false }: { autoSync?: 
   return (
     <View style={styles.items}>
       <Text variant="bodyMedium" style={styles.intro}>
-        {renderHealthConnectLinks(copy.intro, colors.primary)}
+        {renderHealthConnectLinks(isIOS ? copy.iosIntro : copy.intro, colors.primary)}
       </Text>
 
       {isLoading && !availability ? (
@@ -54,14 +55,18 @@ export default function WorkoutImportContent({ autoSync = false }: { autoSync?: 
       ) : availability === 'provider-update-required' ? (
         <Card style={styles.card}>
           <Card.Content>
-            <Text variant="bodyMedium">{renderHealthConnectLinks(copy.updateProvider, colors.primary)}</Text>
-            <Button
-              testID="health-connect-open-provider"
-              compact
-              mode="outlined"
-              onPress={() => void openHealthConnectInstallPage()}>
-              {copy.openGooglePlay}
-            </Button>
+            <Text variant="bodyMedium">
+              {renderHealthConnectLinks(isIOS ? copy.iosUnavailable : copy.updateProvider, colors.primary)}
+            </Text>
+            {!isIOS ? (
+              <Button
+                testID="health-connect-open-provider"
+                compact
+                mode="outlined"
+                onPress={() => void openHealthConnectInstallPage()}>
+                {copy.openGooglePlay}
+              </Button>
+            ) : null}
             <Button
               testID="health-connect-retry"
               compact
@@ -75,8 +80,10 @@ export default function WorkoutImportContent({ autoSync = false }: { autoSync?: 
       ) : availability === 'provider-not-available' ? (
         <Card style={styles.card}>
           <Card.Content>
-            <Text variant="bodyMedium">{renderHealthConnectLinks(copy.providerUnavailable, colors.primary)}</Text>
-            {needsHealthConnectApp && (
+            <Text variant="bodyMedium">
+              {renderHealthConnectLinks(isIOS ? copy.iosUnavailable : copy.providerUnavailable, colors.primary)}
+            </Text>
+            {!isIOS && needsHealthConnectApp ? (
               <Button
                 testID="health-connect-open-provider"
                 compact
@@ -84,7 +91,7 @@ export default function WorkoutImportContent({ autoSync = false }: { autoSync?: 
                 onPress={() => void openHealthConnectInstallPage()}>
                 {copy.openHealthConnect}
               </Button>
-            )}
+            ) : null}
             <Button
               testID="health-connect-retry"
               compact
@@ -98,7 +105,9 @@ export default function WorkoutImportContent({ autoSync = false }: { autoSync?: 
       ) : availability === 'not-supported' ? (
         <Card style={styles.card}>
           <Card.Content>
-            <Text variant="bodyMedium">{renderHealthConnectLinks(copy.minimumAndroid, colors.primary)}</Text>
+            <Text variant="bodyMedium">
+              {renderHealthConnectLinks(isIOS ? copy.iosUnavailable : copy.minimumAndroid, colors.primary)}
+            </Text>
           </Card.Content>
         </Card>
       ) : (
@@ -110,7 +119,7 @@ export default function WorkoutImportContent({ autoSync = false }: { autoSync?: 
               onPress={connect}
               loading={isLoading}
               style={styles.button}>
-              {copy.connect}
+              {isIOS ? copy.iosConnect : copy.connect}
             </Button>
           )}
 
@@ -118,7 +127,7 @@ export default function WorkoutImportContent({ autoSync = false }: { autoSync?: 
             <Card style={styles.statusCard}>
               <Card.Content>
                 <Text variant="titleSmall" style={{ color: colors.primary }}>
-                  {copy.connected}
+                  {isIOS ? copy.iosConnected : copy.connected}
                 </Text>
                 <View style={styles.switchRow}>
                   <View style={styles.copy}>
@@ -156,7 +165,9 @@ export default function WorkoutImportContent({ autoSync = false }: { autoSync?: 
           {isReading ? (
             <ActivityIndicator testID="health-connect-loading" style={styles.loader} />
           ) : workouts.length === 0 && hiddenWorkouts.length === 0 && isConnected ? (
-            <Text style={[styles.message, { color: colors.onSurfaceVariant }]}>{copy.noWorkouts}</Text>
+            <Text style={[styles.message, { color: colors.onSurfaceVariant }]}>
+              {isIOS ? copy.iosNoWorkouts : copy.noWorkouts}
+            </Text>
           ) : (
             workouts.map((workout) => {
               const id = getWorkoutId(workout);

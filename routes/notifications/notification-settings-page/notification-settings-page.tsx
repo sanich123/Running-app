@@ -1,5 +1,5 @@
 import { Platform, ScrollView, useWindowDimensions } from 'react-native';
-import { Switch, Text, useTheme } from 'react-native-paper';
+import { Switch, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import EmailNotificationsBtn from '@Routes/settings-page/email-notifications/email-notifications-btn/email-notifications-btn';
 import SettingsRow from '@Routes/settings-page/settings-row/settings-row';
@@ -33,9 +33,6 @@ export default function NotificationSettingsPage() {
           marginHorizontal: Platform.OS === 'web' ? 'auto' : 0,
         },
       ]}>
-      <Text variant="bodyMedium" style={[styles.intro, { color: colors.onSurfaceVariant }]}>
-        {copy.settingsIntro}
-      </Text>
       <SettingsRow
         title={copy.inApp}
         leading={
