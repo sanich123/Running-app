@@ -1,10 +1,11 @@
 import { SPORTS_BTNS_VALUES } from '@const/sports';
+import { getSpeedInMinsInKm } from '@U/location/activity-metrics';
 import { MAX_SAVED_ROUTE_LOCATIONS } from '@U/location/const';
-import { getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
+import { getReducedLocations } from '@U/location/location-geometry';
 import { WATCH_IMPORT_DAYS } from './const';
 import { calculateWatchWorkoutKilometreSplits } from './kilometre-splits';
-import type { WatchImportDateRange } from './types';
 import type { WatchWorkout } from '../../modules/runich-health/src/RunichHealth';
+import type { WatchImportDateRange } from './types';
 import type { WatchWorkoutToSend } from '@R/services/activity/types';
 import type { ActivityHeartRateSample } from '@S/card/types';
 import type { LocationObject } from 'expo-location';

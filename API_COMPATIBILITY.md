@@ -14,6 +14,10 @@ This ledger records which Runich client release is paired with which backend rel
 
 The client source sends `POST /auth/apple/native` with `{ identityToken, nonce, givenName?, familyName? }` and expects the existing `LoginResponse`. Backend source verifies Apple's JWT signature using Apple's JWKS, then checks issuer, app bundle audience, token age and the request nonce; it stores the signed Apple subject in a nullable unique `Users.apple_subject` column and accepts Apple's verified relay email. Migration `migrations/app/20261111T0748_add_apple_sign_in` adds the nullable column and unique constraint. Client app version remains `1.4.0`; backend package and Swagger versions are `1.4.1`. This source change has no automated or live API verification and has not been deployed to Stage or Production as of `2026-11-11`.
 
+## Unreleased iOS push-token contract (source only)
+
+The client now registers Expo push tokens with `platform: 'ios'` on physical iOS devices and `platform: 'android'` on physical Android devices. The backend DTO accepts both values; the existing token table stores the platform as `Varchar(32)`, and the Expo sender delivers to either platform through the same Expo push service. The API contract has been checked in source on `2026-11-11`; backend and client verification are pending, and the change has not been deployed to Stage or Production.
+
 ## Minimum supported client version
 
 The backend returns `appVersion: 1.3.1` from `GET /auth/config`. The Runich client compares this value with its Expo app version on the home page and redirects versions below the minimum to the app-update screen. This is a client-side gate; the backend does not reject every request based on `x-app-version`.

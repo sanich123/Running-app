@@ -14,7 +14,7 @@ import useCommentEditAction from '../comment-edit-btn/use-comment-edit-action';
 import CommentLikeBtn from '../comment-like-btn/comment-like-btn';
 import CommentLikesLength from '../comment-likes-length/comment-likes-length';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
-import type { CommentResponse } from '@R/runich-api/types';
+import type { CommentResponse } from '@R/runich-api/comment-types';
 
 export default function Comment({
   authorId,

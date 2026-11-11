@@ -4,7 +4,7 @@ import type {
   LoginResponse,
   MessageResponse,
   UserAuthResponse,
-} from '@R/runich-api/types';
+} from '@R/runich-api/auth-types';
 
 export interface EmailPasswordData {
   email: string;

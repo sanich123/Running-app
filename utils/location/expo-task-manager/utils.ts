@@ -19,15 +19,13 @@ import {
 import { store } from '@R/store';
 import { getCurrentActivityDuration } from '@U/activity-duration';
 import { speakActivityReminder, speakCompletedKilometer } from '@U/speech/activity-voice';
+import { getMaxTrackingSpeedForSport, getSpeedInKmPerHour, getSpeedInMinsInKm } from '../activity-metrics';
 import {
   getDistance,
   getElevationChangeBetweenLocations,
   getElevationGainBetweenLocations,
   getKilometerSplitCalculation,
-  getMaxTrackingSpeedForSport,
-  getSpeedInKmPerHour,
-  getSpeedInMinsInKm,
-} from '../location-utils';
+} from '../location-geometry';
 import type { LocationObject } from 'expo-location';
 
 export function getCompletedReminderCount(

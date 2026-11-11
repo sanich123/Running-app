@@ -11,8 +11,9 @@ import {
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import Skeleton from '@S/skeleton/skeleton';
 import { USERS_COUNT, USERS_VARIANT } from './const';
+import type { UsersCounterProps } from './types';
 
-export default function UsersCounter({ variant, isHidden = false }: { variant: USERS_VARIANT; isHidden?: boolean }) {
+export default function UsersCounter({ variant, isHidden = false }: UsersCounterProps) {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const { userId } = useAppSelector(({ auth }) => auth);

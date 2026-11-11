@@ -1,14 +1,9 @@
 import { StyleSheet, View } from 'react-native';
 import UserSafetyMenu from '@S/moderation/user-safety-menu/user-safety-menu';
 import UsersSettingsIcons from '@S/users-settings-icons/users-settings-icons';
+import type { ProfileHeaderActionsProps } from './types';
 
-export default function ProfileHeaderActions({
-  currentUserId,
-  profileUserId,
-}: {
-  currentUserId?: string;
-  profileUserId?: string;
-}) {
+export default function ProfileHeaderActions({ currentUserId, profileUserId }: ProfileHeaderActionsProps) {
   const showUserSafetyMenu = Boolean(profileUserId && currentUserId && profileUserId !== currentUserId);
 
   return (

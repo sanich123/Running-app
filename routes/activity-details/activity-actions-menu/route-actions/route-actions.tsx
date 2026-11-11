@@ -14,7 +14,7 @@ import {
 } from '@U/activity-track/track-library';
 import { ACTIVITY_ACTIONS_MENU, ACTIVITY_ACTIONS_MENU_TEST_IDS } from '../const';
 import MenuItem from '../menu-item/menu-item';
-import type { ActivityResponse } from '@R/runich-api/types';
+import type { ActivityResponse } from '@R/runich-api/activity-types';
 
 export default function ActivityRouteActions({ activity }: { activity: ActivityResponse }) {
   const { language } = useAppSelector(({ settings }) => settings);

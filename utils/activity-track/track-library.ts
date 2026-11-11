@@ -1,5 +1,5 @@
 import { Directory, File, Paths } from 'expo-file-system';
-import { getDistance } from '@U/location/location-utils';
+import { getDistance } from '@U/location/location-geometry';
 import { appStorage } from '@U/storage/storage';
 import { encodeActivityLocationsAsFit } from './fit-encoder';
 import type { ActivityLocation } from '@S/card/types';

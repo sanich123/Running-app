@@ -7,15 +7,9 @@ import GroupEventsTab from './group-events-tab/group-events-tab';
 import GroupMembersList from './group-members-list/group-members-list';
 import GroupPostsList from './group-posts-list/group-posts-list';
 import useGroupDetailTabContent from './use-group-detail-tab-content';
-import type { GroupDetails } from '@R/services/groups/types';
+import type { GroupDetailTabContentProps } from './types';
 
-export default function GroupDetailTabContent({
-  group,
-  isActiveMember,
-}: {
-  group: GroupDetails;
-  isActiveMember: boolean;
-}) {
+export default function GroupDetailTabContent({ group, isActiveMember }: GroupDetailTabContentProps) {
   const { copy, selectedTab, selectTab } = useGroupDetailTabContent();
 
   return !isActiveMember ? (

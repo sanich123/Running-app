@@ -6,7 +6,7 @@ import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import Comment from './comment';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
-import type { CommentResponse } from '@R/runich-api/types';
+import type { CommentResponse } from '@R/runich-api/comment-types';
 
 jest.mock('@S/card/user-info/user-info', () => ({
   __esModule: true,

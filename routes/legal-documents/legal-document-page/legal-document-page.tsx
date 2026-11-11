@@ -2,18 +2,12 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Text, useTheme } from 'react-native-paper';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
-import { LEGAL_DOCUMENT_LABELS, LEGAL_DOCUMENT_VERSION, type LegalDocumentId } from '../content';
+import { LEGAL_DOCUMENT_LABELS, LEGAL_DOCUMENT_VERSION } from '../content';
 import { LEGAL_DOCUMENTS } from '../documents';
 import { RELATED_DOCUMENTS, DOCUMENT_PATHS } from './const';
-import type { LANGUAGES } from '@const/enums';
+import type { LegalDocumentPageProps } from './types';
 
-export default function LegalDocumentPage({
-  documentId,
-  language,
-}: {
-  documentId: LegalDocumentId;
-  language: LANGUAGES;
-}) {
+export default function LegalDocumentPage({ documentId, language }: LegalDocumentPageProps) {
   const { colors } = useTheme();
   const { push } = useRouter();
   const navigate = (path: string) => push(path as Parameters<typeof push>[0]);

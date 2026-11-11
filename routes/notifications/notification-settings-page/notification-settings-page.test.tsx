@@ -1,5 +1,5 @@
 import type { useEffect as useEffectType } from 'react';
-import { fireEvent, screen, waitFor } from '@testing-library/react-native';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { Alert, Linking, Platform } from 'react-native';
 import { LANGUAGES } from '@const/enums';
@@ -17,6 +17,7 @@ const originalPlatformOS = Object.getOwnPropertyDescriptor(Platform, 'OS');
 jest.mock('expo-notifications', () => ({
   __esModule: true,
   AndroidImportance: { HIGH: 4 },
+  IosAuthorizationStatus: { PROVISIONAL: 3, EPHEMERAL: 4 },
   getPermissionsAsync: jest.fn().mockResolvedValue({ granted: false, canAskAgain: true }),
   requestPermissionsAsync: jest.fn().mockResolvedValue({ granted: true, canAskAgain: true }),
   setNotificationChannelAsync: jest.fn().mockResolvedValue(undefined),
@@ -31,6 +32,12 @@ const notificationMocks = jest.requireMock('expo-notifications') as {
 };
 jest.mock('@S/error-toast/error-toast', () => ({ errorToast: jest.fn() }));
 jest.mock('expo-device', () => ({ isDevice: true }));
+jest.mock('react-native-paper', () => {
+  const actual = jest.requireActual('react-native-paper');
+  const React = jest.requireActual('react');
+  const { View } = jest.requireActual('react-native');
+  return { ...actual, Switch: (props: never) => React.createElement(View, props) };
+});
 jest.mock('expo-constants', () => ({
   __esModule: true,
   default: { expoConfig: { extra: { eas: { projectId: 'project-1' } } }, easConfig: undefined },
@@ -94,7 +101,7 @@ describe('NotificationSettingsPage', () => {
     expect(screen.queryByTestId('group-post-notifications-switch')).toBeNull();
     expect(screen.queryByTestId('group-event-notifications-switch')).toBeNull();
     expect(screen.getByText(NOTIFICATION_COPY[LANGUAGES.russian].settingsIntro)).toBeOnTheScreen();
-    await waitFor(() => expect(pushSwitch.props.accessibilityState.disabled).toBe(false));
+    await waitFor(() => expect(pushSwitch.props.disabled).toBe(false));
     expect(notificationMocks.requestPermissionsAsync).not.toHaveBeenCalled();
     await fireEvent(pushSwitch, 'valueChange', true);
     await waitFor(() => expect(notificationMocks.setNotificationChannelAsync).toHaveBeenCalled());
@@ -160,7 +167,7 @@ describe('NotificationSettingsPage', () => {
     await waitFor(() => expect(unregisterCalls).toBe(1));
   });
 
-  it('shows the Android settings action when permission was permanently denied', async () => {
+  it('shows the device settings action when permission was permanently denied', async () => {
     const alert = jest.spyOn(Alert, 'alert').mockImplementation(() => undefined);
     const openSettings = jest.spyOn(Linking, 'openSettings').mockResolvedValue(undefined);
     notificationMocks.getPermissionsAsync.mockReset().mockResolvedValue({ granted: false, canAskAgain: true });
@@ -172,13 +179,13 @@ describe('NotificationSettingsPage', () => {
 
     await renderWithProviders(<NotificationSettingsPage />);
     const pushSwitch = await screen.findByTestId('pushNotificationsSwitch');
-    await waitFor(() => expect(pushSwitch.props.accessibilityState.disabled).toBe(false));
+    await waitFor(() => expect(pushSwitch.props.disabled).toBe(false));
     await fireEvent(pushSwitch, 'valueChange', true);
 
     await waitFor(() =>
       expect(alert).toHaveBeenCalledWith(
         'Разрешение отключено',
-        'Разрешите уведомления в настройках Android.',
+        'Разрешите уведомления в настройках устройства.',
         expect.any(Array),
       ),
     );
@@ -199,7 +206,7 @@ describe('NotificationSettingsPage', () => {
     );
     await renderWithProviders(<NotificationSettingsPage />);
     const pushSwitch = await screen.findByTestId('pushNotificationsSwitch');
-    await waitFor(() => expect(pushSwitch.props.accessibilityState.disabled).toBe(false));
+    await waitFor(() => expect(pushSwitch.props.disabled).toBe(false));
     await fireEvent(pushSwitch, 'valueChange', true);
     await waitFor(() => expect(notificationMocks.requestPermissionsAsync).toHaveBeenCalled());
     expect(alert).not.toHaveBeenCalled();
@@ -218,7 +225,7 @@ describe('NotificationSettingsPage', () => {
     );
     await renderWithProviders(<NotificationSettingsPage />);
     const pushSwitch = await screen.findByTestId('pushNotificationsSwitch');
-    await waitFor(() => expect(pushSwitch.props.accessibilityState.disabled).toBe(false));
+    await waitFor(() => expect(pushSwitch.props.disabled).toBe(false));
     await fireEvent(pushSwitch, 'valueChange', true);
     await waitFor(() =>
       expect(notificationMocks.getExpoPushTokenAsync).toHaveBeenCalledWith({ projectId: 'fallback-project' }),
@@ -246,19 +253,39 @@ describe('NotificationSettingsPage', () => {
     );
   });
 
-  it('skips native permission checks on iOS', async () => {
+  it('registers an iOS push token after the user grants permission', async () => {
+    let registrationBody: unknown;
+    let profileUpdateBody: unknown;
     server.use(
       http.get(`${BASE_URL}/notification/push-token`, () => HttpResponse.json({ enabled: false })),
+      http.post(`${BASE_URL}/notification/push-token`, async ({ request }) => {
+        registrationBody = await request.json();
+        return HttpResponse.json({ enabled: true });
+      }),
       http.get(`${BASE_URL}/user/notification-owner/profile`, () => HttpResponse.json({ emailNotifications: false })),
+      http.patch(`${BASE_URL}/user/notification-owner/profile`, async ({ request }) => {
+        profileUpdateBody = await request.json();
+        return HttpResponse.json({ pushNotifications: true });
+      }),
     );
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'ios' });
     await renderWithProviders(<NotificationSettingsPage />);
-    await screen.findByTestId('pushNotificationsSwitch');
-    expect(notificationMocks.getPermissionsAsync).not.toHaveBeenCalled();
-    expect(screen.getByTestId('pushNotificationsSwitch').props.disabled).toBe(true);
+    const pushSwitch = await screen.findByTestId('pushNotificationsSwitch');
+    await waitFor(() => expect(pushSwitch.props.disabled).toBe(false));
+    expect(pushSwitch.props.onValueChange).toEqual(expect.any(Function));
+    expect(notificationMocks.getPermissionsAsync).toHaveBeenCalled();
+
+    await act(async () => {
+      pushSwitch.props.onValueChange();
+    });
+    await waitFor(() => expect(registrationBody).toEqual({ token: 'ExpoPushToken[device-token]', platform: 'ios' }));
+    await waitFor(() => expect(profileUpdateBody).toEqual({ pushNotifications: true }));
+    expect(notificationMocks.setNotificationChannelAsync).not.toHaveBeenCalled();
+    expect(notificationMocks.requestPermissionsAsync).toHaveBeenCalledTimes(1);
+    expect(notificationMocks.getExpoPushTokenAsync).toHaveBeenCalledWith({ projectId: 'project-1' });
   });
 
-  it('surfaces a failed Android permission check', async () => {
+  it('surfaces a failed native permission check', async () => {
     notificationMocks.getPermissionsAsync.mockReset().mockRejectedValue(new Error('permission service unavailable'));
     server.use(
       http.get(`${BASE_URL}/notification/push-token`, () => HttpResponse.json({ enabled: false })),

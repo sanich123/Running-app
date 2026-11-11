@@ -1,5 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 import MapControlButton from '@S/map-control-button/map-control-button';
+import type { MapControlsProps } from './types';
 
 export default function MapControls({
   copy,
@@ -11,26 +12,7 @@ export default function MapControls({
   onSearch,
   onZoomIn,
   onZoomOut,
-}: {
-  copy: {
-    satellite: string;
-    street: string;
-    switchTo2d: string;
-    switchTo3d: string;
-    locate: string;
-    search: string;
-    zoomIn: string;
-    zoomOut: string;
-  };
-  isSatellite: boolean;
-  is3d: boolean;
-  onToggleMapStyle: () => void;
-  onTogglePitch: () => void;
-  onLocate: () => void;
-  onSearch: () => void;
-  onZoomIn?: () => void;
-  onZoomOut?: () => void;
-}) {
+}: MapControlsProps) {
   return (
     <View style={styles.controls}>
       <MapControlButton

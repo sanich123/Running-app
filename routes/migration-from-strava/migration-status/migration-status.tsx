@@ -2,8 +2,7 @@ import { MaterialDesignIcons as MaterialCommunityIcons } from '@react-native-vec
 import { Pressable, View, StyleSheet } from 'react-native';
 import { ActivityIndicator, IconButton, ProgressBar, Text, useTheme } from 'react-native-paper';
 import { getStatusText, formatBytes } from './utils';
-import type { MigrationCopy } from '../const';
-import type { MigrationViewState } from '../hooks';
+import type { MigrationStatusProps } from './types';
 
 export default function MigrationStatus({
   state,
@@ -14,16 +13,7 @@ export default function MigrationStatus({
   onChooseArchive,
   onCancel,
   onDismissError,
-}: {
-  state: MigrationViewState;
-  copy: MigrationCopy;
-  isProcessing: boolean;
-  isCancelAvailable: boolean;
-  isForegroundUploadSession: boolean;
-  onChooseArchive: () => void;
-  onCancel: () => void;
-  onDismissError: () => void;
-}) {
+}: MigrationStatusProps) {
   const { colors } = useTheme();
   if (state.isInitial) {
     return (

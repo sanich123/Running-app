@@ -3,7 +3,7 @@ import {
   getSpeedInMinsInKm,
   isRunningActivity,
   isWalkingOrHikingActivity,
-} from '@U/location/location-utils';
+} from '@U/location/activity-metrics';
 import { formatDurationMinsSecs } from '@U/time-formatter';
 import { MAP_METRICS } from './const';
 import type { LANGUAGES } from '@const/enums';

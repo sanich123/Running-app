@@ -1,5 +1,5 @@
 import type { DashboardDailyActivities, DashboardMetricTotals, DashboardYearData } from './types';
-import type { DailyActivityStatisticsResponse, YearStatisticsResponse } from '@R/runich-api/types';
+import type { DailyActivityStatisticsResponse, YearStatisticsResponse } from '@R/runich-api/statistics-types';
 
 type StatisticsNode = Record<string, unknown>;
 

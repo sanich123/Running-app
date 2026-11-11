@@ -1,40 +1,23 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import * as SecureStore from 'expo-secure-store';
-import { AppState, Linking, Platform } from 'react-native';
+import { useCallback, useMemo, useState } from 'react';
+import { Linking, Platform } from 'react-native';
 import { LANGUAGES } from '@const/enums';
 import { useImportWatchWorkoutsMutation } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
-import { getWatchImportDateRange, mapWatchWorkoutToActivity } from '@U/watch-import/helpers';
+import { getWatchImportDateRange } from '@U/watch-import/helpers';
 import {
   HealthConnectReadError,
   RunichHealth,
-  type HealthAvailability,
   type HealthConnectReadProgress,
-  type HealthPermissionsResult,
   type WatchWorkout,
 } from '../../../modules/runich-health/src/RunichHealth';
 import { HEALTH_CONNECT_PLAY_STORE_URL } from '../const';
-import {
-  getAutoSyncKey,
-  getConnectionKey,
-  getDiagnosticErrorCode,
-  getHeartRateSampleCount,
-  getRequestErrorStatus,
-  getWatchWorkoutSourceKey,
-  getWorkoutId,
-  getRoutePointCount,
-  HIDDEN_WORKOUTS_KEY,
-  splitWatchWorkoutsIntoBatches,
-} from './helpers';
-import type {
-  ReadDiagnostics,
-  UploadDiagnostics,
-  UploadSkipReason,
-  WorkoutUploadDiagnostic,
-  WorkoutUploadOutcome,
-} from './types';
-import type { WatchWorkoutBatchImportResponse } from '@R/runich-api/types';
+import { getDiagnosticErrorCode, getHeartRateSampleCount, getWorkoutId, getRoutePointCount } from './helpers';
+import { uploadWorkoutBatches } from './upload-workout-batches';
+import { useAutoSyncPreference } from './use-auto-sync-preference';
+import { useHiddenWorkouts } from './use-hidden-workouts';
+import { useWorkoutImportConnection } from './use-workout-import-connection';
+import type { ReadDiagnostics, UploadDiagnostics, UploadSkipReason } from './types';
 
 interface UseWorkoutImportOptions {
   autoSync?: boolean;
@@ -45,19 +28,16 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
   const { language } = useAppSelector(({ settings }) => settings);
   const { userId } = useAppSelector(({ auth }) => auth);
   const isRussian = language === LANGUAGES.russian;
-  const [availability, setAvailability] = useState<HealthAvailability | null>(null);
-  const [healthPermissions, setHealthPermissions] = useState<HealthPermissionsResult | null>(null);
-  const [isConnected, setIsConnected] = useState(false);
+  const { autoSyncEnabled, autoSyncEnabledRef, restoreAutoSyncEnabled, setAutoSyncEnabled } = useAutoSyncPreference({
+    isRussian,
+    userId,
+  });
   const [workouts, setWorkouts] = useState<WatchWorkout[]>([]);
-  const [hiddenWorkoutIds, setHiddenWorkoutIds] = useState<Set<string>>(new Set());
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [isLoading, setIsLoading] = useState(true);
+  const { hiddenWorkoutIds, hiddenWorkoutIdsRef, hideWorkout, restoreWorkout, restoreHiddenWorkoutIds } =
+    useHiddenWorkouts({ isRussian, setSelectedIds });
   const [isReading, setIsReading] = useState(false);
   const [isAutoSyncing, setIsAutoSyncing] = useState(false);
-  const [autoSyncEnabled, setAutoSyncEnabledState] = useState(false);
-  const autoSyncEnabledRef = useRef(false);
-  const hiddenWorkoutIdsRef = useRef<Set<string>>(new Set());
-  const hiddenWorkoutSaveQueueRef = useRef<Promise<void>>(Promise.resolve());
   const [error, setError] = useState<string | null>(null);
   const [importResult, setImportResult] = useState<string | null>(null);
   const [healthStatusErrorCode, setHealthStatusErrorCode] = useState<string | null>(null);
@@ -75,26 +55,6 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
   const hiddenWorkouts = useMemo(
     () => workouts.filter((workout) => hiddenWorkoutIds.has(getWorkoutId(workout))),
     [hiddenWorkoutIds, workouts],
-  );
-
-  const setAutoSyncEnabled = useCallback(
-    async (enabled: boolean) => {
-      autoSyncEnabledRef.current = enabled;
-      setAutoSyncEnabledState(enabled);
-
-      const autoSyncKey = getAutoSyncKey(userId);
-      if (!autoSyncKey) return;
-
-      try {
-        await SecureStore.setItemAsync(autoSyncKey, String(enabled));
-      } catch (saveError) {
-        errorToast(
-          isRussian ? 'Не удалось сохранить настройку автосинхронизации.' : 'Could not save auto-sync setting.',
-          saveError,
-        );
-      }
-    },
-    [isRussian, userId],
   );
 
   const markUploadSkipped = useCallback((reason: UploadSkipReason, sourceWorkouts: WatchWorkout[] = []) => {
@@ -171,120 +131,11 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
     } finally {
       setIsReading(false);
     }
-  }, [isRussian]);
-
-  const updateWorkoutHiddenState = useCallback(
-    async (workout: WatchWorkout, hidden: boolean) => {
-      const id = getWorkoutId(workout);
-      const update = hiddenWorkoutSaveQueueRef.current.then(async () => {
-        const nextIds = new Set(hiddenWorkoutIdsRef.current);
-        if (hidden) nextIds.add(id);
-        else nextIds.delete(id);
-
-        await SecureStore.setItemAsync(HIDDEN_WORKOUTS_KEY, JSON.stringify([...nextIds]));
-        hiddenWorkoutIdsRef.current = nextIds;
-        setHiddenWorkoutIds(nextIds);
-        if (hidden) {
-          setSelectedIds((current) => {
-            const next = new Set(current);
-            next.delete(id);
-            return next;
-          });
-        } else {
-          setSelectedIds((current) => new Set(current).add(id));
-        }
-      });
-      hiddenWorkoutSaveQueueRef.current = update.catch(() => undefined);
-
-      try {
-        await update;
-      } catch (saveError) {
-        errorToast(
-          isRussian ? 'Не удалось сохранить список скрытых тренировок.' : 'Could not save hidden workouts.',
-          saveError,
-        );
-      }
-    },
-    [isRussian],
-  );
-
-  const hideWorkout = useCallback(
-    (workout: WatchWorkout) => updateWorkoutHiddenState(workout, true),
-    [updateWorkoutHiddenState],
-  );
-
-  const restoreWorkout = useCallback(
-    (workout: WatchWorkout) => updateWorkoutHiddenState(workout, false),
-    [updateWorkoutHiddenState],
-  );
+  }, [hiddenWorkoutIdsRef, isRussian]);
 
   const sendWorkoutsToRunich = useCallback(
-    async (id: string, sourceWorkouts: WatchWorkout[]) => {
-      const mappedWorkouts = sourceWorkouts.map(mapWatchWorkoutToActivity);
-      let workoutDiagnostics: WorkoutUploadDiagnostic[] = mappedWorkouts.map((workout, index) => ({
-        source: sourceWorkouts[index].source,
-        sourceActivityId: sourceWorkouts[index].sourceActivityId,
-        sourceHeartRateSampleCount: sourceWorkouts[index].heartRateSamples?.length ?? 0,
-        payloadHeartRateSampleCount: workout.heartRateSamples?.length ?? 0,
-        outcome: 'not-sent',
-      }));
-      const updateWorkoutOutcomes = (sourceKeys: string[], outcome: WorkoutUploadOutcome) => {
-        const updatedSourceKeys = new Set(sourceKeys);
-        workoutDiagnostics = workoutDiagnostics.map((workout) =>
-          updatedSourceKeys.has(getWatchWorkoutSourceKey(workout)) ? { ...workout, outcome } : workout,
-        );
-      };
-      const diagnostics: UploadDiagnostics = {
-        at: new Date().toISOString(),
-        outcome: 'sending',
-        workoutCount: mappedWorkouts.length,
-        sourceRoutePointCount: getRoutePointCount(sourceWorkouts),
-        payloadRoutePointCount: mappedWorkouts.reduce((total, workout) => total + workout.locations.length, 0),
-        sourceHeartRateSampleCount: getHeartRateSampleCount(sourceWorkouts),
-        payloadHeartRateSampleCount: getHeartRateSampleCount(mappedWorkouts),
-        workouts: workoutDiagnostics,
-      };
-      setUploadDiagnostics(diagnostics);
-      let imported = 0;
-      let skipped = 0;
-      const activities: WatchWorkoutBatchImportResponse['activities'] = [];
-      let currentBatchSourceKeys: string[] = [];
-
-      try {
-        const batches = splitWatchWorkoutsIntoBatches(id, mappedWorkouts);
-        for (const workouts of batches) {
-          currentBatchSourceKeys = workouts.map(getWatchWorkoutSourceKey);
-          updateWorkoutOutcomes(currentBatchSourceKeys, 'sending');
-          setUploadDiagnostics({ ...diagnostics, workouts: workoutDiagnostics });
-          const batchResult = await importWorkouts({ id, workouts }).unwrap();
-          updateWorkoutOutcomes(currentBatchSourceKeys, 'uploaded');
-          imported += batchResult.imported;
-          skipped += batchResult.skipped;
-          activities.push(...batchResult.activities);
-          setUploadDiagnostics({ ...diagnostics, workouts: workoutDiagnostics, imported, skipped });
-        }
-        const result = { imported, skipped, activities };
-        setUploadDiagnostics({
-          ...diagnostics,
-          outcome: 'success',
-          workouts: workoutDiagnostics,
-          imported,
-          skipped,
-        });
-        return result;
-      } catch (uploadError) {
-        updateWorkoutOutcomes(currentBatchSourceKeys, 'error');
-        setUploadDiagnostics({
-          ...diagnostics,
-          outcome: 'error',
-          workouts: workoutDiagnostics,
-          imported,
-          skipped,
-          errorStatus: getRequestErrorStatus(uploadError),
-        });
-        throw uploadError;
-      }
-    },
+    (id: string, sourceWorkouts: WatchWorkout[]) =>
+      uploadWorkoutBatches(id, sourceWorkouts, importWorkouts, setUploadDiagnostics),
     [importWorkouts],
   );
 
@@ -326,141 +177,25 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
         setIsAutoSyncing(false);
       }
     },
-    [isRussian, markUploadSkipped, readWorkouts, sendWorkoutsToRunich, userId],
+    [autoSyncEnabledRef, isRussian, markUploadSkipped, readWorkouts, sendWorkoutsToRunich, userId],
   );
 
-  const refreshHealthConnection = useCallback(
-    async (isActive: () => boolean = () => true) => {
-      setIsLoading(true);
-      setError(null);
-      setHealthStatusErrorCode(null);
-      const connectionKey = getConnectionKey(userId);
-      const autoSyncKey = getAutoSyncKey(userId);
-      const savedHiddenWorkouts = SecureStore.getItemAsync(HIDDEN_WORKOUTS_KEY);
-      const savedConnection = connectionKey ? SecureStore.getItemAsync(connectionKey) : Promise.resolve(null);
-      const savedAutoSync = autoSyncKey ? SecureStore.getItemAsync(autoSyncKey) : Promise.resolve(null);
-
-      try {
-        const [nextAvailability, permissions, savedConnectionValue, savedAutoSyncValue, savedHiddenWorkoutsValue] =
-          await Promise.all([
-            RunichHealth.getAvailability(),
-            RunichHealth.getPermissions(),
-            savedConnection,
-            savedAutoSync,
-            savedHiddenWorkouts,
-          ]);
-        if (!isActive()) return;
-
-        let parsedHiddenWorkoutIds: Set<string>;
-        try {
-          const savedIds: unknown = savedHiddenWorkoutsValue ? JSON.parse(savedHiddenWorkoutsValue) : [];
-          parsedHiddenWorkoutIds = new Set(
-            Array.isArray(savedIds) ? savedIds.filter((id): id is string => typeof id === 'string') : [],
-          );
-        } catch {
-          parsedHiddenWorkoutIds = new Set();
-        }
-        hiddenWorkoutIdsRef.current = parsedHiddenWorkoutIds;
-        setHiddenWorkoutIds(parsedHiddenWorkoutIds);
-
-        setAvailability(nextAvailability);
-        setHealthPermissions(permissions);
-        const savedAutoSyncEnabled = savedAutoSyncValue !== 'false';
-        autoSyncEnabledRef.current = savedAutoSyncEnabled;
-        setAutoSyncEnabledState(savedAutoSyncEnabled);
-        const connected = permissions.available && (permissions.granted || savedConnectionValue === 'true');
-        setIsConnected(connected);
-        if (connected && autoSync && userId && savedAutoSyncEnabled) {
-          void syncLatestWorkouts(true, true);
-        } else if (connected && !autoSync) {
-          void readWorkouts();
-        }
-      } catch (loadError) {
-        if (isActive()) {
-          setHealthStatusErrorCode(getDiagnosticErrorCode(loadError));
-          setError(
-            isRussian
-              ? 'Не удалось проверить подключение хранилища здоровья.'
-              : 'Could not check the health store connection.',
-          );
-          errorToast('', loadError);
-        }
-      } finally {
-        if (isActive()) setIsLoading(false);
-      }
-    },
-    [autoSync, isRussian, readWorkouts, syncLatestWorkouts, userId],
-  );
-
-  useEffect(() => {
-    if (!enabled) return;
-    let isMounted = true;
-    const refreshTimeout = setTimeout(() => {
-      void refreshHealthConnection(() => isMounted);
-    }, 0);
-    return () => {
-      isMounted = false;
-      clearTimeout(refreshTimeout);
-    };
-  }, [enabled, refreshHealthConnection]);
-
-  const previousAppState = useRef(AppState.currentState);
-  useEffect(() => {
-    if (!enabled) return;
-    const subscription = AppState.addEventListener('change', (nextAppState) => {
-      const returnedToApp = previousAppState.current !== 'active' && nextAppState === 'active' && Boolean(userId);
-      previousAppState.current = nextAppState;
-      if (returnedToApp) {
-        if (availability === 'available' && isConnected) {
-          if (autoSync && autoSyncEnabled) void syncLatestWorkouts(true);
-          else if (!autoSync) void readWorkouts();
-        } else void refreshHealthConnection();
-      }
+  const { availability, connect, healthPermissions, isConnected, isLoading, refreshHealthConnection } =
+    useWorkoutImportConnection({
+      autoSync,
+      autoSyncEnabled,
+      enabled,
+      isRussian,
+      userId,
+      readWorkouts,
+      restoreAutoSyncEnabled,
+      restoreHiddenWorkoutIds,
+      setAutoSyncEnabled,
+      setError,
+      setHealthStatusErrorCode,
+      setImportResult,
+      syncLatestWorkouts,
     });
-    return () => subscription.remove();
-  }, [
-    autoSync,
-    autoSyncEnabled,
-    availability,
-    enabled,
-    isConnected,
-    readWorkouts,
-    refreshHealthConnection,
-    syncLatestWorkouts,
-    userId,
-  ]);
-
-  const connect = useCallback(async () => {
-    setError(null);
-    setHealthStatusErrorCode(null);
-    setImportResult(null);
-    setIsLoading(true);
-    try {
-      const permissions = await RunichHealth.requestPermissions();
-      setHealthPermissions(permissions);
-      setIsConnected(permissions.granted);
-      if (!permissions.granted) {
-        setError(isRussian ? 'Доступ к тренировкам не предоставлен.' : 'Workout access was not granted.');
-        return;
-      }
-      const connectionKey = getConnectionKey(userId);
-      if (connectionKey) {
-        try {
-          await SecureStore.setItemAsync(connectionKey, 'true');
-        } catch {
-          // The health connection itself does not depend on local marker storage.
-        }
-      }
-      await setAutoSyncEnabled(true);
-      await syncLatestWorkouts(true, true);
-    } catch (connectError) {
-      setHealthStatusErrorCode(getDiagnosticErrorCode(connectError));
-      setError(isRussian ? 'Не удалось подключить хранилище здоровья.' : 'Could not connect the health store.');
-      errorToast('', connectError);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [isRussian, setAutoSyncEnabled, syncLatestWorkouts, userId]);
 
   const openExternalLink = useCallback(
     async (url: string, errorMessage = isRussian ? 'Не удалось открыть ссылку.' : 'Could not open the link.') => {

@@ -12,7 +12,7 @@ import {
   getHeartRateZoneSettings,
 } from './utils';
 import type { ActivityChartSeries } from './types';
-import type { ActivityChartDataResponse } from '@R/runich-api/types';
+import type { ActivityChartDataResponse } from '@R/runich-api/activity-types';
 
 const activityZoneSettings = { basis: 'activityMaximum' as const, maximumHeartRate: 150 };
 

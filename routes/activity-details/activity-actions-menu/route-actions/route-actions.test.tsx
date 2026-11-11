@@ -6,9 +6,9 @@ import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
-import ActivityRouteActions from './route-actions';
 import MenuView from '../menu-view/menu-view';
-import type { ActivityResponse } from '@R/runich-api/types';
+import ActivityRouteActions from './route-actions';
+import type { ActivityResponse } from '@R/runich-api/activity-types';
 
 const mockPush = jest.fn();
 const mockShareAsync = jest.fn();

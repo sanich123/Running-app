@@ -1,15 +1,8 @@
 import { View, StyleSheet } from 'react-native';
 import { Switch, Text } from 'react-native-paper';
+import type { SwitchRowProps } from './types';
 
-export default function SwitchRow({
-  label,
-  value,
-  onValueChange,
-}: {
-  label: string;
-  value: boolean;
-  onValueChange: (value: boolean) => void;
-}) {
+export default function SwitchRow({ label, value, onValueChange }: SwitchRowProps) {
   return (
     <View style={styles.switchRow}>
       <Text style={styles.switchLabel}>{label}</Text>

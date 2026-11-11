@@ -4,7 +4,7 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import { MAPS_PAGE_COPY } from '../const';
 import AddTrackPage from './add-track-page';
 import type useAddTrackPage from './use-add-track-page';
-import type { ActivityRouteWorkoutListItemResponse } from '@R/runich-api/types';
+import type { ActivityRouteWorkoutListItemResponse } from '@R/runich-api/activity-types';
 
 const mockUseAddTrackPage = jest.fn<ReturnType<typeof useAddTrackPage>, []>();
 jest.mock('expo-router', () => ({ Stack: { Screen: () => null } }));

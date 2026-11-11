@@ -9,13 +9,13 @@ import {
 import { setLocationsWhenContinued, startDurationTimer } from '@R/slices/location/location';
 import { resetStore, store } from '@R/store';
 import { MOCK_LOCATION } from '@T/mocks/mock-location';
+import { getSpeedInKmPerHour } from '../activity-metrics';
 import {
   getElevationGain,
   getElevationGainByKilometres,
   getElevationGainBetweenLocations,
   getKilometerSplitCalculation,
-  getSpeedInKmPerHour,
-} from '../location-utils';
+} from '../location-geometry';
 import { getCompletedReminderCount, getMetricsTaskManager, saveMetricsToStoreTaskManager } from './utils';
 
 describe('location speed filtering', () => {

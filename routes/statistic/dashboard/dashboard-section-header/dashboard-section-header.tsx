@@ -1,8 +1,9 @@
 import { StyleSheet, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
+import type { DashboardSectionHeaderProps } from './types';
 
-export default function DashboardSectionHeader({ title, subtitle }: { title: string; subtitle: string }) {
+export default function DashboardSectionHeader({ title, subtitle }: DashboardSectionHeaderProps) {
   const { colors } = useTheme();
   return (
     <View style={styles.container}>

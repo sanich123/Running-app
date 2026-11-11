@@ -13,15 +13,9 @@ import {
 import { useAppSelector } from '@R/typed-hooks';
 import { getIconNameByTypeOfSport } from '@U/icon-utils';
 import { GROUPS_COPY, GROUP_SPORTS, getGroupSportLabels } from '../../const';
-import type { GroupsFilterState } from '../types';
+import type { GroupsFilterControlsProps } from './types';
 
-export default function GroupsFilterControls({
-  filters,
-  onChange,
-}: {
-  filters: GroupsFilterState;
-  onChange: (filters: GroupsFilterState) => void;
-}) {
+export default function GroupsFilterControls({ filters, onChange }: GroupsFilterControlsProps) {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const { allGroups, myGroups, allActivities, search: searchCopy, closeSearch } = GROUPS_COPY[language];

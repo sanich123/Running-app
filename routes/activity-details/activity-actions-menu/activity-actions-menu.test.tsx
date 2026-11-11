@@ -4,10 +4,10 @@ import { LANGUAGES } from '@const/enums';
 import { MOCK_SERVER_ACTIVITY } from '@T/responses/runich';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { REPORT_CONTENT_COPY } from '../../../shared/moderation/report-content-dialog/const';
 import ActivityActionsMenu from './activity-actions-menu';
 import { ACTIVITY_ACTIONS_MENU } from './const';
-import { REPORT_CONTENT_COPY } from '../../../shared/moderation/report-content-dialog/const';
-import type { ActivityResponse } from '@R/runich-api/types';
+import type { ActivityResponse } from '@R/runich-api/activity-types';
 
 const originalPlatformOS = Platform.OS;
 

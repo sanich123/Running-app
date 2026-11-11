@@ -5,8 +5,9 @@ import SettingsRow from '@Routes/settings-page/settings-row/settings-row';
 import { RESPONSIVE_DIALOG_STYLE } from '@S/responsive-dialog-style';
 import { GROUPS_COPY } from '../const';
 import { useGroupNotificationPreferences } from './use-group-notification-preferences';
+import type { GroupNotificationSettingsProps } from './types';
 
-export default function GroupNotificationSettings({ visible, onDismiss }: { visible: boolean; onDismiss: () => void }) {
+export default function GroupNotificationSettings({ visible, onDismiss }: GroupNotificationSettingsProps) {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const groupCopy = GROUPS_COPY[language];

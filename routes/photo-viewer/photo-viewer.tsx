@@ -15,7 +15,7 @@ import VideoViewer from '@Routes/photo-viewer/video-viewer/video-viewer';
 import CustomImage from '@S/custom-image/custom-image';
 import MediaModerationPlaceholder from '@S/media-moderation-placeholder/media-moderation-placeholder';
 import { getPhotoUrl, isDirectMediaUrl, isVideoUrl } from './utils';
-import type { ActivityMediaItemResponse } from '@R/runich-api/types';
+import type { ActivityMediaItemResponse } from '@R/runich-api/activity-types';
 import type { PageScrollStateChangedNativeEvent, PagerViewOnPageSelectedEvent } from 'react-native-pager-view';
 
 export default function PhotoViewer() {

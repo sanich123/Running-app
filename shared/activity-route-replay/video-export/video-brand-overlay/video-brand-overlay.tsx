@@ -5,7 +5,7 @@ import { Text } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import UserAvatar from '@S/avatar/user-avatar/user-avatar';
 import { CARD_METRICS } from '@S/card/metrics/const';
-import { isRunningActivity } from '@U/location/location-utils';
+import { isRunningActivity } from '@U/location/activity-metrics';
 import { ACTIVITY_LABELS, VIDEO_BRAND_NAME, VIDEO_BRAND_UNAVAILABLE_METRIC } from './const';
 import { formatWorkoutTime, formatRunningPace } from './utils';
 import type { VideoBrandOverlayProps } from './types';

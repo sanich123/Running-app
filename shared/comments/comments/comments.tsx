@@ -4,13 +4,13 @@ import { StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent } f
 import { useGetCommentsByActivityIdInfiniteQuery } from '@R/services/comments/comments';
 import { useAppSelector } from '@R/typed-hooks';
 import ErrorComponent from '@S/error-component/error-component';
-import { TOP_LOAD_THRESHOLD } from './const';
 import Comment from '../comment/comment';
 import CommentsEmptyList from '../comments-empty/comments-empty-list/comments-empty-list';
 import CommentsLoadMoreBtn from '../comments-load-more-btn/comments-load-more-btn/comments-load-more-btn';
 import CommentsSkeleton from '../comments-skeleton/comments-skeleton';
+import { TOP_LOAD_THRESHOLD } from './const';
 import type { CommentsProps } from '../types';
-import type { CommentResponse } from '@R/runich-api/types';
+import type { CommentResponse } from '@R/runich-api/comment-types';
 
 export default function Comments({ commentsModalRef }: CommentsProps) {
   const { commentActivityId } = useAppSelector(({ comment }) => comment);

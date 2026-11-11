@@ -4,15 +4,10 @@ import { useForm } from 'react-hook-form';
 import { useAppSelector } from '@R/typed-hooks';
 import CustomTextInput from '@S/custom-text-input/custom-text-input';
 import { GROUPS_COPY } from '../../const';
-import type { GroupCreationDetails, GroupCreationTextFields } from '../types';
+import type { GroupCreationTextFields } from '../types';
+import type { GroupDetailsFieldsProps } from './types';
 
-export default function GroupDetailsFields({
-  details,
-  onChange,
-}: {
-  details: GroupCreationDetails;
-  onChange: (details: GroupCreationDetails) => void;
-}) {
+export default function GroupDetailsFields({ details, onChange }: GroupDetailsFieldsProps) {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const { groupName, nameRequired, description: descriptionCopy, worldwide, location } = GROUPS_COPY[language];

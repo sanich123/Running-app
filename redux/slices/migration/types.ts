@@ -1,4 +1,4 @@
-import type { ActivityMigrationJobResponse } from '@R/runich-api/types';
+import type { ActivityMigrationJobResponse } from '@R/runich-api/activity-types';
 
 export interface MigrationState {
   isDisabled: boolean;

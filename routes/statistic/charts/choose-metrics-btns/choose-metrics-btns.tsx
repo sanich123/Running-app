@@ -3,14 +3,9 @@ import { Chip, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import { getMetricsBtnsValues } from '../const';
 import type { ChooseMetricsBtnsValues } from '../types';
+import type { ChooseMetricsBtnsProps } from './types';
 
-export default function ChooseMetricsBtns({
-  chartValue,
-  setChartValue,
-}: {
-  chartValue: ChooseMetricsBtnsValues;
-  setChartValue: (arg: ChooseMetricsBtnsValues) => void;
-}) {
+export default function ChooseMetricsBtns({ chartValue, setChartValue }: ChooseMetricsBtnsProps) {
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const buttons = getMetricsBtnsValues(language);

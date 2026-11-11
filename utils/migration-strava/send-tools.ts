@@ -9,7 +9,7 @@ import {
 } from './upload-transport';
 import { MigrationArchiveCancelledError, getMigrationErrorMessage, toFileUri } from './utils';
 import type { MigrationCancelHandler } from './types';
-import type { ActivityMigrationJobResponse } from '@R/runich-api/types';
+import type { ActivityMigrationJobResponse } from '@R/runich-api/activity-types';
 
 export { MigrationArchiveCancelledError } from './utils';
 

@@ -7,7 +7,7 @@ import { FONT_FAMILIES } from '@const/fonts';
 import { activityApi } from '@R/services/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import ShowMetrics from '@S/card/show-metrics/show-metrics';
-import { getAverageCadence, isRunningActivity, isWalkingActivity } from '@U/location/location-utils';
+import { getAverageCadence, isRunningActivity, isWalkingActivity } from '@U/location/activity-metrics';
 import { formatDuration } from '@U/time-formatter';
 import { useActivityCard } from '../context';
 import { CARD_METRICS } from './const';

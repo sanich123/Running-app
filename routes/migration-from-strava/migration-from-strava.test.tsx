@@ -13,7 +13,7 @@ import { renderWithProviders } from '@T/utils/test-utils';
 import { MIGRATION_ERROR_COPY } from '@U/migration-strava/const';
 import { MIGRATION_STATES } from './const';
 import MigrationFromStrava from './migration-from-strava';
-import type { ActivityMigrationJobResponse } from '@R/runich-api/types';
+import type { ActivityMigrationJobResponse } from '@R/runich-api/activity-types';
 
 interface MigrationArgs {
   setIsDisabled: (value: boolean) => void;

@@ -3,7 +3,11 @@ import { createSearchParams } from '@R/runich-api/create-search-params';
 import { runichApi } from '@R/runich-api/runich-api';
 import { getDeviceTimeZone } from '@U/time-zone';
 import type { CurrentWeekStatisticsRequest, MonthStatisticsRequest } from './types';
-import type { MonthStatisticsResponse, StatisticMetricResponse, YearStatisticsResponse } from '@R/runich-api/types';
+import type {
+  MonthStatisticsResponse,
+  StatisticMetricResponse,
+  YearStatisticsResponse,
+} from '@R/runich-api/statistics-types';
 
 const { statistics } = Routes;
 

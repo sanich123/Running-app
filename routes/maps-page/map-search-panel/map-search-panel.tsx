@@ -2,19 +2,9 @@ import { useState } from 'react';
 import * as Location from 'expo-location';
 import { StyleSheet, View } from 'react-native';
 import { Button, IconButton, Modal, Portal, Text, TextInput, useTheme } from 'react-native-paper';
-import type { MapsPageCopy } from '../const';
+import type { MapSearchPanelProps } from './types';
 
-export default function MapSearchPanel({
-  visible,
-  copy,
-  onDismiss,
-  onSelectLocation,
-}: {
-  visible: boolean;
-  copy: MapsPageCopy;
-  onDismiss: () => void;
-  onSelectLocation: (coordinate: [number, number]) => void;
-}) {
+export default function MapSearchPanel({ visible, copy, onDismiss, onSelectLocation }: MapSearchPanelProps) {
   const { colors } = useTheme();
   const [query, setQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);

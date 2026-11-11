@@ -5,15 +5,9 @@ import { useAppSelector } from '@R/typed-hooks';
 import ReportContentDialog from '@S/moderation/report-content-dialog/report-content-dialog';
 import { RESPONSIVE_DIALOG_STYLE } from '@S/responsive-dialog-style';
 import useGroupDetailHeaderActions from './use-group-detail-header-actions';
-import type { GroupDetails } from '@R/services/groups/types';
+import type { GroupDetailHeaderActionsProps } from './types';
 
-export default function GroupDetailHeaderActions({
-  group,
-  isActiveMember,
-}: {
-  group: GroupDetails;
-  isActiveMember: boolean;
-}) {
+export default function GroupDetailHeaderActions({ group, isActiveMember }: GroupDetailHeaderActionsProps) {
   const { copy, deleteCurrentGroup, isDeletingGroup, router, shareGroup } = useGroupDetailHeaderActions(group);
   const {
     manageRequests,

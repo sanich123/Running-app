@@ -8,8 +8,9 @@ import {
   FAVORITE_ACTIVITY_BUTTON_ICONS,
   FAVORITE_ACTIVITY_BUTTON_TEST_ID,
 } from './const';
+import type { FavoriteActivityBtnProps } from './types';
 
-export default function FavoriteActivityBtn({ activityId, isFavorite }: { activityId: string; isFavorite: boolean }) {
+export default function FavoriteActivityBtn({ activityId, isFavorite }: FavoriteActivityBtnProps) {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const [setActivityFavorite, { isLoading }] = useSetActivityFavoriteMutation();

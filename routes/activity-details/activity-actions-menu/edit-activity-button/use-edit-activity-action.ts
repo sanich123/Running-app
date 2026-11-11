@@ -5,7 +5,7 @@ import { ROUTES } from '@const/enums';
 import { addPhotoUrls, resetActivityDraft, resetFinishedActivity } from '@R/slices/activity/activity';
 import { useAppDispatch } from '@R/typed-hooks';
 import { getHoursMinutesSecondsFromMilliseconds } from '@U/time-formatter';
-import type { ActivityResponse } from '@R/runich-api/types';
+import type { ActivityResponse } from '@R/runich-api/activity-types';
 
 export default function useEditActivityAction(activity?: ActivityResponse | null) {
   const { push } = useRouter();

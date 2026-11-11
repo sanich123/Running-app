@@ -1,6 +1,6 @@
 import type { MapsPageCopy } from '../../const';
 import type { LANGUAGES } from '@const/enums';
-import type { ActivityRouteWorkoutListItemResponse } from '@R/runich-api/types';
+import type { ActivityRouteWorkoutListItemResponse } from '@R/runich-api/activity-types';
 
 export interface ActivityRouteCardProps {
   activity: ActivityRouteWorkoutListItemResponse;

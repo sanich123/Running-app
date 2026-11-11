@@ -1,4 +1,4 @@
-import type { MonthStatisticsResponse } from '@R/runich-api/types';
+import type { MonthStatisticsResponse } from '@R/runich-api/statistics-types';
 
 export interface CalendarStatisticsProps {
   year: string;

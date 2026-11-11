@@ -14,7 +14,13 @@ import { useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { NOTIFICATION_COPY, NOTIFICATION_PUSH_CONFIG } from './constants';
 import { getNotificationLocale } from './helpers';
-import { getExpoProjectId, getPushChannelName, isAndroidPhysicalDevice } from './notification-settings.helpers';
+import {
+  getExpoProjectId,
+  getPushChannelName,
+  hasPushNotificationPermission,
+  isNativeNotificationPlatform,
+  isPhysicalPushDevice,
+} from './notification-settings.helpers';
 
 export function useNotificationSettings() {
   const { language } = useAppSelector(({ settings }) => settings);
@@ -45,7 +51,7 @@ export function useNotificationSettings() {
   useFocusEffect(
     useCallback(() => {
       let active = true;
-      if (Platform.OS !== 'android') {
+      if (!isNativeNotificationPlatform(Platform.OS)) {
         setPermissionChecked(true);
         return () => {
           active = false;
@@ -55,7 +61,7 @@ export function useNotificationSettings() {
         .then(async (permission) => {
           if (!active) return;
           setPermissionChecked(true);
-          if (!permission.granted && pushStatus?.enabled) {
+          if (!hasPushNotificationPermission(permission, Platform.OS) && pushStatus?.enabled) {
             try {
               await unregisterToken().unwrap();
             } catch (error) {
@@ -76,20 +82,24 @@ export function useNotificationSettings() {
   );
 
   const enablePush = async () => {
-    if (!isAndroidPhysicalDevice(Platform.OS, Device.isDevice)) {
+    if (!isPhysicalPushDevice(Platform.OS, Device.isDevice)) {
       return errorToast(copy.pushUnavailable);
     }
     try {
-      await Notifications.setNotificationChannelAsync(NOTIFICATION_PUSH_CONFIG.channelId, {
-        name: getPushChannelName(locale),
-        importance: Notifications.AndroidImportance.HIGH,
-        vibrationPattern: NOTIFICATION_PUSH_CONFIG.vibrationPattern,
-        lightColor: NOTIFICATION_PUSH_CONFIG.lightColor,
-      });
+      if (Platform.OS === 'android') {
+        await Notifications.setNotificationChannelAsync(NOTIFICATION_PUSH_CONFIG.channelId, {
+          name: getPushChannelName(locale),
+          importance: Notifications.AndroidImportance.HIGH,
+          vibrationPattern: NOTIFICATION_PUSH_CONFIG.vibrationPattern,
+          lightColor: NOTIFICATION_PUSH_CONFIG.lightColor,
+        });
+      }
       let permission = await Notifications.getPermissionsAsync();
-      if (!permission.granted) permission = await Notifications.requestPermissionsAsync();
+      if (!hasPushNotificationPermission(permission, Platform.OS)) {
+        permission = await Notifications.requestPermissionsAsync();
+      }
       setPermissionChecked(true);
-      if (!permission.granted) {
+      if (!hasPushNotificationPermission(permission, Platform.OS)) {
         if (!permission.canAskAgain) {
           Alert.alert(copy.permissionTitle, copy.permissionBody, [
             { text: copy.notNow, style: 'cancel' },
@@ -101,7 +111,7 @@ export function useNotificationSettings() {
       const projectId = getExpoProjectId(Constants.expoConfig?.extra?.eas?.projectId, Constants.easConfig?.projectId);
       if (!projectId) throw new Error(copy.missingProjectId);
       const { data: token } = await Notifications.getExpoPushTokenAsync({ projectId });
-      await registerToken({ token, platform: 'android' }).unwrap();
+      await registerToken({ token, platform: Platform.OS as 'android' | 'ios' }).unwrap();
       await updateProfile({ body: { pushNotifications: true }, id: userId }).unwrap();
     } catch (error) {
       errorToast(copy.enablePushError, error);
@@ -132,6 +142,7 @@ export function useNotificationSettings() {
     canUpdateProfilePreferences,
     inAppNotificationsEnabled,
     isRegistering,
+    isPushAvailable: isNativeNotificationPlatform(Platform.OS),
     isRequestingPush,
     isStatusLoading,
     isUnregistering,

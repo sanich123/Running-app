@@ -1,16 +1,10 @@
 import { StyleSheet, View } from 'react-native';
 import { Button, Chip, Icon, Surface, Text } from 'react-native-paper';
-import useGroupInfoCard from './use-group-info-card';
 import GroupPhoto from '../../group-photo/group-photo';
-import type { GroupDetails } from '@R/services/groups/types';
+import useGroupInfoCard from './use-group-info-card';
+import type { GroupInfoCardProps } from './types';
 
-export default function GroupInfoCard({
-  group,
-  isRefreshing = false,
-}: {
-  group: GroupDetails;
-  isRefreshing?: boolean;
-}) {
+export default function GroupInfoCard({ group, isRefreshing = false }: GroupInfoCardProps) {
   const {
     name,
     description,

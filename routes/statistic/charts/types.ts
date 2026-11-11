@@ -25,3 +25,8 @@ export interface BarChartWrapperProps {
   year: number;
   title: string;
 }
+
+export interface ChartsProps {
+  year: number;
+  months: MonthMetrics;
+}

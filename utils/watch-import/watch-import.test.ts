@@ -1,4 +1,4 @@
-import { getDistance } from '@U/location/location-utils';
+import { getDistance } from '@U/location/location-geometry';
 import { getWatchImportDateRange, mapWatchWorkoutToActivity } from './helpers';
 import type { WatchWorkout } from '../../modules/runich-health/src/RunichHealth';
 

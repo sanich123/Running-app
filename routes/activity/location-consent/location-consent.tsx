@@ -3,18 +3,14 @@ import { useRouter } from 'expo-router';
 import { Checkbox, Text, useTheme } from 'react-native-paper';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
+import type { LocationConsentProps } from './types';
 
 export default function LocationConsent({
   accepted,
   onChange,
   disabled = false,
   onDetailsPress,
-}: {
-  accepted: boolean;
-  onChange: (accepted: boolean) => void;
-  disabled?: boolean;
-  onDetailsPress?: () => void;
-}) {
+}: LocationConsentProps) {
   const { colors } = useTheme();
   const { push } = useRouter();
   const { language } = useAppSelector(({ settings }) => settings);

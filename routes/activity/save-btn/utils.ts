@@ -5,9 +5,10 @@ import { resetLocationsFromBackground, setNavigationTrackId } from '@R/slices/lo
 import { clearTrackingRecovery } from '@R/slices/tracking-recovery/tracking-recovery';
 import { errorToast } from '@S/error-toast/error-toast';
 import { uploadRawRouteAndQueueOnFailure } from '@U/activity-track/upload-raw-route';
+import { getSpeedInMinsInKm } from '@U/location/activity-metrics';
 import { MAX_SAVED_ROUTE_LOCATIONS } from '@U/location/const';
+import { getReducedLocations } from '@U/location/location-geometry';
 import { deactivateLocationJournal, readLocationJournal, removeLocationJournal } from '@U/location/location-journal';
-import { getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { getDeviceTimeZone } from '@U/time-zone';
 import { ACTIVITY_SAVE_ERROR_COPY } from './const';
 import type { ActivityDetails } from './types';
