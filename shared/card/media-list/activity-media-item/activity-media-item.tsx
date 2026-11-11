@@ -185,7 +185,6 @@ export default function ActivityMediaItem({
           <ContentActionsMenu
             accessibilityLabel={mediaActions}
             iconColor="#fff"
-            triggerBackgroundColor={Platform.OS === 'ios' ? 'rgba(0, 0, 0, 0.48)' : undefined}
             testID={`media-actions-menu-${mediaId}`}
             reportLabel={report}
             reportTestID={`report-media-${mediaId}`}
@@ -216,5 +215,5 @@ const styles = StyleSheet.create({
     top: 8,
     zIndex: 4,
   },
-  reportButton: { position: 'absolute', right: 4, top: 4 },
+  reportButton: { position: 'absolute', right: 4, top: 4, zIndex: 2 },
 });

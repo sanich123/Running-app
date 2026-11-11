@@ -8,7 +8,7 @@ export default function ProfileHeaderActions({ currentUserId, profileUserId }: P
   const showUserSafetyMenu = Boolean(profileUserId && currentUserId && profileUserId !== currentUserId);
 
   return (
-    <View style={[styles.layout, Platform.OS === 'ios' ? styles.iosLayout : undefined]}>
+    <View style={styles.layout}>
       <UsersSettingsIcons />
       {showUserSafetyMenu && profileUserId ? (
         <UserSafetyMenu userId={profileUserId} iconColor={Platform.OS === 'ios' ? IOS_HEADER_ICON_COLOR : undefined} />
@@ -19,5 +19,4 @@ export default function ProfileHeaderActions({ currentUserId, profileUserId }: P
 
 const styles = StyleSheet.create({
   layout: { alignItems: 'center', flexDirection: 'row' },
-  iosLayout: { backgroundColor: '#B3B3B3', borderRadius: 20, height: 40, overflow: 'hidden' },
 });

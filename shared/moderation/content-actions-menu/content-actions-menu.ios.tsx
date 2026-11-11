@@ -2,10 +2,12 @@ import { Host } from '@expo/ui';
 import { Button, Label, Menu } from '@expo/ui/swift-ui';
 import {
   accessibilityLabel as accessibilityLabelModifier,
+  contentShape,
   disabled,
   frame,
   foregroundStyle,
   labelStyle as labelStyleModifier,
+  shapes,
 } from '@expo/ui/swift-ui/modifiers';
 import { useTheme } from 'react-native-paper';
 import type { ContentActionsMenuProps } from './types';
@@ -31,10 +33,10 @@ export default function ContentActionsMenu({
       seedColor={iconColor ?? colors.primary}
       style={[
         styles.host,
-        triggerBackgroundColor ? { backgroundColor: triggerBackgroundColor, borderRadius: 20 } : undefined,
+        triggerBackgroundColor ? { backgroundColor: triggerBackgroundColor, borderRadius: 22 } : undefined,
       ]}>
       <Menu
-        modifiers={[frame({ width: 40, height: 40, alignment: 'center' })]}
+        modifiers={[frame({ width: 44, height: 44, alignment: 'center' }), contentShape(shapes.rectangle())]}
         label={
           <Label
             title={accessibilityLabel}
@@ -42,6 +44,8 @@ export default function ContentActionsMenu({
             modifiers={[
               accessibilityLabelModifier(accessibilityLabel),
               labelStyleModifier('iconOnly'),
+              frame({ width: 44, height: 44, alignment: 'center' }),
+              contentShape(shapes.rectangle()),
               ...(iconColor ? [foregroundStyle(iconColor)] : []),
             ]}
           />
@@ -73,5 +77,5 @@ export default function ContentActionsMenu({
 }
 
 const styles = {
-  host: { alignItems: 'center' as const, height: 40, justifyContent: 'center' as const, width: 40 },
+  host: { alignItems: 'center' as const, height: 44, justifyContent: 'center' as const, width: 44, zIndex: 1 },
 };

@@ -19,10 +19,12 @@ jest.mock('@expo/ui', () => {
 });
 jest.mock('@expo/ui/swift-ui/modifiers', () => ({
   accessibilityLabel: (label: string) => label,
+  contentShape: () => ({}),
   disabled: () => ({}),
   frame: () => ({}),
   foregroundStyle: () => ({}),
   labelStyle: () => ({}),
+  shapes: { rectangle: () => ({}) },
 }));
 
 describe('iOS ContentActionsMenu', () => {
