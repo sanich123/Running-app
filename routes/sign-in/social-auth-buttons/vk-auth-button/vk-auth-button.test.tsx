@@ -11,14 +11,6 @@ import VkAuthButton from './vk-auth-button';
 
 jest.mock('expo-router', () => ({ useRouter: jest.fn() }));
 
-jest.mock('react-native-paper', () => {
-  const actual = jest.requireActual('react-native-paper') as Record<string, unknown>;
-  const { createElement } = jest.requireActual('react');
-  const { View } = jest.requireActual('react-native');
-
-  return { ...actual, ActivityIndicator: ({ testID }: { testID?: string }) => createElement(View, { testID }) };
-});
-
 jest.mock('@R/services/authentication/authentication', () => ({
   useLoginWithVkNativeMutation: jest.fn(),
 }));
@@ -73,11 +65,10 @@ describe('VkAuthButton', () => {
     await user.press(screen.getByTestId('vk-auth'));
 
     expect(Linking.openURL).toHaveBeenCalledWith(VK_AUTH_URL);
-    await waitFor(() => {
-      expect(screen.getByText(russianCopy.signingIn)).toBeTruthy();
-      expect(screen.getByText(`${russianCopy.signingInWith} ${russianCopy.vk}…`)).toBeTruthy();
-    });
-    expect(screen.getByTestId('vk-auth').props.accessibilityState.disabled).toBe(true);
+    await waitFor(() => expect(screen.getByTestId('vk-auth').props.accessibilityState.disabled).toBe(true));
+    expect(screen.getByRole('progressbar')).toBeTruthy();
+    expect(screen.queryByTestId('vk-auth-icon-container')).toBeNull();
+    expect(screen.queryByText(russianCopy.vk)).toBeNull();
 
     expect(appStateListeners.length).toBeGreaterThan(0);
     await act(async () => {
@@ -86,19 +77,21 @@ describe('VkAuthButton', () => {
       appStateListeners.forEach((listener) => listener('active'));
       await Promise.resolve();
     });
-    await waitFor(() => expect(screen.queryByTestId('vk-auth-progress')).toBeNull());
+    await waitFor(() => expect(screen.queryByRole('progressbar')).toBeNull());
+    expect(screen.getByTestId('vk-auth').props.accessibilityState.disabled).toBe(false);
     resolveOpenURL?.();
   });
 
-  it('clears progress and reports an external launch failure', async () => {
+  it('clears loading and reports an external launch failure', async () => {
     jest.spyOn(Linking, 'openURL').mockRejectedValueOnce(new Error('launch failed'));
 
     await renderWithProviders(<VkAuthButton />);
     const user = userEvent.setup();
     await user.press(screen.getByTestId('vk-auth'));
 
-    await waitFor(() => expect(screen.queryByTestId('vk-auth-progress')).toBeNull());
-    expect(errorToast).toHaveBeenCalledWith('Не удалось открыть VK', expect.any(Error));
+    await waitFor(() => expect(errorToast).toHaveBeenCalledWith('Не удалось открыть VK', expect.any(Error)));
+    expect(screen.getByTestId('vk-auth').props.accessibilityState.disabled).toBe(false);
+    expect(screen.queryByRole('progressbar')).toBeNull();
   });
 
   it('exchanges a native VK authorization and navigates after success on Android', async () => {
@@ -119,10 +112,11 @@ describe('VkAuthButton', () => {
       deviceId: 'device-id',
       codeVerifier: 'verifier',
     });
-    expect(screen.queryByTestId('vk-auth-progress')).toBeNull();
+    expect(screen.queryByRole('progressbar')).toBeNull();
+    expect(screen.getByTestId('vk-auth').props.accessibilityState.disabled).toBe(false);
   });
 
-  it('clears native progress without an error when VK sign-in is cancelled', async () => {
+  it('clears native loading and reports an error when VK returns no authorization data', async () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
     jest.mocked(loginWithVkNative).mockResolvedValue(null);
 
@@ -130,8 +124,9 @@ describe('VkAuthButton', () => {
     const user = userEvent.setup();
     await user.press(screen.getByTestId('vk-auth'));
 
-    await waitFor(() => expect(screen.queryByTestId('vk-auth-progress')).toBeNull());
+    await waitFor(() => expect(errorToast).toHaveBeenCalledWith('Не удалось войти через VK', expect.any(Error)));
     expect(mockLoginMutation).not.toHaveBeenCalled();
-    expect(errorToast).not.toHaveBeenCalled();
+    expect(screen.queryByRole('progressbar')).toBeNull();
+    expect(screen.getByTestId('vk-auth').props.accessibilityState.disabled).toBe(false);
   });
 });

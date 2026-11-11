@@ -16,9 +16,9 @@ export default {
     icon: IS_DEV ? './assets/images/icon-dev.png' : './assets/images/icon.png',
     userInterfaceStyle: 'automatic',
     splash: {
-      image: './assets/images/splash.png',
+      image: './assets/images/adaptive-icon.png',
       resizeMode: 'contain',
-      backgroundColor: '#363636',
+      backgroundColor: '#F8F6F2',
     },
     experiments: {
       typedRoutes: true,
@@ -195,10 +195,14 @@ export default {
       [
         'expo-splash-screen',
         {
-          backgroundColor: '#363636',
-          image: './assets/images/splash.png',
+          backgroundColor: '#F8F6F2',
+          image: './assets/images/adaptive-icon.png',
           resizeMode: 'contain',
-          imageWidth: 350,
+          imageWidth: 200,
+          dark: {
+            backgroundColor: '#1C1C1E',
+            image: './assets/images/adaptive-icon.png',
+          },
         },
       ],
     ],

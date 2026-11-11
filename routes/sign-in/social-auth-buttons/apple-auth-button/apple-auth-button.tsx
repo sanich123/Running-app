@@ -39,7 +39,9 @@ export default function AppleAuthButton() {
           AppleAuthentication.AppleAuthenticationScope.EMAIL,
         ],
       });
-      if (!credential.identityToken) throw new Error('Apple did not return an identity token');
+      if (!credential.identityToken) {
+        return errorToast(copy.appleLoginFailed);
+      }
 
       const session = await loginWithApple({
         identityToken: credential.identityToken,

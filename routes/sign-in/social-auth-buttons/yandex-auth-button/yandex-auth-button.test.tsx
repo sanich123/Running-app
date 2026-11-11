@@ -11,14 +11,6 @@ import YandexAuthButton from './yandex-auth-button';
 
 jest.mock('expo-router', () => ({ useRouter: jest.fn() }));
 
-jest.mock('react-native-paper', () => {
-  const actual = jest.requireActual('react-native-paper') as Record<string, unknown>;
-  const { createElement } = jest.requireActual('react');
-  const { View } = jest.requireActual('react-native');
-
-  return { ...actual, ActivityIndicator: ({ testID }: { testID?: string }) => createElement(View, { testID }) };
-});
-
 jest.mock('@R/services/authentication/authentication', () => ({
   useLoginWithYandexNativeMutation: jest.fn(),
 }));
@@ -73,11 +65,10 @@ describe('YandexAuthButton', () => {
     await user.press(screen.getByTestId('yandex-auth'));
 
     expect(Linking.openURL).toHaveBeenCalledWith(YANDEX_AUTH_URL);
-    await waitFor(() => {
-      expect(screen.getByText(russianCopy.signingIn)).toBeTruthy();
-      expect(screen.getByText(`${russianCopy.signingInWith} ${russianCopy.yandex}…`)).toBeTruthy();
-    });
-    expect(screen.getByTestId('yandex-auth').props.accessibilityState.disabled).toBe(true);
+    await waitFor(() => expect(screen.getByTestId('yandex-auth').props.accessibilityState.disabled).toBe(true));
+    expect(screen.getByRole('progressbar')).toBeTruthy();
+    expect(screen.queryByTestId('yandex-auth-icon-container')).toBeNull();
+    expect(screen.queryByText(russianCopy.yandex)).toBeNull();
 
     expect(appStateListeners.length).toBeGreaterThan(0);
     await act(async () => {
@@ -86,20 +77,21 @@ describe('YandexAuthButton', () => {
       appStateListeners.forEach((listener) => listener('active'));
       await Promise.resolve();
     });
-    await waitFor(() => expect(screen.queryByTestId('yandex-auth-progress')).toBeNull());
-    expect(screen.queryByTestId('yandex-auth-progress')).toBeNull();
+    await waitFor(() => expect(screen.queryByRole('progressbar')).toBeNull());
+    expect(screen.getByTestId('yandex-auth').props.accessibilityState.disabled).toBe(false);
     resolveOpenURL?.();
   });
 
-  it('clears progress and reports an external launch failure', async () => {
+  it('clears loading and reports an external launch failure', async () => {
     jest.spyOn(Linking, 'openURL').mockRejectedValueOnce(new Error('launch failed'));
 
     await renderWithProviders(<YandexAuthButton />);
     const user = userEvent.setup();
     await user.press(screen.getByTestId('yandex-auth'));
 
-    await waitFor(() => expect(screen.queryByTestId('yandex-auth-progress')).toBeNull());
-    expect(errorToast).toHaveBeenCalledWith('Не удалось открыть Яндекс', expect.any(Error));
+    await waitFor(() => expect(errorToast).toHaveBeenCalledWith('Не удалось открыть Яндекс', expect.any(Error)));
+    expect(screen.getByTestId('yandex-auth').props.accessibilityState.disabled).toBe(false);
+    expect(screen.queryByRole('progressbar')).toBeNull();
   });
 
   it('exchanges a native Yandex token and navigates after success on Android', async () => {
@@ -112,10 +104,11 @@ describe('YandexAuthButton', () => {
 
     await waitFor(() => expect(mockReplace).toHaveBeenCalledWith('/(tabs)/(home)'));
     expect(mockLoginMutation).toHaveBeenCalledWith({ accessToken: 'yandex-access-token' });
-    expect(screen.queryByTestId('yandex-auth-progress')).toBeNull();
+    expect(screen.queryByRole('progressbar')).toBeNull();
+    expect(screen.getByTestId('yandex-auth').props.accessibilityState.disabled).toBe(false);
   });
 
-  it('clears native progress without an error when Yandex sign-in is cancelled', async () => {
+  it('clears native loading and reports an error when Yandex returns no access token', async () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
     jest.mocked(loginWithYandexNative).mockResolvedValue(null);
 
@@ -123,8 +116,9 @@ describe('YandexAuthButton', () => {
     const user = userEvent.setup();
     await user.press(screen.getByTestId('yandex-auth'));
 
-    await waitFor(() => expect(screen.queryByTestId('yandex-auth-progress')).toBeNull());
+    await waitFor(() => expect(errorToast).toHaveBeenCalledWith('Не удалось войти через Яндекс', expect.any(Error)));
     expect(mockLoginMutation).not.toHaveBeenCalled();
-    expect(errorToast).not.toHaveBeenCalled();
+    expect(screen.queryByRole('progressbar')).toBeNull();
+    expect(screen.getByTestId('yandex-auth').props.accessibilityState.disabled).toBe(false);
   });
 });

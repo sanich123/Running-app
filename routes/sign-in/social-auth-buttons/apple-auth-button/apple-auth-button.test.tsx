@@ -214,7 +214,7 @@ describe('AppleAuthButton', () => {
     await user.press(screen.getByTestId('apple-auth'));
 
     await waitFor(() => expect(screen.queryByTestId('apple-auth-progress')).toBeNull());
-    expect(errorToast).toHaveBeenCalledWith(russianCopy.appleLoginFailed, expect.any(Error));
+    expect(errorToast).toHaveBeenCalledWith(russianCopy.appleLoginFailed);
     expect(mockLoginMutation).not.toHaveBeenCalled();
   });
 });
