@@ -48,6 +48,13 @@ describe('ProfileHeaderToolbar', () => {
     expect(screen.queryByTestId('profile-user-safety-menu')).toBeNull();
   });
 
+  it('keeps user safety actions hidden while the profile id is unavailable', async () => {
+    await renderWithProviders(<ProfileHeaderToolbar />);
+
+    expect(screen.queryByTestId('profile-user-safety-menu')).toBeNull();
+    expect(screen.getByLabelText(LABELS[LANGUAGES.russian].users)).toBeOnTheScreen();
+  });
+
   it('navigates to users and settings from native toolbar buttons', async () => {
     const user = userEvent.setup();
 
