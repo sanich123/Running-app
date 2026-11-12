@@ -6,10 +6,9 @@ import { LABELS, ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
 import FeedHeaderTitle from '@S/feed-header-title/feed-header-title';
-import { IOS_HEADER_ICON_COLOR } from '@S/header-icon-source';
 
 export default function ProfileStack() {
-  const { colors } = useTheme();
+  const { colors, dark } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const { back } = useRouter();
 
@@ -18,6 +17,7 @@ export default function ProfileStack() {
       screenOptions={{
         contentStyle: { backgroundColor: colors.background },
         headerBackButtonDisplayMode: Platform.OS === 'ios' || Platform.OS === 'web' ? 'minimal' : 'default',
+        headerUserInterfaceStyle: dark ? 'dark' : 'light',
         headerBackVisible: Platform.OS === 'android' ? false : undefined,
         headerLeft:
           Platform.OS === 'android'
@@ -34,7 +34,7 @@ export default function ProfileStack() {
                 ) : null
             : undefined,
         headerStyle: { backgroundColor: colors.surface },
-        headerTintColor: Platform.OS === 'ios' ? IOS_HEADER_ICON_COLOR : colors.onSurface,
+        headerTintColor: colors.onSurface,
         headerTitleStyle: {
           color: colors.primary,
           fontFamily: FONT_FAMILIES.semiBold,

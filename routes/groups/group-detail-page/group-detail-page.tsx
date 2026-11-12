@@ -6,6 +6,7 @@ import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useAppSelector } from '@R/typed-hooks';
 import EmptyState from '@S/empty-state/empty-state';
 import ErrorComponent from '@S/error-component/error-component';
+import { IOS_HEADER_ITEM_SPACING, IOS_HEADER_ITEM_WIDTH_PROPS } from '@S/header-toolbar-const';
 import ReportContentDialog from '@S/moderation/report-content-dialog/report-content-dialog';
 import { RESPONSIVE_DIALOG_STYLE } from '@S/responsive-dialog-style';
 import GroupDetailHeaderActions from './group-detail-header-actions/group-detail-header-actions';
@@ -55,6 +56,7 @@ export default function GroupDetailPage() {
               <Stack.Toolbar placement="right">
                 {canManageGroup && group.privacy === 'closed' ? (
                   <Stack.Toolbar.Button
+                    {...IOS_HEADER_ITEM_WIDTH_PROPS}
                     icon="person.2"
                     accessibilityLabel={actionCopy.manageRequests}
                     onPress={() => router.push(`/groups/${group.id}/requests` as never)}>
@@ -65,14 +67,24 @@ export default function GroupDetailPage() {
                     ) : null}
                   </Stack.Toolbar.Button>
                 ) : null}
+                {canManageGroup && group.privacy === 'closed' && isActiveMember ? (
+                  <Stack.Toolbar.Spacer width={IOS_HEADER_ITEM_SPACING} />
+                ) : null}
                 {isActiveMember ? (
                   <Stack.Toolbar.Button
+                    {...IOS_HEADER_ITEM_WIDTH_PROPS}
                     icon="plus"
                     accessibilityLabel={actionCopy.createContent}
                     onPress={() => router.push(`/groups/${group.id}/create-content` as never)}
                   />
                 ) : null}
-                <Stack.Toolbar.Menu icon="ellipsis" accessibilityLabel={actionCopy.groupActions}>
+                {(canManageGroup && group.privacy === 'closed') || isActiveMember ? (
+                  <Stack.Toolbar.Spacer width={IOS_HEADER_ITEM_SPACING} />
+                ) : null}
+                <Stack.Toolbar.Menu
+                  {...IOS_HEADER_ITEM_WIDTH_PROPS}
+                  icon="ellipsis"
+                  accessibilityLabel={actionCopy.groupActions}>
                   {isOwner
                     ? [
                         <Stack.Toolbar.MenuAction

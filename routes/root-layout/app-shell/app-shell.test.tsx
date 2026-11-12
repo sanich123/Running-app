@@ -46,13 +46,15 @@ jest.mock('expo-router', () => {
     options.headerTitle?.({ children: 'Home' });
     return React.createElement(View, null, children);
   };
-  const Stack = Object.assign(MockStack, { Screen: () => null });
+  const { Stack: toolbarStack } = require('@T/utils/expo-router-toolbar-mock').createExpoRouterToolbarMock();
+  const Stack = Object.assign(MockStack, { Screen: () => null, Toolbar: toolbarStack.Toolbar });
 
   return {
     Stack,
     Redirect: ({ href }: { href: string }) =>
       React.createElement(View, { testID: 'app-shell-sign-in-redirect', accessibilityLabel: href }),
     usePathname: () => mockPathname(),
+    useRouter: () => ({ push: jest.fn() }),
   };
 });
 

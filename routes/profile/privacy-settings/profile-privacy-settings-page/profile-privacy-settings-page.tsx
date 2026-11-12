@@ -5,6 +5,7 @@ import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
 import ErrorComponent from '@S/error-component/error-component';
 import ProfilePrivacySettings from '../profile-privacy-settings/profile-privacy-settings';
+import { getProfilePrivacySettingsProps } from '../utils';
 
 export default function ProfilePrivacySettingsPage() {
   const { colors } = useTheme();
@@ -19,6 +20,7 @@ export default function ProfilePrivacySettingsPage() {
   } = useGetUserProfileByUserIdQuery(userId ?? '', {
     skip: !userId,
   });
+  const privacySettings = profile && userId ? getProfilePrivacySettingsProps(userId, profile) : null;
 
   return (
     <ScrollView
@@ -36,34 +38,8 @@ export default function ProfilePrivacySettingsPage() {
         <ActivityIndicator size="large" testID="profile-privacy-settings-loading" />
       ) : isError ? (
         <ErrorComponent error={error} refetch={refetch} />
-      ) : profile && userId ? (
-        <ProfilePrivacySettings
-          key={[
-            profile.profileSearchVisible !== false,
-            profile.allowNewFollowers !== false,
-            profile.allowActivityInteractions !== false,
-            profile.allowActivityReplayViewing !== false,
-            profile.allowActivityHeartRateViewing !== false,
-            profile.allowActivityElevationViewing !== false,
-            profile.allowActivityPaceViewing !== false,
-            profile.allowActivitySharing !== false,
-            profile.hideActivityStatistics === true,
-            profile.hideFollowingList === true,
-            profile.hideProfilePhotos === true,
-          ].join(':')}
-          userId={userId}
-          profileSearchVisible={profile.profileSearchVisible !== false}
-          allowNewFollowers={profile.allowNewFollowers !== false}
-          allowActivityInteractions={profile.allowActivityInteractions !== false}
-          allowActivityReplayViewing={profile.allowActivityReplayViewing !== false}
-          allowActivityHeartRateViewing={profile.allowActivityHeartRateViewing !== false}
-          allowActivityElevationViewing={profile.allowActivityElevationViewing !== false}
-          allowActivityPaceViewing={profile.allowActivityPaceViewing !== false}
-          allowActivitySharing={profile.allowActivitySharing !== false}
-          hideActivityStatistics={profile.hideActivityStatistics === true}
-          hideFollowingList={profile.hideFollowingList === true}
-          hideProfilePhotos={profile.hideProfilePhotos === true}
-        />
+      ) : privacySettings ? (
+        <ProfilePrivacySettings key={Object.values(privacySettings).join(':')} {...privacySettings} />
       ) : null}
     </ScrollView>
   );

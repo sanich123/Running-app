@@ -95,7 +95,7 @@ export default function CloseBtn() {
           {isStoppingTracking ? (
             <ActivityIndicator size={18} color={IOS_ACTIVITY_HEADER_ICON_COLOR} />
           ) : (
-            <SymbolView name="xmark" size={24} tintColor={IOS_ACTIVITY_HEADER_ICON_COLOR} weight="semibold" />
+            <SymbolView name="xmark" size={24} tintColor={IOS_ACTIVITY_HEADER_ICON_COLOR} weight="regular" />
           )}
         </Pressable>
       ) : (
@@ -136,6 +136,10 @@ export default function CloseBtn() {
 const styles = StyleSheet.create({
   iosHeaderButton: {
     alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.72)',
+    borderColor: 'rgba(0, 0, 0, 0.12)',
+    borderRadius: 22,
+    borderWidth: StyleSheet.hairlineWidth,
     height: 44,
     justifyContent: 'center',
     width: 44,

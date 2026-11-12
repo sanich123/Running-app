@@ -1,5 +1,5 @@
 diff --git a/android/build.gradle b/android/build.gradle
-index 34fd57e..e122a1a 100644
+index 863b0ac8bbf4408a54c01ba2e882e001532edb15..8bf7ee6f073a5fbac7c3fbdc41df8d6ef27876ed 100644
 --- a/android/build.gradle
 +++ b/android/build.gradle
 @@ -17,5 +17,6 @@ android {
@@ -10,7 +10,7 @@ index 34fd57e..e122a1a 100644
    implementation "androidx.core:core-ktx:1.17.0"
  }
 diff --git a/android/src/main/java/expo/modules/location/LocationHelpers.kt b/android/src/main/java/expo/modules/location/LocationHelpers.kt
-index 2a8f0f1..dd5d986 100644
+index 2a8f0f138193aea83c240d49dd82cde8924d734e..dd5d986ff3a1cd81c1009f52c822edd326396af1 100644
 --- a/android/src/main/java/expo/modules/location/LocationHelpers.kt
 +++ b/android/src/main/java/expo/modules/location/LocationHelpers.kt
 @@ -3,12 +3,14 @@ package expo.modules.location
@@ -62,7 +62,7 @@ index 2a8f0f1..dd5d986 100644
  
      // Decorator for Permissions.getPermissionsWithPermissionsManager, for use in Kotlin coroutines
 diff --git a/android/src/main/java/expo/modules/location/LocationModule.kt b/android/src/main/java/expo/modules/location/LocationModule.kt
-index 8088ec6..dbc4896 100644
+index 8088ec6c731a4f07efbbe9724d19211e8c4b2ff6..dbc48967cfa6c353935bfdb5f5fdb75c9d97a1bc 100644
 --- a/android/src/main/java/expo/modules/location/LocationModule.kt
 +++ b/android/src/main/java/expo/modules/location/LocationModule.kt
 @@ -1,6 +1,7 @@
@@ -338,7 +338,7 @@ index 8088ec6..dbc4896 100644
      const val GEOFENCING_EVENT_ENTER = 1
      const val GEOFENCING_EVENT_EXIT = 2
 diff --git a/android/src/main/java/expo/modules/location/records/LocationResults.kt b/android/src/main/java/expo/modules/location/records/LocationResults.kt
-index a838c79..c158a64 100644
+index a838c799b1e1d37fe8d6e29179f7287ad668f705..c158a64760383117f231b6d66279ab5c8f83c64f 100644
 --- a/android/src/main/java/expo/modules/location/records/LocationResults.kt
 +++ b/android/src/main/java/expo/modules/location/records/LocationResults.kt
 @@ -104,9 +104,10 @@ internal class HeadingEventResponse(
@@ -373,7 +373,7 @@ index a838c79..c158a64 100644
  }
  
 diff --git a/android/src/main/java/expo/modules/location/taskConsumers/LocationTaskConsumer.kt b/android/src/main/java/expo/modules/location/taskConsumers/LocationTaskConsumer.kt
-index 8c129fc..a8d2dc0 100644
+index 8c129fc7605d217fd73c6648c0168a142857a1cc..a8d2dc0573ad605bdce3108eeca9998509e4fcf8 100644
 --- a/android/src/main/java/expo/modules/location/taskConsumers/LocationTaskConsumer.kt
 +++ b/android/src/main/java/expo/modules/location/taskConsumers/LocationTaskConsumer.kt
 @@ -1,6 +1,7 @@
@@ -634,7 +634,7 @@ index 8c129fc..a8d2dc0 100644
      val interval = (task.options["deferredUpdatesInterval"] as? Number)?.toLong() ?: 0L
      return newestLocation.time - oldestLocation.time >= interval && mDeferredDistance >= distance
 diff --git a/build/Location.types.d.ts b/build/Location.types.d.ts
-index 0596eef..52ef654 100644
+index 0596eef1074bebabd3ebcb824b9d43fa57e25f28..52ef65448bff66b25cf72d9d664eadd3903de31d 100644
 --- a/build/Location.types.d.ts
 +++ b/build/Location.types.d.ts
 @@ -234,7 +234,13 @@ export type LocationRegion = {
@@ -652,7 +652,7 @@ index 0596eef..52ef654 100644
       * The coordinates of the position.
       */
 diff --git a/src/Location.types.ts b/src/Location.types.ts
-index c43235c..6d38920 100644
+index c43235c0fa5c0afff0a327ad5846a923e0ab87cb..6d389200788b3bd21620ae6240a545a966158987 100644
 --- a/src/Location.types.ts
 +++ b/src/Location.types.ts
 @@ -255,7 +255,13 @@ export type LocationRegion = {

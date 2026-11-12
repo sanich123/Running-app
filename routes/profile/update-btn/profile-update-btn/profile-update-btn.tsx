@@ -8,7 +8,6 @@ import {
   type ProfileSettingsSearchParams,
 } from '@Routes/profile/profile-settings/profile-settings-params';
 import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
-import { IOS_HEADER_ICON_COLOR } from '@S/header-icon-source';
 import { UPDATE_BTN } from '../const';
 
 export default function ProfileUpdateBtn() {
@@ -40,7 +39,7 @@ export default function ProfileUpdateBtn() {
       disabled={isSaving}
       style={styles.layout}>
       {!isSaving && (
-        <Text variant="titleMedium" style={{ color: Platform.OS === 'ios' ? IOS_HEADER_ICON_COLOR : colors.primary }}>
+        <Text variant="titleMedium" style={{ color: Platform.OS === 'ios' ? colors.onSurface : colors.primary }}>
           {UPDATE_BTN[language].update}
         </Text>
       )}

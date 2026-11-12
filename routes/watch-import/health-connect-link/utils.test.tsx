@@ -1,11 +1,11 @@
 import { fireEvent, render } from '@testing-library/react-native';
 import { Text } from 'react-native-paper';
 import { HEALTH_CONNECT_PLAY_STORE_URL } from '../const';
-import { openExternalLink } from '../utils';
+import { openAppleHealth, openExternalLink } from '../utils';
 import { HEALTH_CONNECT_LINK_PHRASES } from './const';
 import { renderHealthConnectLinks } from './utils';
 
-jest.mock('../utils', () => ({ openExternalLink: jest.fn() }));
+jest.mock('../utils', () => ({ openAppleHealth: jest.fn(), openExternalLink: jest.fn() }));
 
 describe('renderHealthConnectLinks', () => {
   it('turns Health Connect mentions into links and leaves surrounding text readable', async () => {
@@ -24,6 +24,14 @@ describe('renderHealthConnectLinks', () => {
     fireEvent.press(getByRole('link', { name: phrase }));
 
     expect(openExternalLink).toHaveBeenCalledWith(HEALTH_CONNECT_PLAY_STORE_URL);
+  });
+
+  it('opens Apple Health when its link is pressed', async () => {
+    const phrase = HEALTH_CONNECT_LINK_PHRASES[3];
+    const { getByRole } = await render(<Text>{renderHealthConnectLinks(phrase, '#f60')}</Text>);
+    fireEvent.press(getByRole('link', { name: phrase }));
+
+    expect(openAppleHealth).toHaveBeenCalledTimes(1);
   });
 
   it('does not turn plain text into a link', async () => {

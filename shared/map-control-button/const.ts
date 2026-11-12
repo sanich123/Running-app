@@ -1,6 +1,10 @@
 import { StyleSheet } from 'react-native';
 import type { ViewStyle } from 'react-native';
 
+export const IOS_MAP_CONTROL_ICON_COLOR = '#000000';
+export const IOS_MAP_CONTROL_BACKGROUND_COLOR = 'rgba(255, 255, 255, 0.72)';
+export const IOS_MAP_CONTROL_OUTLINE_COLOR = 'rgba(0, 0, 0, 0.12)';
+
 export const getMapControlButtonSize = (screenWidth: number) => (screenWidth < 380 ? 48 : screenWidth < 430 ? 52 : 56);
 export const getMapControlButtonStyle = (size: number, backgroundColor: string, outlineColor: string): ViewStyle => ({
   alignItems: 'center',

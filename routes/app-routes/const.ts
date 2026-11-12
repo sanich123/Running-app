@@ -64,6 +64,9 @@ export const LazyProfilePage = lazy(() => import('@Routes/profile/profile-page/p
 export const LazyProfilePrivacySettingsPage = lazy(
   () => import('@Routes/profile/privacy-settings/profile-privacy-settings-page/profile-privacy-settings-page'),
 );
+export const LazyProfilePrivacyPreviewsPage = lazy(
+  () => import('@Routes/profile/privacy-settings/profile-privacy-previews-page/profile-privacy-previews-page'),
+);
 export const LazyAdminDashboard = lazy(() => import('@Routes/admin/admin-dashboard'));
 export const LazyNotificationsPage = lazy(() => import('@Routes/notifications/notifications-page/notifications-page'));
 export const LazyUpdateAppPage = lazy(() => import('@Routes/update-app/update-app-page/update-app-page'));

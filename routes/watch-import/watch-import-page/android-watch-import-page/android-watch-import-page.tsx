@@ -19,12 +19,14 @@ import ExpandableStep from '../../expandable-step/expandable-step';
 import { renderHealthConnectLinks } from '../../health-connect-link/utils';
 import LinkButton from '../../link-button/link-button';
 import { openExternalLink } from '../../utils';
+import SupportedWatchApps from '../../workout-import-content/supported-watch-apps/supported-watch-apps';
 import WorkoutImportContent from '../../workout-import-content/workout-import-content';
 import { useHealthConnectAccess } from './use-health-connect-access';
 
 export default function AndroidWatchImportPage() {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
+  const isRussian = language === LANGUAGES.russian;
   const {
     title,
     warning,
@@ -53,6 +55,7 @@ export default function AndroidWatchImportPage() {
       <Text variant="bodyMedium" style={[styles.bodyText, { color: colors.onSurfaceVariant }]}>
         {importMethods}
       </Text>
+      <SupportedWatchApps isRussian={isRussian} platform="android" />
 
       <ExpandableStep number={1} title={healthSyncInstall.title}>
         <Text variant="bodyMedium" style={[styles.bodyText, { color: colors.onSurfaceVariant }]}>

@@ -1,49 +1,16 @@
-import { useEffect, useRef } from 'react';
-import { AppState, Platform, View } from 'react-native';
-import { useIsFocused, useRouter } from 'expo-router';
+import { Platform, View } from 'react-native';
 import { Badge, Icon, TouchableRipple, useTheme } from 'react-native-paper';
-import { ROUTES } from '@const/enums';
-import { notificationsApi, useGetUnreadNotificationCountQuery } from '@R/services/notifications/notifications';
-import { useAppDispatch } from '@R/typed-hooks';
-import { getHeaderIconSource, HEADER_ICON_SIZE, IOS_HEADER_ICON_COLOR } from '@S/header-icon-source';
+import { getHeaderIconSource, HEADER_ICON_SIZE } from '@S/header-icon-source';
 import { NOTIFICATIONS_OVERFLOW_LABEL } from './const';
 import { notificationsBtnStyles as styles } from './styles';
+import useNotificationsButton from './use-notifications-button';
 
 export default function NotificationsBtn() {
   const { colors } = useTheme();
-  const { push } = useRouter();
-  const isFocused = useIsFocused();
-  const dispatch = useAppDispatch();
-  const { data: unreadCount = 0, refetch } = useGetUnreadNotificationCountQuery(undefined, {
-    refetchOnMountOrArgChange: true,
-    pollingInterval: isFocused ? 60_000 : 0,
-    skipPollingIfUnfocused: true,
-  });
-  const wasFocused = useRef(isFocused);
-  const iconSize = Platform.OS === 'ios' ? HEADER_ICON_SIZE : 26;
+  const { unreadCount, openNotifications } = useNotificationsButton();
+  const isIOS = Platform.OS === 'ios';
+  const iconSize = isIOS ? HEADER_ICON_SIZE : 26;
   const buttonRadius = (iconSize + 16) / 2;
-
-  useEffect(() => {
-    if (isFocused && !wasFocused.current) void refetch();
-    wasFocused.current = isFocused;
-    const subscription = AppState.addEventListener('change', (state) => {
-      if (state === 'active' && isFocused) void refetch();
-    });
-    return () => subscription.remove();
-  }, [isFocused, refetch]);
-
-  const openNotifications = () => {
-    void dispatch(
-      notificationsApi.endpoints.getNotifications.initiate(undefined, { subscribe: false, forceRefetch: true }),
-    );
-    void dispatch(
-      notificationsApi.endpoints.getUnreadNotificationCount.initiate(undefined, {
-        subscribe: false,
-        forceRefetch: true,
-      }),
-    );
-    push(`/${ROUTES.notifications}` as never);
-  };
 
   return (
     <TouchableRipple
@@ -69,8 +36,8 @@ export default function NotificationsBtn() {
       }}>
       <View pointerEvents="none" style={styles.contents}>
         <Icon
-          source={getHeaderIconSource('bell-outline', 'bell')}
-          color={Platform.OS === 'ios' ? IOS_HEADER_ICON_COLOR : colors.primary}
+          source={getHeaderIconSource('bell-outline', 'bell', colors.onSurface)}
+          color={Platform.OS === 'ios' ? colors.onSurface : colors.primary}
           size={iconSize}
         />
         {unreadCount > 0 ? (

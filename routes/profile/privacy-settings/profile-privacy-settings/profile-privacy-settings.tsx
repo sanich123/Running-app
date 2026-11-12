@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import * as MediaLibrary from 'expo-media-library';
 import { Platform, StyleSheet, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import { List, Switch, Text, useTheme } from 'react-native-paper';
+import { ROUTES } from '@const/enums';
 import { useUpdateProfileByUserIdMutation } from '@R/services/profile/profile';
 import { setSaveCameraPhotosToGallery } from '@R/slices/activity-settings/activity-settings';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import GroupNotificationSettings from '@Routes/groups/group-notification-settings/group-notification-settings';
 import { errorToast } from '@S/error-toast/error-toast';
 import { PROFILE_PRIVACY_SETTING_SECTIONS, PROFILE_PRIVACY_SETTINGS, type ProfilePrivacySettingKey } from '../const';
-import ActivityPrivacyPreview from './activity-privacy-preview/activity-privacy-preview';
-import ProfilePrivacyPreview from './profile-privacy-preview/profile-privacy-preview';
 import { getPrivacyValues } from './utils';
 import type { ProfilePrivacySettingsProps, ProfilePrivacyValues } from './types';
 import type { ProfileSettings } from '@R/services/profile/types';
@@ -29,13 +29,12 @@ export default function ProfilePrivacySettings({
   hideProfilePhotos,
 }: ProfilePrivacySettingsProps) {
   const { colors } = useTheme();
+  const { push } = useRouter();
   const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ settings }) => settings);
   const { saveCameraPhotosToGallery } = useAppSelector(({ activitySettings }) => activitySettings);
   const [updateProfile, { isLoading }] = useUpdateProfileByUserIdMutation();
   const [isRequestingGalleryPermission, setIsRequestingGalleryPermission] = useState(false);
-  const [isProfilePreviewExpanded, setIsProfilePreviewExpanded] = useState(false);
-  const [isActivityPreviewExpanded, setIsActivityPreviewExpanded] = useState(false);
   const [settings, setSettings] = useState<ProfilePrivacyValues>(() =>
     getPrivacyValues({
       userId,
@@ -115,53 +114,16 @@ export default function ProfilePrivacySettings({
               />
             </View>
           ))}
-          {title === 'activitySectionTitle' ? (
-            <List.Accordion
-              testID="activity-preview-accordion"
-              title={text.activityPreviewTitle}
-              titleStyle={{ color: colors.onSurface }}
-              expanded={isActivityPreviewExpanded}
-              onPress={() => setIsActivityPreviewExpanded((expanded) => !expanded)}
-              style={[
-                styles.previewAccordion,
-                { backgroundColor: colors.background, borderColor: colors.outlineVariant },
-              ]}>
-              <ActivityPrivacyPreview
-                allowActivityInteractions={settings.allowActivityInteractions}
-                allowActivityReplayViewing={settings.allowActivityReplayViewing}
-                allowActivityHeartRateViewing={settings.allowActivityHeartRateViewing}
-                allowActivityElevationViewing={settings.allowActivityElevationViewing}
-                allowActivityPaceViewing={settings.allowActivityPaceViewing}
-                allowActivitySharing={settings.allowActivitySharing}
-                hideHeading
-                language={language}
-              />
-            </List.Accordion>
-          ) : null}
-          {title === 'profileSectionTitle' ? (
-            <List.Accordion
-              testID="profile-preview-accordion"
-              title={text.profilePreviewTitle}
-              titleStyle={{ color: colors.onSurface }}
-              expanded={isProfilePreviewExpanded}
-              onPress={() => setIsProfilePreviewExpanded((expanded) => !expanded)}
-              style={[
-                styles.previewAccordion,
-                { backgroundColor: colors.background, borderColor: colors.outlineVariant },
-              ]}>
-              <ProfilePrivacyPreview
-                profileSearchVisible={settings.profileSearchVisible}
-                allowNewFollowers={settings.allowNewFollowers}
-                hideActivityStatistics={settings.hideActivityStatistics}
-                hideFollowingList={settings.hideFollowingList}
-                hideProfilePhotos={settings.hideProfilePhotos}
-                hideHeading
-                language={language}
-              />
-            </List.Accordion>
-          ) : null}
         </View>
       ))}
+      <List.Item
+        testID="privacy-previews-button"
+        title={text.privacyPreviewsButton}
+        titleStyle={{ color: colors.onSurface }}
+        left={() => <List.Icon color={colors.primary} icon="eye-outline" />}
+        right={() => <List.Icon color={colors.onSurfaceVariant} icon="chevron-right" />}
+        onPress={() => push(`/settings/${ROUTES.profilePrivacySettings}/${ROUTES.profilePrivacyPreviews}` as never)}
+      />
       <GroupNotificationSettings />
       {Platform.OS !== 'web' && (
         <View style={styles.group}>
@@ -200,7 +162,6 @@ const styles = StyleSheet.create({
   groupTitle: {
     fontWeight: '600',
   },
-  previewAccordion: { borderRadius: 8, borderWidth: 1, marginTop: 4, overflow: 'hidden' },
   setting: {
     alignItems: 'center',
     flexDirection: 'row',

@@ -22,6 +22,7 @@ const groupRequests: URL[] = [];
 let testStore: ReturnType<typeof createMockStore>;
 interface MockStackScreenProps {
   options?: { headerTitle?: () => ReactNode; headerRight?: () => ReactNode };
+  children?: ReactNode;
 }
 
 function mockStackScreen({ options }: MockStackScreenProps) {
@@ -33,7 +34,13 @@ function mockStackScreen({ options }: MockStackScreenProps) {
   );
 }
 
-jest.mock('expo-router', () => ({ Stack: { Screen: mockStackScreen }, useRouter: () => ({ push: mockPush }) }));
+jest.mock('expo-router', () => {
+  const { Stack: toolbarStack } = require('@T/utils/expo-router-toolbar-mock').createExpoRouterToolbarMock();
+  return {
+    Stack: { ...toolbarStack, Screen: mockStackScreen },
+    useRouter: () => ({ push: mockPush }),
+  };
+});
 
 describe('GroupsPage', () => {
   beforeEach(() => {

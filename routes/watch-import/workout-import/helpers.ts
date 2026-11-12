@@ -1,20 +1,17 @@
-import { WORKOUT_IMPORT_COPY, READ_STAGE_LABELS, ROUTE_STATUS_LABELS, UPLOAD_SKIP_REASON_LABELS } from './const';
-import type {
-  HealthConnectReadStage,
-  WatchWorkout,
-  WatchWorkoutRouteStatus,
-} from '../../../modules/runich-health/src/RunichHealth';
-import type {
-  DiagnosticItem,
-  ReadDiagnostics,
-  UploadDiagnostics,
-  UploadSkipReason,
-  WorkoutUploadDiagnostic,
-} from './types';
+import { WORKOUT_IMPORT_COPY, READ_STAGE_LABELS, UPLOAD_SKIP_REASON_LABELS } from './const';
+import type { HealthConnectReadStage, WatchWorkout } from '../../../modules/runich-health/src/RunichHealth';
+import type { DiagnosticItem, ReadDiagnostics, UploadDiagnostics, UploadSkipReason } from './types';
 import type { WatchWorkoutToSend } from '@R/services/activity/types';
 
 const MAX_IMPORT_BATCH_BYTES = 4 * 1024 * 1024;
 const MAX_IMPORT_BATCH_WORKOUTS = 50;
+const DIAGNOSTIC_DATE_TIME_OPTIONS: Intl.DateTimeFormatOptions = {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+};
 
 function getUtf8ByteLength(value: string): number {
   let byteLength = 0;
@@ -72,11 +69,6 @@ export function getRequestErrorStatus(error: unknown): string {
   return getDiagnosticErrorCode(error);
 }
 
-export function getRouteStatusLabel(status: WatchWorkoutRouteStatus | undefined, isRussian: boolean): string {
-  if (!status) return isRussian ? 'статус маршрута недоступен' : 'route status unavailable';
-  return ROUTE_STATUS_LABELS[status][isRussian ? 0 : 1];
-}
-
 export function getBooleanLabel(value: boolean | undefined, isRussian: boolean): string {
   if (value === undefined) return isRussian ? 'неизвестно' : 'unknown';
   return value ? (isRussian ? 'да' : 'yes') : isRussian ? 'нет' : 'no';
@@ -126,7 +118,7 @@ export function getReadDiagnosticItems(diagnostics: ReadDiagnostics | null, isRu
 
   const dateLocale = isRussian ? 'ru-RU' : 'en-US';
   const items: DiagnosticItem[] = [
-    { label: copy.lastRead, value: new Date(diagnostics.at).toLocaleString(dateLocale) },
+    { label: copy.lastRead, value: new Date(diagnostics.at).toLocaleString(dateLocale, DIAGNOSTIC_DATE_TIME_OPTIONS) },
     { label: copy.range, value: `${diagnostics.startDate.slice(0, 10)} — ${diagnostics.endDate.slice(0, 10)}` },
     {
       label: copy.status,
@@ -148,58 +140,16 @@ export function getReadDiagnosticItems(diagnostics: ReadDiagnostics | null, isRu
   return items;
 }
 
-export function formatWorkoutDiagnostics(
-  workout: WatchWorkout,
-  index: number,
-  isRussian: boolean,
-  uploadDiagnostic?: WorkoutUploadDiagnostic,
-): string {
-  const copy = WORKOUT_IMPORT_COPY[isRussian ? 'ru' : 'en'].diagnostics;
-  const routePointCount = workout.diagnostics?.routePointCount ?? workout.locations.length;
-  const recordId = workout.diagnostics?.sessionRecordId;
-  const heartRateSampleCount = workout.diagnostics?.heartRateSampleCount ?? workout.heartRateSamples?.length ?? 0;
-  const activeCaloriesRecordCount = workout.diagnostics?.activeCaloriesRecordCount ?? 0;
-  const details = [
-    `${index + 1}. ${new Date(workout.date).toLocaleString(isRussian ? 'ru-RU' : 'en-US')}`,
-    workout.sport,
-    `${Math.round(workout.distance)} m`,
-    `${workout.duration ? Math.round(workout.duration / 60_000) : 0} min`,
-    `${copy.origin}: ${workout.diagnostics?.dataOrigin ?? 'unknown'}`,
-    `${copy.route}: ${getRouteStatusLabel(workout.diagnostics?.routeStatus, isRussian)}`,
-    `${copy.points}: ${routePointCount}`,
-    `${copy.heartRatePermission}: ${getBooleanLabel(workout.diagnostics?.heartRatePermissionGranted, isRussian)}`,
-    `${copy.heartRateSamples}: ${heartRateSampleCount}`,
-    `${copy.activeCaloriesPermission}: ${getBooleanLabel(workout.diagnostics?.activeCaloriesPermissionGranted, isRussian)}`,
-    `${copy.activeCaloriesRecords}: ${activeCaloriesRecordCount}`,
-    `${copy.activeCalories}: ${workout.caloriesActive ?? '—'}`,
-  ];
-  if (uploadDiagnostic) {
-    details.push(
-      `${copy.heartRateUpload}: ${uploadDiagnostic.payloadHeartRateSampleCount}/${uploadDiagnostic.sourceHeartRateSampleCount} (${copy.heartRateUploadOutcomes[uploadDiagnostic.outcome]})`,
-    );
-  }
-  if (recordId) details.push(`id: ${recordId.slice(-8)}`);
-  if (workout.diagnostics?.routeErrorCode) {
-    details.push(`${copy.routeError}: ${workout.diagnostics.routeErrorCode}`);
-  }
-  if (workout.diagnostics?.heartRateErrorCode) {
-    details.push(`${copy.heartRateError}: ${workout.diagnostics.heartRateErrorCode}`);
-  }
-  return details.join(' · ');
-}
-
-export function formatWorkoutCountNotice(count: number, isRussian: boolean): string {
-  const template = WORKOUT_IMPORT_COPY[isRussian ? 'ru' : 'en'].diagnostics.showingFirst;
-  return template.replace('{shown}', '50').replace('{total}', String(count));
-}
-
 export function getUploadDiagnosticItems(diagnostics: UploadDiagnostics | null, isRussian: boolean): DiagnosticItem[] {
   const copy = WORKOUT_IMPORT_COPY[isRussian ? 'ru' : 'en'].diagnostics;
   if (!diagnostics) return [{ label: copy.status, tone: 'muted', value: copy.noUpload }];
 
   const dateLocale = isRussian ? 'ru-RU' : 'en-US';
   const items: DiagnosticItem[] = [
-    { label: copy.uploadStatus, value: new Date(diagnostics.at).toLocaleString(dateLocale) },
+    {
+      label: copy.uploadStatus,
+      value: new Date(diagnostics.at).toLocaleString(dateLocale, DIAGNOSTIC_DATE_TIME_OPTIONS),
+    },
     {
       label: copy.status,
       tone: diagnostics.outcome === 'error' ? 'error' : diagnostics.outcome === 'success' ? 'success' : 'default',

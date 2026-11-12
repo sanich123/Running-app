@@ -30,7 +30,7 @@ export default function DiagnosticMetric({ isRussian, label, status, value }: Di
 }
 
 const styles = StyleSheet.create({
-  metric: { gap: 4, justifyContent: 'space-between', minHeight: 48, width: '47%' },
+  metric: { gap: 2, justifyContent: 'space-between', minHeight: 38, width: '47%' },
   value: { fontWeight: '600' },
-  status: { alignSelf: 'flex-start', borderRadius: 999, paddingHorizontal: 9, paddingVertical: 4 },
+  status: { alignSelf: 'flex-start', borderRadius: 999, paddingHorizontal: 8, paddingVertical: 2 },
 });

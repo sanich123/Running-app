@@ -19,7 +19,7 @@ export default function DiagnosticList({ items }: DiagnosticListProps) {
                 : colors.onSurface;
 
         return (
-          <View key={`${item.label}-${index}`} style={styles.row}>
+          <View key={`${item.label}-${index}`} style={styles.item}>
             <Text variant="labelMedium" style={[styles.label, { color: colors.onSurfaceVariant }]}>
               {renderHealthConnectLinks(item.label, colors.primary)}
             </Text>
@@ -34,8 +34,8 @@ export default function DiagnosticList({ items }: DiagnosticListProps) {
 }
 
 const styles = StyleSheet.create({
-  list: { borderRadius: 10, overflow: 'hidden' },
-  row: { alignItems: 'flex-start', flexDirection: 'row', gap: 12, minHeight: 38, paddingVertical: 8 },
-  label: { flex: 0.9 },
-  value: { flex: 1.4, lineHeight: 18, textAlign: 'right' },
+  list: { flexDirection: 'row', flexWrap: 'wrap', columnGap: 12, rowGap: 6 },
+  item: { gap: 0, minWidth: '46%', flexGrow: 1, flexBasis: '46%' },
+  label: { fontSize: 11, lineHeight: 13 },
+  value: { fontSize: 12, lineHeight: 15 },
 });

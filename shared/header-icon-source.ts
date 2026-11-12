@@ -4,15 +4,19 @@ import { SymbolView, type SFSymbol } from 'expo-symbols';
 import { Platform } from 'react-native';
 
 export const HEADER_ICON_SIZE = 24;
-export const IOS_HEADER_ICON_COLOR = '#000000';
 
-export function getHeaderIconSource(androidIcon: string, iosSymbol: SFSymbol) {
+export function getHeaderIconSource(
+  androidIcon: string,
+  iosSymbol: SFSymbol,
+  iosTintColor: string,
+  iosIconSize = HEADER_ICON_SIZE,
+) {
   return Platform.OS === 'ios'
     ? (): ReactNode =>
         createElement(SymbolView, {
           name: iosSymbol,
-          size: HEADER_ICON_SIZE,
-          tintColor: IOS_HEADER_ICON_COLOR,
+          size: iosIconSize,
+          tintColor: iosTintColor,
           weight: 'medium',
         })
     : androidIcon;

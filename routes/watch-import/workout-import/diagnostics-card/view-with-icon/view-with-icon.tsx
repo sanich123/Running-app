@@ -11,17 +11,19 @@ export default function ViewWithIcon({ icon, subtitle, title }: ViewWithIconProp
         <Icon source={icon} size={22} color={colors.primary} />
       </View>
       <View style={styles.copy}>
-        <Text variant="titleMedium">{title}</Text>
-        <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
-          {subtitle}
-        </Text>
+        <Text variant="titleSmall">{title}</Text>
+        {subtitle ? (
+          <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+            {subtitle}
+          </Text>
+        ) : null}
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  header: { alignItems: 'center', flexDirection: 'row', gap: 12, minWidth: 0 },
-  icon: { alignItems: 'center', borderRadius: 14, height: 42, justifyContent: 'center', width: 42 },
+  header: { alignItems: 'center', flexDirection: 'row', gap: 8, minWidth: 0 },
+  icon: { alignItems: 'center', borderRadius: 11, height: 34, justifyContent: 'center', width: 34 },
   copy: { flex: 1, gap: 2, minWidth: 0 },
 });

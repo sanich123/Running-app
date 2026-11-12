@@ -14,7 +14,7 @@ import {
 import { useAppSelector } from '@R/typed-hooks';
 import VideoViewer from '@Routes/photo-viewer/video-viewer/video-viewer';
 import CustomImage from '@S/custom-image/custom-image';
-import { HEADER_ICON_SIZE, IOS_HEADER_ICON_COLOR } from '@S/header-icon-source';
+import { HEADER_ICON_SIZE } from '@S/header-icon-source';
 import MediaModerationPlaceholder from '@S/media-moderation-placeholder/media-moderation-placeholder';
 import { getPhotoUrl, isDirectMediaUrl, isVideoUrl } from './utils';
 import type { ActivityMediaItemResponse } from '@R/runich-api/activity-types';
@@ -157,7 +157,7 @@ export default function PhotoViewer() {
           hitSlop={8}
           style={[styles.backButton, { top: Math.max(insets.top, 8) + 8 }]}>
           {Platform.OS === 'ios' ? (
-            <SymbolView name="chevron.left" size={HEADER_ICON_SIZE} tintColor={IOS_HEADER_ICON_COLOR} weight="medium" />
+            <SymbolView name="chevron.left" size={HEADER_ICON_SIZE} tintColor={colors.onSurface} weight="medium" />
           ) : (
             <Icon source="arrow-left" size={30} color="#fff" />
           )}

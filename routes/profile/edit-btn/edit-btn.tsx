@@ -4,7 +4,6 @@ import { Button, Text, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
-import { IOS_HEADER_ICON_COLOR } from '@S/header-icon-source';
 import { EDIT_BTN } from './const';
 
 export default function EditBtn() {
@@ -26,7 +25,7 @@ export default function EditBtn() {
       }
       style={styles.layout}>
       {!isLoading && (
-        <Text variant="titleMedium" style={{ color: Platform.OS === 'ios' ? IOS_HEADER_ICON_COLOR : colors.primary }}>
+        <Text variant="titleMedium" style={{ color: Platform.OS === 'ios' ? colors.onSurface : colors.primary }}>
           {EDIT_BTN[language].edit}
         </Text>
       )}

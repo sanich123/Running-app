@@ -2,7 +2,7 @@ import { Platform, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { IconButton, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
-import { getHeaderIconSource, HEADER_ICON_SIZE, IOS_HEADER_ICON_COLOR } from '@S/header-icon-source';
+import { getHeaderIconSource, HEADER_ICON_SIZE } from '@S/header-icon-source';
 import { GROUPS_COPY } from '../../const';
 
 export default function GroupsPageHeaderActions() {
@@ -14,8 +14,8 @@ export default function GroupsPageHeaderActions() {
   return (
     <View style={styles.headerActions}>
       <IconButton
-        icon={getHeaderIconSource('account-multiple-plus-outline', 'plus')}
-        iconColor={Platform.OS === 'ios' ? IOS_HEADER_ICON_COLOR : colors.primary}
+        icon={getHeaderIconSource('account-multiple-plus-outline', 'plus', colors.onSurface)}
+        iconColor={Platform.OS === 'ios' ? colors.onSurface : colors.primary}
         accessibilityLabel={create}
         onPress={() => router.push('/groups/create' as never)}
         size={HEADER_ICON_SIZE}

@@ -3,7 +3,8 @@ import { Stack, useRouter } from 'expo-router';
 import { IconButton, useTheme } from 'react-native-paper';
 import { LABELS, LANGUAGES, ROUTES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
-import { getHeaderIconSource, HEADER_ICON_SIZE, IOS_HEADER_ICON_COLOR } from '@S/header-icon-source';
+import { getHeaderIconSource, HEADER_ICON_SIZE } from '@S/header-icon-source';
+import { IOS_HEADER_ITEM_WIDTH_PROPS } from '@S/header-toolbar-const';
 import AddTrackMenu from './add-track-menu/add-track-menu';
 import { MAPS_PAGE_COPY } from './const';
 import { importTrackFile } from './import-track';
@@ -39,7 +40,7 @@ export default function MapsPage({ mode = 'maps' }: { mode?: 'maps' | 'routes' }
               return (
                 <IconButton
                   accessibilityLabel={actionLabel}
-                  icon={getHeaderIconSource('plus', 'plus')}
+                  icon={getHeaderIconSource('plus', 'plus', colors.onSurface)}
                   iconColor={colors.primary}
                   size={HEADER_ICON_SIZE}
                   onPress={() => router.push(`/${ROUTES.createOfflineMap}` as never)}
@@ -52,7 +53,11 @@ export default function MapsPage({ mode = 'maps' }: { mode?: 'maps' | 'routes' }
         {Platform.OS === 'ios' ? (
           <Stack.Toolbar placement="right">
             {isRoutesPage ? (
-              <Stack.Toolbar.Menu icon="plus" accessibilityLabel={actionLabel} tintColor={IOS_HEADER_ICON_COLOR}>
+              <Stack.Toolbar.Menu
+                {...IOS_HEADER_ITEM_WIDTH_PROPS}
+                icon="plus"
+                accessibilityLabel={actionLabel}
+                tintColor={colors.onSurface}>
                 <Stack.Toolbar.MenuAction icon="figure.run" onPress={() => router.push(`/${ROUTES.addTrack}` as never)}>
                   {copy.addTrackFromWorkouts}
                 </Stack.Toolbar.MenuAction>
@@ -62,9 +67,10 @@ export default function MapsPage({ mode = 'maps' }: { mode?: 'maps' | 'routes' }
               </Stack.Toolbar.Menu>
             ) : (
               <Stack.Toolbar.Button
+                {...IOS_HEADER_ITEM_WIDTH_PROPS}
                 icon="plus"
                 accessibilityLabel={actionLabel}
-                tintColor={IOS_HEADER_ICON_COLOR}
+                tintColor={colors.onSurface}
                 onPress={() => router.push(`/${ROUTES.createOfflineMap}` as never)}
               />
             )}

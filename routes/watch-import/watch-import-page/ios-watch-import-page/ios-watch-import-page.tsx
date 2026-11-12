@@ -6,13 +6,14 @@ import { useAppSelector } from '@R/typed-hooks';
 import { IOS_WATCH_IMPORT_COPY } from '../../const';
 import ExpandableStep from '../../expandable-step/expandable-step';
 import { renderAppleHealthLinks } from '../../utils';
+import SupportedWatchApps from '../../workout-import-content/supported-watch-apps/supported-watch-apps';
 import WorkoutImportContent from '../../workout-import-content/workout-import-content';
 
 export default function IOSWatchImportPage() {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
-  const { title, intro, sourceApp, runich, compare, compareTitle } =
-    IOS_WATCH_IMPORT_COPY[language === LANGUAGES.russian ? 'ru' : 'en'];
+  const isRussian = language === LANGUAGES.russian;
+  const { title, intro, sourceApp, runich } = IOS_WATCH_IMPORT_COPY[isRussian ? 'ru' : 'en'];
 
   return (
     <>
@@ -20,6 +21,7 @@ export default function IOSWatchImportPage() {
       <Text variant="bodyMedium" style={[styles.bodyText, { color: colors.onSurfaceVariant }]}>
         {renderAppleHealthLinks(intro, colors.primary)}
       </Text>
+      <SupportedWatchApps isRussian={isRussian} platform="ios" />
       <ExpandableStep number={1} title={sourceApp.title}>
         <Text variant="bodyMedium" style={[styles.bodyText, { color: colors.onSurfaceVariant }]}>
           {renderAppleHealthLinks(sourceApp.description, colors.primary)}
@@ -31,11 +33,6 @@ export default function IOSWatchImportPage() {
         </Text>
       </ExpandableStep>
       <WorkoutImportContent autoSync showIntro={false} />
-      <ExpandableStep number={3} title={compareTitle} keepMounted>
-        <Text variant="bodyMedium" style={[styles.bodyText, { color: colors.onSurfaceVariant }]}>
-          {renderAppleHealthLinks(compare, colors.primary)}
-        </Text>
-      </ExpandableStep>
     </>
   );
 }
