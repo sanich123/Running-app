@@ -57,7 +57,21 @@ export async function uploadWorkoutBatches(
       updateWorkoutOutcomes(currentBatchSourceKeys, 'sending');
       setUploadDiagnostics({ ...diagnostics, workouts: workoutDiagnostics });
       const batchResult = await importWorkouts({ id: userId, workouts }).unwrap();
-      updateWorkoutOutcomes(currentBatchSourceKeys, 'uploaded');
+      const importedKeys = new Set(
+        batchResult.activities.flatMap(({ source, sourceActivityId }) =>
+          source && sourceActivityId ? [`${source}:${sourceActivityId}`] : [],
+        ),
+      );
+      updateWorkoutOutcomes(
+        workouts.filter((workout) => importedKeys.has(getWatchWorkoutSourceKey(workout))).map(getWatchWorkoutSourceKey),
+        'imported',
+      );
+      updateWorkoutOutcomes(
+        workouts
+          .filter((workout) => !importedKeys.has(getWatchWorkoutSourceKey(workout)))
+          .map(getWatchWorkoutSourceKey),
+        'skipped',
+      );
       imported += batchResult.imported;
       skipped += batchResult.skipped;
       activities.push(...batchResult.activities);

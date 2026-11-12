@@ -2,16 +2,22 @@ import type { PropsWithChildren } from 'react';
 import { act, renderHook, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { Provider } from 'react-redux';
-import { AppState } from 'react-native';
+import { AppState, Platform } from 'react-native';
 import type { AppStateStatus } from 'react-native';
 import { resetAuthSlice } from '@R/slices/auth/auth';
 import * as errorToastModule from '@S/error-toast/error-toast';
 import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
-import { getAutoSyncKey, getConnectionKey, getWorkoutId, HIDDEN_WORKOUTS_KEY } from './helpers';
-import type * as WorkoutImportModule from './use-workout-import';
+import {
+  getAutoSyncKey,
+  getConnectionKey,
+  getHealthKitAuthorizationRequestKey,
+  getWorkoutId,
+  HIDDEN_WORKOUTS_KEY,
+} from './helpers';
 import type { WatchWorkout } from '../../../modules/runich-health/src/RunichHealth';
+import type * as WorkoutImportModule from './use-workout-import';
 
 const mockGetAvailability = jest.fn();
 const mockGetPermissions = jest.fn();
@@ -19,6 +25,7 @@ const mockRequestPermissions = jest.fn();
 const mockReadWorkouts = jest.fn();
 const mockGetItemAsync = jest.fn();
 const mockSetItemAsync = jest.fn();
+const originalPlatformOS = Platform.OS;
 
 jest.mock('../../../modules/runich-health/src/RunichHealth', () => ({
   RunichHealth: {
@@ -61,11 +68,16 @@ describe('useWorkoutImport', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
     importedWorkoutBatches = [];
     server.use(
       http.post(`${BASE_URL}/activity/:userId/watch-import`, async ({ request }) => {
         importedWorkoutBatches.push({ url: new URL(request.url).pathname, body: await request.json() });
-        return HttpResponse.json({ imported: 1, skipped: 0, activities: [] });
+        return HttpResponse.json({
+          imported: 1,
+          skipped: 0,
+          activities: [{ id: 'activity-1', source: 'health-connect', sourceActivityId: 'health-record-1' }],
+        });
       }),
     );
     mockGetAvailability.mockResolvedValue('available');
@@ -96,6 +108,7 @@ describe('useWorkoutImport', () => {
 
   afterEach(async () => {
     jest.restoreAllMocks();
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: originalPlatformOS });
     await act(async () => {
       mockStore.dispatch(resetAuthSlice());
     });
@@ -148,7 +161,7 @@ describe('useWorkoutImport', () => {
         expect.objectContaining({
           sourceHeartRateSampleCount: 2,
           payloadHeartRateSampleCount: 2,
-          outcome: 'uploaded',
+          outcome: 'imported',
         }),
       ],
     });
@@ -222,6 +235,29 @@ describe('useWorkoutImport', () => {
     expect(mockSetItemAsync).toHaveBeenCalledWith(getAutoSyncKey('user-1'), 'true');
     expect(mockReadWorkouts).toHaveBeenCalledTimes(1);
     expect(importedWorkoutBatches).toHaveLength(1);
+  });
+
+  it('ignores the legacy connection marker on iOS until the user requests HealthKit access', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'ios' });
+    mockGetPermissions.mockResolvedValue({ available: true });
+    mockGetItemAsync.mockImplementation((key: string) =>
+      Promise.resolve(key === getConnectionKey('user-1') ? 'true' : null),
+    );
+
+    const { result } = await renderHook(() => useWorkoutImport(), { wrapper: Wrapper });
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(result.current.isConnected).toBe(false);
+    expect(mockReadWorkouts).not.toHaveBeenCalled();
+    expect(mockRequestPermissions).not.toHaveBeenCalled();
+
+    await act(async () => {
+      await result.current.connect();
+    });
+
+    expect(mockRequestPermissions).toHaveBeenCalledTimes(1);
+    expect(mockSetItemAsync).toHaveBeenCalledWith(getHealthKitAuthorizationRequestKey('user-1'), 'true');
+    expect(result.current.isConnected).toBe(true);
   });
 
   it('persists changes to the auto-sync switch', async () => {

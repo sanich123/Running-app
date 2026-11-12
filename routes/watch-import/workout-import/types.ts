@@ -14,7 +14,7 @@ export interface ReadDiagnostics {
 
 export type UploadSkipReason = 'read-failed' | 'no-user' | 'no-workouts' | 'manual-selection';
 
-export type WorkoutUploadOutcome = 'not-sent' | 'sending' | 'uploaded' | 'error';
+export type WorkoutUploadOutcome = 'not-sent' | 'sending' | 'imported' | 'skipped' | 'error';
 
 export interface WorkoutUploadDiagnostic {
   source: HealthStore;

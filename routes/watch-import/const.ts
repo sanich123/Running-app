@@ -14,9 +14,39 @@ export const HEALTH_SYNC_CONFIG_SCREENSHOT_URL =
 export const IOS_WATCH_IMPORT_COPY = {
   en: {
     title: 'Connect Apple Health',
+    intro:
+      'First allow your watch app to save workouts to Apple Health, then connect Runich. Runich imports each workout once and skips workouts already saved in your Runich account.',
+    sourceApp: {
+      title: 'Set up your watch app',
+      description:
+        '1. In the watch app on your iPhone, find Apple Health, HealthKit, or connected apps in its settings and enable workout sync. The menu name depends on the watch manufacturer.\n\n2. Allow the app to write Workouts, Workout Routes, and Heart Rate if those options are available. Some apps export the workout but not the route or heart-rate samples.\n\n3. Sync a workout, then tap Open Apple Health. Find it under Activity → Workouts. Open the workout to check its map; check Heart → Heart Rate for samples recorded during the same time.',
+    },
+    runich: {
+      title: 'Connect Runich to Apple Health',
+      description:
+        '1. Tap the button below. Runich will ask Apple Health for read access to workouts, workout routes, and heart rate.\n\n2. To review or change access later, tap Open Apple Health, then your profile picture → Apps → Runich. Enable Workouts, Workout Routes, and Heart Rate.\n\n3. Apple Health does not tell Runich whether read access was denied. If workouts or measurements are missing, check these switches in Apple Health and make sure the watch app has written the data there.',
+    },
+    compare:
+      'Use Open Apple Health to compare the workouts, route map, and heart-rate samples with the workouts and sample counts in Runich diagnostics.',
+    compareTitle: 'Compare Apple Health and Runich',
   },
   ru: {
     title: 'Подключить Apple Health',
+    intro:
+      'Сначала разрешите приложению часов сохранять тренировки в Apple Health, затем подключите Runich. Каждая тренировка добавляется в Runich один раз; уже импортированные тренировки пропускаются.',
+    sourceApp: {
+      title: 'Настройте приложение часов',
+      description:
+        '1. В приложении часов на iPhone найдите в настройках Apple Health, HealthKit или подключённые приложения и включите синхронизацию тренировок. Название пункта зависит от производителя часов.\n\n2. Разрешите приложению записывать тренировки, маршруты тренировок и пульс, если такие переключатели доступны. Некоторые приложения передают саму тренировку, но не маршрут или измерения пульса.\n\n3. Синхронизируйте тренировку и нажмите «Откройте Apple Health». Найдите её в разделе «Активность» → «Тренировки». Откройте тренировку и проверьте карту; измерения за то же время проверьте в разделе «Сердце» → «Пульс».',
+    },
+    runich: {
+      title: 'Подключите Runich к Apple Health',
+      description:
+        '1. Нажмите кнопку ниже. Runich запросит у Apple Health доступ на чтение тренировок, маршрутов и пульса.\n\n2. Чтобы проверить или изменить доступ позже, нажмите «Откройте Apple Health», затем аватар профиля → «Приложения» → Runich. Включите тренировки, маршруты тренировок и пульс.\n\n3. Apple Health не сообщает Runich, отказал ли пользователь в доступе на чтение. Если тренировки или измерения не появились, проверьте эти переключатели в Apple Health и убедитесь, что приложение часов сохранило данные туда.',
+    },
+    compare:
+      'Нажмите «Откройте Apple Health», чтобы сравнить список тренировок, карту маршрута и измерения пульса с тренировками и счётчиками в диагностике Runich.',
+    compareTitle: 'Сравните Apple Health и Runich',
   },
 } as const;
 

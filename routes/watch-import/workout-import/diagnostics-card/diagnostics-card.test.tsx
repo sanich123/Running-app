@@ -1,7 +1,10 @@
 import { screen } from '@testing-library/react-native';
+import { Platform } from 'react-native';
 import { renderWithProviders } from '@T/utils/test-utils';
 import DiagnosticsCard from './diagnostics-card';
 import type { WatchWorkout } from '../../../../modules/runich-health/src/RunichHealth';
+
+const originalPlatformOS = Platform.OS;
 
 const workout: WatchWorkout = {
   source: 'health-connect',
@@ -27,6 +30,14 @@ const workout: WatchWorkout = {
 };
 
 describe('DiagnosticsCard', () => {
+  beforeEach(() => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
+  });
+
+  afterEach(() => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: originalPlatformOS });
+  });
+
   it('shows the route point count for each found workout', async () => {
     await renderWithProviders(
       <DiagnosticsCard
@@ -55,7 +66,7 @@ describe('DiagnosticsCard', () => {
               sourceActivityId: 'health-record-1',
               sourceHeartRateSampleCount: 12,
               payloadHeartRateSampleCount: 12,
-              outcome: 'uploaded',
+              outcome: 'imported',
             },
           ],
         }}
@@ -67,7 +78,7 @@ describe('DiagnosticsCard', () => {
     expect(screen.getByText(/точек: 2/)).toBeOnTheScreen();
     expect(screen.getByText(/разрешение на пульс: да/)).toBeOnTheScreen();
     expect(screen.getByText(/измерений пульса: 12/)).toBeOnTheScreen();
-    expect(screen.getByText(/пульс в запросе: 12\/12 \(запрос принят\)/)).toBeOnTheScreen();
+    expect(screen.getByText(/пульс в запросе: 12\/12 \(добавлена в Runich\)/)).toBeOnTheScreen();
     expect(screen.getByText('12 → 12')).toBeOnTheScreen();
     expect(screen.getByText(/настроена ли выгрузка пульса/)).toBeOnTheScreen();
   });

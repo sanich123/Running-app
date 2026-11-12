@@ -125,7 +125,15 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
           ? { stage: readError.stage, errorCode: readError.errorCode }
           : { errorCode: getDiagnosticErrorCode(readError) }),
       });
-      setError(isRussian ? 'Не удалось получить тренировки из хранилища здоровья.' : 'Could not read workouts.');
+      setError(
+        Platform.OS === 'ios'
+          ? isRussian
+            ? 'Не удалось прочитать тренировки. Проверьте доступ Runich к тренировкам в Apple Health.'
+            : 'Could not read workouts. Check Runich workout access in Apple Health.'
+          : isRussian
+            ? 'Не удалось получить тренировки из хранилища здоровья.'
+            : 'Could not read workouts.',
+      );
       errorToast('', readError);
       return null;
     } finally {

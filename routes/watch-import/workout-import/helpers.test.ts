@@ -6,6 +6,7 @@ import {
   getAutoSyncKey,
   getBooleanLabel,
   getConnectionKey,
+  getHealthKitAuthorizationRequestKey,
   getDiagnosticErrorCode,
   getReadDiagnosticItems,
   getReadStageLabel,
@@ -44,6 +45,11 @@ describe('watch import diagnostics helpers', () => {
   it('creates a user-scoped auto-sync marker key', () => {
     expect(getAutoSyncKey('user-1')).toBe('runich.watch.auto-sync.enabled.user-1');
     expect(getAutoSyncKey(null)).toBeNull();
+  });
+
+  it('creates a user-scoped HealthKit authorization request key only for signed-in users', () => {
+    expect(getHealthKitAuthorizationRequestKey('user-1')).toBe('runich.healthkit.authorization-requested.user-1');
+    expect(getHealthKitAuthorizationRequestKey(null)).toBeNull();
   });
 
   it('formats read diagnostics as structured label/value items', () => {
@@ -106,9 +112,9 @@ describe('watch import diagnostics helpers', () => {
         sourceActivityId: workout.sourceActivityId,
         sourceHeartRateSampleCount: 1,
         payloadHeartRateSampleCount: 1,
-        outcome: 'uploaded',
+        outcome: 'imported',
       }),
-    ).toContain('пульс в запросе: 1/1 (запрос принят)');
+    ).toContain('пульс в запросе: 1/1 (добавлена в Runich)');
   });
 
   it('formats errors, labels, and workout metadata for both languages and missing values', () => {
@@ -304,6 +310,6 @@ describe('watch import diagnostics helpers', () => {
       },
     };
     expect(formatWorkoutDiagnostics(succeededWorkout, 0, true)).toContain('id: 12345678');
-    expect(formatWorkoutDiagnostics(succeededWorkout, 0, true)).toContain('error: PERMISSION_DENIED');
+    expect(formatWorkoutDiagnostics(succeededWorkout, 0, true)).toContain('ошибка маршрута: PERMISSION_DENIED');
   });
 });

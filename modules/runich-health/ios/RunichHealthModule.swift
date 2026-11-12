@@ -12,26 +12,24 @@ public final class RunichHealthModule: Module {
       HKHealthStore.isHealthDataAvailable() ? "available" : "not-supported"
     }
 
-    AsyncFunction("getPermissions") { () async -> [String: Bool] in
-      [
-        "available": HKHealthStore.isHealthDataAvailable(),
-        "granted": false
-      ]
+    AsyncFunction("getPermissions") { () async -> [String: Any] in
+      ["available": HKHealthStore.isHealthDataAvailable()]
     }
 
-    AsyncFunction("requestPermissions") { () async throws -> [String: Bool] in
+    AsyncFunction("requestPermissions") { () async throws -> [String: Any] in
       guard HKHealthStore.isHealthDataAvailable() else {
-        return ["available": false, "granted": false]
+        return ["available": false]
       }
 
       try await healthStore.requestAuthorization(toShare: [], read: readTypes())
-      return ["available": true, "granted": true]
+      // HealthKit intentionally does not reveal whether a read permission was granted.
+      return ["available": true]
     }
 
     AsyncFunction("readWorkouts") { (startDate: String, endDate: String) async throws -> [[String: Any]] in
       guard HKHealthStore.isHealthDataAvailable() else { return [] }
-      guard let start = ISO8601DateFormatter().date(from: startDate),
-            let end = ISO8601DateFormatter().date(from: endDate) else {
+      guard let start = parseISO8601Date(startDate),
+            let end = parseISO8601Date(endDate) else {
         throw NSError(domain: "RunichHealth", code: 1, userInfo: [NSLocalizedDescriptionKey: "Некорректная дата тренировки"])
       }
 
@@ -51,17 +49,12 @@ public final class RunichHealthModule: Module {
     var types = Set<HKObjectType>()
     types.insert(HKObjectType.workoutType())
     types.insert(HKSeriesType.workoutRoute())
+    if let heartRateType = HKObjectType.quantityType(forIdentifier: .heartRate) {
+      types.insert(heartRateType)
+    }
 
-    for identifier in [
-      HKQuantityTypeIdentifier.distanceWalkingRunning,
-      HKQuantityTypeIdentifier.distanceCycling,
-      HKQuantityTypeIdentifier.distanceSwimming,
-      HKQuantityTypeIdentifier.stepCount,
-      HKQuantityTypeIdentifier.activeEnergyBurned
-    ] {
-      if let type = HKObjectType.quantityType(forIdentifier: identifier) {
-        types.insert(type)
-      }
+    if let stepCountType = HKObjectType.quantityType(forIdentifier: .stepCount) {
+      types.insert(stepCountType)
     }
 
     return types
@@ -86,6 +79,17 @@ public final class RunichHealthModule: Module {
   }
 
   private func makeWorkout(_ workout: HKWorkout) async -> [String: Any] {
+    let (locations, routeErrorCode) = await routeLocationsWithDiagnostics(for: workout)
+    let (heartRateSamples, heartRateErrorCode) = await heartRateSamples(for: workout)
+    var diagnostics: [String: Any] = [
+      "dataOrigin": workout.sourceRevision.source.name,
+      "routeStatus": routeErrorCode == nil ? (locations.isEmpty ? "no-route-data" : "route-in-record") : "route-read-error",
+      "routePointCount": locations.count,
+      "heartRateSampleCount": heartRateSamples.count
+    ]
+    if let routeErrorCode { diagnostics["routeErrorCode"] = routeErrorCode }
+    if let heartRateErrorCode { diagnostics["heartRateErrorCode"] = heartRateErrorCode }
+
     var result: [String: Any] = [
       "source": "healthkit",
       "sourceActivityId": workout.uuid.uuidString,
@@ -94,8 +98,11 @@ public final class RunichHealthModule: Module {
       "sport": mapSport(workout.workoutActivityType),
       "duration": max(0, Int((workout.duration * 1000).rounded())),
       "distance": workout.totalDistance?.doubleValue(for: HKUnit.meter()) ?? 0,
-      "locations": await routeLocations(for: workout)
+      "locations": locations,
+      "diagnostics": diagnostics
     ]
+
+    if !heartRateSamples.isEmpty { result["heartRateSamples"] = heartRateSamples }
 
     if let title = workout.workoutActivityType.name?.trimmingCharacters(in: .whitespacesAndNewlines), !title.isEmpty {
       result["title"] = title
@@ -125,17 +132,97 @@ public final class RunichHealthModule: Module {
     }
   }
 
-  private func routeLocations(for workout: HKWorkout) async -> [[String: Any]] {
+  private func routeLocationsWithDiagnostics(for workout: HKWorkout) async -> (locations: [[String: Any]], errorCode: String?) {
     do {
       let routes = try await queryRoutes(for: workout)
       var locations: [[String: Any]] = []
       for route in routes {
         locations.append(contentsOf: try await queryRouteLocations(route))
       }
-      return locations
+      return (locations, nil)
     } catch {
-      return []
+      return ([], errorCode(for: error))
     }
+  }
+
+  private func heartRateSamples(for workout: HKWorkout) async -> (samples: [[String: Any]], errorCode: String?) {
+    guard let heartRateType = HKObjectType.quantityType(forIdentifier: .heartRate) else { return ([], nil) }
+
+    do {
+      let workoutSamples = try await queryHeartRateSamples(
+        type: heartRateType,
+        predicate: HKQuery.predicateForObjects(from: workout)
+      )
+      let associatedSamples = mapHeartRateSamples(workoutSamples, for: workout)
+      if !associatedSamples.isEmpty { return (associatedSamples, nil) }
+    } catch {
+      // Some sources save heart-rate samples in HealthKit without linking them to the workout.
+    }
+
+    let intervalPredicate = HKQuery.predicateForSamples(
+      withStart: workout.startDate,
+      end: workout.endDate,
+      options: .strictStartDate
+    )
+    do {
+      let intervalSamples = try await queryHeartRateSamples(type: heartRateType, predicate: intervalPredicate)
+      return (mapHeartRateSamples(intervalSamples, for: workout), nil)
+    } catch {
+      return ([], errorCode(for: error))
+    }
+  }
+
+  private func queryHeartRateSamples(type: HKQuantityType, predicate: NSPredicate) async throws -> [HKQuantitySample] {
+    try await withCheckedThrowingContinuation { continuation in
+      let query = HKSampleQuery(
+        sampleType: type,
+        predicate: predicate,
+        limit: HKObjectQueryNoLimit,
+        sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: true)]
+      ) { _, samples, error in
+        if let error {
+          continuation.resume(throwing: error)
+          return
+        }
+        continuation.resume(returning: (samples as? [HKQuantitySample]) ?? [])
+      }
+      healthStore.execute(query)
+    }
+  }
+
+  private func mapHeartRateSamples(_ samples: [HKQuantitySample], for workout: HKWorkout) -> [[String: Any]] {
+    let heartRateUnit = HKUnit.count().unitDivided(by: HKUnit.minute())
+    var seenSamples = Set<String>()
+
+    return samples.compactMap { sample in
+      let timestamp = Int((sample.startDate.timeIntervalSince1970 * 1000).rounded())
+      let beatsPerMinute = sample.quantity.doubleValue(for: heartRateUnit)
+      guard sample.startDate >= workout.startDate,
+            sample.startDate <= workout.endDate,
+            beatsPerMinute.isFinite,
+            beatsPerMinute >= 1,
+            beatsPerMinute <= 300 else {
+        return nil
+      }
+
+      let roundedBeatsPerMinute = Int(beatsPerMinute.rounded())
+      let key = "\(timestamp):\(roundedBeatsPerMinute)"
+      guard seenSamples.insert(key).inserted else { return nil }
+      return ["timestamp": timestamp, "beatsPerMinute": roundedBeatsPerMinute]
+    }
+  }
+
+  private func parseISO8601Date(_ value: String) -> Date? {
+    let formatter = ISO8601DateFormatter()
+    formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+    if let date = formatter.date(from: value) { return date }
+
+    formatter.formatOptions = [.withInternetDateTime]
+    return formatter.date(from: value)
+  }
+
+  private func errorCode(for error: Error) -> String {
+    String((error as NSError).code)
   }
 
   private func queryRoutes(for workout: HKWorkout) async throws -> [HKWorkoutRoute] {

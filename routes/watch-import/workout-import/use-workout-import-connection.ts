@@ -1,10 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 import * as SecureStore from 'expo-secure-store';
-import { AppState } from 'react-native';
+import { AppState, Platform } from 'react-native';
 import { errorToast } from '@S/error-toast/error-toast';
 import { RunichHealth } from '../../../modules/runich-health/src/RunichHealth';
-import { getAutoSyncKey, getConnectionKey, getDiagnosticErrorCode, HIDDEN_WORKOUTS_KEY } from './helpers';
+import {
+  getAutoSyncKey,
+  getConnectionKey,
+  getDiagnosticErrorCode,
+  getHealthKitAuthorizationRequestKey,
+  HIDDEN_WORKOUTS_KEY,
+} from './helpers';
 import type {
   HealthAvailability,
   HealthPermissionsResult,
@@ -52,7 +58,8 @@ export function useWorkoutImportConnection({
       setIsLoading(true);
       setError(null);
       setHealthStatusErrorCode(null);
-      const connectionKey = getConnectionKey(userId);
+      const connectionKey =
+        Platform.OS === 'ios' ? getHealthKitAuthorizationRequestKey(userId) : getConnectionKey(userId);
       const savedConnection = connectionKey ? SecureStore.getItemAsync(connectionKey) : Promise.resolve(null);
       const autoSyncKey = getAutoSyncKey(userId);
       const savedAutoSync = autoSyncKey ? SecureStore.getItemAsync(autoSyncKey) : Promise.resolve(null);
@@ -74,7 +81,11 @@ export function useWorkoutImportConnection({
         setHealthPermissions(permissions);
         const savedAutoSyncEnabled = savedAutoSyncValue !== 'false';
         restoreAutoSyncEnabled(savedAutoSyncEnabled);
-        const connected = permissions.available && (permissions.granted || savedConnectionValue === 'true');
+        const connected =
+          permissions.available &&
+          (Platform.OS === 'ios'
+            ? savedConnectionValue === 'true'
+            : permissions.granted || savedConnectionValue === 'true');
         setIsConnected(connected);
         if (connected && autoSync && userId && savedAutoSyncEnabled) {
           void syncLatestWorkouts(true, true);
@@ -154,12 +165,14 @@ export function useWorkoutImportConnection({
     try {
       const permissions = await RunichHealth.requestPermissions();
       setHealthPermissions(permissions);
-      setIsConnected(permissions.granted);
-      if (!permissions.granted) {
+      const connected = permissions.available && (Platform.OS === 'ios' || permissions.granted === true);
+      setIsConnected(connected);
+      if (!connected) {
         setError(isRussian ? 'Доступ к тренировкам не предоставлен.' : 'Workout access was not granted.');
         return;
       }
-      const connectionKey = getConnectionKey(userId);
+      const connectionKey =
+        Platform.OS === 'ios' ? getHealthKitAuthorizationRequestKey(userId) : getConnectionKey(userId);
       if (connectionKey) {
         try {
           await SecureStore.setItemAsync(connectionKey, 'true');

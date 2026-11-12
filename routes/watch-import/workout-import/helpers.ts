@@ -1,16 +1,16 @@
 import { WORKOUT_IMPORT_COPY, READ_STAGE_LABELS, ROUTE_STATUS_LABELS, UPLOAD_SKIP_REASON_LABELS } from './const';
 import type {
+  HealthConnectReadStage,
+  WatchWorkout,
+  WatchWorkoutRouteStatus,
+} from '../../../modules/runich-health/src/RunichHealth';
+import type {
   DiagnosticItem,
   ReadDiagnostics,
   UploadDiagnostics,
   UploadSkipReason,
   WorkoutUploadDiagnostic,
 } from './types';
-import type {
-  HealthConnectReadStage,
-  WatchWorkout,
-  WatchWorkoutRouteStatus,
-} from '../../../modules/runich-health/src/RunichHealth';
 import type { WatchWorkoutToSend } from '@R/services/activity/types';
 
 const MAX_IMPORT_BATCH_BYTES = 4 * 1024 * 1024;
@@ -102,6 +102,10 @@ export function getConnectionKey(userId: string | null): string | null {
   return userId ? `runich.watch.connected.${userId}` : null;
 }
 
+export function getHealthKitAuthorizationRequestKey(userId: string | null): string | null {
+  return userId ? `runich.healthkit.authorization-requested.${userId}` : null;
+}
+
 export function getAutoSyncKey(userId: string | null): string | null {
   return userId ? `runich.watch.auto-sync.enabled.${userId}` : null;
 }
@@ -175,7 +179,12 @@ export function formatWorkoutDiagnostics(
     );
   }
   if (recordId) details.push(`id: ${recordId.slice(-8)}`);
-  if (workout.diagnostics?.routeErrorCode) details.push(`error: ${workout.diagnostics.routeErrorCode}`);
+  if (workout.diagnostics?.routeErrorCode) {
+    details.push(`${copy.routeError}: ${workout.diagnostics.routeErrorCode}`);
+  }
+  if (workout.diagnostics?.heartRateErrorCode) {
+    details.push(`${copy.heartRateError}: ${workout.diagnostics.heartRateErrorCode}`);
+  }
   return details.join(' · ');
 }
 

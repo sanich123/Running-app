@@ -18,6 +18,10 @@ The client source sends `POST /auth/apple/native` with `{ identityToken, nonce, 
 
 The client now registers Expo push tokens with `platform: 'ios'` on physical iOS devices and `platform: 'android'` on physical Android devices. The backend DTO accepts both values; the existing token table stores the platform as `Varchar(32)`, and the Expo sender delivers to either platform through the same Expo push service. The API contract has been checked in source on `2026-11-11`; backend and client verification are pending, and the change has not been deployed to Stage or Production.
 
+## Unreleased watch-workout import behavior (source only)
+
+`POST /activity/:userId/watch-import` accepts workouts from Health Connect and HealthKit. The server identifies a workout by `(userId, source, sourceActivityId)`, skips records already stored under that identity, and returns only newly created activities in `activities`; `imported` and `skipped` retain their existing response fields. HealthKit workouts can include GPS route points and heart-rate samples, which are saved with the activity when present. Client and backend source were updated on `2026-11-12`; no native iOS build, API integration check, or deployed Stage/Production verification has been performed.
+
 ## Minimum supported client version
 
 The backend returns `appVersion: 1.3.1` from `GET /auth/config`. The Runich client compares this value with its Expo app version on the home page and redirects versions below the minimum to the app-update screen. This is a client-side gate; the backend does not reject every request based on `x-app-version`.

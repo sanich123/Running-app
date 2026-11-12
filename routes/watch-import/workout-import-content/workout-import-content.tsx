@@ -7,7 +7,13 @@ import DiagnosticsCard from '../workout-import/diagnostics-card/diagnostics-card
 import { formatImportSelectedLabel, getWorkoutId } from '../workout-import/helpers';
 import { useWorkoutImport } from '../workout-import/use-workout-import';
 
-export default function WorkoutImportContent({ autoSync = false }: { autoSync?: boolean }) {
+export default function WorkoutImportContent({
+  autoSync = false,
+  showIntro = true,
+}: {
+  autoSync?: boolean;
+  showIntro?: boolean;
+}) {
   const { colors } = useTheme();
   const isIOS = Platform.OS === 'ios';
   const {
@@ -46,9 +52,11 @@ export default function WorkoutImportContent({ autoSync = false }: { autoSync?: 
 
   return (
     <View style={styles.items}>
-      <Text variant="bodyMedium" style={styles.intro}>
-        {renderHealthConnectLinks(isIOS ? copy.iosIntro : copy.intro, colors.primary)}
-      </Text>
+      {showIntro && (
+        <Text variant="bodyMedium" style={styles.intro}>
+          {renderHealthConnectLinks(isIOS ? copy.iosIntro : copy.intro, colors.primary)}
+        </Text>
+      )}
 
       {isLoading && !availability ? (
         <ActivityIndicator testID="health-connect-loading" style={styles.loader} />
@@ -127,7 +135,7 @@ export default function WorkoutImportContent({ autoSync = false }: { autoSync?: 
             <Card style={styles.statusCard}>
               <Card.Content>
                 <Text variant="titleSmall" style={{ color: colors.primary }}>
-                  {isIOS ? copy.iosConnected : copy.connected}
+                  {renderHealthConnectLinks(isIOS ? copy.iosConnected : copy.connected, colors.primary)}
                 </Text>
                 <View style={styles.switchRow}>
                   <View style={styles.copy}>
@@ -140,6 +148,17 @@ export default function WorkoutImportContent({ autoSync = false }: { autoSync?: 
                     testID="health-connect-auto-sync-switch"
                   />
                 </View>
+                {isIOS && (
+                  <Button
+                    testID="health-connect-request-permissions"
+                    compact
+                    mode="outlined"
+                    onPress={connect}
+                    loading={isLoading}
+                    style={styles.permissionButton}>
+                    {copy.iosRequestPermissions}
+                  </Button>
+                )}
               </Card.Content>
             </Card>
           )}
@@ -166,7 +185,7 @@ export default function WorkoutImportContent({ autoSync = false }: { autoSync?: 
             <ActivityIndicator testID="health-connect-loading" style={styles.loader} />
           ) : workouts.length === 0 && hiddenWorkouts.length === 0 && isConnected ? (
             <Text style={[styles.message, { color: colors.onSurfaceVariant }]}>
-              {isIOS ? copy.iosNoWorkouts : copy.noWorkouts}
+              {renderHealthConnectLinks(isIOS ? copy.iosNoWorkouts : copy.noWorkouts, colors.primary)}
             </Text>
           ) : (
             workouts.map((workout) => {
@@ -285,6 +304,7 @@ const styles = StyleSheet.create({
   statusCard: { marginTop: 2, borderColor: '#4caf50', borderWidth: 1 },
   row: { flexDirection: 'row', alignItems: 'center' },
   switchRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 12 },
+  permissionButton: { alignSelf: 'flex-start', marginTop: 12 },
   copy: { flex: 1, gap: 2 },
   button: { marginTop: 6 },
   rowAction: { alignSelf: 'flex-end' },

@@ -5,6 +5,7 @@ export const ROUTE_STATUS_LABELS = {
   'consent-granted': ['доступ выдан, точки получены', 'consent granted, points read'],
   'consent-granted-empty': ['доступ выдан, точек нет', 'consent granted, no points'],
   'consent-denied-or-error': ['отказ или ошибка доступа', 'consent denied or read failed'],
+  'route-read-error': ['ошибка чтения маршрута', 'route read error'],
 } as const;
 
 export const READ_STAGE_LABELS = {
@@ -30,10 +31,12 @@ export const WORKOUT_IMPORT_COPY = {
     title: 'Импорт тренировок',
     intro:
       'Каждый раз, когда вы заходите в Runich, приложение синхронизирует импортированные тренировки из Health Connect. Основные проблемы, которые у меня возникали, были связаны с выгрузкой тренировок в Health Connect, а не с чтением из него. Как правило, если вы видите тренировку с маршрутом в Health Connect, она либо автоматически синхронизируется в Runich, либо ниже есть кнопка для ручной синхронизации. Также ниже есть диагностическая информация о том, какие тренировки Runich видит в Health Connect.',
-    iosIntro: 'Runich импортирует тренировки и маршруты из Apple Health за последние 30 дней.',
+    iosIntro:
+      'Runich импортирует тренировки из Apple Health за последние 30 дней и пропускает те, что уже есть в аккаунте.',
     iosUnavailable: 'Apple Health недоступно на этом устройстве.',
-    iosConnect: 'Разрешить Runich читать тренировки в Apple Health',
-    iosConnected: 'Apple Health подключено',
+    iosConnect: 'Подключить Runich к Apple Health',
+    iosConnected: 'Запрос доступа отправлен. Проверьте разрешения в Apple Health.',
+    iosRequestPermissions: 'Запросить разрешения ещё раз',
     iosNoWorkouts: 'Завершённых тренировок в Apple Health за последние 30 дней нет.',
     updateProvider: 'Обновите Health Connect через Google Play, затем вернитесь сюда и повторите подключение.',
     openGooglePlay: 'Открыть Google Play',
@@ -64,6 +67,10 @@ export const WORKOUT_IMPORT_COPY = {
         upload: 'Отправка в Runich',
       },
       platform: 'Платформа',
+      platformNameIOS: 'iPhone / Apple Health',
+      platformNameAndroid: 'Android / Health Connect',
+      healthKitPermissionStatus: 'статус чтения не раскрывается HealthKit',
+      healthKitPermissionUnknown: 'проверьте в Apple Health',
       store: 'хранилище',
       checking: 'проверяется',
       connected: 'подключение',
@@ -71,6 +78,7 @@ export const WORKOUT_IMPORT_COPY = {
       requiredPermissions: 'Все обязательные разрешения на чтение',
       permissionItems: {
         exerciseSession: 'Тренировки',
+        workoutRoutes: 'Маршруты тренировок',
         distance: 'Расстояние',
         steps: 'Шаги',
         heartRate: 'Пульс',
@@ -86,12 +94,19 @@ export const WORKOUT_IMPORT_COPY = {
       heartRateUploadOutcomes: {
         'not-sent': 'не отправлен',
         sending: 'отправляется',
-        uploaded: 'запрос принят',
+        imported: 'добавлена в Runich',
+        skipped: 'уже была в Runich',
         error: 'ошибка запроса',
       },
       heartRateAccessNote:
         'Если разрешение есть, но измерений нет, проверьте, настроена ли выгрузка пульса из приложения-источника в Health Connect.',
       routeAccessNote: 'Доступ к GPS-маршруту запрашивается отдельно для каждой тренировки.',
+      iosHeartRateAccessNote:
+        'Откройте Apple Health и проверьте, что приложение часов записало пульс за время тренировки, а у Runich включено чтение пульса. HealthKit не раскрывает Runich, разрешено ли чтение.',
+      iosRouteAccessNote:
+        'Откройте Apple Health и проверьте карту тренировки и разрешение Runich на чтение маршрутов. Если карты нет в Apple Health, приложение часов не передало маршрут.',
+      iosNote:
+        'Сверьте найденные записи с Apple Health. В диагностике показаны источник, статус маршрута, число GPS-точек и измерений пульса до и после подготовки запроса; координаты не отображаются. Повторный импорт уже сохранённых тренировок пропускается.',
       statusError: 'Ошибка проверки/разрешения хранилища здоровья',
       lastRead: 'Последнее чтение',
       range: 'период',
@@ -110,6 +125,8 @@ export const WORKOUT_IMPORT_COPY = {
       origin: 'источник',
       route: 'маршрут',
       points: 'точек',
+      routeError: 'ошибка маршрута',
+      heartRateError: 'ошибка пульса',
       showingFirst: 'Показаны первые {shown} из {total}.',
       uploadStatus: 'Статус отправки в Runich',
       uploadOutcomes: {
@@ -132,10 +149,12 @@ export const WORKOUT_IMPORT_COPY = {
     title: 'Workout import',
     intro:
       'Each time you open Runich, the app syncs imported workouts from Health Connect. The main problems I encountered were related to exporting workouts to Health Connect, not reading them from it. If you see a workout with a route in Health Connect, it will usually either sync to Runich automatically or you can use the manual sync button below. Diagnostic information below also shows which workouts Runich can see in Health Connect.',
-    iosIntro: 'Runich imports workouts and routes saved in Apple Health from the last 30 days.',
+    iosIntro:
+      'Runich imports workouts from Apple Health from the last 30 days and skips workouts already in your account.',
     iosUnavailable: 'Apple Health is not available on this device.',
-    iosConnect: 'Allow Runich to read workouts in Apple Health',
-    iosConnected: 'Apple Health connected',
+    iosConnect: 'Connect Runich to Apple Health',
+    iosConnected: 'Access request sent. Check permissions in Apple Health.',
+    iosRequestPermissions: 'Request permissions again',
     iosNoWorkouts: 'No completed workouts in Apple Health from the last 30 days.',
     updateProvider: 'Update Health Connect through Google Play, then return here and connect again.',
     openGooglePlay: 'Open Google Play',
@@ -166,6 +185,10 @@ export const WORKOUT_IMPORT_COPY = {
         upload: 'Upload to Runich',
       },
       platform: 'Platform',
+      platformNameIOS: 'iPhone / Apple Health',
+      platformNameAndroid: 'Android / Health Connect',
+      healthKitPermissionStatus: 'HealthKit does not disclose read status',
+      healthKitPermissionUnknown: 'check in Apple Health',
       store: 'store',
       checking: 'checking',
       connected: 'connected',
@@ -173,6 +196,7 @@ export const WORKOUT_IMPORT_COPY = {
       requiredPermissions: 'All required read permissions',
       permissionItems: {
         exerciseSession: 'Workouts',
+        workoutRoutes: 'Workout routes',
         distance: 'Distance',
         steps: 'Steps',
         heartRate: 'Heart rate',
@@ -188,12 +212,19 @@ export const WORKOUT_IMPORT_COPY = {
       heartRateUploadOutcomes: {
         'not-sent': 'not sent',
         sending: 'sending',
-        uploaded: 'request accepted',
+        imported: 'added to Runich',
+        skipped: 'already in Runich',
         error: 'request failed',
       },
       heartRateAccessNote:
         'If permission is granted but no samples are found, check whether the source app is configured to export heart rate to Health Connect.',
       routeAccessNote: 'GPS route access is requested separately for each workout.',
+      iosHeartRateAccessNote:
+        'Open Apple Health and check that the watch app wrote heart rate for the workout and Runich can read heart rate. HealthKit does not tell Runich whether read access was denied.',
+      iosRouteAccessNote:
+        'Open Apple Health and check the workout map and Runich route access. If the map is missing in Apple Health, the watch app did not export the route.',
+      iosNote:
+        'Compare the records with Apple Health. Diagnostics show the source, route status, GPS point count, and heart-rate sample counts before and after preparing the request; coordinates are not displayed. Workouts already saved in Runich are skipped.',
       statusError: 'Health store status/permission error',
       lastRead: 'Last read',
       range: 'range',
@@ -212,6 +243,8 @@ export const WORKOUT_IMPORT_COPY = {
       origin: 'origin',
       route: 'route',
       points: 'points',
+      routeError: 'route error',
+      heartRateError: 'heart-rate error',
       showingFirst: 'Showing the first {shown} of {total}.',
       uploadStatus: 'Runich upload status',
       uploadOutcomes: {

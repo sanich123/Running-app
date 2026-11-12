@@ -1,9 +1,11 @@
 import { screen, userEvent } from '@testing-library/react-native';
 import { Platform } from 'react-native';
 import { LANGUAGES } from '@const/enums';
+import { changeLanguage } from '@R/slices/settings/settings';
+import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { PROFILE_WATCH_IMPORT } from '../../profile/const';
-import { WATCH_IMPORT_COPY } from '../const';
+import { IOS_WATCH_IMPORT_COPY, WATCH_IMPORT_COPY } from '../const';
 import type * as WatchImportModule from './watch-import-page';
 
 const mockOpenExternalLink = jest.fn();
@@ -14,7 +16,10 @@ const originalPlatformOS = Platform.OS;
 jest.mock('expo-router', () => ({
   Stack: { Screen: () => null },
 }));
-jest.mock('../utils', () => ({ openExternalLink: mockOpenExternalLink }));
+jest.mock('../utils', () => ({
+  ...jest.requireActual('../utils'),
+  openExternalLink: mockOpenExternalLink,
+}));
 jest.mock('../workout-import-content/workout-import-content', () => ({ __esModule: true, default: () => null }));
 jest.mock('../../../modules/runich-health/src/RunichHealth', () => ({
   RunichHealth: { getPermissions: mockGetPermissions, requestPermissions: mockRequestPermissions },
@@ -25,6 +30,7 @@ const WatchImportPage = require('./watch-import-page').default as typeof WatchIm
 describe('WatchImportPage', () => {
   beforeEach(() => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
+    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     mockOpenExternalLink.mockReset();
     mockGetPermissions.mockReset();
     mockRequestPermissions.mockReset();
@@ -128,5 +134,41 @@ describe('WatchImportPage', () => {
     expect(screen.getByTestId('watch-import-health-connect-access').props.accessibilityState).toEqual({
       disabled: true,
     });
+  });
+
+  it('shows the Russian Apple Health setup and its links on iOS', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'ios' });
+    const user = userEvent.setup();
+    const copy = IOS_WATCH_IMPORT_COPY.ru;
+
+    await renderWithProviders(<WatchImportPage />);
+
+    expect(screen.getByText(copy.intro)).toBeOnTheScreen();
+    expect(screen.getAllByRole('link', { name: 'Apple Health' }).length).toBeGreaterThan(0);
+    await user.press(screen.getByLabelText(copy.sourceApp.title));
+    expect(screen.getByText(copy.sourceApp.description)).toBeOnTheScreen();
+    expect(screen.getByLabelText(copy.runich.title)).toBeOnTheScreen();
+  });
+
+  it('shows the English Apple Health setup on iOS', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'ios' });
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
+
+    await renderWithProviders(<WatchImportPage />);
+
+    expect(screen.getByText(IOS_WATCH_IMPORT_COPY.en.intro)).toBeOnTheScreen();
+    expect(screen.getByLabelText(IOS_WATCH_IMPORT_COPY.en.sourceApp.title)).toBeOnTheScreen();
+  });
+
+  it('shows an actionable message when the user denies Health Connect access', async () => {
+    const user = userEvent.setup();
+    const copy = WATCH_IMPORT_COPY.ru;
+    mockRequestPermissions.mockResolvedValue({ available: true, granted: false });
+
+    await renderWithProviders(<WatchImportPage />);
+    await user.press(screen.getByLabelText(copy.steps.healthConnect.title));
+    await user.press(screen.getByTestId('watch-import-health-connect-access'));
+
+    expect(screen.getByText(copy.steps.healthConnect.actions.accessDenied)).toBeOnTheScreen();
   });
 });

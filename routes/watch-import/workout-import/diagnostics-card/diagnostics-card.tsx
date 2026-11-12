@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import { ActivityIndicator, Card, Icon, Text, useTheme } from 'react-native-paper';
 import { renderHealthConnectLinks } from '../../health-connect-link/utils';
 import { WORKOUT_IMPORT_COPY } from '../const';
@@ -29,6 +29,7 @@ export default function DiagnosticsCard({
 }: DiagnosticsCardProps) {
   const { colors } = useTheme();
   const copy = WORKOUT_IMPORT_COPY[isRussian ? 'ru' : 'en'].diagnostics;
+  const isIOS = Platform.OS === 'ios';
 
   return (
     <Card style={[styles.card, { borderColor: colors.outlineVariant }]}>
@@ -38,7 +39,11 @@ export default function DiagnosticsCard({
         <View style={styles.details}>
           <DiagnosticsSection icon="connection" title={copy.sections.connection}>
             <View style={styles.metricsGrid}>
-              <DiagnosticMetric isRussian={isRussian} label={copy.platform} value="Android" />
+              <DiagnosticMetric
+                isRussian={isRussian}
+                label={copy.platform}
+                value={isIOS ? copy.platformNameIOS : copy.platformNameAndroid}
+              />
               <DiagnosticMetric isRussian={isRussian} label={copy.store} value={availability ?? copy.checking} />
               <DiagnosticMetric isRussian={isRussian} label={copy.connected} status={isConnected} />
               <DiagnosticMetric isRussian={isRussian} label={copy.account} status={Boolean(userId)} />
@@ -49,40 +54,55 @@ export default function DiagnosticsCard({
             <View style={styles.metricsGrid}>
               <DiagnosticMetric
                 isRussian={isRussian}
-                label={copy.requiredPermissions}
+                label={isIOS ? copy.healthKitPermissionStatus : copy.requiredPermissions}
                 status={healthPermissions?.granted}
+                value={isIOS ? copy.healthKitPermissionUnknown : undefined}
               />
               <DiagnosticMetric
                 isRussian={isRussian}
                 label={copy.permissionItems.exerciseSession}
                 status={healthPermissions?.details?.exerciseSession}
+                value={isIOS ? copy.healthKitPermissionUnknown : undefined}
               />
-              <DiagnosticMetric
-                isRussian={isRussian}
-                label={copy.permissionItems.distance}
-                status={healthPermissions?.details?.distance}
-              />
-              <DiagnosticMetric
-                isRussian={isRussian}
-                label={copy.permissionItems.steps}
-                status={healthPermissions?.details?.steps}
-              />
+              {isIOS ? (
+                <DiagnosticMetric
+                  isRussian={isRussian}
+                  label={copy.permissionItems.workoutRoutes}
+                  value={copy.healthKitPermissionUnknown}
+                />
+              ) : (
+                <>
+                  <DiagnosticMetric
+                    isRussian={isRussian}
+                    label={copy.permissionItems.distance}
+                    status={healthPermissions?.details?.distance}
+                  />
+                  <DiagnosticMetric
+                    isRussian={isRussian}
+                    label={copy.permissionItems.steps}
+                    status={healthPermissions?.details?.steps}
+                  />
+                </>
+              )}
               <DiagnosticMetric
                 isRussian={isRussian}
                 label={copy.permissionItems.heartRate}
                 status={healthPermissions?.details?.heartRate}
+                value={isIOS ? copy.healthKitPermissionUnknown : undefined}
               />
-              <DiagnosticMetric
-                isRussian={isRussian}
-                label={copy.permissionItems.activeCalories}
-                status={healthPermissions?.details?.activeCalories}
-              />
+              {!isIOS && (
+                <DiagnosticMetric
+                  isRussian={isRussian}
+                  label={copy.permissionItems.activeCalories}
+                  status={healthPermissions?.details?.activeCalories}
+                />
+              )}
             </View>
             <Text variant="bodySmall" style={[styles.detailText, { color: colors.onSurfaceVariant }]}>
-              {copy.heartRateAccessNote}
+              {renderHealthConnectLinks(isIOS ? copy.iosHeartRateAccessNote : copy.heartRateAccessNote, colors.primary)}
             </Text>
             <Text variant="bodySmall" style={[styles.detailText, { color: colors.onSurfaceVariant }]}>
-              {copy.routeAccessNote}
+              {renderHealthConnectLinks(isIOS ? copy.iosRouteAccessNote : copy.routeAccessNote, colors.primary)}
             </Text>
           </DiagnosticsSection>
 
@@ -139,7 +159,7 @@ export default function DiagnosticsCard({
           </DiagnosticsSection>
 
           <Text variant="bodySmall" style={[styles.note, { color: colors.onSurfaceVariant }]}>
-            {copy.note}
+            {renderHealthConnectLinks(isIOS ? copy.iosNote : copy.note, colors.primary)}
           </Text>
         </View>
       </Card.Content>
