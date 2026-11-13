@@ -52,14 +52,11 @@ export default function CustomPasswordInput<T extends FieldValues>({
               marginTop: compact ? 4 : 12,
               opacity: shouldBeDisabled ? 0.7 : 1,
             }}
-            contentStyle={
-              compact
-                ? undefined
-                : {
-                    fontFamily: FONT_FAMILIES.regular,
-                    textAlignVertical: 'center',
-                  }
-            }
+            contentStyle={{
+              fontFamily: FONT_FAMILIES.regular,
+              ...(compact ? { paddingBottom: 0, paddingTop: 0 } : {}),
+              textAlignVertical: 'center',
+            }}
             outlineStyle={{ borderRadius: 8 }}
             onChangeText={(text) => {
               onChange(text);

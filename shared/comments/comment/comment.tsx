@@ -1,6 +1,6 @@
 import { useEffect, useState, type RefObject } from 'react';
 import { Animated, View, StyleSheet } from 'react-native';
-import { Text, Divider } from 'react-native-paper';
+import { Button, Divider, Icon, Text, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import { UserInfoSize } from '@S/card/user-info/const';
@@ -13,6 +13,7 @@ import { COMMENT_EDIT_BTN } from '../comment-edit-btn/const';
 import useCommentEditAction from '../comment-edit-btn/use-comment-edit-action';
 import CommentLikeBtn from '../comment-like-btn/comment-like-btn';
 import CommentLikesLength from '../comment-likes-length/comment-likes-length';
+import { COMMENT_MODERATION_COPY } from './const';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 import type { CommentResponse } from '@R/runich-api/comment-types';
 
@@ -25,17 +26,28 @@ export default function Comment({
   profile,
   commentLike,
   commentsModalRef,
-}: CommentResponse & { commentsModalRef: RefObject<BottomSheetModal | null> }) {
+  moderationStatus = 'visible',
+  onRefreshStatus,
+}: CommentResponse & {
+  commentsModalRef: RefObject<BottomSheetModal | null>;
+  onRefreshStatus?: () => void;
+}) {
   const { idOfUpdatingComment, commentActivityId, activityOwnerProfile } = useAppSelector(({ comment }) => comment);
   const { userId } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ settings }) => settings);
   const isYouAuthor = userId === authorId;
   const isActivityOwner = activityOwnerProfile.userId === userId;
   const canInteract = activityOwnerProfile.allowActivityInteractions !== false || isActivityOwner;
-  const onEdit = useCommentEditAction(id, comment);
+  const onEdit = useCommentEditAction(id, comment ?? '');
   const { onDelete, isLoading: isDeletingComment } = useCommentDeleteAction(id, commentActivityId);
   const [commentAnimation] = useState(() => new Animated.Value(0));
   const [isReportVisible, setIsReportVisible] = useState(false);
+  const { colors } = useTheme();
+  const moderationCopy = COMMENT_MODERATION_COPY[language];
+  const isPending = moderationStatus === 'pending' || moderationStatus === 'processing';
+  const isHiddenByModeration = moderationStatus === 'hidden' || moderationStatus === 'removed';
+  const canViewComment = isYouAuthor || moderationStatus === 'visible';
+  const displayedComment = canViewComment ? comment : null;
 
   useEffect(() => {
     Animated.timing(commentAnimation, {
@@ -74,7 +86,7 @@ export default function Comment({
             reportLabel={language === LANGUAGES.russian ? 'Сообщить о нарушении' : 'Report'}
             reportTestID={`report-comment-${id}`}
             onReport={() => setIsReportVisible(true)}
-            showReport={!isYouAuthor}
+            showReport={!isYouAuthor && !isPending}
             additionalActions={[
               ...(!isYouAuthor || idOfUpdatingComment === id
                 ? []
@@ -105,16 +117,31 @@ export default function Comment({
         </View>
       </View>
       <View style={styles.textCommentWrapper}>
-        <Text variant="bodyLarge">{comment}</Text>
+        {isPending || isHiddenByModeration ? (
+          <View style={styles.moderationNotice}>
+            <Icon source={isPending ? 'clock-outline' : 'eye-off-outline'} size={17} color={colors.primary} />
+            <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant, flex: 1 }}>
+              {isPending ? moderationCopy.pending : moderationCopy.hidden}
+            </Text>
+            {isPending && onRefreshStatus ? (
+              <Button mode="text" compact onPress={onRefreshStatus} style={styles.refreshButton}>
+                {moderationCopy.refresh}
+              </Button>
+            ) : null}
+          </View>
+        ) : null}
+        <Text variant="bodyLarge">{displayedComment ?? moderationCopy.hiddenPlaceholder}</Text>
       </View>
-      <View style={styles.likesWrapper}>
-        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          {(canInteract || commentLike.some(({ authorId: likerId }) => likerId === userId)) && (
-            <CommentLikeBtn activityId={activityId} commentId={id} commentLikesFromComment={commentLike} />
-          )}
-          <CommentLikesLength commentId={id} commentLikesFromComment={commentLike} />
+      {moderationStatus === 'visible' ? (
+        <View style={styles.likesWrapper}>
+          <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            {(canInteract || commentLike.some(({ authorId: likerId }) => likerId === userId)) && (
+              <CommentLikeBtn activityId={activityId} commentId={id} commentLikesFromComment={commentLike} />
+            )}
+            <CommentLikesLength commentId={id} commentLikesFromComment={commentLike} />
+          </View>
         </View>
-      </View>
+      ) : null}
       <ReportContentDialog
         visible={isReportVisible}
         targetType="comment"
@@ -145,6 +172,15 @@ const styles = StyleSheet.create({
   },
   textCommentWrapper: {
     marginLeft: 10,
+    gap: 4,
+  },
+  moderationNotice: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 5,
+  },
+  refreshButton: {
+    marginVertical: -6,
   },
   likesWrapper: {
     display: 'flex',

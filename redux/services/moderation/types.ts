@@ -1,5 +1,5 @@
 export type UserReportTargetType = 'activity' | 'comment' | 'media' | 'user' | 'group';
-type ContentReportTargetType = UserReportTargetType | 'media_upload';
+type ContentReportTargetType = UserReportTargetType | 'activity_text' | 'group_post' | 'media_upload';
 
 export type ContentReportReason =
   'threats' | 'harassment' | 'hate_speech' | 'sexual_content' | 'violence' | 'spam' | 'other';
@@ -64,7 +64,16 @@ export interface ModerationReportContext {
   media?: { id: string; url: string | null; thumbnail: string | null }[] | null;
   activityId?: string | null;
   moderationStatus?:
-    'visible' | 'hidden' | 'removed' | 'queued' | 'processing' | 'review_required' | 'approved' | 'rejected' | 'failed';
+    | 'pending'
+    | 'processing'
+    | 'visible'
+    | 'hidden'
+    | 'removed'
+    | 'queued'
+    | 'review_required'
+    | 'approved'
+    | 'rejected'
+    | 'failed';
   scores?: Record<string, number> | null;
   frameCount?: number | null;
   modelVersion?: string | null;

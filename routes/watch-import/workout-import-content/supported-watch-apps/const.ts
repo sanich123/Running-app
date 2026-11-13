@@ -7,6 +7,11 @@ export interface AppSupport {
   heartRate: DataAvailability;
 }
 
+export const WATCH_APP_STATUS_WARNING_COLORS = {
+  light: 'rgb(156, 96, 0)',
+  dark: 'rgb(255, 214, 102)',
+} as const;
+
 export const SUPPORTED_WATCH_APPS: Record<'ios' | 'android', { direct: AppSupport[]; healthSync: string[] }> = {
   ios: {
     direct: [

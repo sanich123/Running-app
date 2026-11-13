@@ -109,7 +109,7 @@ export const LABELS = {
     profilePrivacySettings: 'Privacy',
     profilePrivacyPreviews: 'Privacy previews',
     admin: 'Admin',
-    migration: 'Migration',
+    migration: 'Transfer',
   },
   [LANGUAGES.russian]: {
     feed: 'Главная',
@@ -140,6 +140,6 @@ export const LABELS = {
     profilePrivacySettings: 'Конфиденциальность',
     profilePrivacyPreviews: 'Примеры конфиденциальности',
     admin: 'Админка',
-    migration: 'Миграция',
+    migration: 'Перенос',
   },
 };

@@ -31,9 +31,15 @@ export default function ReportDetails({
   if (!report) return null;
 
   const targetType = copy.targetType[report.targetType];
-  const contentStatus = ['visible', 'hidden', 'removed'].includes(context?.moderationStatus ?? '')
-    ? (context?.moderationStatus as 'visible' | 'hidden' | 'removed')
-    : undefined;
+  const moderationStatus = context?.moderationStatus;
+  const contentStatus =
+    moderationStatus === 'pending' ||
+    moderationStatus === 'processing' ||
+    moderationStatus === 'visible' ||
+    moderationStatus === 'hidden' ||
+    moderationStatus === 'removed'
+      ? moderationStatus
+      : undefined;
   const moderationActions =
     report.targetType === 'media_upload'
       ? (['approve_media', 'reject_media'] as ModerationActionType[])
@@ -46,7 +52,7 @@ export default function ReportDetails({
           );
   const actionItems = moderationActions.filter((action) => {
     if (action === 'approve_media' || action === 'reject_media') return context?.moderationStatus === 'review_required';
-    if (action === 'restore_content') return contentStatus === 'hidden' || contentStatus === 'removed';
+    if (action === 'restore_content') return Boolean(contentStatus && contentStatus !== 'visible');
     if (action === 'hide_content') return contentStatus === 'visible';
     if (action === 'remove_content') return contentStatus !== 'removed';
     return true;

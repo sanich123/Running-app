@@ -83,6 +83,7 @@ export interface ProfileType {
 export interface ActivityCardData {
   description?: string | null;
   title?: string | null;
+  textModerationStatus?: 'pending' | 'processing' | 'visible' | 'hidden' | 'removed';
   date: string;
   sport: SPORTS_BTNS_VALUES | string;
   id: string;

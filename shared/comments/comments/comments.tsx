@@ -4,6 +4,7 @@ import { StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent } f
 import { useGetCommentsByActivityIdInfiniteQuery } from '@R/services/comments/comments';
 import { useAppSelector } from '@R/typed-hooks';
 import ErrorComponent from '@S/error-component/error-component';
+import useAutoModerationRefresh from '@S/moderation/use-auto-moderation-refresh';
 import Comment from '../comment/comment';
 import CommentsEmptyList from '../comments-empty/comments-empty-list/comments-empty-list';
 import CommentsLoadMoreBtn from '../comments-load-more-btn/comments-load-more-btn/comments-load-more-btn';
@@ -46,6 +47,10 @@ export default function Comments({ commentsModalRef }: CommentsProps) {
   const isInitialLoading = isLoading && !hasLoadedPage;
   const isInitialError = isError && !hasLoadedPage;
   const shouldShowPaginationAction = Boolean(hasNextPage || (isError && hasLoadedPage));
+  const hasPendingComments = comments.some(
+    ({ moderationStatus }) => moderationStatus === 'pending' || moderationStatus === 'processing',
+  );
+  useAutoModerationRefresh(hasPendingComments, () => void refetch());
 
   if (isInitialLoading) {
     return <CommentsSkeleton />;
@@ -64,7 +69,9 @@ export default function Comments({ commentsModalRef }: CommentsProps) {
       data={comments}
       testID="comments-list"
       keyExtractor={(comment) => comment.id}
-      renderItem={({ item }) => <Comment {...item} commentsModalRef={commentsModalRef} />}
+      renderItem={({ item }) => (
+        <Comment {...item} commentsModalRef={commentsModalRef} onRefreshStatus={() => void refetch()} />
+      )}
       contentContainerStyle={styles.content}
       ListHeaderComponent={() => (
         <>

@@ -5,6 +5,7 @@ export interface CommentMutationResponse {
   profileId: string;
   id: string;
   date: string;
+  moderationStatus?: 'pending' | 'processing' | 'visible' | 'hidden' | 'removed';
 }
 
 export interface CommentLikeSummaryResponse {
@@ -22,7 +23,8 @@ interface CommentProfileResponse {
 
 export interface CommentResponse {
   authorId: string;
-  comment: string;
+  comment: string | null;
+  moderationStatus?: 'pending' | 'processing' | 'visible' | 'hidden' | 'removed';
   activityId: string;
   profileId: string;
   id: string;

@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
 import { useGetGroupPostsInfiniteQuery } from '@R/services/groups/groups';
 import { useAppSelector } from '@R/typed-hooks';
+import useAutoModerationRefresh from '@S/moderation/use-auto-moderation-refresh';
 import { GROUPS_COPY } from '../../../const';
 import { createGroupListScrollHandler } from '../utils';
 import type { GroupDetails } from '@R/services/groups/types';
@@ -15,14 +15,12 @@ export default function useGroupPostsList(group: GroupDetails) {
   const { data, isLoading, isError, error, refetch, hasNextPage, isFetchingNextPage, fetchNextPage } =
     useGetGroupPostsInfiniteQuery(id, { skip: !canSeePosts });
   const posts = data?.pages.flatMap(({ items }) => items) ?? [];
-  const hasPendingPhoto = posts.some(({ photoPending }) => photoPending);
+  const hasPendingModeration = posts.some(
+    ({ photoPending, moderationStatus }) =>
+      photoPending || moderationStatus === 'pending' || moderationStatus === 'processing',
+  );
   const onScroll = createGroupListScrollHandler({ hasNextPage, isFetchingNextPage, fetchNextPage });
-
-  useEffect(() => {
-    if (!hasPendingPhoto) return;
-    const interval = setInterval(() => void refetch(), 8000);
-    return () => clearInterval(interval);
-  }, [hasPendingPhoto, refetch]);
+  useAutoModerationRefresh(hasPendingModeration, () => void refetch());
 
   return { canSeePosts, copy, error, isError, isFetchingNextPage, isLoading, onScroll, posts, refetch };
 }

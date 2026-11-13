@@ -12,7 +12,7 @@ export default function MigrationBtn() {
     <SettingsRow
       testID="migration-settings-row"
       icon="run"
-      title={isRussian ? 'Перенести активности из Strava' : 'Migrate from Strava'}
+      title={isRussian ? 'Перенести тренировки из другого сервиса' : 'Import workouts from another service'}
       description={isRussian ? 'Импортируйте историю тренировок' : 'Import your workout history'}
       onPress={() => push(`/${ROUTES.migration}`)}
     />

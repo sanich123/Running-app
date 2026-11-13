@@ -1,12 +1,8 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Card, Chip, Icon, Text, useTheme } from 'react-native-paper';
-import type { MD3Theme } from 'react-native-paper';
 import { WORKOUT_IMPORT_COPY } from '../../workout-import/const';
-import { SUPPORTED_WATCH_APPS, type AppSupport, type DataAvailability } from './const';
-
-type SupportedAppsCopy =
-  (typeof WORKOUT_IMPORT_COPY)['ru']['supportedApps'] | (typeof WORKOUT_IMPORT_COPY)['en']['supportedApps'];
+import { SUPPORTED_WATCH_APPS, WATCH_APP_STATUS_WARNING_COLORS } from './const';
 
 export default function SupportedWatchApps({
   isRussian,
@@ -16,7 +12,8 @@ export default function SupportedWatchApps({
   platform: 'ios' | 'android';
 }) {
   const [expanded, setExpanded] = useState(false);
-  const { colors } = useTheme();
+  const { colors, dark } = useTheme();
+  const warningColor = dark ? WATCH_APP_STATUS_WARNING_COLORS.dark : WATCH_APP_STATUS_WARNING_COLORS.light;
   const language = isRussian ? 'ru' : 'en';
   const copy = WORKOUT_IMPORT_COPY[language].supportedApps;
   const apps = SUPPORTED_WATCH_APPS[platform];
@@ -48,20 +45,78 @@ export default function SupportedWatchApps({
             <View style={styles.section}>
               <Text variant="titleSmall">{copy.directTitle[platform]}</Text>
               <View style={styles.legend}>
-                <LegendItem icon="run" label={copy.workout} color={colors.onSurfaceVariant} />
-                <LegendItem icon="map-marker-path" label={copy.route} color={colors.onSurfaceVariant} />
-                <LegendItem icon="heart-pulse" label={copy.heartRate} color={colors.onSurfaceVariant} />
+                {[
+                  { icon: 'run', label: copy.workout },
+                  { icon: 'map-marker-path', label: copy.route },
+                  { icon: 'heart-pulse', label: copy.heartRate },
+                ].map(({ icon, label }) => (
+                  <View key={icon} style={styles.legendItem}>
+                    <Icon source={icon} size={16} color={colors.onSurfaceVariant} />
+                    <Text variant="labelSmall">{label}</Text>
+                  </View>
+                ))}
               </View>
               <View style={styles.statusLegend}>
-                <StatusLegend icon="check" label={copy.yes} color={colors.primary} />
-                <StatusLegend icon="close" label={copy.no} color={colors.error} />
-                <StatusLegend icon="minus" label={copy.partial} color={colors.secondary} />
-                <StatusLegend icon="help" label={copy.unknown} color={colors.tertiary} />
+                {[
+                  { icon: 'check', label: copy.yes, color: colors.tertiary },
+                  { icon: 'close', label: copy.no, color: colors.error },
+                  { icon: 'minus', label: copy.partial, color: warningColor },
+                  { icon: 'help', label: copy.unknown, color: warningColor },
+                ].map(({ icon, label, color }) => (
+                  <View key={icon} style={styles.legendItem}>
+                    <Icon source={icon} size={13} color={color} />
+                    <Text variant="labelSmall" style={styles.legendStatusText}>
+                      {label}
+                    </Text>
+                  </View>
+                ))}
               </View>
               <View style={styles.appList}>
-                {apps.direct.map((app) => (
-                  <AppRow key={app.name} app={app} copy={copy} colors={colors} />
-                ))}
+                {apps.direct.map((app) => {
+                  const indicators = [
+                    { icon: 'run', label: copy.workout, state: app.workout },
+                    { icon: 'map-marker-path', label: copy.route, state: app.route },
+                    { icon: 'heart-pulse', label: copy.heartRate, state: app.heartRate },
+                  ];
+
+                  return (
+                    <View key={app.name} style={styles.appRow}>
+                      <Text variant="bodyMedium" numberOfLines={2} style={styles.appName}>
+                        {app.name}
+                      </Text>
+                      <View style={styles.indicators}>
+                        {indicators.map(({ icon, label, state }) => {
+                          const stateCopy =
+                            state === 'yes'
+                              ? copy.yes
+                              : state === 'no'
+                                ? copy.no
+                                : state === 'partial'
+                                  ? copy.partial
+                                  : copy.unknown;
+                          const iconColor =
+                            state === 'yes' ? colors.tertiary : state === 'no' ? colors.error : warningColor;
+                          const statusIcon = state === 'no' ? 'close' : state === 'partial' ? 'minus' : 'help';
+
+                          return (
+                            <View
+                              key={icon}
+                              accessible
+                              accessibilityLabel={`${label}: ${stateCopy}`}
+                              style={styles.indicator}>
+                              <Icon source={icon} size={19} color={iconColor} />
+                              {state !== 'yes' ? (
+                                <View style={[styles.statusMark, { backgroundColor: iconColor }]}>
+                                  <Icon source={statusIcon} size={8} color={colors.surface} />
+                                </View>
+                              ) : null}
+                            </View>
+                          );
+                        })}
+                      </View>
+                    </View>
+                  );
+                })}
               </View>
             </View>
 
@@ -82,78 +137,6 @@ export default function SupportedWatchApps({
         ) : null}
       </Card.Content>
     </Card>
-  );
-}
-
-function AppRow({ app, copy, colors }: { app: AppSupport; copy: SupportedAppsCopy; colors: MD3Theme['colors'] }) {
-  return (
-    <View style={styles.appRow}>
-      <Text variant="bodyMedium" numberOfLines={2} style={styles.appName}>
-        {app.name}
-      </Text>
-      <View style={styles.indicators}>
-        <DataIndicator icon="run" label={copy.workout} state={app.workout} copy={copy} colors={colors} />
-        <DataIndicator icon="map-marker-path" label={copy.route} state={app.route} copy={copy} colors={colors} />
-        <DataIndicator icon="heart-pulse" label={copy.heartRate} state={app.heartRate} copy={copy} colors={colors} />
-      </View>
-    </View>
-  );
-}
-
-function DataIndicator({
-  icon,
-  label,
-  state,
-  copy,
-  colors,
-}: {
-  icon: string;
-  label: string;
-  state: DataAvailability;
-  copy: SupportedAppsCopy;
-  colors: MD3Theme['colors'];
-}) {
-  const stateCopy =
-    state === 'yes' ? copy.yes : state === 'no' ? copy.no : state === 'partial' ? copy.partial : copy.unknown;
-  const iconColor =
-    state === 'yes'
-      ? colors.primary
-      : state === 'no'
-        ? colors.error
-        : state === 'partial'
-          ? colors.secondary
-          : colors.tertiary;
-  const statusIcon = state === 'no' ? 'close' : state === 'partial' ? 'minus' : 'help';
-
-  return (
-    <View accessible accessibilityLabel={`${label}: ${stateCopy}`} style={styles.indicator}>
-      <Icon source={icon} size={19} color={iconColor} />
-      {state !== 'yes' ? (
-        <View style={[styles.statusMark, { backgroundColor: iconColor }]}>
-          <Icon source={statusIcon} size={8} color={colors.surface} />
-        </View>
-      ) : null}
-    </View>
-  );
-}
-
-function LegendItem({ icon, label, color }: { icon: string; label: string; color: string }) {
-  return (
-    <View style={styles.legendItem}>
-      <Icon source={icon} size={16} color={color} />
-      <Text variant="labelSmall">{label}</Text>
-    </View>
-  );
-}
-
-function StatusLegend({ icon, label, color }: { icon: string; label: string; color: string }) {
-  return (
-    <View style={styles.legendItem}>
-      <Icon source={icon} size={13} color={color} />
-      <Text variant="labelSmall" style={styles.legendStatusText}>
-        {label}
-      </Text>
-    </View>
   );
 }
 

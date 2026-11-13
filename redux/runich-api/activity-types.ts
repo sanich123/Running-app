@@ -68,6 +68,7 @@ export interface ActivityResponse {
   updatedAt?: string;
   description?: string | null;
   title?: string | null;
+  textModerationStatus?: 'pending' | 'processing' | 'visible' | 'hidden' | 'removed';
   sport: string;
   media?: ActivityMediaItemResponse[] | null;
   mapPhotoUrl?: string | null;
@@ -104,6 +105,7 @@ export type ActivityListItemResponse = Pick<
   | 'date'
   | 'timeZone'
   | 'title'
+  | 'textModerationStatus'
   | 'sport'
   | 'media'
   | 'mapPhotoUrl'
@@ -141,6 +143,7 @@ export interface ActivityMutationResponse {
   updatedAt: string;
   description?: string | null;
   title?: string | null;
+  textModerationStatus?: 'pending' | 'processing' | 'visible' | 'hidden' | 'removed';
   sport: string;
   media?: ActivityMediaItemResponse[] | null;
   mapPhotoUrl?: string | null;

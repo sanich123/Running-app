@@ -205,8 +205,8 @@ function handleMigrationError(error: unknown, setIsError: (value: string) => voi
   if (isMigrationArchiveCancelledError(error) || isMigrationArchiveTransferError(error)) return;
   if (isMigrationArchiveOperationError(error)) return;
 
-  setIsError(`Ошибка миграции из Strava: ${getMigrationErrorMessage(error)}`);
-  errorToast('Ошибка миграции из Strava', error);
+  setIsError(`Ошибка переноса из Strava: ${getMigrationErrorMessage(error)}`);
+  errorToast('Ошибка переноса из Strava', error);
 }
 
 function resetMigrationUi(migration: StartStravaMigrationProps) {
