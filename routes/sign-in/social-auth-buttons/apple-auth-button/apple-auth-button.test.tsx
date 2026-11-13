@@ -122,6 +122,7 @@ describe('AppleAuthButton', () => {
 
     await waitFor(() =>
       expect(mockLoginMutation).toHaveBeenCalledWith({
+        authorizationCode: 'authorization-code',
         identityToken: 'apple-identity-token',
         nonce,
         givenName: 'Alex',
@@ -173,6 +174,7 @@ describe('AppleAuthButton', () => {
 
     await waitFor(() =>
       expect(mockLoginMutation).toHaveBeenCalledWith({
+        authorizationCode: 'authorization-code',
         identityToken: 'apple-identity-token',
         nonce,
         givenName: undefined,
@@ -203,6 +205,27 @@ describe('AppleAuthButton', () => {
       email: null,
       fullName: null,
       identityToken: null,
+      realUserStatus: AppleAuthentication.AppleAuthenticationUserDetectionStatus.LIKELY_REAL,
+      state: null,
+      user: 'apple-user-id',
+    });
+
+    await renderWithProviders(<AppleAuthButton />);
+    await waitFor(() => expect(screen.getByTestId('apple-auth')).toBeTruthy());
+    const user = userEvent.setup();
+    await user.press(screen.getByTestId('apple-auth'));
+
+    await waitFor(() => expect(screen.queryByTestId('apple-auth-progress')).toBeNull());
+    expect(errorToast).toHaveBeenCalledWith(russianCopy.appleLoginFailed);
+    expect(mockLoginMutation).not.toHaveBeenCalled();
+  });
+
+  it('reports a missing Apple authorization code', async () => {
+    jest.mocked(AppleAuthentication.signInAsync).mockResolvedValueOnce({
+      authorizationCode: null,
+      email: null,
+      fullName: null,
+      identityToken: 'apple-identity-token',
       realUserStatus: AppleAuthentication.AppleAuthenticationUserDetectionStatus.LIKELY_REAL,
       state: null,
       user: 'apple-user-id',

@@ -4,10 +4,10 @@ import { LANGUAGES } from '@const/enums';
 import { setCommentActivityId, setCommentToUpdate, setIdOfUpdatingComment } from '@R/slices/comment/comment';
 import { BASE_URL } from '@T/utils/handlers';
 import { server } from '@T/utils/server';
-import CommentInput from './comment-input';
-import { COMMENT_ICON_TEST_ID, COMMENT_INPUT_TEST_ID, COMMENT_INPUT } from './const';
 import { mockStore, setMockUserId } from '../../../tests/utils/mock-store';
 import { renderWithProviders } from '../../../tests/utils/test-utils';
+import CommentInput from './comment-input';
+import { COMMENT_ICON_TEST_ID, COMMENT_INPUT_TEST_ID, COMMENT_INPUT } from './const';
 
 describe('Comment input', () => {
   it('should correctly renders', async () => {
@@ -52,16 +52,21 @@ describe('Comment input', () => {
     await waitFor(() => expect(requestBody).toEqual({ comment: 'A real test comment' }));
   });
 
-  it('closes the composer without sending an empty comment', async () => {
+  it('shows cancel after typing and clears the draft without sending it', async () => {
     const user = userEvent.setup();
-    mockStore.dispatch(setIdOfUpdatingComment(''));
-    mockStore.dispatch(setCommentToUpdate(''));
+    mockStore.dispatch(setIdOfUpdatingComment('draft-comment-id'));
+    mockStore.dispatch(setCommentToUpdate('previous draft'));
     await renderWithProviders(<CommentInput commentId="" />);
+    const input = screen.getByTestId(COMMENT_INPUT_TEST_ID);
 
+    expect(screen.queryByTestId('comment-input-cancel')).toBeNull();
+    await user.type(input, 'unsent comment');
     await user.press(screen.getByTestId('comment-input-cancel'));
 
+    expect(screen.getByTestId(COMMENT_INPUT_TEST_ID).props.value).toBe('');
     expect(mockStore.getState().comment.idOfUpdatingComment).toBe('');
     expect(mockStore.getState().comment.commentToUpdate).toBe('');
+    expect(screen.queryByTestId(COMMENT_ICON_TEST_ID)).toBeNull();
   });
 
   it('updates an existing comment only when its normalized text changes', async () => {

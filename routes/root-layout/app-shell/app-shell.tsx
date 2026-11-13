@@ -223,11 +223,9 @@ export default function AppShell() {
               <Stack.Screen
                 name={`${ROUTES.map}/${ROUTES.routeId}`}
                 options={{
-                  headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
                   title: LABELS[language].map,
-                }}>
-                {getUsersSettingsToolbar(true, true)}
-              </Stack.Screen>
+                }}
+              />
               <Stack.Screen name={`${ROUTES.media}/${ROUTES.photoUrl}`} options={{ headerShown: false }} />
               <Stack.Screen
                 name={`${ROUTES.mediaGrid}/${ROUTES.routeId}`}

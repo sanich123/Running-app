@@ -65,20 +65,20 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '4. OAuth и email',
         paragraphs: [
-          'При авторизации через VK ID, Яндекс ID или Sign in with Apple подтверждённый email и идентификатор аккаунта провайдера используются для создания или поиска аккаунта; имя и фамилия добавляются, если провайдер их передал. Apple может скрыть личный email и передать адрес-посредник. Пароли и токены провайдеров в профиле не сохраняются и не используются для иных целей. Самостоятельная регистрация по email доступна только с адресом российского почтового оператора в доменной зоне .ru или .рф; это ограничение не относится к адресам, которые передают провайдеры входа.',
+          'При авторизации через VK ID, Яндекс ID или Sign in with Apple подтверждённый email и идентификатор аккаунта провайдера используются для создания или поиска аккаунта; имя и фамилия добавляются, если провайдер их передал. Apple может скрыть личный email и передать адрес-посредник. Пароли провайдеров не сохраняются. Refresh token Apple хранится на сервере в зашифрованном виде и используется только для отзыва доступа при удалении аккаунта; данные не сохраняются в профиле и не используются для иных целей. Самостоятельная регистрация по email доступна только с адресом российского почтового оператора в доменной зоне .ru или .рф; это ограничение не относится к адресам, которые передают провайдеры входа.',
         ],
       },
       {
         heading: '5. Геолокация',
         paragraphs: [
-          'Перед системным запросом Android на предоставление геолокации, приложение показывает согласие на предоставление геолокации. Доступ к геолокации в фоновом режиме используется только для продолжения записи при заблокированном экране или свернутом приложении и прекращается после остановки тренировки.',
+          'Перед системным запросом Android на предоставление геолокации приложение показывает отдельное согласие. Runich получает геопозицию в фоне для записи маршрута активной тренировки, даже если экран заблокирован или приложение работает в фоне. Сбор прекращается после остановки тренировки и не происходит в фоне вне активной тренировки.',
           'Пользователь может отказаться или отозвать системное разрешение. Завершенные маршруты и координаты хранятся до удаления аккаунта; временные данные незавершенной тренировки удаляются после завершения, отмены или сброса записи.',
         ],
       },
       {
         heading: '6. Данные здоровья из Apple Health и Health Connect',
         paragraphs: [
-          'При подключении хранилища здоровья и предоставлении системных разрешений Runich читает данные на устройстве из Apple Health через HealthKit на iOS или из Health Connect на Android. Импорт охватывает тренировки за последние 30 дней. Доступ используется только для чтения: Runich не записывает данные обратно в Apple Health или Health Connect. При включенной автосинхронизации Android проверяет новые записи при открытии или возвращении в приложение, а iOS — при открытии экрана импорта или возвращении на него; при выключенной автосинхронизации пользователь запускает чтение и импорт вручную.',
+          'При подключении хранилища здоровья и предоставлении системных разрешений Runich читает данные на устройстве из Apple Health через HealthKit на iOS или из Health Connect на Android. Импорт охватывает тренировки за последние 30 дней. Доступ используется только для чтения: Runich не записывает данные обратно в Apple Health или Health Connect. При включенной автосинхронизации Android и iOS проверяют новые записи при открытии приложения или возвращении в него; при выключенной автосинхронизации пользователь запускает чтение и импорт вручную.',
           'Для каждой импортируемой тренировки могут считываться вид спорта, название (если передано источником), дата и время начала, часовой пояс, длительность, дистанция, количество шагов, идентификатор тренировки в источнике для предотвращения повторного импорта и связанный маршрут. Точки маршрута могут содержать время, широту, долготу, высоту и точность геопозиции; HealthKit также может передавать скорость и направление движения. На Android дополнительно считываются измерения пульса с временем и значением ударов в минуту, а также активные калории в килокалориях. На iOS Runich запрашивает разрешение HealthKit на чтение активной энергии, но текущая версия приложения не считывает и не отправляет это значение; разрешение на чтение пульса HealthKit не запрашивается.',
           'Эти данные нужны, чтобы создать и обновлять импортированную тренировку в аккаунте Runich, показывать маршрут и спортивные показатели, рассчитывать темп и статистику и отображать график пульса, если он доступен. Данные здоровья не используются для рекламы, маркетингового профилирования или продажи.',
           'После импорта данные передаются в API Runich и хранятся в аккаунте пользователя. В производственной среде серверы и база данных Runich размещаются в инфраструктуре Timeweb в Российской Федерации, а файлы маршрутов хранятся в S3-совместимом хранилище Timeweb. Для формирования карты сервер использует картографические ресурсы OpenFreeMap; если внутренняя генерация карты недоступна, сокращенный маршрут может быть передан Mapbox для создания статического изображения.',
@@ -230,7 +230,7 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '2. Период и системное разрешение',
         paragraphs: [
-          'Системное разрешение может предоставлять доступ к геолокации в фоне в любое время, но Runich обращается к геолокации в фоне только во время активной тренировки — при заблокированном экране или свернутом приложении. Обращение к геолокации прекращается после остановки тренировки. Завершенные маршруты и координаты хранятся до удаления аккаунта, если не удалены вместе с тренировкой или более длительное хранение не требуется законом.',
+          'Системное разрешение может предоставлять доступ к геолокации в фоне в любое время, но Runich получает геопозицию только для записи маршрута активной тренировки — даже если экран заблокирован или приложение работает в фоне. Сбор прекращается после остановки тренировки и не происходит в фоне вне активной тренировки. Завершенные маршруты и координаты хранятся до удаления аккаунта, если не удалены вместе с тренировкой или более длительное хранение не требуется законом.',
           'После этого согласия приложение запрашивает системное разрешение. Без него запись маршрута недоступна или может быть неполной.',
         ],
       },
@@ -265,6 +265,12 @@ const RUSSIAN_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
         paragraphs: [
           'Удаляются аккаунт, профиль, тренировки, маршруты и координаты, материалы, комментарии, отметки «нравится», связи и активные сессии.',
           `По вопросам удаления и другим обращениям можно написать на ${LEGAL_OPERATOR.email}.`,
+        ],
+      },
+      {
+        heading: '4. Доступ через Apple',
+        paragraphs: [
+          'Runich отзывает сохраненный токен Apple при удалении аккаунта. Если после удаления Runich все еще указан в настройках Apple ID среди приложений, использующих «Вход с Apple», удалите его там вручную.',
         ],
       },
     ],
@@ -308,20 +314,20 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '4. OAuth and email',
         paragraphs: [
-          'When you sign in through VK ID, Yandex ID or Sign in with Apple, the verified email and provider account identifier are used to create or find an account; name fields are added when the provider shares them. Apple may hide the personal email and provide a relay address. Provider passwords and tokens are not stored in the profile or used for unrelated purposes. Direct email registration is available only with an address from a Russian email provider in the .ru or .рф domain zone; this restriction does not apply to email addresses provided by sign-in providers.',
+          'When you sign in through VK ID, Yandex ID or Sign in with Apple, the verified email and provider account identifier are used to create or find an account; name fields are added when the provider shares them. Apple may hide the personal email and provide a relay address. Provider passwords are not stored. Apple refresh tokens are stored on the server in encrypted form and used only to revoke access when an account is deleted; they are not stored in the profile or used for unrelated purposes. Direct email registration is available only with an address from a Russian email provider in the .ru or .рф domain zone; this restriction does not apply to email addresses provided by sign-in providers.',
         ],
       },
       {
         heading: '5. Location data',
         paragraphs: [
-          'Before the Android system request to grant location access, the app shows location consent. Background location access is used only to continue recording while the screen is locked or the app is minimized and stops when the workout stops.',
+          'Before the Android system request to grant location access, the app shows separate consent. Runich collects background location only to record the route of an active workout while the screen is locked or the app is running in the background. Collection stops when the workout stops and does not happen outside an active workout.',
           'You may refuse or revoke the system permission. Completed routes and coordinates are kept until you delete the account; temporary data from an unfinished workout is deleted after recording is completed, cancelled or reset.',
         ],
       },
       {
         heading: '6. Health data from Apple Health and Health Connect',
         paragraphs: [
-          'When you connect a health store and grant system permissions, Runich reads data on your device from Apple Health through HealthKit on iOS or Health Connect on Android. Import covers workouts from the last 30 days. Access is read-only: Runich does not write data back to Apple Health or Health Connect. When auto-sync is enabled, Android checks for records when the app is opened or returned to, while iOS checks when you open or return to the import screen. When auto-sync is off, you start reading and import manually.',
+          'When you connect a health store and grant system permissions, Runich reads data on your device from Apple Health through HealthKit on iOS or Health Connect on Android. Import covers workouts from the last 30 days. Access is read-only: Runich does not write data back to Apple Health or Health Connect. When auto-sync is enabled, both Android and iOS check for records when the app is opened or returned to. When auto-sync is off, you start reading and import manually.',
           'For each imported workout, Runich may read the sport, title if supplied by the source, start date and time, time zone, duration, distance, step count, source workout identifier used to prevent duplicates, and associated route. Route points may contain time, latitude, longitude, altitude and location accuracy; HealthKit may also provide speed and direction of travel. On Android, Runich additionally reads heart-rate samples with their time and beats-per-minute value, and active calories in kilocalories. On iOS, Runich requests HealthKit read permission for active energy, but the current app version does not read or send that value; it does not request HealthKit heart-rate access.',
           'This data is used to create and update an imported workout in your Runich account, show its route and sports metrics, calculate pace and statistics, and display a heart-rate chart when available. Health data is not used for advertising, marketing profiling or sale.',
           'After import, data is sent to the Runich API and stored in your account. In production, Runich servers and database are hosted in Timeweb infrastructure in the Russian Federation, and route files are stored in Timeweb S3-compatible storage. The server uses OpenFreeMap map resources to render maps; if internal map rendering is unavailable, a reduced route may be sent to Mapbox to create a static image.',
@@ -408,7 +414,7 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '3. Data, location and workouts',
         paragraphs: [
-          'Personal-data processing is governed by the separate Policy. Continuing registration or sign-in after the legal notice with links is displayed means that the user accepts the documents in the service interface. To estimate workout calories, the user may provide weight, height, age and gender in the profile. Route recording starts only after separate consent to grant location access and the system permission; background location tracking is used only during workout recording.',
+          'Personal-data processing is governed by the separate Policy. Continuing registration or sign-in after the legal notice with links is displayed means that the user accepts the documents in the service interface. To estimate workout calories, the user may provide weight, height, age and gender in the profile. Route recording starts only after separate consent to grant location access and the system permission; background location is collected only to record an active workout route, including when the screen is locked or the app is running in the background, and stops when the workout stops.',
           'Workouts and coordinates are kept until the account is deleted unless the user deletes a workout earlier or a longer period is required by law.',
         ],
       },
@@ -473,7 +479,7 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
       {
         heading: '2. Period and system permission',
         paragraphs: [
-          'The system permission may allow background location access at any time, but Runich accesses location in the background only during an active workout, when the screen is locked or the app is minimized. Location access stops when the workout stops. Completed routes and coordinates are kept until the account is deleted unless they are deleted with the workout or a longer period is required by law.',
+          'The system permission may allow background location access at any time, but Runich collects location only to record the route of an active workout, including when the screen is locked or the app is running in the background. Collection stops when the workout stops and does not happen in the background outside an active workout. Completed routes and coordinates are kept until the account is deleted unless they are deleted with the workout or a longer period is required by law.',
           'After this consent, the app requests system permission. Without it, route recording is unavailable or may be incomplete.',
         ],
       },
@@ -511,6 +517,12 @@ const ENGLISH_DOCUMENTS: Record<LegalDocumentId, LegalDocument> = {
         paragraphs: [
           'The account, profile, workouts, routes and coordinates, materials, comments, likes, connections and active sessions are deleted.',
           `For deletion requests and other requests, contact ${LEGAL_OPERATOR.email}.`,
+        ],
+      },
+      {
+        heading: '4. Apple access',
+        paragraphs: [
+          'Runich revokes its stored Apple token when you delete your account. If Runich is still listed in your Apple Account settings among apps using Sign in with Apple after deletion, remove it there manually.',
         ],
       },
     ],

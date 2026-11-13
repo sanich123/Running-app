@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Keyboard, View, StyleSheet } from 'react-native';
-import { Button, Icon, IconButton, Text, useTheme } from 'react-native-paper';
+import { Keyboard, View, StyleSheet, Platform, Text as NativeText } from 'react-native';
+import { Icon, IconButton, Text, useTheme } from 'react-native-paper';
 import {
   usePostCommentWithActivityIdMutation,
   useUpdateCommentByCommentIdMutation,
@@ -59,18 +59,16 @@ export default function CommentInput({ commentToUpdate = '', commentId = '' }: C
 
   return (
     <View style={styles.wrapper}>
-      <View style={styles.header}>
-        <Text variant="labelLarge">
-          {isEditing ? COMMENT_INPUT[language].editingLabel : COMMENT_INPUT[language].label}
-        </Text>
-        <Button compact mode="text" onPress={closeInput} testID="comment-input-cancel">
-          {COMMENT_INPUT[language].cancel}
-        </Button>
-      </View>
+      {isEditing ? (
+        <View style={styles.header}>
+          <Text variant="labelLarge">{COMMENT_INPUT[language].editingLabel}</Text>
+        </View>
+      ) : null}
       <View style={styles.inputRow}>
         <CommentTextInput
           testID={COMMENT_INPUT_TEST_ID}
           placeholder={COMMENT_INPUT[language].placeholder}
+          placeholderTextColor={Platform.OS === 'ios' ? 'transparent' : undefined}
           value={comment}
           style={[
             styles.input,
@@ -96,9 +94,26 @@ export default function CommentInput({ commentToUpdate = '', commentId = '' }: C
           submitBehavior="submit"
           enterKeyHint="send"
         />
+        {Platform.OS === 'ios' && comment.length === 0 ? (
+          <View pointerEvents="none" style={styles.placeholderContainer}>
+            <NativeText style={[styles.placeholderText, { color: colors.onSurfaceDisabled }]}>
+              {COMMENT_INPUT[language].placeholder}
+            </NativeText>
+          </View>
+        ) : null}
         <View style={styles.inputIcon}>
           <Icon source="comment-outline" size={20} color={colors.primary} />
         </View>
+        {comment.length > 0 ? (
+          <IconButton
+            testID="comment-input-cancel"
+            icon="close"
+            iconColor={colors.onSurfaceVariant}
+            accessibilityLabel={COMMENT_INPUT[language].cancel}
+            style={[styles.actionButton, comment.trim().length > 0 && styles.cancelButtonBesideSend]}
+            onPress={closeInput}
+          />
+        ) : null}
         {comment.trim().length > 0 ? (
           <IconButton
             loading={isSending}
@@ -107,7 +122,7 @@ export default function CommentInput({ commentToUpdate = '', commentId = '' }: C
             iconColor={colors.primary}
             mode="contained-tonal"
             containerColor={colors.primaryContainer}
-            style={styles.sendButton}
+            style={styles.actionButton}
             onPress={submitComment}
             disabled={isSending}
           />
@@ -138,9 +153,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     minHeight: 52,
     paddingLeft: 44,
-    paddingRight: 50,
-    paddingVertical: 13,
-    textAlignVertical: 'center',
+    paddingRight: 96,
+    paddingVertical: 0,
+    paddingTop: Platform.OS === 'ios' ? 14 : 0,
+    textAlignVertical: Platform.OS === 'ios' ? 'top' : 'center',
     width: '100%',
   },
   inputIcon: {
@@ -148,12 +164,27 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 16,
   },
-  sendButton: {
+  placeholderContainer: {
+    bottom: 10,
+    justifyContent: 'center',
+    left: 44,
+    position: 'absolute',
+    right: 96,
+    top: 0,
+  },
+  placeholderText: {
+    fontSize: 16,
+    lineHeight: 20,
+  },
+  actionButton: {
     height: 40,
     margin: 0,
     position: 'absolute',
     right: 4,
     top: 6,
     width: 40,
+  },
+  cancelButtonBesideSend: {
+    right: 48,
   },
 });

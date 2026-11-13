@@ -2,7 +2,6 @@ interface ConnectionControlsCopy {
   connect: string;
   iosConnect: string;
   connected: string;
-  iosConnected: string;
   autoSync: { title: string };
   iosRequestPermissions: string;
   refresh: string;

@@ -31,11 +31,13 @@ export default function ConnectionControls({
       )}
 
       {isConnected && (
-        <Card style={styles.statusCard}>
+        <Card style={isIOS ? styles.iosSettingsCard : styles.statusCard}>
           <Card.Content>
-            <Text variant="titleSmall" style={{ color: colors.primary }}>
-              {renderHealthConnectLinks(isIOS ? copy.iosConnected : copy.connected, colors.primary)}
-            </Text>
+            {!isIOS && (
+              <Text variant="titleSmall" style={{ color: colors.primary }}>
+                {renderHealthConnectLinks(copy.connected, colors.primary)}
+              </Text>
+            )}
             <View style={styles.switchRow}>
               <View style={styles.copy}>
                 <Text variant="titleSmall">{copy.autoSync.title}</Text>
@@ -78,6 +80,7 @@ export default function ConnectionControls({
 
 const styles = StyleSheet.create({
   statusCard: { marginTop: 2, borderColor: '#4caf50', borderWidth: 1 },
+  iosSettingsCard: { marginTop: 2 },
   switchRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 12 },
   copy: { flex: 1, gap: 2 },
   permissionButton: { alignSelf: 'flex-start', marginTop: 12 },

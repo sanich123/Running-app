@@ -39,12 +39,13 @@ export default function AppleAuthButton() {
           AppleAuthentication.AppleAuthenticationScope.EMAIL,
         ],
       });
-      if (!credential.identityToken) {
+      if (!credential.identityToken || !credential.authorizationCode) {
         return errorToast(copy.appleLoginFailed);
       }
 
       const session = await loginWithApple({
         identityToken: credential.identityToken,
+        authorizationCode: credential.authorizationCode,
         nonce,
         givenName: credential.fullName?.givenName ?? undefined,
         familyName: credential.fullName?.familyName ?? undefined,

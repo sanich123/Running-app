@@ -65,6 +65,7 @@ export default function SearchInput({ setSearch, setIsInitial, search }: SearchI
 const styles = StyleSheet.create({
   content: {
     fontFamily: FONT_FAMILIES.regular,
+    marginLeft: 50,
     textAlignVertical: 'center',
   },
   input: { fontSize: 15, minHeight: 52 },

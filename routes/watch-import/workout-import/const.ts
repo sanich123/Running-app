@@ -19,10 +19,9 @@ export const WORKOUT_IMPORT_COPY = {
     intro:
       'Каждый раз, когда вы заходите в Runich, приложение синхронизирует импортированные тренировки из Health Connect. Если тренировка с GPS-маршрутом не появляется, проверьте список совместимых приложений и разрешения ниже.',
     iosIntro:
-      'Runich импортирует тренировки из Apple Health за последние 30 дней и пропускает те, что уже есть в аккаунте.',
+      'При открытии Runich и возвращении в приложение он проверяет Apple Health на наличие тренировок за последние 30 дней. Новые тренировки импортируются автоматически, если включена автосинхронизация; уже импортированные не дублируются.',
     iosUnavailable: 'Apple Health недоступно на этом устройстве.',
     iosConnect: 'Подключить Runich к Apple Health',
-    iosConnected: 'Запрос доступа отправлен. Проверьте разрешения в Apple Health.',
     iosRequestPermissions: 'Запросить разрешения ещё раз',
     iosNoWorkouts: 'Завершённых тренировок в Apple Health за последние 30 дней нет.',
     workoutSignals: {
@@ -131,10 +130,9 @@ export const WORKOUT_IMPORT_COPY = {
     intro:
       'Each time you open Runich, the app syncs imported workouts from Health Connect. If a workout with a GPS route does not appear, check the compatible-app list and permissions below.',
     iosIntro:
-      'Runich imports workouts from Apple Health from the last 30 days and skips workouts already in your account.',
+      'When you open Runich or return to it, the app checks Apple Health for workouts from the last 30 days. New workouts are imported automatically when auto-sync is enabled; workouts already imported are skipped.',
     iosUnavailable: 'Apple Health is not available on this device.',
     iosConnect: 'Connect Runich to Apple Health',
-    iosConnected: 'Access request sent. Check permissions in Apple Health.',
     iosRequestPermissions: 'Request permissions again',
     iosNoWorkouts: 'No completed workouts in Apple Health from the last 30 days.',
     workoutSignals: {

@@ -29,7 +29,7 @@ describe('ConnectionControls', () => {
     expect(screen.queryByTestId('health-connect-refresh')).toBeNull();
   });
 
-  it('lets the user change auto-sync, request iOS permissions, and refresh workouts', async () => {
+  it('keeps iOS auto-sync and refresh controls without claiming read permission was granted', async () => {
     const connect = jest.fn(async () => undefined);
     const setAutoSyncEnabled = jest.fn(async () => undefined);
     const syncLatestWorkouts = jest.fn(async () => undefined);
@@ -56,6 +56,7 @@ describe('ConnectionControls', () => {
     expect(setAutoSyncEnabled).toHaveBeenCalledWith(false);
     expect(connect).toHaveBeenCalledTimes(1);
     expect(syncLatestWorkouts).toHaveBeenCalledWith(true);
-    expect(screen.getByText(WORKOUT_IMPORT_COPY.en.iosConnected)).toBeOnTheScreen();
+    expect(screen.queryByText(WORKOUT_IMPORT_COPY.en.connected)).toBeNull();
+    expect(screen.getByTestId('health-connect-request-permissions')).toBeOnTheScreen();
   });
 });

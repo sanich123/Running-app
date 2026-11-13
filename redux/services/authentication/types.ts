@@ -31,6 +31,7 @@ export interface NativeVkAuthCode {
 
 export interface NativeAppleAuthToken {
   identityToken: string;
+  authorizationCode: string;
   nonce: string;
   givenName?: string;
   familyName?: string;

@@ -2,7 +2,9 @@ import { Button, HStack, Host, Image, Menu, Text } from '@expo/ui/swift-ui';
 import {
   accessibilityLabel as accessibilityLabelModifier,
   disabled,
+  frame,
   foregroundStyle,
+  padding,
 } from '@expo/ui/swift-ui/modifiers';
 import { useTheme } from 'react-native-paper';
 import type { ActivityChartAxisMenuProps } from './types';
@@ -19,7 +21,7 @@ export default function ActivityChartAxisMenu({
   const selectedOption = options.find(({ metric }) => metric === selectedMetric) ?? options[0];
 
   return (
-    <Host matchContents seedColor={colors.primary}>
+    <Host matchContents={{ horizontal: false, vertical: true }} seedColor={colors.primary} style={{ flex: 1 }}>
       <Menu
         testID={`activity-chart-${side}-selector`}
         label={
@@ -29,6 +31,8 @@ export default function ActivityChartAxisMenu({
             modifiers={[
               accessibilityLabelModifier(`${axisLabel}: ${selectedOption.axisTitle}`),
               foregroundStyle(colors.primary),
+              padding({ horizontal: 10, vertical: 8 }),
+              frame({ maxWidth: Infinity, alignment: side === 'right' ? 'trailing' : 'leading' }),
             ]}>
             <Image systemName="circle.fill" size={8} color={selectedOption.color} />
             <Text
