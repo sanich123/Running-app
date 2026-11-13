@@ -7,7 +7,7 @@ import {
 } from '@gorhom/bottom-sheet';
 import { KeyboardStickyView } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { View, StyleSheet } from 'react-native';
+import { Platform, View, StyleSheet } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { setCommentToUpdate, setIdOfUpdatingComment } from '@R/slices/comment/comment';
@@ -33,7 +33,8 @@ export default function CommentsListModal({ commentsModalRef, allowNewComments =
       <BottomSheetFooter animatedFooterPosition={animatedFooterPosition} bottomInset={bottomInset}>
         <KeyboardStickyView
           testID="comments-composer-keyboard-sticky"
-          offset={{ opened: -8 }}
+          enabled={Platform.OS !== 'ios'}
+          offset={{ opened: 4 }}
           style={styles.stickyComposer}>
           <View
             testID="comments-composer"
