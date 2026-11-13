@@ -31,6 +31,32 @@ export default {
         'com.apple.developer.healthkit': true,
       },
       privacyManifests: {
+        NSPrivacyCollectedDataTypes: [
+          {
+            NSPrivacyCollectedDataType: 'NSPrivacyCollectedDataTypeHealth',
+            NSPrivacyCollectedDataTypeLinked: true,
+            NSPrivacyCollectedDataTypeTracking: false,
+            NSPrivacyCollectedDataTypePurposes: ['NSPrivacyCollectedDataTypePurposeAppFunctionality'],
+          },
+          {
+            NSPrivacyCollectedDataType: 'NSPrivacyCollectedDataTypeFitness',
+            NSPrivacyCollectedDataTypeLinked: true,
+            NSPrivacyCollectedDataTypeTracking: false,
+            NSPrivacyCollectedDataTypePurposes: ['NSPrivacyCollectedDataTypePurposeAppFunctionality'],
+          },
+          {
+            NSPrivacyCollectedDataType: 'NSPrivacyCollectedDataTypePreciseLocation',
+            NSPrivacyCollectedDataTypeLinked: true,
+            NSPrivacyCollectedDataTypeTracking: false,
+            NSPrivacyCollectedDataTypePurposes: ['NSPrivacyCollectedDataTypePurposeAppFunctionality'],
+          },
+          {
+            NSPrivacyCollectedDataType: 'NSPrivacyCollectedDataTypeUserID',
+            NSPrivacyCollectedDataTypeLinked: true,
+            NSPrivacyCollectedDataTypeTracking: false,
+            NSPrivacyCollectedDataTypePurposes: ['NSPrivacyCollectedDataTypePurposeAppFunctionality'],
+          },
+        ],
         NSPrivacyAccessedAPITypes: [
           {
             NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryUserDefaults',
@@ -48,7 +74,7 @@ export default {
         NSMotionUsageDescription:
           'Приложение Runich использует данные о движении и шагах для определения активности и подсчета шагов во время тренировки',
         NSHealthShareUsageDescription:
-          'Runich использует завершенные тренировки из Apple Health, чтобы сохранить их в вашем аккаунте',
+          'Runich считывает тренировки, маршруты, шаги и доступные измерения пульса из Apple Health, чтобы сохранить тренировку в вашем аккаунте',
       },
       bundleIdentifier: IS_DEV ? 'com.sanich123.runich.dev' : 'com.sanich123.runich',
     },
