@@ -27,8 +27,9 @@ export default function ContentActionsMenu({
   onBlock,
 }: ContentActionsMenuProps) {
   const { colors } = useTheme();
+  const hasActions = showReport || !!additionalActions?.length || (!!onBlock && !!blockLabel);
 
-  return (
+  return hasActions ? (
     <Host
       seedColor={iconColor ?? colors.primary}
       style={[
@@ -73,7 +74,7 @@ export default function ContentActionsMenu({
         ) : null}
       </Menu>
     </Host>
-  );
+  ) : null;
 }
 
 const styles = {

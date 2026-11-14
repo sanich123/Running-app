@@ -11,7 +11,12 @@ import { errorToast } from '@S/error-toast/error-toast';
 import { COMMENT_LIKE_BTN } from './const';
 import type { CommentLikeBtnProps } from '../types';
 
-export default function CommentLikeBtn({ activityId, commentId, commentLikesFromComment }: CommentLikeBtnProps) {
+export default function CommentLikeBtn({
+  activityId,
+  commentId,
+  commentLikesFromComment,
+  disabled = false,
+}: CommentLikeBtnProps) {
   const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ settings }) => settings);
@@ -75,7 +80,7 @@ export default function CommentLikeBtn({ activityId, commentId, commentLikesFrom
             errorToast(COMMENT_LIKE_BTN[language].errorSending, error);
           }
         }}
-        disabled={isLoadingLikes || isErrorToGetLikes}
+        disabled={disabled || isLoadingLikes || isErrorToGetLikes}
         loading={isSendingLike || isDeletingLike}
       />
     </Animated.View>

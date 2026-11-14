@@ -80,21 +80,6 @@ export default function Comment({
           />
         </View>
         <View style={styles.actions}>
-          {isPending && !isYouAuthor && onRefreshStatus ? (
-            <IconButton
-              icon="refresh"
-              accessibilityLabel={moderationCopy.refresh}
-              accessibilityRole="button"
-              testID={`refresh-comment-status-${id}`}
-              onPress={onRefreshStatus}
-              iconColor={colors.primary}
-              rippleColor={colors.primaryContainer}
-              size={20}
-              loading={isRefreshingStatus}
-              disabled={isRefreshingStatus}
-              style={styles.refreshButton}
-            />
-          ) : null}
           <ContentActionsMenu
             accessibilityLabel={
               language === LANGUAGES.russian ? 'Дополнительные действия с комментарием' : 'Comment actions'
@@ -148,14 +133,36 @@ export default function Comment({
           <Text variant="bodyLarge">{moderationCopy.hiddenPlaceholder}</Text>
         )}
       </View>
-      {moderationStatus === 'visible' ? (
+      {moderationStatus === 'visible' || isPending ? (
         <View style={styles.likesWrapper}>
-          <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-            {(canInteract || commentLike.some(({ authorId: likerId }) => likerId === userId)) && (
-              <CommentLikeBtn activityId={activityId} commentId={id} commentLikesFromComment={commentLike} />
+          <View style={styles.likesLeadingActions}>
+            {(isPending || canInteract || commentLike.some(({ authorId: likerId }) => likerId === userId)) && (
+              <CommentLikeBtn
+                activityId={activityId}
+                commentId={id}
+                commentLikesFromComment={commentLike}
+                disabled={isPending}
+              />
             )}
-            <CommentLikesLength commentId={id} commentLikesFromComment={commentLike} />
+            {moderationStatus === 'visible' ? (
+              <CommentLikesLength commentId={id} commentLikesFromComment={commentLike} />
+            ) : null}
           </View>
+          {isPending && !isYouAuthor && onRefreshStatus ? (
+            <IconButton
+              icon="refresh"
+              accessibilityLabel={moderationCopy.refresh}
+              accessibilityRole="button"
+              testID={`refresh-comment-status-${id}`}
+              onPress={onRefreshStatus}
+              iconColor={colors.primary}
+              rippleColor={colors.primaryContainer}
+              size={20}
+              loading={isRefreshingStatus}
+              disabled={isRefreshingStatus}
+              style={styles.refreshButton}
+            />
+          ) : null}
         </View>
       ) : null}
       <ReportContentDialog
@@ -207,6 +214,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  likesLeadingActions: { display: 'flex', flexDirection: 'row', alignItems: 'center' },
   actions: { alignItems: 'center', justifyContent: 'center', marginLeft: 8 },
   dateTimeWrapper: {
     display: 'flex',

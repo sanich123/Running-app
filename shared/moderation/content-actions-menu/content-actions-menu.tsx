@@ -16,14 +16,11 @@ export default function ContentActionsMenu({
   onBlock,
 }: ContentActionsMenuProps) {
   const [isVisible, setIsVisible] = useState(false);
-  const [hasOpened, setHasOpened] = useState(false);
   const { colors } = useTheme();
-  const openMenu = () => {
-    setHasOpened(true);
-    setIsVisible(true);
-  };
+  const openMenu = () => setIsVisible(true);
+  const hasActions = showReport || !!additionalActions?.length || (!!onBlock && !!blockLabel);
 
-  return hasOpened ? (
+  return hasActions ? (
     <Menu
       visible={isVisible}
       onDismiss={() => setIsVisible(false)}
@@ -38,6 +35,7 @@ export default function ContentActionsMenu({
           icon="dots-vertical"
           accessibilityLabel={accessibilityLabel}
           accessibilityRole="button"
+          accessibilityState={{ expanded: isVisible }}
           testID={testID}
           onPress={openMenu}
           iconColor={iconColor ?? colors.primary}
@@ -94,19 +92,7 @@ export default function ContentActionsMenu({
         />
       ) : null}
     </Menu>
-  ) : (
-    <IconButton
-      icon="dots-vertical"
-      accessibilityLabel={accessibilityLabel}
-      accessibilityRole="button"
-      testID={testID}
-      onPress={openMenu}
-      iconColor={iconColor ?? colors.primary}
-      rippleColor={colors.primaryContainer}
-      size={20}
-      style={styles.trigger}
-    />
-  );
+  ) : null;
 }
 
 const styles = {
