@@ -15,7 +15,7 @@ import type { CommentResponse } from '@R/runich-api/comment-types';
 
 export default function Comments({ commentsModalRef }: CommentsProps) {
   const { commentActivityId } = useAppSelector(({ comment }) => comment);
-  const { data, error, refetch, isLoading, isError, isFetchingNextPage, hasNextPage, fetchNextPage } =
+  const { data, error, refetch, isLoading, isError, isFetching, isFetchingNextPage, hasNextPage, fetchNextPage } =
     useGetCommentsByActivityIdInfiniteQuery({ activityId: commentActivityId }, { skip: !commentActivityId });
   const hasLoadedPage = Boolean(data?.pages.length);
   const hasScrolledFromInitialTop = useRef(false);
@@ -70,7 +70,12 @@ export default function Comments({ commentsModalRef }: CommentsProps) {
       testID="comments-list"
       keyExtractor={(comment) => comment.id}
       renderItem={({ item }) => (
-        <Comment {...item} commentsModalRef={commentsModalRef} onRefreshStatus={() => void refetch()} />
+        <Comment
+          {...item}
+          commentsModalRef={commentsModalRef}
+          onRefreshStatus={() => void refetch()}
+          isRefreshingStatus={isFetching}
+        />
       )}
       contentContainerStyle={styles.content}
       ListHeaderComponent={() => (

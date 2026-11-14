@@ -72,10 +72,11 @@ describe('comment', () => {
     );
 
     expect(screen.getByText(COMMENT_MODERATION_COPY.russian.pending)).toBeOnTheScreen();
-    expect(screen.getByText(COMMENT_MODERATION_COPY.russian.hiddenPlaceholder)).toBeOnTheScreen();
+    expect(screen.queryByText(COMMENT_MODERATION_COPY.russian.hiddenPlaceholder)).toBeNull();
     expect(screen.queryByText('This text must stay private')).toBeNull();
     expect(screen.queryByTestId('report-comment-comment-1')).toBeNull();
-    fireEvent.press(screen.getByText(COMMENT_MODERATION_COPY.russian.refresh));
+    fireEvent.press(screen.getByTestId('refresh-comment-status-comment-1'));
+    expect(screen.queryByText(COMMENT_MODERATION_COPY.russian.refresh)).toBeNull();
     expect(onRefreshStatus).toHaveBeenCalledTimes(1);
   });
 
@@ -83,7 +84,8 @@ describe('comment', () => {
     mockStore.dispatch(setMockUserId('user-1'));
     await renderWithProviders(<Comment {...commentProps} moderationStatus="pending" />);
 
-    expect(screen.getByText(COMMENT_MODERATION_COPY.russian.pending)).toBeOnTheScreen();
+    expect(screen.queryByText(COMMENT_MODERATION_COPY.russian.pending)).toBeNull();
     expect(screen.getByText('Отличная тренировка!')).toBeOnTheScreen();
+    expect(screen.queryByTestId('refresh-comment-status-comment-1')).toBeNull();
   });
 });

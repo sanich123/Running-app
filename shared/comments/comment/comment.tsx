@@ -1,6 +1,6 @@
 import { useEffect, useState, type RefObject } from 'react';
 import { Animated, View, StyleSheet } from 'react-native';
-import { Button, Divider, Icon, Text, useTheme } from 'react-native-paper';
+import { Divider, Icon, IconButton, Text, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import { UserInfoSize } from '@S/card/user-info/const';
@@ -28,9 +28,11 @@ export default function Comment({
   commentsModalRef,
   moderationStatus = 'visible',
   onRefreshStatus,
+  isRefreshingStatus = false,
 }: CommentResponse & {
   commentsModalRef: RefObject<BottomSheetModal | null>;
   onRefreshStatus?: () => void;
+  isRefreshingStatus?: boolean;
 }) {
   const { idOfUpdatingComment, commentActivityId, activityOwnerProfile } = useAppSelector(({ comment }) => comment);
   const { userId } = useAppSelector(({ auth }) => auth);
@@ -47,7 +49,7 @@ export default function Comment({
   const isPending = moderationStatus === 'pending' || moderationStatus === 'processing';
   const isHiddenByModeration = moderationStatus === 'hidden' || moderationStatus === 'removed';
   const canViewComment = isYouAuthor || moderationStatus === 'visible';
-  const displayedComment = canViewComment ? comment : null;
+  const showModerationNotice = isHiddenByModeration || (isPending && !isYouAuthor);
 
   useEffect(() => {
     Animated.timing(commentAnimation, {
@@ -78,6 +80,21 @@ export default function Comment({
           />
         </View>
         <View style={styles.actions}>
+          {isPending && !isYouAuthor && onRefreshStatus ? (
+            <IconButton
+              icon="refresh"
+              accessibilityLabel={moderationCopy.refresh}
+              accessibilityRole="button"
+              testID={`refresh-comment-status-${id}`}
+              onPress={onRefreshStatus}
+              iconColor={colors.primary}
+              rippleColor={colors.primaryContainer}
+              size={20}
+              loading={isRefreshingStatus}
+              disabled={isRefreshingStatus}
+              style={styles.refreshButton}
+            />
+          ) : null}
           <ContentActionsMenu
             accessibilityLabel={
               language === LANGUAGES.russian ? 'Дополнительные действия с комментарием' : 'Comment actions'
@@ -117,20 +134,19 @@ export default function Comment({
         </View>
       </View>
       <View style={styles.textCommentWrapper}>
-        {isPending || isHiddenByModeration ? (
+        {showModerationNotice ? (
           <View style={styles.moderationNotice}>
             <Icon source={isPending ? 'clock-outline' : 'eye-off-outline'} size={17} color={colors.primary} />
             <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant, flex: 1 }}>
               {isPending ? moderationCopy.pending : moderationCopy.hidden}
             </Text>
-            {isPending && onRefreshStatus ? (
-              <Button mode="text" compact onPress={onRefreshStatus} style={styles.refreshButton}>
-                {moderationCopy.refresh}
-              </Button>
-            ) : null}
           </View>
         ) : null}
-        <Text variant="bodyLarge">{displayedComment ?? moderationCopy.hiddenPlaceholder}</Text>
+        {canViewComment ? (
+          <Text variant="bodyLarge">{comment}</Text>
+        ) : isPending ? null : (
+          <Text variant="bodyLarge">{moderationCopy.hiddenPlaceholder}</Text>
+        )}
       </View>
       {moderationStatus === 'visible' ? (
         <View style={styles.likesWrapper}>
@@ -180,7 +196,10 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   refreshButton: {
-    marginVertical: -6,
+    backgroundColor: 'transparent',
+    height: 40,
+    margin: 0,
+    width: 40,
   },
   likesWrapper: {
     display: 'flex',
