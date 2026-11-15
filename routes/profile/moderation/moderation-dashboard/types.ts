@@ -33,6 +33,7 @@ export interface ModerationReportQueueProps {
   copy: ModerationDashboardCopy;
   onSelectReport: (reportId: string) => void;
   onSelectAppeal: (appealId: string, reportId: string) => void;
+  reportDetailsProps?: ReportAccordionDetailsProps;
 }
 
 export interface ModerationReportDetailProps {
@@ -48,6 +49,11 @@ export interface ModerationReportDetailProps {
   language: LANGUAGES;
   onOpenDecision: (decision: PendingDecision) => void;
 }
+
+export type ReportAccordionDetailsProps = Omit<
+  ModerationReportDetailProps,
+  'selectedReportId' | 'selectedAppeal' | 'activeTab' | 'copy' | 'language'
+>;
 
 export interface ModerationReportContextProps {
   report: ModerationReportItem;

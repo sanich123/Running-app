@@ -111,7 +111,7 @@ describe('GroupPostCard', () => {
 
     expect(screen.getByText(GROUPS_COPY[LANGUAGES.english].postTextPending)).toBeOnTheScreen();
     expect(screen.queryByText('This text must stay private')).toBeNull();
-    fireEvent.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].refreshModerationStatus));
+    fireEvent.press(screen.getByRole('button', { name: GROUPS_COPY[LANGUAGES.english].refreshModerationStatus }));
     expect(onRefreshStatus).toHaveBeenCalledTimes(1);
   });
 

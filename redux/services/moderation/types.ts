@@ -11,7 +11,7 @@ export interface SubmitContentReportRequest {
   details?: string;
 }
 
-type ContentReportStatus = 'open' | 'in_review' | 'resolved' | 'rejected' | 'appealed';
+export type ContentReportStatus = 'open' | 'in_review' | 'resolved' | 'rejected' | 'appealed';
 export type ModerationActionType =
   | 'hide_content'
   | 'remove_content'
@@ -39,6 +39,7 @@ export interface ModerationReportItem {
   assignedModeratorId: string | null;
   createdAt: string;
   reviewedAt: string | null;
+  contextPreview?: string | null;
 }
 
 interface ModerationReportAction {
@@ -74,6 +75,7 @@ export interface ModerationReportContext {
     | 'approved'
     | 'rejected'
     | 'failed';
+  mediaStatus?: 'queued' | 'processing' | 'review_required' | 'approved' | 'rejected' | 'failed' | null;
   scores?: Record<string, number> | null;
   frameCount?: number | null;
   modelVersion?: string | null;
@@ -82,8 +84,18 @@ export interface ModerationReportContext {
 
 export interface ModerationReportDetails {
   report: ModerationReportItem;
+  reporter?: ModerationReportUser | null;
+  contentAuthor?: ModerationReportUser | null;
   context: ModerationReportContext | null;
   actions: ModerationReportAction[];
+}
+
+export interface ModerationReportUser {
+  userId: string;
+  name: string | null;
+  surname: string | null;
+  profilePhoto: string | null;
+  email: string | null;
 }
 
 export interface ModerationAppealItem {

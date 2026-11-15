@@ -155,8 +155,8 @@ const styles = StyleSheet.create({
     paddingLeft: 44,
     paddingRight: 96,
     paddingVertical: 0,
-    paddingTop: Platform.OS === 'ios' ? 14 : 0,
-    textAlignVertical: Platform.OS === 'ios' ? 'top' : 'center',
+    paddingTop: Platform.OS === 'ios' || Platform.OS === 'web' ? 14 : 0,
+    textAlignVertical: Platform.OS === 'ios' || Platform.OS === 'web' ? 'top' : 'center',
     width: '100%',
   },
   inputIcon: {

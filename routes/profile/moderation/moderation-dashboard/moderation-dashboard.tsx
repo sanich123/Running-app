@@ -5,6 +5,7 @@ import { ActivityIndicator, IconButton, SegmentedButtons, Text, useTheme } from 
 import { useGetAdminAccessQuery } from '@R/services/admin/admin';
 import {
   useApplyModerationActionMutation,
+  useDeleteModerationReportMutation,
   useDecideModerationAppealMutation,
   useGetModerationAppealsQuery,
   useGetModerationReportDetailsQuery,
@@ -27,7 +28,7 @@ export default function ModerationDashboard() {
   const copy = MODERATION_DASHBOARD_COPY[language];
   const isWideLayout = width >= 900;
   const [activeTab, setActiveTab] = useState<ModerationTab>(params.showAppeals === 'true' ? 'appeals' : 'reports');
-  const [statusFilter, setStatusFilter] = useState<ReportFilter>('all');
+  const [statusFilter, setStatusFilter] = useState<ReportFilter>('new');
   const [selectedReportOverride, setSelectedReportOverride] = useState<string | null>(null);
   const selectedReportId = selectedReportOverride ?? (typeof params.reportId === 'string' ? params.reportId : '');
   const [selectedAppealOverride, setSelectedAppealOverride] = useState<string | null>(null);
@@ -38,25 +39,54 @@ export default function ModerationDashboard() {
   const { data: access, isLoading: isCheckingAccess } = useGetAdminAccessQuery();
   const isModerator = access?.permissions.includes('moderation.manage') === true;
   const reportsQuery = useGetModerationReportsQuery({ take: 100 }, { skip: !isModerator });
+  const resolvedReportsQuery = useGetModerationReportsQuery(
+    { status: 'resolved', take: 100 },
+    { skip: !isModerator || activeTab !== 'reports' || statusFilter !== 'processed' },
+  );
+  const rejectedReportsQuery = useGetModerationReportsQuery(
+    { status: 'rejected', take: 100 },
+    { skip: !isModerator || activeTab !== 'reports' || statusFilter !== 'processed' },
+  );
   const appealsQuery = useGetModerationAppealsQuery({ take: 100 }, { skip: !isModerator });
   const reportDetailsQuery = useGetModerationReportDetailsQuery(selectedReportId, {
     skip: !isModerator || !selectedReportId,
   });
   const [applyModerationAction, actionState] = useApplyModerationActionMutation();
+  const [deleteModerationReport, deleteReportState] = useDeleteModerationReportMutation();
   const [decideModerationAppeal, appealState] = useDecideModerationAppealMutation();
-  const isSavingDecision = actionState.isLoading || appealState.isLoading;
-  const reports = (reportsQuery.data ?? []).filter(
-    (report) => report.status !== 'appealed' && (statusFilter === 'all' || report.status === statusFilter),
-  );
+  const isSavingDecision = actionState.isLoading || deleteReportState.isLoading || appealState.isLoading;
+  const reports =
+    statusFilter === 'processed'
+      ? [...(resolvedReportsQuery.data ?? []), ...(rejectedReportsQuery.data ?? [])]
+      : (reportsQuery.data ?? []).filter((report) => report.status !== 'appealed');
   const appeals = appealsQuery.data ?? [];
   const selectedAppeal = appeals.find(({ id }) => id === selectedAppealId);
   const report = reportDetailsQuery.data?.report;
   const isClosedSelectedReport = report?.status === 'resolved' || report?.status === 'rejected';
-  const isQueueLoading = activeTab === 'reports' ? reportsQuery.isLoading : appealsQuery.isLoading;
-  const queueError = activeTab === 'reports' ? reportsQuery.isError : appealsQuery.isError;
-  const queueErrorValue = activeTab === 'reports' ? reportsQuery.error : appealsQuery.error;
+  const isProcessedFilter = statusFilter === 'processed';
+  const isProcessedQueueLoading = resolvedReportsQuery.isLoading || rejectedReportsQuery.isLoading;
+  const isProcessedQueueError = resolvedReportsQuery.isError || rejectedReportsQuery.isError;
+  const processedQueueError = resolvedReportsQuery.isError ? resolvedReportsQuery.error : rejectedReportsQuery.error;
+  const isQueueLoading =
+    activeTab === 'reports'
+      ? isProcessedFilter
+        ? isProcessedQueueLoading
+        : reportsQuery.isLoading
+      : appealsQuery.isLoading;
+  const queueError =
+    activeTab === 'reports' ? (isProcessedFilter ? isProcessedQueueError : reportsQuery.isError) : appealsQuery.isError;
+  const queueErrorValue =
+    activeTab === 'reports' ? (isProcessedFilter ? processedQueueError : reportsQuery.error) : appealsQuery.error;
+  const queueRefetch =
+    activeTab === 'reports'
+      ? isProcessedFilter
+        ? () => Promise.all([resolvedReportsQuery.refetch(), rejectedReportsQuery.refetch()])
+        : reportsQuery.refetch
+      : appealsQuery.refetch;
   const hasQueueItems = activeTab === 'reports' ? reports.length > 0 : appeals.length > 0;
-  const showQueue = !((!isWideLayout && Boolean(selectedReportId)) || (isWideLayout && isClosedSelectedReport));
+  const showQueue =
+    activeTab === 'reports' ||
+    !((!isWideLayout && Boolean(selectedReportId)) || (isWideLayout && isClosedSelectedReport));
 
   const openDecisionDialog = (decision: PendingDecision) => {
     setDecisionNote('');
@@ -77,6 +107,9 @@ export default function ModerationDashboard() {
           },
         }).unwrap();
         successToast(copy.actionComplete);
+      } else if (pendingDecision.kind === 'delete-report') {
+        await deleteModerationReport(pendingDecision.reportId).unwrap();
+        successToast(copy.deleteReportComplete);
       } else {
         await decideModerationAppeal({
           appealId: pendingDecision.appealId,
@@ -85,15 +118,28 @@ export default function ModerationDashboard() {
         successToast(copy.appealComplete);
       }
       setPendingDecision(null);
-      setSelectedAppealOverride('');
-      await Promise.all([reportsQuery.refetch(), appealsQuery.refetch(), reportDetailsQuery.refetch()]);
+      if (pendingDecision.kind === 'action') {
+        setStatusFilter('processed');
+        setSelectedReportOverride('');
+      } else if (pendingDecision.kind === 'delete-report') {
+        setSelectedReportOverride('');
+      } else {
+        setSelectedAppealOverride('');
+      }
     } catch (error) {
-      errorToast(pendingDecision.kind === 'appeal' ? copy.appealError : copy.actionError, error);
+      errorToast(
+        pendingDecision.kind === 'appeal'
+          ? copy.appealError
+          : pendingDecision.kind === 'delete-report'
+            ? copy.deleteReportError
+            : copy.actionError,
+        error,
+      );
     }
   };
 
   const selectReport = (reportId: string) => {
-    setSelectedReportOverride(reportId);
+    setSelectedReportOverride(selectedReportId === reportId ? '' : reportId);
     setSelectedAppealOverride('');
   };
 
@@ -116,13 +162,11 @@ export default function ModerationDashboard() {
         contentInsetAdjustmentBehavior="automatic"
         style={{ backgroundColor: colors.background }}
         contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}>
-        <Text variant="headlineSmall" style={styles.title}>
-          {copy.title}
-        </Text>
         <SegmentedButtons
           value={activeTab}
           onValueChange={(value) => {
             setActiveTab(value as ModerationTab);
+            setSelectedReportOverride('');
             setSelectedAppealOverride('');
           }}
           buttons={[
@@ -145,15 +189,28 @@ export default function ModerationDashboard() {
             isLoading={isQueueLoading}
             isError={queueError}
             error={queueErrorValue}
-            refetch={activeTab === 'reports' ? reportsQuery.refetch : appealsQuery.refetch}
+            refetch={queueRefetch}
             language={language}
             copy={copy}
             onSelectReport={selectReport}
             onSelectAppeal={selectAppeal}
+            reportDetailsProps={
+              activeTab === 'reports'
+                ? {
+                    isLoading: reportDetailsQuery.isLoading,
+                    isError: reportDetailsQuery.isError,
+                    error: reportDetailsQuery.error,
+                    refetch: reportDetailsQuery.refetch,
+                    reportDetails: reportDetailsQuery.data,
+                    onOpenDecision: openDecisionDialog,
+                  }
+                : undefined
+            }
           />
           <View
             style={[
               styles.detailColumn,
+              activeTab === 'reports' && styles.hidden,
               isWideLayout && isClosedSelectedReport && styles.detailClosedWide,
               !isWideLayout && !selectedReportId && styles.hidden,
               isWideLayout && !selectedReportId && !hasQueueItems && styles.hidden,
@@ -174,19 +231,21 @@ export default function ModerationDashboard() {
                 isWideLayout && styles.detailWide,
                 { backgroundColor: colors.surface, borderColor: colors.outlineVariant },
               ]}>
-              <ReportDetails
-                selectedReportId={selectedReportId}
-                isLoading={reportDetailsQuery.isLoading}
-                isError={reportDetailsQuery.isError}
-                error={reportDetailsQuery.error}
-                refetch={reportDetailsQuery.refetch}
-                reportDetails={reportDetailsQuery.data}
-                selectedAppeal={selectedAppeal}
-                activeTab={activeTab}
-                copy={copy}
-                language={language}
-                onOpenDecision={openDecisionDialog}
-              />
+              {activeTab === 'appeals' ? (
+                <ReportDetails
+                  selectedReportId={selectedReportId}
+                  isLoading={reportDetailsQuery.isLoading}
+                  isError={reportDetailsQuery.isError}
+                  error={reportDetailsQuery.error}
+                  refetch={reportDetailsQuery.refetch}
+                  reportDetails={reportDetailsQuery.data}
+                  selectedAppeal={selectedAppeal}
+                  activeTab={activeTab}
+                  copy={copy}
+                  language={language}
+                  onOpenDecision={openDecisionDialog}
+                />
+              ) : null}
             </View>
           </View>
         </View>
@@ -209,7 +268,6 @@ export default function ModerationDashboard() {
 
 const styles = StyleSheet.create({
   container: { alignSelf: 'center', flexGrow: 1, gap: 16, maxWidth: 1280, padding: 16, width: '100%' },
-  title: { marginBottom: 4 },
   columns: { flex: 1, gap: 16, minWidth: 0 },
   columnsWide: { alignItems: 'stretch', flexDirection: 'row' },
   detailColumn: { flex: 1, minWidth: 0, width: '100%' },

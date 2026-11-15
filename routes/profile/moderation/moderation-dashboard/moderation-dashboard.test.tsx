@@ -20,7 +20,11 @@ import type {
 } from '@R/services/moderation/types';
 
 const mockRouteParams = { current: {} as { reportId?: string; appealId?: string; showAppeals?: string } };
-jest.mock('expo-router', () => ({ useLocalSearchParams: () => mockRouteParams.current }));
+const mockRouterPush = jest.fn();
+jest.mock('expo-router', () => ({
+  useLocalSearchParams: () => mockRouteParams.current,
+  useRouter: () => ({ push: mockRouterPush }),
+}));
 
 function createReport(overrides: Partial<ModerationReportItem> = {}): ModerationReportItem {
   return {
@@ -89,7 +93,7 @@ describe('ModerationDashboard', () => {
 
     await renderWithProviders(<ModerationDashboard />);
 
-    expect(await screen.findByText(MODERATION_DASHBOARD_COPY[LANGUAGES.russian].title)).toBeOnTheScreen();
+    expect(await screen.findByText(MODERATION_DASHBOARD_COPY[LANGUAGES.russian].reports)).toBeOnTheScreen();
     expect(screen.getByText(MODERATION_DASHBOARD_COPY[LANGUAGES.russian].emptyReports)).toBeOnTheScreen();
   });
 
@@ -102,7 +106,10 @@ describe('ModerationDashboard', () => {
       http.get(`${BASE_URL}/admin/access`, () =>
         HttpResponse.json({ roles: ['moderator'], permissions: ['moderation.manage'], isSuperuser: false }),
       ),
-      http.get(`${BASE_URL}/moderation/reports`, () => HttpResponse.json([report])),
+      http.get(`${BASE_URL}/moderation/reports`, ({ request }) => {
+        const status = new URL(request.url).searchParams.get('status');
+        return HttpResponse.json(status ? [] : [report]);
+      }),
       http.get(`${BASE_URL}/moderation/appeals`, () => HttpResponse.json([])),
       http.get(`${BASE_URL}/moderation/reports/report-1`, () => HttpResponse.json(createReportDetails(report))),
       http.post(`${BASE_URL}/moderation/reports/report-1/actions`, async ({ request }) => {
@@ -113,11 +120,16 @@ describe('ModerationDashboard', () => {
 
     await renderWithProviders(<ModerationDashboard />);
     await user.press(await screen.findByTestId('moderation-report-report-1'));
+    await user.press(screen.getByTestId('moderation-actions-report-1'));
     await user.press(await screen.findByTestId('moderation-action-hide_content'));
     await user.type(screen.getByTestId('moderation-decision-note'), 'Reviewed evidence');
     await user.press(screen.getByText(copy.confirmAction));
 
-    await waitFor(() => expect(receivedActions).toEqual([{ action: 'hide_content', note: 'Reviewed evidence' }]));
+    await waitFor(() => {
+      expect(receivedActions).toEqual([{ action: 'hide_content', note: 'Reviewed evidence' }]);
+      expect(screen.queryByText(copy.confirmAction)).toBeNull();
+    });
+    expect(await screen.findByText(copy.emptyProcessedReports)).toBeOnTheScreen();
   });
 
   it('loads an appeal from the email link and lets the moderator uphold it', async () => {
@@ -138,7 +150,9 @@ describe('ModerationDashboard', () => {
       http.get(`${BASE_URL}/admin/access`, () =>
         HttpResponse.json({ roles: ['moderator'], permissions: ['moderation.manage'], isSuperuser: false }),
       ),
-      http.get(`${BASE_URL}/moderation/reports`, () => HttpResponse.json([report])),
+      http.get(`${BASE_URL}/moderation/reports`, ({ request }) =>
+        HttpResponse.json(new URL(request.url).searchParams.has('status') ? [] : [report]),
+      ),
       http.get(`${BASE_URL}/moderation/appeals`, () => HttpResponse.json([appeal])),
       http.get(`${BASE_URL}/moderation/reports/report-1`, () => HttpResponse.json(createReportDetails(report))),
       http.post(`${BASE_URL}/moderation/appeals/appeal-1/decision`, async ({ request }) => {
@@ -149,32 +163,41 @@ describe('ModerationDashboard', () => {
 
     await renderWithProviders(<ModerationDashboard />);
     await user.press(await screen.findByTestId('moderation-appeal-appeal-1'));
+    await user.press(screen.getByTestId('moderation-actions-report-1'));
     await user.press(await screen.findByText(copy.upholdAppeal));
     await user.press(screen.getByText(copy.confirmAction));
 
-    await waitFor(() => expect(receivedDecisions).toEqual([{ decision: 'upheld' }]));
+    await waitFor(() => {
+      expect(receivedDecisions).toEqual([{ decision: 'upheld' }]);
+      expect(screen.queryByText(copy.confirmAction)).toBeNull();
+    });
   });
 
-  it('filters reports by status without hiding the open report', async () => {
+  it('shows open and in-review reports as new and resolves them into the completed section', async () => {
     const user = userEvent.setup();
+    const completedReport = createReport({ id: 'report-3', targetId: 'activity-3', status: 'resolved' });
     server.use(
       http.get(`${BASE_URL}/admin/access`, () =>
         HttpResponse.json({ roles: ['moderator'], permissions: ['moderation.manage'], isSuperuser: false }),
       ),
-      http.get(`${BASE_URL}/moderation/reports`, () =>
-        HttpResponse.json([
+      http.get(`${BASE_URL}/moderation/reports`, ({ request }) => {
+        const status = new URL(request.url).searchParams.get('status');
+        if (status === 'resolved') return HttpResponse.json([completedReport]);
+        if (status === 'rejected') return HttpResponse.json([]);
+        return HttpResponse.json([
           createReport(),
           createReport({ id: 'report-2', targetId: 'activity-2', status: 'in_review' }),
-        ]),
-      ),
+        ]);
+      }),
       http.get(`${BASE_URL}/moderation/appeals`, () => HttpResponse.json([])),
     );
 
     await renderWithProviders(<ModerationDashboard />);
     expect(await screen.findByTestId('moderation-report-report-1')).toBeOnTheScreen();
     expect(screen.getByTestId('moderation-report-report-2')).toBeOnTheScreen();
-    await user.press(screen.getByTestId('moderation-report-filter-open'));
-    expect(screen.getByTestId('moderation-report-report-1')).toBeOnTheScreen();
+    await user.press(screen.getByTestId('moderation-report-filter-processed'));
+    expect(await screen.findByTestId('moderation-report-report-3')).toBeOnTheScreen();
+    expect(screen.queryByTestId('moderation-report-report-1')).toBeNull();
     expect(screen.queryByTestId('moderation-report-report-2')).toBeNull();
   });
 
@@ -187,7 +210,9 @@ describe('ModerationDashboard', () => {
       http.get(`${BASE_URL}/admin/access`, () =>
         HttpResponse.json({ roles: ['moderator'], permissions: ['moderation.manage'], isSuperuser: false }),
       ),
-      http.get(`${BASE_URL}/moderation/reports`, () => HttpResponse.json([report])),
+      http.get(`${BASE_URL}/moderation/reports`, ({ request }) =>
+        HttpResponse.json(new URL(request.url).searchParams.has('status') ? [] : [report]),
+      ),
       http.get(`${BASE_URL}/moderation/appeals`, () => HttpResponse.json([])),
       http.get(`${BASE_URL}/moderation/reports/report-1`, () =>
         HttpResponse.json(
@@ -213,10 +238,15 @@ describe('ModerationDashboard', () => {
     expect(await screen.findByText(`${copy.framesChecked}: 18`)).toBeOnTheScreen();
     expect(screen.getByText(/Porn 93.0%/)).toBeOnTheScreen();
     expect(screen.getByText(`${copy.mediaCheckStatus}: ${copy.mediaStatus.review_required}`)).toBeOnTheScreen();
+    await user.press(screen.getByTestId('moderation-actions-report-1'));
     await user.press(screen.getByTestId('moderation-action-approve_media'));
     await user.press(screen.getByText(copy.confirmAction));
 
-    await waitFor(() => expect(receivedActions).toEqual([{ action: 'approve_media' }]));
+    await waitFor(() => {
+      expect(receivedActions).toEqual([{ action: 'approve_media' }]);
+      expect(screen.queryByText(copy.confirmAction)).toBeNull();
+    });
+    expect(await screen.findByText(copy.emptyProcessedReports)).toBeOnTheScreen();
   });
 
   it('confirms the selected suspension length for a reported profile', async () => {
@@ -229,7 +259,9 @@ describe('ModerationDashboard', () => {
       http.get(`${BASE_URL}/admin/access`, () =>
         HttpResponse.json({ roles: ['moderator'], permissions: ['moderation.manage'], isSuperuser: false }),
       ),
-      http.get(`${BASE_URL}/moderation/reports`, () => HttpResponse.json([report])),
+      http.get(`${BASE_URL}/moderation/reports`, ({ request }) =>
+        HttpResponse.json(new URL(request.url).searchParams.has('status') ? [] : [report]),
+      ),
       http.get(`${BASE_URL}/moderation/appeals`, () => HttpResponse.json([])),
       http.get(`${BASE_URL}/moderation/reports/report-1`, () =>
         HttpResponse.json(
@@ -249,6 +281,7 @@ describe('ModerationDashboard', () => {
     await renderWithProviders(<ModerationDashboard />);
     await user.press(await screen.findByTestId('moderation-report-report-1'));
     expect(await screen.findByText('Alex Runner')).toBeOnTheScreen();
+    await user.press(screen.getByTestId('moderation-actions-report-1'));
     expect(screen.queryByTestId('moderation-action-hide_content')).toBeNull();
     await user.press(screen.getByTestId('moderation-action-temporary_suspend'));
     const suspensionInput = screen.getByTestId('moderation-suspension-days');
@@ -256,7 +289,11 @@ describe('ModerationDashboard', () => {
     await user.type(suspensionInput, '14');
     await user.press(screen.getByText(copy.confirmAction));
 
-    await waitFor(() => expect(receivedActions).toEqual([{ action: 'temporary_suspend', suspensionDays: 14 }]));
+    await waitFor(() => {
+      expect(receivedActions).toEqual([{ action: 'temporary_suspend', suspensionDays: 14 }]);
+      expect(screen.queryByText(copy.confirmAction)).toBeNull();
+    });
+    expect(await screen.findByText(copy.emptyProcessedReports)).toBeOnTheScreen();
   });
 
   it('uses the default suspension period when the moderator leaves the duration empty', async () => {
@@ -268,7 +305,9 @@ describe('ModerationDashboard', () => {
       http.get(`${BASE_URL}/admin/access`, () =>
         HttpResponse.json({ roles: ['moderator'], permissions: ['moderation.manage'], isSuperuser: false }),
       ),
-      http.get(`${BASE_URL}/moderation/reports`, () => HttpResponse.json([report])),
+      http.get(`${BASE_URL}/moderation/reports`, ({ request }) =>
+        HttpResponse.json(new URL(request.url).searchParams.has('status') ? [] : [report]),
+      ),
       http.get(`${BASE_URL}/moderation/appeals`, () => HttpResponse.json([])),
       http.get(`${BASE_URL}/moderation/reports/report-1`, () => HttpResponse.json(createReportDetails(report))),
       http.post(`${BASE_URL}/moderation/reports/report-1/actions`, async ({ request }) => {
@@ -279,11 +318,16 @@ describe('ModerationDashboard', () => {
 
     await renderWithProviders(<ModerationDashboard />);
     await user.press(await screen.findByTestId('moderation-report-report-1'));
+    await user.press(screen.getByTestId('moderation-actions-report-1'));
     await user.press(await screen.findByTestId('moderation-action-temporary_suspend'));
     await user.clear(screen.getByTestId('moderation-suspension-days'));
     await user.press(screen.getByText(copy.confirmAction));
 
-    await waitFor(() => expect(receivedActions).toEqual([{ action: 'temporary_suspend', suspensionDays: 7 }]));
+    await waitFor(() => {
+      expect(receivedActions).toEqual([{ action: 'temporary_suspend', suspensionDays: 7 }]);
+      expect(screen.queryByText(copy.confirmAction)).toBeNull();
+    });
+    expect(await screen.findByText(copy.emptyProcessedReports)).toBeOnTheScreen();
   });
 
   it('opens a report from its email link when the target has no available context', async () => {
@@ -304,7 +348,7 @@ describe('ModerationDashboard', () => {
 
     expect(
       await screen.findByText(
-        `${MODERATION_DASHBOARD_COPY[LANGUAGES.russian].targetType.activity} · ${MODERATION_DASHBOARD_COPY[LANGUAGES.russian].status.rejected}`,
+        `${MODERATION_DASHBOARD_COPY[LANGUAGES.russian].targetType.activity} · ${MODERATION_DASHBOARD_COPY[LANGUAGES.russian].reasons.threats}`,
       ),
     ).toBeOnTheScreen();
     expect(screen.queryByText(MODERATION_DASHBOARD_COPY[LANGUAGES.russian].noHistory)).toBeOnTheScreen();
@@ -342,6 +386,7 @@ describe('ModerationDashboard', () => {
     await user.press(await screen.findByTestId('moderation-report-report-1'));
 
     expect(await screen.findByTestId('moderation-open-media')).toBeOnTheScreen();
+    await user.press(screen.getByTestId('moderation-actions-report-1'));
     expect(screen.getByTestId('moderation-action-restore_content')).toBeOnTheScreen();
     expect(screen.getByText(MODERATION_DASHBOARD_COPY[LANGUAGES.russian].history)).toBeOnTheScreen();
     await user.press(screen.getByTestId('moderation-open-media'));
@@ -394,6 +439,7 @@ describe('ModerationDashboard', () => {
 
     await renderWithProviders(<ModerationDashboard />);
     await user.press(await screen.findByTestId('moderation-report-report-1'));
+    await user.press(screen.getByTestId('moderation-actions-report-1'));
     await user.press(await screen.findByTestId('moderation-action-hide_content'));
     await user.press(screen.getByText(copy.confirmAction));
 
@@ -427,6 +473,7 @@ describe('ModerationDashboard', () => {
 
     await renderWithProviders(<ModerationDashboard />);
     await user.press(await screen.findByTestId('moderation-appeal-appeal-failing'));
+    await user.press(screen.getByTestId('moderation-actions-report-1'));
     await user.press(await screen.findByText(copy.rejectAppeal));
     await user.press(screen.getByText(copy.confirmAction));
 
@@ -519,7 +566,7 @@ describe('ModerationDashboard', () => {
 
     await renderWithProviders(<ModerationDashboard />);
 
-    expect(await screen.findByText(copy.title)).toBeOnTheScreen();
+    expect(await screen.findByText(copy.reports)).toBeOnTheScreen();
     expect(screen.queryByText(copy.context)).toBeNull();
     expect(screen.queryByTestId(ERROR_COMPONENT_TEST_ID)).toBeNull();
   });
@@ -547,12 +594,10 @@ describe('ModerationDashboard', () => {
       const user = userEvent.setup();
       await renderWithProviders(<ModerationDashboard />);
       const reportRow = await screen.findByTestId('moderation-report-report-1');
-      expect(
-        await screen.findByText(`${copy.status.open} · ${new Date(report.createdAt).toLocaleString('en-US')}`),
-      ).toBeOnTheScreen();
+      expect(await screen.findByText(new Date(report.createdAt).toLocaleString('en-US'))).toBeOnTheScreen();
       await user.press(reportRow);
 
-      expect(await screen.findByText(`${copy.targetType.activity} · ${copy.status.open}`)).toBeOnTheScreen();
+      expect(await screen.findByText(`${copy.targetType.activity} · ${copy.reasons.threats}`)).toBeOnTheScreen();
       expect(screen.queryByText(copy.back)).toBeNull();
     } finally {
       dimensions.mockRestore();

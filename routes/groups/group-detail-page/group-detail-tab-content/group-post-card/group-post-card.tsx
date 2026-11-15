@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Avatar, Button, Icon, Surface, Text, useTheme } from 'react-native-paper';
+import { Avatar, Icon, IconButton, Surface, Text, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import { GROUPS_COPY } from '../../../const';
@@ -8,7 +8,15 @@ import GroupPhoto from '../../../group-photo/group-photo';
 import { isGroupPhotoUnderModeration } from '../../../group-photo/utils';
 import type { GroupPost } from '@R/services/groups/types';
 
-export default function GroupPostCard({ post, onRefreshStatus }: { post: GroupPost; onRefreshStatus?: () => void }) {
+export default function GroupPostCard({
+  post,
+  onRefreshStatus,
+  isRefreshingStatus = false,
+}: {
+  post: GroupPost;
+  onRefreshStatus?: () => void;
+  isRefreshingStatus?: boolean;
+}) {
   const router = useRouter();
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
@@ -73,9 +81,19 @@ export default function GroupPostCard({ post, onRefreshStatus }: { post: GroupPo
             {isTextUnderModeration ? postTextPending : postTextHidden}
           </Text>
           {isTextUnderModeration && onRefreshStatus ? (
-            <Button mode="text" compact onPress={onRefreshStatus} style={styles.refreshButton}>
-              {refreshModerationStatus}
-            </Button>
+            <IconButton
+              icon="refresh"
+              accessibilityLabel={refreshModerationStatus}
+              accessibilityRole="button"
+              testID={`refresh-group-post-status-${id}`}
+              onPress={onRefreshStatus}
+              iconColor={colors.primary}
+              rippleColor={colors.primaryContainer}
+              size={20}
+              loading={isRefreshingStatus}
+              disabled={isRefreshingStatus}
+              style={styles.refreshButton}
+            />
           ) : null}
         </View>
       ) : null}
@@ -110,7 +128,7 @@ const styles = StyleSheet.create({
   postHeader: { alignItems: 'center', flexDirection: 'row', gap: 10 },
   postAuthor: { flex: 1, gap: 2 },
   moderationNotice: { alignItems: 'center', flexDirection: 'row', gap: 5 },
-  refreshButton: { marginVertical: -6 },
+  refreshButton: { backgroundColor: 'transparent', height: 40, margin: 0, width: 40 },
   postPhoto: { aspectRatio: 1.4, borderRadius: 12, width: '100%' },
   postPhotoNotice: { alignItems: 'center', flexDirection: 'row', gap: 6 },
 });

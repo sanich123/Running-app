@@ -8,20 +8,24 @@ import type { ModerationReportContextProps } from '../types';
 export default function ReportContext({ report, context, copy }: ModerationReportContextProps) {
   if (!context) return null;
 
-  const isVideoUpload = report.targetType === 'media_upload' && context.contentType?.startsWith('video/');
+  const isVideoMedia =
+    (report.targetType === 'media' || report.targetType === 'media_upload' || report.targetType === 'group_post') &&
+    (context.contentType?.startsWith('video/') || Boolean(context.url && isVideoUrl(context.url)));
   const previewUrl =
     context.thumbnail ??
     (report.targetType === 'group' ||
-    report.targetType === 'media' ||
-    (report.targetType === 'media_upload' && !isVideoUpload)
+    ((report.targetType === 'media' || report.targetType === 'media_upload' || report.targetType === 'group_post') &&
+      !isVideoMedia)
       ? context.url
       : null);
   const contextText = context.comment ?? [context.title, context.description].filter(Boolean).join('\n\n');
-  const videoUploadUrl = context.url ?? context.thumbnail;
+  const videoMediaUrl = context.url ?? context.thumbnail;
   const profileName = [context.name, context.surname].filter(Boolean).join(' ');
-  const mediaStatusLabel = context.moderationStatus
-    ? (copy.mediaStatus as Record<string, string>)[context.moderationStatus]
-    : undefined;
+  const mediaStatus = context.mediaStatus ?? (report.targetType === 'media_upload' ? context.moderationStatus : null);
+  const mediaStatusLabel = mediaStatus ? (copy.mediaStatus as Record<string, string>)[mediaStatus] : undefined;
+  const hasAutomaticModerationInfo = Boolean(
+    mediaStatus || context.scores || context.frameCount !== undefined || context.modelVersion || context.contentType,
+  );
 
   return (
     <View style={styles.context}>
@@ -57,38 +61,67 @@ export default function ReportContext({ report, context, copy }: ModerationRepor
           })}
         </ScrollView>
       ) : null}
-      {isVideoUpload ? (
-        videoUploadUrl ? (
+      {isVideoMedia ? (
+        videoMediaUrl ? (
           <MediaThumbnail
-            mediaUrl={videoUploadUrl}
+            mediaUrl={videoMediaUrl}
             thumbnail={context.thumbnail}
             isVideo
             style={styles.preview}
-            testID="moderation-video-upload-preview"
+            testID={
+              report.targetType === 'media_upload'
+                ? 'moderation-video-upload-preview'
+                : report.targetType === 'media'
+                  ? 'moderation-reported-media-video-preview'
+                  : 'moderation-group-post-video-preview'
+            }
           />
         ) : null
       ) : previewUrl ? (
-        <Image source={{ uri: previewUrl }} style={styles.preview} resizeMode="contain" />
+        <Image
+          source={{ uri: previewUrl }}
+          style={styles.preview}
+          resizeMode="contain"
+          testID="moderation-reported-media-image-preview"
+        />
       ) : null}
-      {context.scores ? (
-        <Text selectable>
-          {copy.modelScores}:{' '}
-          {Object.entries(context.scores)
-            .map(([name, value]) => `${name} ${(value * 100).toFixed(1)}%`)
-            .join(' · ')}
-        </Text>
+      {hasAutomaticModerationInfo ? (
+        <View style={styles.automaticModeration}>
+          <Text variant="titleSmall">{copy.automatedModeration}</Text>
+          {context.scores ? (
+            <Text selectable>
+              {copy.modelScores}:{' '}
+              {Object.entries(context.scores)
+                .map(([name, value]) => `${name} ${(value * 100).toFixed(1)}%`)
+                .join(' · ')}
+            </Text>
+          ) : null}
+          {context.frameCount !== undefined && context.frameCount !== null ? (
+            <Text>
+              {copy.framesChecked}: {context.frameCount}
+            </Text>
+          ) : null}
+          {mediaStatus ? (
+            <Text>
+              {copy.mediaCheckStatus}: {mediaStatusLabel ?? mediaStatus}
+            </Text>
+          ) : null}
+          {context.modelVersion ? (
+            <Text>
+              {copy.modelVersion}: {context.modelVersion}
+            </Text>
+          ) : null}
+          {context.contentType ? (
+            <Text>
+              {copy.contentType}: {context.contentType}
+            </Text>
+          ) : null}
+        </View>
       ) : null}
-      {context.frameCount !== undefined && context.frameCount !== null ? (
-        <Text>
-          {copy.framesChecked}: {context.frameCount}
-        </Text>
-      ) : null}
-      {report.targetType === 'media_upload' && context.moderationStatus ? (
-        <Text>
-          {copy.mediaCheckStatus}: {mediaStatusLabel ?? context.moderationStatus}
-        </Text>
-      ) : null}
-      {(report.targetType === 'group' || report.targetType === 'media' || report.targetType === 'media_upload') &&
+      {(report.targetType === 'group' ||
+        report.targetType === 'media' ||
+        report.targetType === 'media_upload' ||
+        report.targetType === 'group_post') &&
       context.url ? (
         <Button
           mode="text"
@@ -103,6 +136,7 @@ export default function ReportContext({ report, context, copy }: ModerationRepor
 
 const styles = StyleSheet.create({
   context: { gap: 8 },
+  automaticModeration: { backgroundColor: '#80808014', borderRadius: 8, gap: 4, padding: 10 },
   activityMediaContent: { gap: 8, paddingVertical: 4 },
   activityMediaTile: { borderRadius: 8, overflow: 'hidden' },
   activityMediaPreview: { backgroundColor: '#808080', height: 220, width: 160 },

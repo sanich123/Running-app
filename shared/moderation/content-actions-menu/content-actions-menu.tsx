@@ -16,82 +16,101 @@ export default function ContentActionsMenu({
   onBlock,
 }: ContentActionsMenuProps) {
   const [isVisible, setIsVisible] = useState(false);
+  const [hasOpened, setHasOpened] = useState(false);
   const { colors } = useTheme();
-  const openMenu = () => setIsVisible(true);
+  const openMenu = () => {
+    setHasOpened(true);
+    setIsVisible(true);
+  };
   const hasActions = showReport || !!additionalActions?.length || (!!onBlock && !!blockLabel);
 
   return hasActions ? (
-    <Menu
-      visible={isVisible}
-      onDismiss={() => setIsVisible(false)}
-      contentStyle={{
-        backgroundColor: colors.surface,
-        borderColor: colors.outlineVariant,
-        borderRadius: 14,
-        borderWidth: 1,
-      }}
-      anchor={
-        <IconButton
-          icon="dots-vertical"
-          accessibilityLabel={accessibilityLabel}
-          accessibilityRole="button"
-          accessibilityState={{ expanded: isVisible }}
-          testID={testID}
-          onPress={openMenu}
-          iconColor={iconColor ?? colors.primary}
-          rippleColor={colors.primaryContainer}
-          size={20}
-          style={styles.trigger}
-        />
-      }>
-      {showReport ? (
-        <Menu.Item
-          leadingIcon="flag-outline"
-          title={reportLabel}
-          dense
-          rippleColor={colors.primaryContainer}
-          style={styles.item}
-          titleStyle={styles.menuTitle}
-          testID={reportTestID}
-          onPress={() => {
-            setIsVisible(false);
-            onReport();
-          }}
-        />
-      ) : null}
-      {additionalActions?.map((action) => (
-        <Menu.Item
-          key={action.testID}
-          leadingIcon={action.leadingIcon}
-          title={action.label}
-          dense
-          rippleColor={colors.primaryContainer}
-          style={styles.item}
-          titleStyle={[styles.menuTitle, action.destructive ? { color: colors.error } : undefined]}
-          testID={action.testID}
-          disabled={action.disabled}
-          onPress={() => {
-            setIsVisible(false);
-            action.onPress();
-          }}
-        />
-      ))}
-      {onBlock && blockLabel ? (
-        <Menu.Item
-          leadingIcon="account-cancel-outline"
-          title={blockLabel}
-          dense
-          rippleColor={colors.primaryContainer}
-          style={styles.item}
-          titleStyle={styles.menuTitle}
-          testID={blockTestID}
-          onPress={() => {
-            setIsVisible(false);
-            onBlock();
-          }}
-        />
-      ) : null}
-    </Menu>
+    hasOpened ? (
+      <Menu
+        visible={isVisible}
+        onDismiss={() => setIsVisible(false)}
+        contentStyle={{
+          backgroundColor: colors.surface,
+          borderColor: colors.outlineVariant,
+          borderRadius: 14,
+          borderWidth: 1,
+        }}
+        anchor={
+          <IconButton
+            icon="dots-vertical"
+            accessibilityLabel={accessibilityLabel}
+            accessibilityRole="button"
+            accessibilityState={{ expanded: isVisible }}
+            testID={testID}
+            onPress={openMenu}
+            iconColor={iconColor ?? colors.primary}
+            rippleColor={colors.primaryContainer}
+            size={20}
+            style={styles.trigger}
+          />
+        }>
+        {showReport ? (
+          <Menu.Item
+            leadingIcon="flag-outline"
+            title={reportLabel}
+            dense
+            rippleColor={colors.primaryContainer}
+            style={styles.item}
+            titleStyle={styles.menuTitle}
+            testID={reportTestID}
+            onPress={() => {
+              setIsVisible(false);
+              onReport();
+            }}
+          />
+        ) : null}
+        {additionalActions?.map((action) => (
+          <Menu.Item
+            key={action.testID}
+            leadingIcon={action.leadingIcon}
+            title={action.label}
+            dense
+            rippleColor={colors.primaryContainer}
+            style={styles.item}
+            titleStyle={[styles.menuTitle, action.destructive ? { color: colors.error } : undefined]}
+            testID={action.testID}
+            disabled={action.disabled}
+            onPress={() => {
+              setIsVisible(false);
+              action.onPress();
+            }}
+          />
+        ))}
+        {onBlock && blockLabel ? (
+          <Menu.Item
+            leadingIcon="account-cancel-outline"
+            title={blockLabel}
+            dense
+            rippleColor={colors.primaryContainer}
+            style={styles.item}
+            titleStyle={styles.menuTitle}
+            testID={blockTestID}
+            onPress={() => {
+              setIsVisible(false);
+              onBlock();
+            }}
+          />
+        ) : null}
+      </Menu>
+    ) : (
+      <IconButton
+        icon="dots-vertical"
+        accessibilityLabel={accessibilityLabel}
+        accessibilityRole="button"
+        accessibilityState={{ expanded: isVisible }}
+        testID={testID}
+        onPress={openMenu}
+        iconColor={iconColor ?? colors.primary}
+        rippleColor={colors.primaryContainer}
+        size={20}
+        style={styles.trigger}
+      />
+    )
   ) : null;
 }
 

@@ -12,7 +12,7 @@ export default function useGroupPostsList(group: GroupDetails) {
   const copy = GROUPS_COPY[language];
   const isOwner = groupIsOwner || createdByUserId === userId;
   const canSeePosts = privacy === 'open' || currentMembership?.status === 'active' || isOwner;
-  const { data, isLoading, isError, error, refetch, hasNextPage, isFetchingNextPage, fetchNextPage } =
+  const { data, isLoading, isError, error, refetch, hasNextPage, isFetching, isFetchingNextPage, fetchNextPage } =
     useGetGroupPostsInfiniteQuery(id, { skip: !canSeePosts });
   const posts = data?.pages.flatMap(({ items }) => items) ?? [];
   const hasPendingModeration = posts.some(
@@ -22,5 +22,5 @@ export default function useGroupPostsList(group: GroupDetails) {
   const onScroll = createGroupListScrollHandler({ hasNextPage, isFetchingNextPage, fetchNextPage });
   useAutoModerationRefresh(hasPendingModeration, () => void refetch());
 
-  return { canSeePosts, copy, error, isError, isFetchingNextPage, isLoading, onScroll, posts, refetch };
+  return { canSeePosts, copy, error, isError, isFetching, isFetchingNextPage, isLoading, onScroll, posts, refetch };
 }
