@@ -25,6 +25,8 @@ export enum Tags {
   moderationReport = 'moderationReport',
   moderationAppeals = 'moderationAppeals',
   adminAccess = 'adminAccess',
+  adminFeedback = 'adminFeedback',
+  adminFeedbackItem = 'adminFeedbackItem',
   adminUsers = 'adminUsers',
   adminAccessAudit = 'adminAccessAudit',
   groups = 'groups',

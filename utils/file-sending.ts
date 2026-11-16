@@ -286,13 +286,15 @@ export async function getAccessToGallery(
   }
 }
 
-export async function deleteUploadedMedia(publicUrls: string[], assetIds: string[] = []) {
+export async function deleteUploadedMedia(publicUrls: string[], assetIds: string[] = [], feedbackId?: string) {
   try {
     for (const assetId of assetIds) {
       await store.dispatch(photosApi.endpoints.deleteModerationUpload.initiate({ assetId })).unwrap();
     }
     for (const url of publicUrls) {
-      await store.dispatch(photosApi.endpoints.deletePhoto.initiate({ url })).unwrap();
+      await store
+        .dispatch(photosApi.endpoints.deletePhoto.initiate({ url, ...(feedbackId ? { feedbackId } : {}) }))
+        .unwrap();
     }
     return true;
   } catch (error) {

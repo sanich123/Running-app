@@ -1,21 +1,72 @@
 import { LANGUAGES } from '@const/enums';
+import type { FeedbackTopic } from '@R/services/feedback/feedback';
+export type { FeedbackKind, FeedbackTopic } from '@R/services/feedback/feedback';
 
-export type FeedbackKind = 'bug' | 'thanks' | 'feature';
+export const FEEDBACK_TOPICS = [
+  'account',
+  'workout',
+  'sync',
+  'maps',
+  'groups',
+  'other',
+] as const satisfies readonly FeedbackTopic[];
 
 export const FEEDBACK_TEXT = {
   [LANGUAGES.english]: {
     title: 'Feedback',
-    intro: 'Tell us what you would like to share with the developer.',
-    bug: 'Report a bug',
-    thanks: 'Thank the developer',
-    feature: 'Request a feature',
-    beforeSend: 'Before sending',
-    freeService: 'Runich is completely free to use',
-    soloDeveloper: 'Runich was written and is maintained by one developer in their spare time',
+    intro: 'Find a quick answer or send a message to Runich support.',
+    faq: [
+      {
+        question: 'Can I contact support without an account?',
+        answer: 'Yes. Enter an email address and we will send your request receipt there.',
+      },
+      {
+        question: 'What should I include in a bug report?',
+        answer:
+          'Describe what you did, what you expected, and what happened. Device and app details are added automatically.',
+      },
+      {
+        question: 'Can I attach a screenshot?',
+        answer: 'Yes. Attach photos or videos to a bug report or feature request.',
+      },
+      {
+        question: 'Why might Runich be unavailable while I use a VPN?',
+        answer:
+          'A VPN or its network route can block the connection to Runich servers. We cannot change restrictions imposed by a VPN provider or network. Try turning off the VPN or switching networks.',
+      },
+      {
+        question: 'Why can location tracking stop during a workout?',
+        answer:
+          'Your phone may stop background location updates because of system permissions or battery restrictions. Check location access and background activity settings. We cannot restore route points that the phone did not record.',
+      },
+    ],
+    requestType: 'What can we help with?',
+    question: 'Ask a question',
+    topic: 'Choose a topic',
+    topics: {
+      account: 'Account and sign-in',
+      workout: 'Workouts and GPS',
+      sync: 'Workout sync',
+      maps: 'Maps and routes',
+      groups: 'Groups and community',
+      other: 'Something else',
+    },
+    email: 'Reply email',
+    emailHint: 'We will use this address to reply to your request.',
+    emailRequired: 'Enter your email address to contact support.',
+    privacyNotice: 'Device and app version are included to help investigate your request.',
+    acceptedTitle: 'We received your request',
+    acceptedEmail: 'A confirmation was sent to',
+    acceptedEmailFailed: 'Your request is saved, but we could not send the confirmation email.',
+    reference: 'Reference',
+    close: 'Close',
+    sendAnother: 'Send another request',
+    bug: 'Report a problem',
+    feature: 'Suggest a feature',
+    questionPlaceholder: 'Describe your question and include any useful details',
     feedbackText: 'Feedback text',
     bugPlaceholder: 'Describe as precisely as possible how to reproduce the bug',
     featurePlaceholder: 'Describe the feature you would like',
-    thanksPlaceholder: 'Write a message to the developer',
     photoUploaded: 'Files uploaded',
     attachmentLimit:
       'You can add up to 10 photos or videos under 100 MB total. Uploading 10 files may take a while — check your connection speed.',
@@ -28,17 +79,59 @@ export const FEEDBACK_TEXT = {
   },
   [LANGUAGES.russian]: {
     title: 'Обратная связь',
-    intro: 'Выбери, чем хочешь поделиться с разработчиком.',
-    bug: 'Поведать о баге',
-    thanks: 'Поблагодарить разработчика',
-    feature: 'Хочу фичу',
-    beforeSend: 'Перед отправкой',
-    freeService: 'Runich полностью бесплатный сервис',
-    soloDeveloper: 'Runich полностью был написан и поддерживается одним разработчиком в свободное от работы время',
+    intro: 'Найди быстрый ответ или напиши в поддержку Runich.',
+    faq: [
+      {
+        question: 'Можно обратиться без аккаунта?',
+        answer: 'Да. Укажи email — на него придёт подтверждение, что обращение принято.',
+      },
+      {
+        question: 'Что написать в сообщении об ошибке?',
+        answer:
+          'Опиши, что ты делал, что ожидал увидеть и что произошло. Модель устройства и версию приложения мы приложим автоматически.',
+      },
+      {
+        question: 'Можно приложить скриншот?',
+        answer: 'Да. К сообщению об ошибке или предложению можно приложить фото или видео.',
+      },
+      {
+        question: 'Почему Runich может не работать с VPN?',
+        answer:
+          'VPN или маршрут сети через VPN может блокировать соединение с серверами Runich. Мы не можем повлиять на ограничения VPN-сервиса или сети. Попробуй отключить VPN или подключиться к другой сети.',
+      },
+      {
+        question: 'Почему геопозиция может перестать записываться во время тренировки?',
+        answer:
+          'Телефон может остановить обновление геопозиции в фоне из-за системных разрешений или ограничений энергосбережения. Проверь доступ к геопозиции и работу приложения в фоне. Мы не можем восстановить точки маршрута, которые телефон не записал.',
+      },
+    ],
+    requestType: 'Чем помочь?',
+    question: 'Задать вопрос',
+    topic: 'Выбери тему',
+    topics: {
+      account: 'Аккаунт и вход',
+      workout: 'Тренировки и GPS',
+      sync: 'Синхронизация тренировок',
+      maps: 'Карты и маршруты',
+      groups: 'Группы и сообщество',
+      other: 'Другое',
+    },
+    email: 'Email для ответа',
+    emailHint: 'Используем адрес только для ответа на обращение.',
+    emailRequired: 'Укажи email, чтобы мы могли ответить.',
+    privacyNotice: 'Для разбора обращения автоматически приложим модель устройства и версию приложения.',
+    acceptedTitle: 'Мы получили обращение',
+    acceptedEmail: 'Подтверждение отправлено на адрес',
+    acceptedEmailFailed: 'Обращение сохранено, но письмо-подтверждение отправить не удалось.',
+    reference: 'Номер обращения',
+    close: 'Закрыть',
+    sendAnother: 'Отправить ещё одно обращение',
+    bug: 'Сообщить об ошибке',
+    feature: 'Предложить функцию',
+    questionPlaceholder: 'Опиши вопрос и добавь детали, которые помогут разобраться',
     feedbackText: 'Текст обратной связи',
     bugPlaceholder: 'Максимально точно опишите, при каком сценарии можно воспроизвести баг',
     featurePlaceholder: 'Опишите желаемую функцию',
-    thanksPlaceholder: 'Напишите сообщение разработчику',
     photoUploaded: 'Файлы загружены',
     attachmentLimit:
       'Можно добавить до 10 фото или видео общим размером менее 100 МБ. Загрузка 10 файлов может занять время — обрати внимание на скорость соединения.',

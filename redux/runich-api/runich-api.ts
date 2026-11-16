@@ -21,6 +21,8 @@ export const runichApi = createApi({
     Tags.adminAccess,
     Tags.adminUsers,
     Tags.adminAccessAudit,
+    Tags.adminFeedback,
+    Tags.adminFeedbackItem,
     Tags.groups,
   ],
   baseQuery: baseQueryWithReauth,

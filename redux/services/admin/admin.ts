@@ -1,6 +1,13 @@
 import { Methods, Routes, Tags } from '@R/runich-api/const';
 import { runichApi } from '@R/runich-api/runich-api';
-import type { AdminAccess, AdminAccessAuditItem, AdminRole, AdminUser } from './types';
+import type {
+  AdminAccess,
+  AdminAccessAuditItem,
+  AdminFeedbackItem,
+  AdminFeedbackStatus,
+  AdminRole,
+  AdminUser,
+} from './types';
 
 const { admin } = Routes;
 
@@ -18,6 +25,22 @@ const adminApi = runichApi.injectEndpoints({
     getAdminAccessAudit: query<AdminAccessAuditItem[], { take?: number } | void>({
       query: (params) => ({ url: `/${admin}/access-audit`, params: params ?? undefined }),
       providesTags: [Tags.adminAccessAudit],
+    }),
+    getAdminFeedback: query<AdminFeedbackItem[], { status?: AdminFeedbackStatus; take?: number }>({
+      query: (params) => ({ url: `/${admin}/feedback`, params }),
+      providesTags: [Tags.adminFeedback],
+    }),
+    getAdminFeedbackById: query<AdminFeedbackItem, string>({
+      query: (id) => `/${admin}/feedback/${id}`,
+      providesTags: [Tags.adminFeedbackItem],
+    }),
+    updateAdminFeedbackStatus: mutation<void, { id: string; status: AdminFeedbackStatus }>({
+      query: ({ id, status }) => ({ url: `/${admin}/feedback/${id}/status`, method: Methods.patch, body: { status } }),
+      invalidatesTags: [Tags.adminFeedback, Tags.adminFeedbackItem],
+    }),
+    replyToAdminFeedback: mutation<AdminFeedbackItem, { id: string; text: string }>({
+      query: ({ id, text }) => ({ url: `/${admin}/feedback/${id}/reply`, method: Methods.post, body: { text } }),
+      invalidatesTags: [Tags.adminFeedback, Tags.adminFeedbackItem],
     }),
     grantAdminRole: mutation<void, { userId: string; role: AdminRole }>({
       query: ({ userId, role }) => ({
@@ -40,6 +63,10 @@ export const {
   useGetAdminAccessQuery,
   useGetAdminUsersQuery,
   useGetAdminAccessAuditQuery,
+  useGetAdminFeedbackQuery,
+  useGetAdminFeedbackByIdQuery,
+  useUpdateAdminFeedbackStatusMutation,
+  useReplyToAdminFeedbackMutation,
   useGrantAdminRoleMutation,
   useRevokeAdminRoleMutation,
 } = adminApi;

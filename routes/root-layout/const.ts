@@ -5,6 +5,7 @@ export const LazyUsersSettingsIcons = lazy(() => import('@S/users-settings-icons
 
 export const PUBLIC_ROUTES = new Set([
   `/${ROUTES.signIn}`,
+  `/${ROUTES.feedback}`,
   `/${ROUTES.loginFromUrl}`,
   `/${ROUTES.confirmEmailCode}`,
   `/${ROUTES.changePassword}`,

@@ -3,3 +3,7 @@ export interface PendingAttachmentPreview {
   uri: string;
   isVideo: boolean;
 }
+
+export interface FeedbackContactForm {
+  email: string;
+}

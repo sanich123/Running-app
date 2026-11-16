@@ -4,12 +4,14 @@ export const ADMIN_DASHBOARD_COPY = {
   [LANGUAGES.russian]: {
     loading: 'Проверяем права доступа…',
     moderation: 'Модерация',
+    feedback: 'Обращения',
     access: 'Права доступа',
     emailOnly: 'У вас есть право отправлять email. Этот раздел админки пока не подключён.',
   },
   [LANGUAGES.english]: {
     loading: 'Checking access…',
     moderation: 'Moderation',
+    feedback: 'Support',
     access: 'Access rights',
     emailOnly: 'You can send email. This admin section is not connected yet.',
   },

@@ -75,6 +75,8 @@ export default {
           'Приложение Runich использует данные о движении и шагах для определения активности и подсчета шагов во время тренировки',
         NSHealthShareUsageDescription:
           'Runich считывает тренировки, маршруты, шаги и доступные измерения пульса из Apple Health, чтобы сохранить тренировку в вашем аккаунте',
+        NSHealthUpdateUsageDescription:
+          'Runich использует данные Apple Health для импорта выбранных вами тренировок, маршрутов, шагов и доступных измерений пульса в ваш аккаунт Runich',
       },
       bundleIdentifier: IS_DEV ? 'com.sanich123.runich.dev' : 'com.sanich123.runich',
     },
