@@ -1,7 +1,7 @@
 import { createElement } from 'react';
 import { Divider } from 'react-native-paper';
 import UserListItem from '@S/user-list-item/user-list-item';
-import type { FollowerResponse } from '@R/runich-api/types';
+import type { FollowerResponse } from '@R/runich-api/social-types';
 
 export const renderFollowerItem = ({ item }: { item: Pick<FollowerResponse, 'userId' | 'user'> }) =>
   createElement(UserListItem, {

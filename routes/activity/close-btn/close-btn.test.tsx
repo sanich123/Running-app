@@ -35,7 +35,8 @@ describe('Activity close btn', () => {
     expect(closeButton.props.accessibilityLabel).toBe(ACTIVITY_CLOSE_BTN.russian.btnText);
     const closeButtonStyle = StyleSheet.flatten(closeButton.props.style);
     if (Platform.OS === 'ios') {
-      expect(closeButtonStyle.backgroundColor).toBeUndefined();
+      expect(closeButtonStyle.backgroundColor).toBe('rgba(255, 255, 255, 0.72)');
+      expect(closeButtonStyle.borderRadius).toBe(22);
       expect(closeButtonStyle.width).toBe(44);
       expect(closeButtonStyle.height).toBe(44);
     } else {

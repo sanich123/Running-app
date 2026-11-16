@@ -1,14 +1,9 @@
 import { ActivityIndicator, IconButton } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
+import type { ActivityMediaDeleteBtnProps } from './types';
 
-export default function ActivityMediaDeleteBtn({
-  onDelete,
-  isDeleting,
-}: {
-  onDelete: () => void;
-  isDeleting: boolean;
-}) {
+export default function ActivityMediaDeleteBtn({ onDelete, isDeleting }: ActivityMediaDeleteBtnProps) {
   const { language } = useAppSelector(({ settings }) => settings);
   const label = language === LANGUAGES.russian ? 'Удалить медиа' : 'Delete media';
 

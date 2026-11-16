@@ -1,17 +1,8 @@
 import UserAvatar from '@S/avatar/user-avatar/user-avatar';
 import { ProfileAvatarTestIds } from './const';
+import type { ProfileAvatarProps } from './types';
 
-export default function ProfileAvatar({
-  name,
-  surname,
-  profilePhoto,
-  profilePhotoBlurhash,
-}: {
-  name?: string;
-  surname?: string;
-  profilePhoto?: string | null;
-  profilePhotoBlurhash?: string | null;
-}) {
+export default function ProfileAvatar({ name, surname, profilePhoto, profilePhotoBlurhash }: ProfileAvatarProps) {
   return (
     <UserAvatar
       size={150}

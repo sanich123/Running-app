@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { ActivityResponse } from '@R/runich-api/types';
+import type { ActivityResponse } from '@R/runich-api/activity-types';
 
 export interface DeleteActivityButtonProps {
   activity: ActivityResponse;

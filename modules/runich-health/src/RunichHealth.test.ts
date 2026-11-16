@@ -416,16 +416,16 @@ describe('RunichHealth', () => {
   it('uses the native iOS module and reports unsupported-platform fallbacks', async () => {
     const nativeModule = {
       getAvailability: jest.fn().mockResolvedValue('available'),
-      getPermissions: jest.fn().mockResolvedValue({ available: true, granted: true }),
-      requestPermissions: jest.fn().mockResolvedValue({ available: true, granted: true }),
+      getPermissions: jest.fn().mockResolvedValue({ available: true }),
+      requestPermissions: jest.fn().mockResolvedValue({ available: true }),
       readWorkouts: jest.fn().mockResolvedValue([{ sourceActivityId: 'ios-workout' }]),
     };
     const health = loadHealth('ios', 17, nativeModule);
     const progress: string[] = [];
 
     await expect(health.RunichHealth.getAvailability()).resolves.toBe('available');
-    await expect(health.RunichHealth.getPermissions()).resolves.toEqual({ available: true, granted: true });
-    await expect(health.RunichHealth.requestPermissions()).resolves.toEqual({ available: true, granted: true });
+    await expect(health.RunichHealth.getPermissions()).resolves.toEqual({ available: true });
+    await expect(health.RunichHealth.requestPermissions()).resolves.toEqual({ available: true });
     await expect(
       health.RunichHealth.readWorkouts('start', 'end', (item) => progress.push(item.stage)),
     ).resolves.toEqual([{ sourceActivityId: 'ios-workout' }]);

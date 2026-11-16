@@ -1,12 +1,12 @@
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
 import ErrorComponent from '@S/error-component/error-component';
-import useGroupPostsList from './use-group-posts-list';
 import GroupPostCard from '../group-post-card/group-post-card';
+import useGroupPostsList from './use-group-posts-list';
 import type { GroupDetails } from '@R/services/groups/types';
 
 export default function GroupPostsList({ group }: { group: GroupDetails }) {
-  const { canSeePosts, copy, error, isError, isFetchingNextPage, isLoading, onScroll, posts, refetch } =
+  const { canSeePosts, copy, error, isError, isFetching, isFetchingNextPage, isLoading, onScroll, posts, refetch } =
     useGroupPostsList(group);
   const { postsLoadError, noPosts } = copy;
 
@@ -21,7 +21,14 @@ export default function GroupPostsList({ group }: { group: GroupDetails }) {
       ) : isError ? (
         <ErrorComponent error={error ?? new Error(postsLoadError)} refetch={refetch} />
       ) : posts.length ? (
-        posts.map(({ id, ...post }) => <GroupPostCard key={id} post={{ id, ...post }} />)
+        posts.map(({ id, ...post }) => (
+          <GroupPostCard
+            key={id}
+            post={{ id, ...post }}
+            onRefreshStatus={() => void refetch()}
+            isRefreshingStatus={isFetching}
+          />
+        ))
       ) : (
         <Text variant="bodyMedium" style={styles.emptyText}>
           {noPosts}

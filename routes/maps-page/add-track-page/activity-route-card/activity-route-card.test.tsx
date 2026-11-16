@@ -1,9 +1,9 @@
 import { screen, userEvent } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
-import ActivityRouteCard from './activity-route-card';
 import { MAPS_PAGE_COPY } from '../../const';
-import type { ActivityRouteWorkoutListItemResponse } from '@R/runich-api/types';
+import ActivityRouteCard from './activity-route-card';
+import type { ActivityRouteWorkoutListItemResponse } from '@R/runich-api/activity-types';
 
 const activity: ActivityRouteWorkoutListItemResponse = {
   id: 'workout-1',

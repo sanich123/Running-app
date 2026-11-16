@@ -11,6 +11,38 @@ export const HEALTH_SYNC_SOURCE_SCREENSHOT_URL =
 export const HEALTH_SYNC_CONFIG_SCREENSHOT_URL =
   'https://healthsync.app/wp-content/uploads/2023/09/Health-Sync-activity-source-configure.webp';
 
+export const IOS_WATCH_IMPORT_COPY = {
+  en: {
+    title: 'Connect Apple Health',
+    intro: 'Allow your watch app to save workouts to Apple Health. Then let Runich read data from Apple Health.',
+    sourceApp: {
+      title: 'Set up your watch app',
+      description:
+        '1. In the watch app on your iPhone, enable workout sync with Apple Health. The menu name depends on the watch manufacturer.\n\n2. Allow the app to write Workouts, Workout Routes, and Heart Rate if those options are available. Some apps export the workout but not the route or heart-rate samples.\n\n3. After syncing a workout, open Apple Health and find it. Open the workout, check the map, and find the heart-rate data.',
+    },
+    runich: {
+      title: 'Connect Runich to Apple Health',
+      description:
+        '1. Tap the button below. Runich will ask Apple Health for read access to workouts, workout routes, and heart rate.\n\n2. You can change Runich’s access yourself later in Apple Health.',
+    },
+  },
+  ru: {
+    title: 'Подключить Apple Health',
+    intro:
+      'Разрешите приложению часов сохранять тренировки в Apple Health. Затем дайте разрешение Runich считывать данные в Apple Health.',
+    sourceApp: {
+      title: 'Настройте приложение часов',
+      description:
+        '1. В приложении часов на iPhone включите синхронизацию тренировок с Apple Health. Название пункта зависит от производителя часов.\n\n2. Разрешите приложению записывать тренировки, маршруты тренировок и пульс, если такие переключатели доступны. Некоторые приложения передают саму тренировку, но не маршрут или измерения пульса.\n\n3. После синхронизации тренировки откройте Apple Health и найдите её. Откройте тренировку, проверьте карту и найдите пульс.',
+    },
+    runich: {
+      title: 'Подключите Runich к Apple Health',
+      description:
+        '1. Нажмите кнопку ниже. Runich запросит у Apple Health доступ на чтение тренировок, маршрутов и пульса.\n\n2. Позже вы сможете самостоятельно изменить доступ Runich в приложении Apple Health.',
+    },
+  },
+} as const;
+
 export const WATCH_IMPORT_COPY = {
   en: {
     title: 'Workout import',
@@ -19,7 +51,7 @@ export const WATCH_IMPORT_COPY = {
       description: 'The instructions may be incomplete and will change.',
     },
     importMethods:
-      'Workouts with routes can be imported in two ways: from Strava or from the watch app. In both cases, the import goes through Health Sync.',
+      'Workouts can sync directly from a watch app to Health Connect when that app supports route and heart-rate export. Other watch apps can be connected through Health Sync. Check the platform-specific app list below and verify the route and heart-rate samples in Health Connect before importing.',
     steps: {
       healthSyncInstall: {
         title: 'Configure Health Sync',
@@ -63,7 +95,7 @@ export const WATCH_IMPORT_COPY = {
       description: 'Инструкция может быть неполной и будет изменяться.',
     },
     importMethods:
-      'Импорт тренировок с маршрутом возможен 2мя способами: из Strava и из приложения часов. В обоих случаях импорт идет через приложение Health Sync.',
+      'Тренировки передаются напрямую из приложения часов в Health Connect, если оно поддерживает выгрузку маршрута и пульса. Для других приложений можно настроить Health Sync. Сначала проверьте список для Android ниже, затем убедитесь, что в Health Connect есть маршрут и измерения пульса.',
     steps: {
       healthSyncInstall: {
         title: 'Настройте Health Sync',

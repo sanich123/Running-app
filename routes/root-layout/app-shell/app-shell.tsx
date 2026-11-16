@@ -8,7 +8,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Platform, Pressable, Text, useColorScheme } from 'react-native';
-import { Redirect, Stack, usePathname } from 'expo-router';
+import { Redirect, Stack, usePathname, useRouter } from 'expo-router';
 import { configureFonts, MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
 import { LABELS, ROUTES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
@@ -16,6 +16,7 @@ import { COLORS } from '@const/theme-colors';
 import { useAppSelector } from '@R/typed-hooks';
 import HealthConnectAutoSync from '@Routes/watch-import/health-connect-auto-sync/health-connect-auto-sync';
 import FeedHeaderTitle from '@S/feed-header-title/feed-header-title';
+import { IOS_HEADER_ITEM_SPACING, IOS_HEADER_ITEM_WIDTH_PROPS } from '@S/header-toolbar-const';
 import useAppInitialization from '@U/hooks/use-app-initialization';
 import { LazyUsersSettingsIcons, PUBLIC_ROUTES } from '../const';
 import LazyHeader from '../lazy-header/lazy-header';
@@ -31,6 +32,7 @@ export default function AppShell() {
   const { accessToken, refreshToken } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ settings }) => settings);
   const labels = LABELS[language];
+  const { push } = useRouter();
   const pathname = usePathname();
   const hasSession = Boolean(accessToken || refreshToken);
   const colorScheme = theme ?? systemColorScheme;
@@ -41,6 +43,30 @@ export default function AppShell() {
     colorScheme === 'dark'
       ? { ...MD3DarkTheme, roundness: 2, fonts, colors: appColors }
       : { ...MD3LightTheme, roundness: 2, fonts, colors: appColors };
+  const getUsersSettingsToolbar = (showUsers: boolean, showSettings: boolean) =>
+    Platform.OS === 'ios' ? (
+      <Stack.Toolbar placement="right">
+        {showUsers ? (
+          <Stack.Toolbar.Button
+            {...IOS_HEADER_ITEM_WIDTH_PROPS}
+            icon="person.2"
+            accessibilityLabel={labels.users}
+            tintColor={appColors.onSurface}
+            onPress={() => push(`/${ROUTES.users}` as never)}
+          />
+        ) : null}
+        {showUsers && showSettings ? <Stack.Toolbar.Spacer width={IOS_HEADER_ITEM_SPACING} /> : null}
+        {showSettings ? (
+          <Stack.Toolbar.Button
+            {...IOS_HEADER_ITEM_WIDTH_PROPS}
+            icon="gearshape"
+            accessibilityLabel={labels.settings}
+            tintColor={appColors.onSurface}
+            onPress={() => push(`/${ROUTES.settings}` as never)}
+          />
+        ) : null}
+      </Stack.Toolbar>
+    ) : null;
 
   if (!hasSession && !PUBLIC_ROUTES.has(pathname)) {
     return (
@@ -125,6 +151,7 @@ export default function AppShell() {
                       : undefined,
                 headerStyle: { backgroundColor: appColors.surface },
                 headerTintColor: appColors.onSurface,
+                headerUserInterfaceStyle: colorScheme === 'dark' ? 'dark' : 'light',
                 headerTitleStyle: {
                   color: appColors.primary,
                   fontFamily: FONT_FAMILIES.semiBold,
@@ -174,26 +201,28 @@ export default function AppShell() {
                 options={{
                   headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
                   title: LABELS[language].followers,
-                }}
-              />
+                }}>
+                {getUsersSettingsToolbar(true, true)}
+              </Stack.Screen>
               <Stack.Screen
                 name={`${ROUTES.following}/${ROUTES.routeId}`}
                 options={{
                   headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
                   title: LABELS[language].followings,
-                }}
-              />
+                }}>
+                {getUsersSettingsToolbar(true, true)}
+              </Stack.Screen>
               <Stack.Screen
                 name={`${ROUTES.likes}/${ROUTES.routeId}`}
                 options={{
                   headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
                   title: LABELS[language].likes,
-                }}
-              />
+                }}>
+                {getUsersSettingsToolbar(true, true)}
+              </Stack.Screen>
               <Stack.Screen
                 name={`${ROUTES.map}/${ROUTES.routeId}`}
                 options={{
-                  headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
                   title: LABELS[language].map,
                 }}
               />
@@ -211,48 +240,62 @@ export default function AppShell() {
                   headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
                   headerTitle: LABELS[language].profile,
                   title: LABELS[language].profile,
-                }}
-              />
+                }}>
+                {getUsersSettingsToolbar(false, true)}
+              </Stack.Screen>
               <Stack.Screen name={`${ROUTES.manualActivity}/${ROUTES.index}`} options={{ title: '' }} />
               <Stack.Screen
                 name={`${ROUTES.settings}/${ROUTES.index}`}
                 options={{
                   headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
                   title: LABELS[language].settings,
-                }}
-              />
+                }}>
+                {getUsersSettingsToolbar(true, false)}
+              </Stack.Screen>
               <Stack.Screen
                 name={`${ROUTES.settings}/${ROUTES.notificationSettings}/${ROUTES.index}`}
                 options={{ title: LABELS[language].notificationSettings }}
+              />
+              <Stack.Screen
+                name={`${ROUTES.settings}/${ROUTES.profilePrivacySettings}/${ROUTES.index}`}
+                options={{ title: LABELS[language].profilePrivacySettings }}
+              />
+              <Stack.Screen
+                name={`${ROUTES.settings}/${ROUTES.profilePrivacySettings}/${ROUTES.profilePrivacyPreviews}`}
+                options={{ title: LABELS[language].profilePrivacyPreviews }}
               />
               <Stack.Screen
                 name={`${ROUTES.users}/${ROUTES.index}`}
                 options={{
                   headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
                   title: LABELS[language].users,
-                }}
-              />
+                }}>
+                {getUsersSettingsToolbar(false, true)}
+              </Stack.Screen>
               <Stack.Screen
                 name={`${ROUTES.monthStatistics}/${ROUTES.index}`}
                 options={{
                   headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
                   title: LABELS[language].statistics,
-                }}
-              />
+                }}>
+                {getUsersSettingsToolbar(true, true)}
+              </Stack.Screen>
               <Stack.Screen
                 name={`${ROUTES.activitiesList}/${ROUTES.routeIds}`}
                 options={{
                   headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
                   title: LABELS[language].activities,
-                }}
-              />
+                }}>
+                {getUsersSettingsToolbar(true, true)}
+              </Stack.Screen>
               <Stack.Screen
                 name={`${ROUTES.migration}/${ROUTES.index}`}
                 options={{
                   headerRight: () => <LazyHeader component={LazyUsersSettingsIcons} />,
                   title: LABELS[language].migration,
-                }}
-              />
+                }}>
+                {getUsersSettingsToolbar(true, true)}
+              </Stack.Screen>
             </Stack>
           </BottomSheetModalProvider>
         </PaperProvider>

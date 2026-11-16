@@ -9,7 +9,7 @@ import EmptyState from '@S/empty-state/empty-state';
 import UserListItem from '@S/user-list-item/user-list-item';
 import type { ModalLikesListProps } from '../types';
 import type { BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
-import type { LikeListResponse } from '@R/runich-api/types';
+import type { LikeListResponse } from '@R/runich-api/social-types';
 
 export default function ModalLikesList({ bottomSheetModalRef, likesLength, canViewLikes }: ModalLikesListProps) {
   const { colors } = useTheme();

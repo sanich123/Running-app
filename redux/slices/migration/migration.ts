@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { MIGRATION_INITIAL_STATE } from './const';
-import type { ActivityMigrationJobResponse } from '@R/runich-api/types';
+import type { ActivityMigrationJobResponse } from '@R/runich-api/activity-types';
 
 const migration = createSlice({
   name: 'migration',

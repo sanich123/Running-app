@@ -3,8 +3,9 @@ import { Text, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
+import type { YearMonthTitleProps } from './types';
 
-export default function YearMonthTitle({ year, month }: { year: string; month: string }) {
+export default function YearMonthTitle({ year, month }: YearMonthTitleProps) {
   const { language } = useAppSelector(({ settings }) => settings);
   const { colors } = useTheme();
   const monthYear = new Date(+year, +month).toLocaleDateString(language === LANGUAGES.russian ? 'ru-RU' : 'en-US', {

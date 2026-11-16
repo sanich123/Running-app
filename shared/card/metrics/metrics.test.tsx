@@ -5,7 +5,7 @@ import { changeLanguage } from '@R/slices/settings/settings';
 import { MOCK_DISTANCE, MOCK_DURATION } from '@T/mocks/mock-location';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { getSpeedInKmPerHour, getSpeedInMinsInKm } from '@U/location/location-utils';
+import { getSpeedInKmPerHour, getSpeedInMinsInKm } from '@U/location/activity-metrics';
 import { formatDuration } from '@U/time-formatter';
 import { ActivityCardContext } from '../context';
 import CardMetrics from './metrics';

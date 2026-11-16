@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { useGlobalSearchParams, useRouter } from 'expo-router';
 import { Button, Text, useTheme } from 'react-native-paper';
 import { useGetUserProfileByUserIdQuery, useUpdateProfileByUserIdMutation } from '@R/services/profile/profile';
@@ -39,7 +39,7 @@ export default function ProfileUpdateBtn() {
       disabled={isSaving}
       style={styles.layout}>
       {!isSaving && (
-        <Text variant="titleMedium" style={{ color: colors.primary }}>
+        <Text variant="titleMedium" style={{ color: Platform.OS === 'ios' ? colors.onSurface : colors.primary }}>
           {UPDATE_BTN[language].update}
         </Text>
       )}

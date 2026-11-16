@@ -9,10 +9,10 @@ import {
 } from '@R/slices/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { TIMEOUT_MESSAGE } from '@Routes/activity/location-indicator/const';
-import { getMaxTrackingSpeedForSport } from '@U/location/location-utils';
+import { getMaxTrackingSpeedForSport } from '@U/location/activity-metrics';
 import { useGlobalActivitySportParams } from '../activity-params';
-import { ACTIVITY_ERROR_MSG, NO_SPEED_ALERT_TIME } from './const';
 import ActivityMotionStatus from '../motion-status/activity-motion-status/activity-motion-status';
+import { ACTIVITY_ERROR_MSG, NO_SPEED_ALERT_TIME } from './const';
 
 export default function ErrorMsg() {
   const dispatch = useAppDispatch();

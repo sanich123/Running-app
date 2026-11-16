@@ -1,5 +1,5 @@
 import { renderCardsFunction, keyExtractor } from './utils';
-import type { ActivityListItemResponse } from '@R/runich-api/types';
+import type { ActivityListItemResponse } from '@R/runich-api/activity-types';
 
 describe('render item', () => {
   it('maps an activity list item to the card props', () => {

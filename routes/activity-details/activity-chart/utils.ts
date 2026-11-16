@@ -1,5 +1,5 @@
 import { LANGUAGES, type LANGUAGES as Language } from '@const/enums';
-import { isRunningActivity } from '@U/location/location-utils';
+import { isRunningActivity } from '@U/location/activity-metrics';
 import type {
   ActivityChartMetric,
   ActivityChartPoint,
@@ -7,7 +7,7 @@ import type {
   HeartRateZone,
   HeartRateZoneSettings,
 } from './types';
-import type { ActivityChartDataResponse } from '@R/runich-api/types';
+import type { ActivityChartDataResponse } from '@R/runich-api/activity-types';
 import type { ActivityHeartRateSample } from '@S/card/types';
 
 type ActivityChartLocation = NonNullable<ActivityChartDataResponse['locations']>[number];

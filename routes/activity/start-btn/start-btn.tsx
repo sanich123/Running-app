@@ -27,7 +27,9 @@ import { ACTIVITY_TRACKING_ERROR_COPY } from '@Routes/activity/const';
 import { errorToast } from '@S/error-toast/error-toast';
 import { getCurrentActivityDuration } from '@U/activity-duration';
 import { getCurrentOrLastKnownPosition } from '@U/get-initial-position';
+import { getSpeedInMinsInKm } from '@U/location/activity-metrics';
 import { startLocationTracking, stopLocationTracking } from '@U/location/expo-task-manager/background-location';
+import { getElevationGainByKilometres } from '@U/location/location-geometry';
 import {
   appendLocationToJournal,
   createLocationJournal,
@@ -37,7 +39,6 @@ import {
   removeLocationJournal,
 } from '@U/location/location-journal';
 import { getLocationProvider, stripLocationProvider } from '@U/location/location-provider';
-import { getElevationGainByKilometres, getSpeedInMinsInKm } from '@U/location/location-utils';
 import {
   finishPedometerActivity,
   pausePedometerActivity,
@@ -47,16 +48,13 @@ import {
 import { getDeviceTimeZone } from '@U/time-zone';
 import { useActivitySportParams } from '../activity-params';
 import { ACTIVITY_START_BTN_TEST_ID, ACTIVITY_START_BTN, STOP_ICON } from './const';
+import type { StartBtnProps } from './types';
 
 export default function StartBtn({
   isReadyToRecordLocation,
   isGettingLocation: isGettingLocationProp,
   onTrackingActionInProgressChange,
-}: {
-  isReadyToRecordLocation: boolean;
-  isGettingLocation?: boolean;
-  onTrackingActionInProgressChange?: (isInProgress: boolean) => void;
-}) {
+}: StartBtnProps) {
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
   const {

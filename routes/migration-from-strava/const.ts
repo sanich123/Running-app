@@ -5,7 +5,7 @@ export const STRAVA_EXPORT_URL =
 
 export const MIGRATION_STATES = {
   [LANGUAGES.russian]: {
-    title: 'Миграция из Strava',
+    title: 'Перенос из Strava',
     howItWorks: 'Как это работает',
     ableToTransfer: 'Перенесите все свои тренировки из Strava в наш сервис.',
     moreInfo: '1. Подробная инструкция по экспорту данных',
@@ -16,8 +16,6 @@ export const MIGRATION_STATES = {
     wifiConnection: 'Для загрузки нужен стабильный интернет, желательно быстрый Wi‑Fi.',
     serverResponseTime:
       'После подготовки архив загружается в фоновом режиме. Можно свернуть приложение, перейти к тренировке или вернуться на эту страницу позже — здесь будет актуальный прогресс.',
-    backgroundUploadLimitations:
-      'Продолжение после перезагрузки телефона и после принудительного закрытия приложения пока не поддерживается. На Android система может остановить фоновую передачу; при сбое загрузку можно повторить.',
     archiveLimit: 'Размер архива не должен превышать 100 МБ. Если нужно загрузить архив большего размера, ',
     feedbackLink: 'напишите в обратную связь',
     unzipping: 'Распаковываем архив',
@@ -52,12 +50,12 @@ export const MIGRATION_STATES = {
     success: 'Успешно!',
     uploadProgress: 'Прогресс загрузки архива',
     cancel: 'Отменить загрузку',
-    errorTitle: 'Ошибка миграции',
+    errorTitle: 'Ошибка переноса',
     closeError: 'Закрыть сообщение об ошибке',
     error: 'Ошибка',
   },
   [LANGUAGES.english]: {
-    title: 'Migration from Strava',
+    title: 'Transfer from Strava',
     howItWorks: 'How it works',
     ableToTransfer: 'Bring all your Strava activities to Runich.',
     moreInfo: '1. Read the detailed export instructions',
@@ -68,8 +66,6 @@ export const MIGRATION_STATES = {
     wifiConnection: 'A stable internet connection is required, preferably fast Wi‑Fi.',
     serverResponseTime:
       'After preparation, the archive uploads in the background. You can minimize the app, record a workout, or return to this page later to see the current progress.',
-    backgroundUploadLimitations:
-      'Resuming after a phone restart or force-closing the app is not supported yet. Android may stop a background transfer; if it fails, you can upload the archive again.',
     archiveLimit: 'The archive size must not exceed 150 MB. If you need to upload a larger archive, ',
     feedbackLink: 'contact us through feedback',
     unzipping: 'Unzipping',
@@ -104,7 +100,7 @@ export const MIGRATION_STATES = {
     success: 'Success!',
     uploadProgress: 'Archive upload progress',
     cancel: 'Cancel upload',
-    errorTitle: 'Migration error',
+    errorTitle: 'Transfer error',
     closeError: 'Close error message',
     error: 'Error',
   },

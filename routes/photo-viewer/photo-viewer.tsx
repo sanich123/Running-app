@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { SymbolView } from 'expo-symbols';
 import PagerView from 'react-native-pager-view';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import uuid from 'react-native-uuid';
@@ -13,9 +14,10 @@ import {
 import { useAppSelector } from '@R/typed-hooks';
 import VideoViewer from '@Routes/photo-viewer/video-viewer/video-viewer';
 import CustomImage from '@S/custom-image/custom-image';
+import { HEADER_ICON_SIZE } from '@S/header-icon-source';
 import MediaModerationPlaceholder from '@S/media-moderation-placeholder/media-moderation-placeholder';
 import { getPhotoUrl, isDirectMediaUrl, isVideoUrl } from './utils';
-import type { ActivityMediaItemResponse } from '@R/runich-api/types';
+import type { ActivityMediaItemResponse } from '@R/runich-api/activity-types';
 import type { PageScrollStateChangedNativeEvent, PagerViewOnPageSelectedEvent } from 'react-native-pager-view';
 
 export default function PhotoViewer() {
@@ -132,7 +134,7 @@ export default function PhotoViewer() {
                       }}
                     />
                   )}
-                  {canSeeMediaStage && mediaReviewStatus ? (
+                  {canSeeMediaStage && ['queued', 'processing', 'review_required'].includes(mediaReviewStatus ?? '') ? (
                     <MediaModerationPlaceholder
                       status={mediaReviewStatus}
                       compact
@@ -154,7 +156,11 @@ export default function PhotoViewer() {
           onPress={() => router.back()}
           hitSlop={8}
           style={[styles.backButton, { top: Math.max(insets.top, 8) + 8 }]}>
-          <Icon source="arrow-left" size={30} color="#fff" />
+          {Platform.OS === 'ios' ? (
+            <SymbolView name="chevron.left" size={HEADER_ICON_SIZE} tintColor={colors.onSurface} weight="medium" />
+          ) : (
+            <Icon source="arrow-left" size={30} color="#fff" />
+          )}
         </Pressable>
       </View>
     </View>

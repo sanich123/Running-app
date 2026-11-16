@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Avatar, Icon, Surface, Text, useTheme } from 'react-native-paper';
+import { Avatar, Icon, IconButton, Surface, Text, useTheme } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
 import { GROUPS_COPY } from '../../../const';
@@ -8,12 +8,21 @@ import GroupPhoto from '../../../group-photo/group-photo';
 import { isGroupPhotoUnderModeration } from '../../../group-photo/utils';
 import type { GroupPost } from '@R/services/groups/types';
 
-export default function GroupPostCard({ post }: { post: GroupPost }) {
+export default function GroupPostCard({
+  post,
+  onRefreshStatus,
+  isRefreshingStatus = false,
+}: {
+  post: GroupPost;
+  onRefreshStatus?: () => void;
+  isRefreshingStatus?: boolean;
+}) {
   const router = useRouter();
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const { userId } = useAppSelector(({ auth }) => auth);
-  const { member, postPhotoUnavailable } = GROUPS_COPY[language];
+  const { member, postPhotoUnavailable, postTextPending, postTextHidden, refreshModerationStatus } =
+    GROUPS_COPY[language];
   const locale = language === LANGUAGES.russian ? 'ru-RU' : 'en-US';
   const {
     id,
@@ -38,6 +47,9 @@ export default function GroupPostCard({ post }: { post: GroupPost }) {
     photoReviewStatus,
     photoPending,
   });
+  const isTextUnderModeration = post.moderationStatus === 'pending' || post.moderationStatus === 'processing';
+  const isTextHiddenByModeration = post.moderationStatus === 'hidden' || post.moderationStatus === 'removed';
+  const canViewText = !post.moderationStatus || post.moderationStatus === 'visible' || authorUserId === userId;
 
   return (
     <Surface style={[styles.post, { backgroundColor: colors.surface }]} elevation={1}>
@@ -62,7 +74,30 @@ export default function GroupPostCard({ post }: { post: GroupPost }) {
           </Text>
         </View>
       </Pressable>
-      <Text variant="bodyLarge">{text}</Text>
+      {isTextUnderModeration || isTextHiddenByModeration ? (
+        <View style={styles.moderationNotice}>
+          <Icon source={isTextUnderModeration ? 'clock-outline' : 'eye-off-outline'} size={18} color={colors.primary} />
+          <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant, flex: 1 }}>
+            {isTextUnderModeration ? postTextPending : postTextHidden}
+          </Text>
+          {isTextUnderModeration && onRefreshStatus ? (
+            <IconButton
+              icon="refresh"
+              accessibilityLabel={refreshModerationStatus}
+              accessibilityRole="button"
+              testID={`refresh-group-post-status-${id}`}
+              onPress={onRefreshStatus}
+              iconColor={colors.primary}
+              rippleColor={colors.primaryContainer}
+              size={20}
+              loading={isRefreshingStatus}
+              disabled={isRefreshingStatus}
+              style={styles.refreshButton}
+            />
+          ) : null}
+        </View>
+      ) : null}
+      {canViewText && text ? <Text variant="bodyLarge">{text}</Text> : null}
       {hasPhoto && (postPhotoUrl || isPhotoUnderModeration) ? (
         <GroupPhoto
           photoUrl={photoUrl}
@@ -92,6 +127,8 @@ const styles = StyleSheet.create({
   post: { borderRadius: 16, gap: 12, padding: 14 },
   postHeader: { alignItems: 'center', flexDirection: 'row', gap: 10 },
   postAuthor: { flex: 1, gap: 2 },
+  moderationNotice: { alignItems: 'center', flexDirection: 'row', gap: 5 },
+  refreshButton: { backgroundColor: 'transparent', height: 40, margin: 0, width: 40 },
   postPhoto: { aspectRatio: 1.4, borderRadius: 12, width: '100%' },
   postPhotoNotice: { alignItems: 'center', flexDirection: 'row', gap: 6 },
 });

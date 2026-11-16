@@ -3,6 +3,7 @@ import { Text, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
 import { WEEK_STATISTICS } from '../const';
+import type { WeekStatisticsMetricProps } from './types';
 
 export default function WeekStatisticsMetric({
   isError,
@@ -10,13 +11,7 @@ export default function WeekStatisticsMetric({
   isLoading,
   metrics,
   title,
-}: {
-  isError: boolean;
-  isSuccess: boolean;
-  isLoading: boolean;
-  metrics: string;
-  title: string;
-}) {
+}: WeekStatisticsMetricProps) {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   return (

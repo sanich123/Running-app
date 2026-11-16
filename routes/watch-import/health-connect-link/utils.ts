@@ -2,7 +2,7 @@ import { createElement } from 'react';
 import type { ReactNode } from 'react';
 import { Text } from 'react-native-paper';
 import { HEALTH_CONNECT_PLAY_STORE_URL } from '../const';
-import { openExternalLink } from '../utils';
+import { openAppleHealth, openExternalLink } from '../utils';
 import { HEALTH_CONNECT_LINK_PATTERN, HEALTH_CONNECT_LINK_PHRASES } from './const';
 
 export function renderHealthConnectLinks(text: string, color: string): ReactNode[] {
@@ -12,7 +12,8 @@ export function renderHealthConnectLinks(text: string, color: string): ReactNode
           key: `health-connect-link-${index}`,
           children: part,
           accessibilityRole: 'link',
-          onPress: () => void openExternalLink(HEALTH_CONNECT_PLAY_STORE_URL),
+          onPress: () =>
+            void (part.includes('Apple Health') ? openAppleHealth() : openExternalLink(HEALTH_CONNECT_PLAY_STORE_URL)),
           style: { color, textDecorationLine: 'underline' },
         })
       : part,

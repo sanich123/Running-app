@@ -9,9 +9,9 @@ import { BASE_URL } from '@T/utils/handlers';
 import { createMockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
-import GroupsPage from './groups-page';
 import { GROUP_CATEGORY_LABELS, GROUPS_COPY, GROUP_SPORT_LABELS } from '../const';
 import { GROUP_FIXTURE } from '../test-fixtures';
+import GroupsPage from './groups-page';
 
 const mockPush = jest.fn();
 let groupsResponse: unknown[] = [GROUP_FIXTURE];
@@ -22,6 +22,7 @@ const groupRequests: URL[] = [];
 let testStore: ReturnType<typeof createMockStore>;
 interface MockStackScreenProps {
   options?: { headerTitle?: () => ReactNode; headerRight?: () => ReactNode };
+  children?: ReactNode;
 }
 
 function mockStackScreen({ options }: MockStackScreenProps) {
@@ -33,7 +34,13 @@ function mockStackScreen({ options }: MockStackScreenProps) {
   );
 }
 
-jest.mock('expo-router', () => ({ Stack: { Screen: mockStackScreen }, useRouter: () => ({ push: mockPush }) }));
+jest.mock('expo-router', () => {
+  const { Stack: toolbarStack } = require('@T/utils/expo-router-toolbar-mock').createExpoRouterToolbarMock();
+  return {
+    Stack: { ...toolbarStack, Screen: mockStackScreen },
+    useRouter: () => ({ push: mockPush }),
+  };
+});
 
 describe('GroupsPage', () => {
   beforeEach(() => {
@@ -80,6 +87,7 @@ describe('GroupsPage', () => {
     const header = screen.getByTestId('groups-header');
     expect(within(header).queryByTestId('search-groups')).toBeNull();
     expect(within(header).getByTestId('groups-create-button')).toBeOnTheScreen();
+    expect(within(header).queryByTestId('groups-settings-button')).toBeNull();
     const filters = within(screen.getByTestId('groups-filter-row'));
     expect(filters.getByTestId('groups-sport-filter')).toBeOnTheScreen();
     expect(filters.getByTestId('search-groups')).toBeOnTheScreen();
@@ -125,16 +133,6 @@ describe('GroupsPage', () => {
     fireEvent.press(screen.getByTestId('groups-create-button'));
 
     expect(mockPush).toHaveBeenCalledWith('/groups/create');
-  });
-
-  it('opens group notification preferences from the tab settings button', async () => {
-    await renderLoadedPage();
-    await userEvent.press(screen.getByTestId('groups-settings-button'));
-
-    expect(screen.getByText(GROUPS_COPY[LANGUAGES.english].groupNotificationSettingsTitle)).toBeOnTheScreen();
-    expect(screen.getByTestId('group-post-notifications-switch')).toBeOnTheScreen();
-    expect(screen.getByTestId('group-event-notifications-switch')).toBeOnTheScreen();
-    expect(screen.getByText(GROUPS_COPY[LANGUAGES.english].groupNotificationDeliveryHint)).toBeOnTheScreen();
   });
 
   it('switches scope, applies and clears a sport filter', async () => {

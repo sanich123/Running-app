@@ -1,9 +1,9 @@
 import { MarkerView } from '@rnmapbox/maps';
 import { View, StyleSheet } from 'react-native';
 import { Icon, useTheme } from 'react-native-paper';
-import type { LocationObject } from 'expo-location';
+import type { PauseMarkerProps } from './types';
 
-export default function PauseMarker({ location, isResume }: { location: LocationObject; isResume: boolean }) {
+export default function PauseMarker({ location, isResume }: PauseMarkerProps) {
   const { colors } = useTheme();
   const markerColor = isResume ? colors.primary : colors.tertiary;
 

@@ -4,21 +4,11 @@ import { Image } from 'expo-image';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Icon, IconButton, Menu, Text, TextInput, useTheme } from 'react-native-paper';
 import { errorToast } from '@S/error-toast/error-toast';
-import { removeOfflineMap, renameOfflineMap, type SavedOfflineMap } from '@U/offline-map-library';
+import { removeOfflineMap, renameOfflineMap } from '@U/offline-map-library';
 import { formatBytes, OFFLINE_MAP_THUMBNAIL_ASPECT_RATIO } from '../utils';
-import type { MapsPageCopy } from '../../const';
+import type { OfflineMapListProps } from './types';
 
-export default function OfflineMapList({
-  maps,
-  copy,
-  onMapsChange,
-  onOpenMap,
-}: {
-  maps: SavedOfflineMap[];
-  copy: MapsPageCopy;
-  onMapsChange: (maps: SavedOfflineMap[]) => void;
-  onOpenMap?: (offlineMap: SavedOfflineMap) => void;
-}) {
+export default function OfflineMapList({ maps, copy, onMapsChange, onOpenMap }: OfflineMapListProps) {
   const { colors } = useTheme();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editedTitle, setEditedTitle] = useState('');

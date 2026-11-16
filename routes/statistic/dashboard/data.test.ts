@@ -1,5 +1,5 @@
 import { buildDashboardYears } from './data';
-import type { YearStatisticsResponse } from '@R/runich-api/types';
+import type { YearStatisticsResponse } from '@R/runich-api/statistics-types';
 
 describe('statistics dashboard data', () => {
   it('keeps server years and unknown sports instead of limiting the UI to local sport buttons', () => {

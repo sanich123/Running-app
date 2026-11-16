@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { getLocationAnimationDuration } from '@U/location/location-utils';
+import { getLocationAnimationDuration } from '@U/location/location-geometry';
 import type { Camera } from '@rnmapbox/maps';
 import type { LocationObject } from 'expo-location';
 

@@ -1,7 +1,7 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import { delay, http, HttpResponse } from 'msw';
 import { Platform } from 'react-native';
-import { LANGUAGES, ROUTES } from '@const/enums';
+import { ROUTES } from '@const/enums';
 import { runichApi } from '@R/runich-api/runich-api';
 import { UserProfileAvatarTestIds } from '@S/avatar/user-profile-avatar/const';
 import { ERROR_COMPONENT_TEST_ID } from '@S/error-component/const';
@@ -11,7 +11,6 @@ import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { errorResponse, loadingResponse } from '@T/utils/response-states';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { PROFILE_PRIVACY_LINK_LABELS } from './const';
 import ProfilePage from './profile-page';
 
 const mockPathname = `/${ROUTES.profile}`;
@@ -153,15 +152,11 @@ describe('ProfilePage', () => {
     expect(screen.queryByTestId('profile-privacy-settings-button')).not.toBeOnTheScreen();
   });
 
-  it('opens privacy settings from the profile page', async () => {
-    const user = userEvent.setup();
+  it('keeps privacy settings out of the profile page', async () => {
     await renderWithProviders(<ProfilePage />);
-    expect(await screen.findByText(PROFILE_PRIVACY_LINK_LABELS[LANGUAGES.russian])).toBeOnTheScreen();
+    await screen.findByText(`${MOCK_SERVER_PROFILE.name} ${MOCK_SERVER_PROFILE.surname}`);
+    expect(screen.queryByTestId('profile-privacy-settings-button')).not.toBeOnTheScreen();
     expect(screen.queryByText(/Видимость профиля, подписки/)).not.toBeOnTheScreen();
-
-    await user.press(screen.getByTestId('profile-privacy-settings-button'));
-
-    expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.profile}/${ROUTES.profilePrivacySettings}`);
   });
 
   it('keeps maps and routes available on mobile', async () => {
@@ -280,7 +275,7 @@ describe('ProfilePage', () => {
     expect(await screen.findByTestId('profile-activity-media-owner-private-profile-photo')).toBeOnTheScreen();
     expect(screen.getByTestId('profile-community-section')).toBeOnTheScreen();
     expect(screen.getByTestId('profile-statistics')).toBeOnTheScreen();
-    expect(await screen.findByTestId('profile-privacy-settings-button')).toBeOnTheScreen();
+    expect(screen.queryByTestId('profile-privacy-settings-button')).not.toBeOnTheScreen();
     expect(screen.queryByTestId('profile-follow')).not.toBeOnTheScreen();
     expect(mediaRequests).toBe(1);
   });
@@ -292,12 +287,12 @@ describe('ProfilePage', () => {
     expect(await screen.findByTestId('watch-import-profile-row')).toBeOnTheScreen();
   });
 
-  it('hides watch import on iOS for the profile owner', async () => {
+  it('shows watch import on iOS for the profile owner', async () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'ios' });
     await renderWithProviders(<ProfilePage />);
 
     expect(await screen.findByText(`${MOCK_SERVER_PROFILE.name} ${MOCK_SERVER_PROFILE.surname}`)).toBeOnTheScreen();
-    expect(screen.queryByTestId('watch-import-profile-row')).not.toBeOnTheScreen();
+    expect(screen.getByTestId('watch-import-profile-row')).toBeOnTheScreen();
   });
 
   it('renders error state', async () => {

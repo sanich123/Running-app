@@ -1,15 +1,24 @@
+import { useState } from 'react';
 import { FlatList, Platform, StyleSheet, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import EmptyState from '@S/empty-state/empty-state';
 import ErrorComponent from '@S/error-component/error-component';
-import useGroupsList from './use-groups-list';
 import GroupCard from '../group-card/group-card';
+import useGroupsList from './use-groups-list';
 import type { GroupsQuery } from '@R/services/groups/types';
 
 export default function GroupsList({ filters }: { filters: GroupsQuery }) {
-  const { copy, error, hasFilter, isError, isFetching, isLoading, refetch, visibleGroups } = useGroupsList(filters);
+  const { copy, error, hasFilter, isError, isLoading, refetch, visibleGroups } = useGroupsList(filters);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const { loadError, noResults, emptyTitle, emptyMessage } = copy;
+
+  const refresh = () => {
+    setIsRefreshing(true);
+    const finishRefresh = () => setIsRefreshing(false);
+    void refetch().then(finishRefresh, finishRefresh);
+  };
+
   return isLoading ? (
     <ActivityIndicator style={styles.loader} />
   ) : isError ? (
@@ -27,8 +36,8 @@ export default function GroupsList({ filters }: { filters: GroupsQuery }) {
       data={visibleGroups}
       keyExtractor={({ id }) => id}
       contentContainerStyle={styles.list}
-      refreshing={isFetching}
-      onRefresh={() => void refetch()}
+      refreshing={isRefreshing}
+      onRefresh={refresh}
       renderItem={({ item: group }) => <GroupCard group={group} />}
     />
   );

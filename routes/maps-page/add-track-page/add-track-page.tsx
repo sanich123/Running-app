@@ -1,8 +1,10 @@
-import { FlatList, StyleSheet, View } from 'react-native';
+import { FlatList, Platform, StyleSheet, View } from 'react-native';
 import { Stack } from 'expo-router';
 import { ActivityIndicator, Button, IconButton, Searchbar, Text, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
 import EmptyState from '@S/empty-state/empty-state';
+import { getHeaderIconSource, HEADER_ICON_SIZE } from '@S/header-icon-source';
+import { IOS_HEADER_ITEM_WIDTH_PROPS } from '@S/header-toolbar-const';
 import ActivityRouteCard from './activity-route-card/activity-route-card';
 import DateFilters from './date-filters/date-filters';
 import useAddTrackPage from './use-add-track-page';
@@ -41,6 +43,7 @@ export default function AddTrackPage() {
             isSearchOpen ? (
               <Searchbar
                 autoFocus
+                icon={getHeaderIconSource('magnify', 'magnifyingglass', colors.onSurface)}
                 iconColor={colors.primary}
                 mode="bar"
                 placeholder={copy.searchActivities}
@@ -48,17 +51,23 @@ export default function AddTrackPage() {
                 accessibilityLabel={copy.searchActivities}
                 value={searchQuery}
                 onChangeText={setSearchQuery}
-                right={() => (
-                  <IconButton
-                    icon="close"
-                    accessibilityLabel={copy.cancel}
-                    onPress={() => {
-                      setSearchQuery('');
-                      setIsSearchOpen(false);
-                    }}
-                    style={styles.headerSearchClose}
-                  />
-                )}
+                right={
+                  Platform.OS === 'ios'
+                    ? undefined
+                    : () => (
+                        <IconButton
+                          icon={getHeaderIconSource('close', 'xmark', colors.onSurface)}
+                          iconColor={colors.primary}
+                          size={HEADER_ICON_SIZE}
+                          accessibilityLabel={copy.cancel}
+                          onPress={() => {
+                            setSearchQuery('');
+                            setIsSearchOpen(false);
+                          }}
+                          style={styles.headerSearchClose}
+                        />
+                      )
+                }
                 style={styles.headerSearch}
                 inputStyle={styles.headerSearchInput}
                 testID="search-activities"
@@ -77,17 +86,36 @@ export default function AddTrackPage() {
             ),
           headerTitleAlign: 'left',
           headerRight: () =>
-            isSearchOpen ? null : (
+            Platform.OS === 'ios' || isSearchOpen ? null : (
               <IconButton
-                icon="magnify"
+                icon={getHeaderIconSource('magnify', 'magnifyingglass', colors.onSurface)}
+                iconColor={colors.primary}
+                size={HEADER_ICON_SIZE}
                 accessibilityLabel={copy.searchActivities}
                 onPress={() => setIsSearchOpen(true)}
                 style={styles.headerActionButton}
                 testID="open-workout-search"
               />
             ),
-        }}
-      />
+        }}>
+        {Platform.OS === 'ios' ? (
+          <Stack.Toolbar placement="right">
+            <Stack.Toolbar.Button
+              {...IOS_HEADER_ITEM_WIDTH_PROPS}
+              icon={isSearchOpen ? 'xmark' : 'magnifyingglass'}
+              accessibilityLabel={isSearchOpen ? copy.cancel : copy.searchActivities}
+              onPress={() => {
+                if (isSearchOpen) {
+                  setSearchQuery('');
+                  setIsSearchOpen(false);
+                } else {
+                  setIsSearchOpen(true);
+                }
+              }}
+            />
+          </Stack.Toolbar>
+        ) : null}
+      </Stack.Screen>
       {isLoading && !activities.length ? (
         <View style={styles.pageState}>
           <ActivityIndicator size="large" testID="route-workouts-loading" />

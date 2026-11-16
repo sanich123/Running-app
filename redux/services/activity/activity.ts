@@ -29,7 +29,7 @@ import type {
   ActivityFavoriteMutationResponse,
   HomeActivityFeedsResponse,
   WatchWorkoutBatchImportResponse,
-} from '@R/runich-api/types';
+} from '@R/runich-api/activity-types';
 import type { HomeFeed } from '@Routes/home-page/const';
 
 const HOME_FEEDS = [HOME_FEED.my, HOME_FEED.followers, HOME_FEED.favorites] as const;

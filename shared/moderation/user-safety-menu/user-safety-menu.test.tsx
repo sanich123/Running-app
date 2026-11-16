@@ -7,9 +7,9 @@ import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { REPORT_CONTENT_COPY } from '../report-content-dialog/const';
 import { USER_SAFETY_MENU_COPY } from './const';
 import UserSafetyMenu from './user-safety-menu';
-import { REPORT_CONTENT_COPY } from '../report-content-dialog/const';
 
 jest.mock('@S/moderation/content-actions-menu/content-actions-menu', () => {
   const React = jest.requireActual('react');

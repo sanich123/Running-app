@@ -26,5 +26,5 @@ export interface PushTokenStatus {
 
 export interface RegisterPushTokenBody {
   token: string;
-  platform: 'android';
+  platform: 'android' | 'ios';
 }

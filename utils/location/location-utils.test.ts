@@ -1,6 +1,16 @@
-import { MAX_ACTIVITY_LOCATIONS } from './const';
 import {
   getAverageCadence,
+  getSpeedInMinsInKm,
+  getSpeedInKmPerHour,
+  getMaxTrackingSpeedForSport,
+  isCyclingActivity,
+  isHikingActivity,
+  isRunningActivity,
+  isWalkingActivity,
+  isWalkingOrHikingActivity,
+} from './activity-metrics';
+import { MAX_ACTIVITY_LOCATIONS } from './const';
+import {
   getElevationChangeBetweenLocations,
   getElevationGain,
   getElevationGainByKilometres,
@@ -8,16 +18,8 @@ import {
   getKilometerSplitCalculation,
   getDistance,
   getReducedLocations,
-  getSpeedInMinsInKm,
-  getSpeedInKmPerHour,
-  getMaxTrackingSpeedForSport,
   getLocationAnimationDuration,
-  isCyclingActivity,
-  isHikingActivity,
-  isRunningActivity,
-  isWalkingActivity,
-  isWalkingOrHikingActivity,
-} from './location-utils';
+} from './location-geometry';
 import type { ActivityLocation } from '@S/card/types';
 
 describe('activity metrics', () => {

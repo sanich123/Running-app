@@ -18,6 +18,6 @@ export default function DiagnosticsSection({ children, icon, title }: PropsWithC
 }
 
 const styles = StyleSheet.create({
-  section: { gap: 10 },
+  section: { gap: 6 },
   header: { alignItems: 'center', flexDirection: 'row', gap: 8 },
 });

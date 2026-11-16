@@ -6,7 +6,7 @@ import { ROUTES } from '@const/enums';
 import { resetAuthSlice, setAuthTokens } from '@R/slices/auth/auth';
 import { flushAuthPersistence } from '@R/slices/auth/persistence';
 import { deviceId, deviceName, deviceMetadata, platform } from '@U/device/device-id';
-import type { ApiState, AuthResponse } from './types';
+import type { ApiState, AuthResponse } from './auth-types';
 import type { BaseQueryApi, FetchArgs } from '@reduxjs/toolkit/query/react';
 
 export enum Tags {

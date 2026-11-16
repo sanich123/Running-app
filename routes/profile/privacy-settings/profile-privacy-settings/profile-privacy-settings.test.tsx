@@ -1,4 +1,4 @@
-import { act, fireEvent, screen, waitFor, within } from '@testing-library/react-native';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 import * as MediaLibrary from 'expo-media-library';
 import { http, HttpResponse } from 'msw';
 import { Platform } from 'react-native';
@@ -19,8 +19,6 @@ jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush }) }));
 
 const originalPlatformOSDescriptor = Object.getOwnPropertyDescriptor(Platform, 'OS');
 const originalPlatformVersionDescriptor = Object.getOwnPropertyDescriptor(Platform, 'Version');
-const englishPrivacyCopy = PROFILE_PRIVACY_SETTINGS[LANGUAGES.english];
-
 const defaultSettings = {
   userId: 'owner-id',
   profileSearchVisible: true,
@@ -63,7 +61,7 @@ describe('ProfilePrivacySettings', () => {
     expect(screen.queryByTestId('privacy-setting-emailNotifications')).not.toBeOnTheScreen();
     expect(screen.queryByText(EMAIL_NOTIFICATIONS_COPY[LANGUAGES.english].fullTitle)).not.toBeOnTheScreen();
     expect(MediaLibrary.requestPermissionsAsync).not.toHaveBeenCalled();
-    expect(screen.getByText(PROFILE_PRIVACY_SETTINGS[LANGUAGES.english].profileSearchDescription)).toBeOnTheScreen();
+    expect(screen.getByText(PROFILE_PRIVACY_SETTINGS[LANGUAGES.english].profileSearch)).toBeOnTheScreen();
   });
 
   it('groups activity totals under profile privacy', () => {
@@ -207,10 +205,9 @@ describe('ProfilePrivacySettings', () => {
         { allowActivityPaceViewing: false },
       ]),
     );
-    expect(
-      within(screen.getByTestId('privacy-activity-preview-graph')).getByText(
-        englishPrivacyCopy.activityPreviewGraphHidden,
-      ),
-    ).toBeOnTheScreen();
+    expect(screen.queryByTestId('activity-preview-accordion')).not.toBeOnTheScreen();
+    expect(screen.getByTestId('privacy-previews-button')).toBeOnTheScreen();
+    await fireEvent.press(screen.getByTestId('privacy-previews-button'));
+    expect(mockPush).toHaveBeenCalledWith('/settings/privacy-settings/previews');
   });
 });

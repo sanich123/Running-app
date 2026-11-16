@@ -4,11 +4,20 @@ import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { SEARCH_ICON_TEST_ID, SEARCH_INPUT, SEARCH_INPUT_TEST_ID } from './const';
+import { SEARCH_CLEAR_ICON_TEST_ID, SEARCH_ICON_TEST_ID, SEARCH_INPUT, SEARCH_INPUT_TEST_ID } from './const';
 import SearchInput from './search-input';
 
 describe('SearchInput', () => {
-  beforeEach(() => mockStore.dispatch(changeLanguage(LANGUAGES.english)));
+  const originalPlatformOS = Platform.OS;
+
+  beforeEach(() => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'ios' });
+  });
+
+  afterEach(() => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: originalPlatformOS });
+  });
   it('normalizes typing and marks the page non-initial', async () => {
     const setSearch = jest.fn();
     const setIsInitial = jest.fn();
@@ -19,11 +28,22 @@ describe('SearchInput', () => {
     expect(setIsInitial).toHaveBeenCalledWith(false);
   });
 
-  it('submits the current search from the icon', async () => {
+  it.each([
+    ['iOS', 'ios'],
+    ['Android', 'android'],
+    ['web', 'web'],
+  ] as const)('shows search and clear icons on %s and clears the search', async (_, platformOS) => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: platformOS });
     const setSearch = jest.fn();
-    await renderWithProviders(<SearchInput search="eliud" setSearch={setSearch} setIsInitial={jest.fn()} />);
-    fireEvent.press(screen.getByTestId(SEARCH_ICON_TEST_ID));
-    expect(setSearch).toHaveBeenCalledWith('eliud');
+    const setIsInitial = jest.fn();
+    await renderWithProviders(<SearchInput search="eliud" setSearch={setSearch} setIsInitial={setIsInitial} />);
+    const searchIcon = screen.getByTestId(SEARCH_ICON_TEST_ID);
+    const clearIcon = screen.getByTestId(SEARCH_CLEAR_ICON_TEST_ID);
+    expect(searchIcon).toBeOnTheScreen();
+    expect(clearIcon).toBeOnTheScreen();
+    fireEvent.press(clearIcon);
+    expect(setSearch).toHaveBeenCalledWith('');
+    expect(setIsInitial).toHaveBeenCalledWith(false);
   });
 
   it('fills the available width on mobile web', async () => {

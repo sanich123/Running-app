@@ -8,6 +8,7 @@ import type {
   EmailPasswordData,
   LoginUserResponse,
   MessageApiResponse,
+  NativeAppleAuthToken,
   NativeVkAuthCode,
   ProviderAccessToken,
   RegisterResponse,
@@ -42,6 +43,13 @@ const authenticationApi = runichApi.injectEndpoints({
     loginWithVkNative: mutation<LoginUserResponse, NativeVkAuthCode>({
       query: (body) => ({
         url: '/auth/vk/native',
+        body,
+        method: 'POST',
+      }),
+    }),
+    loginWithAppleNative: mutation<LoginUserResponse, NativeAppleAuthToken>({
+      query: (body) => ({
+        url: '/auth/apple/native',
         body,
         method: 'POST',
       }),
@@ -124,6 +132,7 @@ export const {
   useLoginUserMutation,
   useLoginWithYandexNativeMutation,
   useLoginWithVkNativeMutation,
+  useLoginWithAppleNativeMutation,
   useRequestEmailLinkMutation,
   useLogoutMutation,
   useUpdateSessionLocationMutation,

@@ -4,7 +4,7 @@ import type {
   LoginResponse,
   MessageResponse,
   UserAuthResponse,
-} from '@R/runich-api/types';
+} from '@R/runich-api/auth-types';
 
 export interface EmailPasswordData {
   email: string;
@@ -27,6 +27,14 @@ export interface NativeVkAuthCode {
   code: string;
   deviceId: string;
   codeVerifier: string;
+}
+
+export interface NativeAppleAuthToken {
+  identityToken: string;
+  authorizationCode: string;
+  nonce: string;
+  givenName?: string;
+  familyName?: string;
 }
 
 export interface VerifyPasswordChangeCodeData extends EmailData {

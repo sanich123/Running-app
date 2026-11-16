@@ -7,6 +7,7 @@ import type {
   ModerationReportDetails,
   ModerationReportItem,
   SubmitContentReportRequest,
+  ContentReportStatus,
 } from './types';
 
 const { moderation } = Routes;
@@ -21,7 +22,7 @@ export const moderationApi = runichApi.injectEndpoints({
         body,
       }),
     }),
-    getModerationReports: query<ModerationReportItem[], { take?: number } | void>({
+    getModerationReports: query<ModerationReportItem[], { status?: ContentReportStatus; take?: number } | void>({
       query: (params) => ({ url: `/${moderation}/reports`, params: params ?? undefined }),
       providesTags: [Tags.moderationReports],
     }),
@@ -38,6 +39,17 @@ export const moderationApi = runichApi.injectEndpoints({
       invalidatesTags: (_result, _error, { reportId }) => [
         Tags.moderationReports,
         { type: Tags.moderationReport, id: reportId },
+      ],
+    }),
+    deleteModerationReport: mutation<void, string>({
+      query: (reportId) => ({
+        url: `/${moderation}/reports/${reportId}`,
+        method: Methods.delete,
+      }),
+      invalidatesTags: (_result, _error, reportId) => [
+        Tags.moderationReports,
+        { type: Tags.moderationReport, id: reportId },
+        Tags.moderationAppeals,
       ],
     }),
     getModerationAppeals: query<ModerationAppealItem[], { take?: number } | void>({
@@ -79,6 +91,7 @@ export const {
   useGetModerationReportsQuery,
   useGetModerationReportDetailsQuery,
   useApplyModerationActionMutation,
+  useDeleteModerationReportMutation,
   useGetModerationAppealsQuery,
   useDecideModerationAppealMutation,
   useBlockUserMutation,

@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react-native';
 import { renderWithProviders } from '@T/utils/test-utils';
 import CalendarActivities from './calendar-activities';
-import type { MonthStatisticsResponse } from '@R/runich-api/types';
+import type { MonthStatisticsResponse } from '@R/runich-api/statistics-types';
 
 jest.mock('../../calendar-date-with-activity/calendar-date-with-activity', () => {
   const { View } = jest.requireActual('react-native');

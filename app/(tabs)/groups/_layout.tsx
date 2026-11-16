@@ -7,7 +7,7 @@ import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
 
 export default function GroupsLayout() {
-  const { colors } = useTheme();
+  const { colors, dark } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const { back } = useRouter();
 
@@ -16,6 +16,7 @@ export default function GroupsLayout() {
       screenOptions={({ navigation }) => ({
         contentStyle: { backgroundColor: colors.background },
         headerBackButtonDisplayMode: Platform.OS === 'ios' || Platform.OS === 'web' ? 'minimal' : 'default',
+        headerUserInterfaceStyle: dark ? 'dark' : 'light',
         headerBackVisible: Platform.OS === 'android' ? false : undefined,
         headerLeft:
           Platform.OS === 'android'

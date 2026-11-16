@@ -15,9 +15,10 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { ACTIVITY_TRACKING_ERROR_COPY } from '@Routes/activity/const';
 import { errorToast } from '@S/error-toast/error-toast';
 import { getCurrentActivityDuration } from '@U/activity-duration';
+import { getSpeedInMinsInKm } from '@U/location/activity-metrics';
 import { startLocationTracking, stopLocationTracking } from '@U/location/expo-task-manager/background-location';
+import { getElevationGainByKilometres } from '@U/location/location-geometry';
 import { getActiveLocationJournalId } from '@U/location/location-journal';
-import { getElevationGainByKilometres, getSpeedInMinsInKm } from '@U/location/location-utils';
 import { pausePedometerActivity, resumePedometerActivity } from '@U/pedometer/pedometer';
 import { getDeviceTimeZone } from '@U/time-zone';
 

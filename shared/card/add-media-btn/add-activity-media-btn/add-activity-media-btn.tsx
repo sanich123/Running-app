@@ -10,10 +10,10 @@ import MapMetaButton from '@S/card/map-meta-overlay/map-meta-button/map-meta-but
 import { errorToast } from '@S/error-toast/error-toast';
 import { deleteUploadedMedia, getAccessToGallery } from '@U/file-sending';
 import { ADD_ACTIVITY_MEDIA_COPY } from '../const';
-import type { ActivityMediaItem } from '../../types';
+import type { AddActivityMediaBtnProps } from './types';
 import type { MediaUploadItem } from '@U/file-sending';
 
-export default function AddActivityMediaBtn({ activityId, media }: { activityId: string; media: ActivityMediaItem[] }) {
+export default function AddActivityMediaBtn({ activityId, media }: AddActivityMediaBtnProps) {
   const dispatch = useAppDispatch();
   const { userId } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ settings }) => settings);

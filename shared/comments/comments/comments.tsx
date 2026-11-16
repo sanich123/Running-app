@@ -4,17 +4,18 @@ import { StyleSheet, View, type NativeScrollEvent, type NativeSyntheticEvent } f
 import { useGetCommentsByActivityIdInfiniteQuery } from '@R/services/comments/comments';
 import { useAppSelector } from '@R/typed-hooks';
 import ErrorComponent from '@S/error-component/error-component';
-import { TOP_LOAD_THRESHOLD } from './const';
+import useAutoModerationRefresh from '@S/moderation/use-auto-moderation-refresh';
 import Comment from '../comment/comment';
 import CommentsEmptyList from '../comments-empty/comments-empty-list/comments-empty-list';
 import CommentsLoadMoreBtn from '../comments-load-more-btn/comments-load-more-btn/comments-load-more-btn';
 import CommentsSkeleton from '../comments-skeleton/comments-skeleton';
+import { TOP_LOAD_THRESHOLD } from './const';
 import type { CommentsProps } from '../types';
-import type { CommentResponse } from '@R/runich-api/types';
+import type { CommentResponse } from '@R/runich-api/comment-types';
 
 export default function Comments({ commentsModalRef }: CommentsProps) {
   const { commentActivityId } = useAppSelector(({ comment }) => comment);
-  const { data, error, refetch, isLoading, isError, isFetchingNextPage, hasNextPage, fetchNextPage } =
+  const { data, error, refetch, isLoading, isError, isFetching, isFetchingNextPage, hasNextPage, fetchNextPage } =
     useGetCommentsByActivityIdInfiniteQuery({ activityId: commentActivityId }, { skip: !commentActivityId });
   const hasLoadedPage = Boolean(data?.pages.length);
   const hasScrolledFromInitialTop = useRef(false);
@@ -46,6 +47,10 @@ export default function Comments({ commentsModalRef }: CommentsProps) {
   const isInitialLoading = isLoading && !hasLoadedPage;
   const isInitialError = isError && !hasLoadedPage;
   const shouldShowPaginationAction = Boolean(hasNextPage || (isError && hasLoadedPage));
+  const hasPendingComments = comments.some(
+    ({ moderationStatus }) => moderationStatus === 'pending' || moderationStatus === 'processing',
+  );
+  useAutoModerationRefresh(hasPendingComments, () => void refetch());
 
   if (isInitialLoading) {
     return <CommentsSkeleton />;
@@ -64,7 +69,14 @@ export default function Comments({ commentsModalRef }: CommentsProps) {
       data={comments}
       testID="comments-list"
       keyExtractor={(comment) => comment.id}
-      renderItem={({ item }) => <Comment {...item} commentsModalRef={commentsModalRef} />}
+      renderItem={({ item }) => (
+        <Comment
+          {...item}
+          commentsModalRef={commentsModalRef}
+          onRefreshStatus={() => void refetch()}
+          isRefreshingStatus={isFetching}
+        />
+      )}
       contentContainerStyle={styles.content}
       ListHeaderComponent={() => (
         <>

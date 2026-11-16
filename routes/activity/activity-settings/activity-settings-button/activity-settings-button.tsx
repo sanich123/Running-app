@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { SymbolView } from 'expo-symbols';
 import { Platform, Pressable, StyleSheet } from 'react-native';
 import { Icon, useTheme } from 'react-native-paper';
@@ -14,25 +14,39 @@ import ActivitySettings from '../activity-settings';
 import { ACTIVITY_SETTINGS } from '../const';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
-export default function ActivitySettingsButton() {
+export default function ActivitySettingsButton({
+  openRef,
+  showTrigger = true,
+}: {
+  openRef?: { current: () => void };
+  showTrigger?: boolean;
+}) {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const activitySettingsModalRef = useRef<BottomSheetModal>(null);
   const activityLocationInfoModalRef = useRef<BottomSheetModal>(null);
-  const openActivitySettings = () => activitySettingsModalRef.current?.present();
+  const openActivitySettings = useCallback(() => activitySettingsModalRef.current?.present(), []);
+
+  useEffect(() => {
+    if (!openRef) return;
+    openRef.current = openActivitySettings;
+    return () => {
+      openRef.current = () => {};
+    };
+  }, [openActivitySettings, openRef]);
 
   return (
     <>
-      {Platform.OS === 'ios' ? (
+      {showTrigger && Platform.OS === 'ios' ? (
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={ACTIVITY_SETTINGS[language].open}
           onPress={openActivitySettings}
           style={styles.iosHeaderButton}
           testID="activity-settings-button">
-          <SymbolView name="gearshape" size={23} tintColor={IOS_ACTIVITY_HEADER_ICON_COLOR} weight="medium" />
+          <SymbolView name="gearshape" size={24} tintColor={IOS_ACTIVITY_HEADER_ICON_COLOR} weight="medium" />
         </Pressable>
-      ) : (
+      ) : showTrigger ? (
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={ACTIVITY_SETTINGS[language].open}
@@ -46,7 +60,7 @@ export default function ActivitySettingsButton() {
           testID="activity-settings-button">
           <Icon source="cogs" size={24} color={colors.onSurface} />
         </Pressable>
-      )}
+      ) : null}
       <ActivitySettings
         settingsModalRef={activitySettingsModalRef}
         locationInfoModalRef={activityLocationInfoModalRef}

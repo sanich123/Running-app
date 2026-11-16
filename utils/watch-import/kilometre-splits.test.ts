@@ -1,4 +1,4 @@
-import { getDistance } from '@U/location/location-utils';
+import { getDistance } from '@U/location/location-geometry';
 import { calculateWatchWorkoutKilometreSplits } from './kilometre-splits';
 import type { LocationObject } from 'expo-location';
 

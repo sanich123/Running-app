@@ -1,9 +1,9 @@
 import { LANGUAGES, type LANGUAGES as Language } from '@const/enums';
-import { getAverageCadence, getSpeedInKmPerHour, isRunningActivity } from '@U/location/location-utils';
+import { getAverageCadence, getSpeedInKmPerHour, isRunningActivity } from '@U/location/activity-metrics';
 import { formatDuration } from '@U/time-formatter';
 import { ACTIVITY_STATISTICS_PAGE_COPY } from './const';
 import type { ActivityStatisticMetric, ActivityStatisticSection } from './types';
-import type { ActivityResponse } from '@R/runich-api/types';
+import type { ActivityResponse } from '@R/runich-api/activity-types';
 
 interface ActivityStatisticVisibility {
   heartRate: boolean;

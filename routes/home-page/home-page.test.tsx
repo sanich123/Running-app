@@ -12,7 +12,7 @@ import { errorResponse, loadingResponse } from '@T/utils/response-states';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import HomePage from './home-page';
-import type { ActivityListItemResponse } from '@R/runich-api/types';
+import type { ActivityListItemResponse } from '@R/runich-api/activity-types';
 
 const mockPush = jest.fn();
 const mockReplace = jest.fn();

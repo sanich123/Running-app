@@ -15,7 +15,7 @@ import { getDeviceTimeZone } from '@U/time-zone';
 import CalendarActivities from '../calendar/calendar-activities/calendar-activities';
 import MonthTypesChips from '../chips/month-types-chips/month-types-chips';
 import YearMonthTitle from '../year-month-title/year-month-title';
-import type { MonthStatisticsResponse } from '@R/runich-api/types';
+import type { MonthStatisticsResponse } from '@R/runich-api/statistics-types';
 
 export default function MonthStatistics() {
   const { width } = useWindowDimensions();

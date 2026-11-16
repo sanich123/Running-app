@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { ActivityListItemResponse } from '@R/runich-api/types';
+import type { ActivityListItemResponse } from '@R/runich-api/activity-types';
 
 export interface InfiniteScrollListProps {
   dataToRender: ActivityListItemResponse[];

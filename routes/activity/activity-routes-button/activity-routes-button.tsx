@@ -27,7 +27,7 @@ export default function ActivityRoutesButton() {
       onPress={openRoutes}
       style={styles.iosHeaderButton}
       testID="activity-routes-button">
-      <SymbolView name="map" size={23} tintColor={IOS_ACTIVITY_HEADER_ICON_COLOR} weight="medium" />
+      <SymbolView name="map" size={24} tintColor={IOS_ACTIVITY_HEADER_ICON_COLOR} weight="medium" />
     </Pressable>
   ) : (
     <Pressable

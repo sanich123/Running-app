@@ -1,32 +1,19 @@
-import { screen } from '@testing-library/react-native';
+import { screen, userEvent } from '@testing-library/react-native';
+import { Platform } from 'react-native';
 import { renderWithProviders } from '@T/utils/test-utils';
 import DiagnosticsCard from './diagnostics-card';
-import type { WatchWorkout } from '../../../../modules/runich-health/src/RunichHealth';
 
-const workout: WatchWorkout = {
-  source: 'health-connect',
-  sourceActivityId: 'health-record-1',
-  date: '2026-10-08T07:00:00.000Z',
-  timeZone: 'Europe/Moscow',
-  sport: 'run',
-  duration: 600_000,
-  distance: 2_000,
-  heartRateSamples: Array.from({ length: 12 }, (_, index) => ({ timestamp: index + 1, beatsPerMinute: 140 })),
-  locations: [
-    { timestamp: 1_000, coords: { latitude: 55.75, longitude: 37.61 } },
-    { timestamp: 2_000, coords: { latitude: 55.76, longitude: 37.62 } },
-  ],
-  diagnostics: {
-    dataOrigin: 'com.example.watch',
-    sessionRecordId: 'health-record-1',
-    routeStatus: 'route-in-record',
-    routePointCount: 2,
-    heartRatePermissionGranted: true,
-    heartRateSampleCount: 12,
-  },
-};
+const originalPlatformOS = Platform.OS;
 
 describe('DiagnosticsCard', () => {
+  beforeEach(() => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
+  });
+
+  afterEach(() => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: originalPlatformOS });
+  });
+
   it('shows the route point count for each found workout', async () => {
     await renderWithProviders(
       <DiagnosticsCard
@@ -55,20 +42,20 @@ describe('DiagnosticsCard', () => {
               sourceActivityId: 'health-record-1',
               sourceHeartRateSampleCount: 12,
               payloadHeartRateSampleCount: 12,
-              outcome: 'uploaded',
+              outcome: 'imported',
             },
           ],
         }}
         userId="user-1"
-        workouts={[workout]}
       />,
     );
 
-    expect(screen.getByText(/точек: 2/)).toBeOnTheScreen();
-    expect(screen.getByText(/разрешение на пульс: да/)).toBeOnTheScreen();
-    expect(screen.getByText(/измерений пульса: 12/)).toBeOnTheScreen();
-    expect(screen.getByText(/пульс в запросе: 12\/12 \(запрос принят\)/)).toBeOnTheScreen();
+    const user = userEvent.setup();
+    await user.press(screen.getByTestId('workout-import-diagnostics-accordion'));
+    expect(screen.queryByText('Найденные тренировки')).toBeNull();
+    expect(screen.queryByText(/источник: com\.example\.watch/)).toBeNull();
     expect(screen.getByText('12 → 12')).toBeOnTheScreen();
+    expect(screen.getByText('2 → 2')).toBeOnTheScreen();
     expect(screen.getByText(/настроена ли выгрузка пульса/)).toBeOnTheScreen();
   });
 });

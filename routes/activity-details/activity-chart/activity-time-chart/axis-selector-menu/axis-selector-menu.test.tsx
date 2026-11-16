@@ -36,7 +36,9 @@ jest.mock('@expo/ui/swift-ui', () => {
 jest.mock('@expo/ui/swift-ui/modifiers', () => ({
   accessibilityLabel: (label: string) => ({ accessibilityLabel: label }),
   disabled: (isDisabled: boolean) => ({ disabled: isDisabled }),
+  frame: () => ({}),
   foregroundStyle: (color: string) => ({ color }),
+  padding: () => ({}),
 }));
 
 describe('ActivityChartAxisMenu', () => {

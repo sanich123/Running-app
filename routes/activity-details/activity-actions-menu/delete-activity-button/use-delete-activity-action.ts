@@ -6,7 +6,7 @@ import { finishLoading, startLoading } from '@R/slices/loading/loading';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { ACTIVITY_DELETE_CONFIRMATION } from '../const';
-import type { ActivityResponse } from '@R/runich-api/types';
+import type { ActivityResponse } from '@R/runich-api/activity-types';
 
 export default function useDeleteActivityAction(activity?: ActivityResponse | null) {
   const [isConfirmDialogVisible, setIsConfirmDialogVisible] = useState(false);

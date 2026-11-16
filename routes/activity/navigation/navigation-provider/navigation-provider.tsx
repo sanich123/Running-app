@@ -1,16 +1,10 @@
-import type { ReactNode } from 'react';
 import MapRegionDownloader from '@Routes/maps-page/offline-maps-tab/map-region-downloader/map-region-downloader';
 import ConfirmDialog from '@S/confirm-dialog/confirm-dialog';
 import ActivityNavigationContext from '../../navigation-context';
 import useActivityNavigation from '../use-activity-navigation';
+import type { NavigationProviderProps } from './types';
 
-export default function NavigationProvider({
-  isLocationReady,
-  children,
-}: {
-  isLocationReady: boolean;
-  children: ReactNode;
-}) {
+export default function NavigationProvider({ isLocationReady, children }: NavigationProviderProps) {
   const { contextValue, finishDialog, offlineMap } = useActivityNavigation(isLocationReady);
 
   return (

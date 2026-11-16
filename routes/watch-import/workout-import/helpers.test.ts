@@ -1,24 +1,22 @@
 import { WORKOUT_IMPORT_COPY } from './const';
 import {
   formatImportSelectedLabel,
-  formatWorkoutCountNotice,
-  formatWorkoutDiagnostics,
   getAutoSyncKey,
   getBooleanLabel,
   getConnectionKey,
+  getHealthKitAuthorizationRequestKey,
   getDiagnosticErrorCode,
   getReadDiagnosticItems,
   getReadStageLabel,
   getRequestErrorStatus,
   getRoutePointCount,
-  getRouteStatusLabel,
   getUploadDiagnosticItems,
   getUploadSkipReasonLabel,
   getWorkoutId,
   splitWatchWorkoutsIntoBatches,
 } from './helpers';
-import type { ReadDiagnostics, UploadDiagnostics, UploadSkipReason } from './types';
 import type { WatchWorkout } from '../../../modules/runich-health/src/RunichHealth';
+import type { ReadDiagnostics, UploadDiagnostics, UploadSkipReason } from './types';
 
 const workout: WatchWorkout = {
   source: 'health-connect',
@@ -30,20 +28,17 @@ const workout: WatchWorkout = {
   distance: 2_000,
   locations: [{ timestamp: 1_000, coords: { latitude: 55.75, longitude: 37.61 } }],
   heartRateSamples: [{ timestamp: 1_000, beatsPerMinute: 140 }],
-  diagnostics: {
-    dataOrigin: 'com.example.watch',
-    sessionRecordId: 'record-12345678',
-    routeStatus: 'route-in-record',
-    routePointCount: 1,
-    heartRatePermissionGranted: true,
-    heartRateSampleCount: 1,
-  },
 };
 
 describe('watch import diagnostics helpers', () => {
   it('creates a user-scoped auto-sync marker key', () => {
     expect(getAutoSyncKey('user-1')).toBe('runich.watch.auto-sync.enabled.user-1');
     expect(getAutoSyncKey(null)).toBeNull();
+  });
+
+  it('creates a user-scoped HealthKit authorization request key only for signed-in users', () => {
+    expect(getHealthKitAuthorizationRequestKey('user-1')).toBe('runich.healthkit.authorization-requested.user-1');
+    expect(getHealthKitAuthorizationRequestKey(null)).toBeNull();
   });
 
   it('formats read diagnostics as structured label/value items', () => {
@@ -67,7 +62,7 @@ describe('watch import diagnostics helpers', () => {
     );
   });
 
-  it('shows why upload was skipped and formats workout metadata separately', () => {
+  it('shows why upload was skipped', () => {
     const diagnostics: UploadDiagnostics = {
       at: '2026-10-08T08:00:00.000Z',
       outcome: 'skipped',
@@ -90,28 +85,14 @@ describe('watch import diagnostics helpers', () => {
 
     expect(getUploadDiagnosticItems(diagnostics, true)).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ label: 'причина', value: 'ожидается выбор тренировок для первого импорта' }),
+        expect.objectContaining({ label: 'причина', value: 'выберите тренировки для первого импорта' }),
         expect.objectContaining({ label: 'тренировок', value: '1' }),
-        expect.objectContaining({ label: 'измерения пульса (Health Connect → Runich)', value: '1 → 0' }),
+        expect.objectContaining({ label: 'пульс (Health Connect → Runich)', value: '1 → 0' }),
       ]),
     );
-    expect(formatWorkoutDiagnostics(workout, 0, true)).toContain('источник: com.example.watch');
-    expect(formatWorkoutDiagnostics(workout, 0, true)).toContain('маршрут: маршрут в записи');
-    expect(formatWorkoutDiagnostics(workout, 0, true)).toContain('точек: 1');
-    expect(formatWorkoutDiagnostics(workout, 0, true)).toContain('разрешение на пульс: да');
-    expect(formatWorkoutDiagnostics(workout, 0, true)).toContain('измерений пульса: 1');
-    expect(
-      formatWorkoutDiagnostics(workout, 0, true, {
-        source: 'health-connect',
-        sourceActivityId: workout.sourceActivityId,
-        sourceHeartRateSampleCount: 1,
-        payloadHeartRateSampleCount: 1,
-        outcome: 'uploaded',
-      }),
-    ).toContain('пульс в запросе: 1/1 (запрос принят)');
   });
 
-  it('formats errors, labels, and workout metadata for both languages and missing values', () => {
+  it('formats errors and labels for both languages and missing values', () => {
     expect(getDiagnosticErrorCode(null)).toBe('UnknownError');
     expect(getDiagnosticErrorCode('offline')).toBe('UnknownError');
     expect(getDiagnosticErrorCode({ code: 'READ_FAILED', name: 'IgnoredName' })).toBe('READ_FAILED');
@@ -121,19 +102,6 @@ describe('watch import diagnostics helpers', () => {
     expect(getRequestErrorStatus({ status: 503 })).toBe('503');
     expect(getRequestErrorStatus({ status: '429' })).toBe('429');
     expect(getRequestErrorStatus({ status: null, code: 'RATE_LIMITED' })).toBe('RATE_LIMITED');
-
-    expect(getRouteStatusLabel(undefined, true)).toBe('статус маршрута недоступен');
-    expect(getRouteStatusLabel(undefined, false)).toBe('route status unavailable');
-    for (const status of [
-      'route-in-record',
-      'no-route-data',
-      'route-not-provided',
-      'consent-granted',
-      'consent-granted-empty',
-      'consent-denied-or-error',
-    ] as const) {
-      expect(getRouteStatusLabel(status, true)).not.toBe(getRouteStatusLabel(status, false));
-    }
 
     expect(getBooleanLabel(undefined, true)).toBe('неизвестно');
     expect(getBooleanLabel(undefined, false)).toBe(WORKOUT_IMPORT_COPY.en.diagnostics.unknownStage);
@@ -164,27 +132,8 @@ describe('watch import diagnostics helpers', () => {
     expect(getConnectionKey('user-1')).toBe('runich.watch.connected.user-1');
     expect(getConnectionKey(null)).toBeNull();
     expect(getRoutePointCount([workout, { ...workout, locations: [] }])).toBe(1);
-    expect(formatWorkoutCountNotice(83, true)).toBe('Показаны первые 50 из 83.');
-    expect(formatWorkoutCountNotice(83, false)).toBe('Showing the first 50 of 83.');
     expect(formatImportSelectedLabel(2, true)).toBe('Импортировать выбранные (2)');
     expect(formatImportSelectedLabel(2, false)).toBe('Import selected (2)');
-
-    const sparseWorkout: WatchWorkout = {
-      ...workout,
-      duration: 0,
-      locations: [],
-      diagnostics: undefined,
-      heartRateSamples: undefined,
-    };
-    const formatted = formatWorkoutDiagnostics(sparseWorkout, 1, false);
-    expect(formatted).toContain('2. ');
-    expect(formatted).toContain('0 min');
-    expect(formatted).toContain('origin: unknown');
-    expect(formatted).toContain('route: route status unavailable');
-    expect(formatted).toContain('points: 0');
-    expect(formatted).toContain('heart-rate samples: 0');
-    expect(formatted).not.toContain('id:');
-    expect(formatted).not.toContain('error:');
   });
 
   it('splits watch uploads at the workout and UTF-8 byte limits', () => {
@@ -250,7 +199,7 @@ describe('watch import diagnostics helpers', () => {
     expect(getReadDiagnosticItems(reading, true)).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ tone: 'default', value: 'выполняется' }),
-        expect.objectContaining({ value: 'чтение списка активностей' }),
+        expect.objectContaining({ value: 'чтение списка тренировок' }),
         expect.objectContaining({ value: '4' }),
       ]),
     );
@@ -283,7 +232,7 @@ describe('watch import diagnostics helpers', () => {
       expect.arrayContaining([
         expect.objectContaining({ tone: 'error', value: 'error' }),
         expect.objectContaining({ label: 'GPS points', value: '10 → 8' }),
-        expect.objectContaining({ label: 'heart-rate samples (Health Connect → Runich)', value: '12 → 10' }),
+        expect.objectContaining({ label: 'Heart rate (Health Connect → Runich)', value: '12 → 10' }),
         expect.objectContaining({ label: 'imported', tone: 'success', value: '1' }),
         expect.objectContaining({ label: 'skipped', value: '1' }),
         expect.objectContaining({ label: 'response/error', tone: 'error', value: '503' }),
@@ -293,17 +242,5 @@ describe('watch import diagnostics helpers', () => {
     expect(getUploadDiagnosticItems(sending, true)).toEqual(
       expect.arrayContaining([expect.objectContaining({ tone: 'default', value: 'выполняется' })]),
     );
-
-    const succeededWorkout: WatchWorkout = {
-      ...workout,
-      diagnostics: {
-        routeStatus: 'consent-denied-or-error',
-        routePointCount: 0,
-        sessionRecordId: 'record-12345678',
-        routeErrorCode: 'PERMISSION_DENIED',
-      },
-    };
-    expect(formatWorkoutDiagnostics(succeededWorkout, 0, true)).toContain('id: 12345678');
-    expect(formatWorkoutDiagnostics(succeededWorkout, 0, true)).toContain('error: PERMISSION_DENIED');
   });
 });

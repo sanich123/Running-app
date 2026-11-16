@@ -7,19 +7,14 @@ const ROUTER_ORIGIN = IS_STAGE ? 'https://stage-web.runich-app.ru' : 'https://ru
 export default {
   expo: {
     owner: 'sanich123',
-    name: IS_DEV ? 'runich(dev)' : 'runich',
+    name: IS_DEV ? 'Runich(dev)' : 'Runich',
     slug: 'running-app',
     scheme: IS_DEV ? 'runich-dev' : 'runich',
-    version: '1.4.0',
+    version: '1.5.0',
     orientation: 'portrait',
     runtimeVersion: { policy: 'appVersion' },
     icon: IS_DEV ? './assets/images/icon-dev.png' : './assets/images/icon.png',
     userInterfaceStyle: 'automatic',
-    splash: {
-      image: './assets/images/splash.png',
-      resizeMode: 'contain',
-      backgroundColor: '#363636',
-    },
     experiments: {
       typedRoutes: true,
       tsconfigPaths: true,
@@ -28,32 +23,60 @@ export default {
     },
     assetBundlePatterns: ['**/*'],
     ios: {
+      usesAppleSignIn: true,
+      icon: './assets/images/runich-app-icon.icon',
       associatedDomains: ['applinks:runich-app.ru', 'applinks:stage-web.runich-app.ru'],
       entitlements: {
         'com.apple.developer.networking.wifi-info': true,
         'com.apple.developer.healthkit': true,
       },
+      privacyManifests: {
+        NSPrivacyCollectedDataTypes: [
+          {
+            NSPrivacyCollectedDataType: 'NSPrivacyCollectedDataTypeHealth',
+            NSPrivacyCollectedDataTypeLinked: true,
+            NSPrivacyCollectedDataTypeTracking: false,
+            NSPrivacyCollectedDataTypePurposes: ['NSPrivacyCollectedDataTypePurposeAppFunctionality'],
+          },
+          {
+            NSPrivacyCollectedDataType: 'NSPrivacyCollectedDataTypeFitness',
+            NSPrivacyCollectedDataTypeLinked: true,
+            NSPrivacyCollectedDataTypeTracking: false,
+            NSPrivacyCollectedDataTypePurposes: ['NSPrivacyCollectedDataTypePurposeAppFunctionality'],
+          },
+          {
+            NSPrivacyCollectedDataType: 'NSPrivacyCollectedDataTypePreciseLocation',
+            NSPrivacyCollectedDataTypeLinked: true,
+            NSPrivacyCollectedDataTypeTracking: false,
+            NSPrivacyCollectedDataTypePurposes: ['NSPrivacyCollectedDataTypePurposeAppFunctionality'],
+          },
+          {
+            NSPrivacyCollectedDataType: 'NSPrivacyCollectedDataTypeUserID',
+            NSPrivacyCollectedDataTypeLinked: true,
+            NSPrivacyCollectedDataTypeTracking: false,
+            NSPrivacyCollectedDataTypePurposes: ['NSPrivacyCollectedDataTypePurposeAppFunctionality'],
+          },
+        ],
+        NSPrivacyAccessedAPITypes: [
+          {
+            NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryUserDefaults',
+            NSPrivacyAccessedAPITypeReasons: ['CA92.1'],
+          },
+        ],
+      },
       config: { usesNonExemptEncryption: false },
       infoPlist: {
         UIBackgroundModes: ['location', 'fetch', 'remote-notification'],
-        privacyManifests: {
-          NSPrivacyAccessedAPITypes: [
-            {
-              NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryUserDefaults',
-              NSPrivacyAccessedAPITypeReasons: ['CA92.1'],
-            },
-          ],
-        },
         NSLocationAlwaysAndWhenInUseUsageDescription:
-          'Приложению Runich нужен доступ к геолокации в фоне, чтобы продолжать запись активной тренировки при заблокированном экране или свернутом приложении. Вне тренировки геолокация в фоне не используется.',
+          'Runich использует геолокацию в фоне для записи маршрута активной тренировки, даже если экран заблокирован или приложение работает в фоне. Фоновая геолокация используется только пока тренировка записывается и прекращается после ее остановки.',
         NSLocationWhenInUseUsageDescription:
           'Приложению Runich нужен доступ к геолокации во время использования для записи активной тренировки. Вне тренировки геолокация не используется.',
         NSMotionUsageDescription:
           'Приложение Runich использует данные о движении и шагах для определения активности и подсчета шагов во время тренировки',
         NSHealthShareUsageDescription:
-          'Runich использует завершенные тренировки из Apple Health, чтобы сохранить их в вашем аккаунте',
+          'Runich считывает тренировки, маршруты, шаги и доступные измерения пульса из Apple Health, чтобы сохранить тренировку в вашем аккаунте',
       },
-      bundleIdentifier: IS_DEV ? 'com.sanich123.runningapp.dev' : 'com.sanich123.runningapp',
+      bundleIdentifier: IS_DEV ? 'com.sanich123.runich.dev' : 'com.sanich123.runich',
     },
     android: {
       intentFilters: ANDROID_UNIVERSAL_LINK_FILTERS,
@@ -107,11 +130,12 @@ export default {
       'expo-image',
       'expo-sharing',
       'expo-localization',
+      'expo-apple-authentication',
       [
         'expo-notifications',
         {
           icon: './assets/images/notification-icon.png',
-          color: '#FF6030',
+          color: '#F8F6F2',
           largeIcon: './assets/images/runich-logo.png',
         },
       ],
@@ -168,7 +192,7 @@ export default {
           isAndroidForegroundServiceEnabled: true,
           isIosBackgroundLocationEnabled: true,
           locationAlwaysAndWhenInUsePermission:
-            'Разрешите приложению Runich использовать геолокацию в фоне. Доступ нужен, чтобы продолжать запись активной тренировки при заблокированном экране или свернутом приложении. Вне тренировки геолокация в фоне не используется.',
+            'Runich собирает геопозицию в фоне только для записи маршрута активной тренировки, когда экран заблокирован или приложение работает в фоне. Сбор прекращается после остановки тренировки.',
         },
       ],
       [
@@ -192,10 +216,14 @@ export default {
       [
         'expo-splash-screen',
         {
-          backgroundColor: '#363636',
-          image: './assets/images/splash.png',
+          backgroundColor: '#F8F6F2',
+          image: './assets/images/adaptive-icon.png',
           resizeMode: 'contain',
-          imageWidth: 350,
+          imageWidth: 200,
+          dark: {
+            backgroundColor: '#1C1C1E',
+            image: './assets/images/adaptive-icon.png',
+          },
         },
       ],
     ],

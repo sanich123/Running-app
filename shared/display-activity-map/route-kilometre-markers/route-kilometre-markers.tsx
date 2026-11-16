@@ -3,16 +3,13 @@ import { CircleLayer, MarkerView, ShapeSource } from '@rnmapbox/maps';
 import { StyleSheet, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
-import type { SelectedKilometre } from './types';
+import type { SelectedKilometre, RouteKilometreMarkersProps } from './types';
 import type { ActivityKilometreSplit } from '@S/card/types';
 
 export default function RouteKilometreMarkers({
   kilometresSplit,
   kilometreUnit = 'km',
-}: {
-  kilometresSplit?: ActivityKilometreSplit[];
-  kilometreUnit?: string;
-} = {}) {
+}: RouteKilometreMarkersProps = {}) {
   const { colors } = useTheme();
   const { kilometresSplit: kilometreSplitsFromStore } = useAppSelector(({ location }) => location);
   const routeKilometreSplits = kilometresSplit ?? kilometreSplitsFromStore;

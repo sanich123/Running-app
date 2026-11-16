@@ -4,11 +4,10 @@ import { Card, Text, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import BarChartWrapper from './bar-chart-wrapper/bar-chart-wrapper';
 import ChooseMetricsBtns from './choose-metrics-btns/choose-metrics-btns';
-import { ChooseMetricsBtnsValues } from './types';
+import { ChooseMetricsBtnsValues, type ChartsProps } from './types';
 import { reduceMonthMetrics } from './utils';
-import type { MonthMetrics } from './types';
 
-export default function Charts({ year, months }: { year: number; months: MonthMetrics }) {
+export default function Charts({ year, months }: ChartsProps) {
   const { colors } = useTheme();
   const [chartValue, setChartValue] = useState<ChooseMetricsBtnsValues>(ChooseMetricsBtnsValues.distance);
   const { language } = useAppSelector(({ settings }) => settings);

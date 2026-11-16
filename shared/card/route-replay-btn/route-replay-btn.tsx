@@ -5,8 +5,9 @@ import { activityApi } from '@R/services/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import MapMetaButton from '@S/card/map-meta-overlay/map-meta-button/map-meta-button';
 import { ROUTE_REPLAY_BUTTON_COPY } from './const';
+import type { RouteReplayBtnProps } from './types';
 
-export default function RouteReplayBtn({ activityId, userId }: { activityId: string; userId: string }) {
+export default function RouteReplayBtn({ activityId, userId }: RouteReplayBtnProps) {
   const { push } = useRouter();
   const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ settings }) => settings);

@@ -1,8 +1,9 @@
 import { View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
+import type { ShowMetricsProps } from './types';
 
-export default function ShowMetrics({ title, metrics }: { title: string; metrics: string }) {
+export default function ShowMetrics({ title, metrics }: ShowMetricsProps) {
   const { colors } = useTheme();
   return (
     <View>

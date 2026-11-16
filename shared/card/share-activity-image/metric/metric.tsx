@@ -1,8 +1,9 @@
 import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
+import type { MetricProps } from './types';
 
-export default function Metric({ label, value }: { label: string; value: string }) {
+export default function Metric({ label, value }: MetricProps) {
   return (
     <View style={styles.metric}>
       <Text numberOfLines={1} style={styles.metricValue}>

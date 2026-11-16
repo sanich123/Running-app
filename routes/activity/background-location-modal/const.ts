@@ -3,12 +3,12 @@ import { LANGUAGES } from '@const/enums';
 export const BACKGROUND_LOCATIONS = {
   [LANGUAGES.russian]: {
     needToAllow:
-      'Разрешение нужно, чтобы приложение продолжало получать геопозицию при заблокированном экране или свернутом приложении.\n\nБез этого часть маршрута может потеряться, и тренировка сохранится некорректно.',
+      'Runich собирает геопозицию для записи маршрута активной тренировки, даже если экран заблокирован или приложение работает в фоне. Фоновая геолокация используется только пока тренировка записывается и прекращается после ее остановки.',
     giveAccess: 'Дать доступ к местоположению в фоне',
   },
   [LANGUAGES.english]: {
     needToAllow:
-      'This permission lets the app keep receiving your location when the screen is locked or the app is minimized.\n\nWithout it, part of the route may be lost and the workout may not be saved correctly.',
+      'Runich collects your location to record the route of an active workout, even when the screen is locked or the app is running in the background. Background location is used only while the workout is being recorded and stops when you stop it.',
     giveAccess: 'Give access to location in background',
   },
 };

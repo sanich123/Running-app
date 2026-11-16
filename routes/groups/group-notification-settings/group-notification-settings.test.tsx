@@ -9,7 +9,6 @@ import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import GroupNotificationSettings from './group-notification-settings';
-import { GROUPS_COPY } from '../const';
 
 const updatedPreferences: Record<string, unknown>[] = [];
 let profileResponse = { ...MOCK_SERVER_PROFILE, groupPostsNotifications: false, groupEventsNotifications: true };
@@ -43,19 +42,19 @@ describe('GroupNotificationSettings', () => {
     mockStore.dispatch(setMockUserId(MOCK_SERVER_IDS.userId));
   });
 
-  it('shows group notification preferences and explains delivery channels', async () => {
-    await renderWithProviders(<GroupNotificationSettings visible onDismiss={jest.fn()} />);
+  it('shows group notification preferences without an explanation block', async () => {
+    await renderWithProviders(<GroupNotificationSettings />);
     const postsSwitch = await screen.findByTestId('group-post-notifications-switch');
     const eventsSwitch = screen.getByTestId('group-event-notifications-switch');
 
     expect(postsSwitch.props.value).toBe(false);
     expect(eventsSwitch.props.value).toBe(true);
-    expect(screen.getByText(GROUPS_COPY[LANGUAGES.english].groupNotificationDeliveryHint)).toBeOnTheScreen();
+    expect(screen.getByTestId('group-notification-settings')).toBeOnTheScreen();
     expect(screen.getByText(NOTIFICATION_COPY.english.groupPostsNotifications)).toBeOnTheScreen();
   });
 
   it('saves each preference to the matching profile field', async () => {
-    await renderWithProviders(<GroupNotificationSettings visible onDismiss={jest.fn()} />);
+    await renderWithProviders(<GroupNotificationSettings />);
     await fireEvent(screen.getByTestId('group-post-notifications-switch'), 'valueChange', true);
     await waitFor(() => expect(updatedPreferences).toHaveLength(1));
     await fireEvent(screen.getByTestId('group-event-notifications-switch'), 'valueChange', false);
@@ -67,10 +66,9 @@ describe('GroupNotificationSettings', () => {
   it('uses the Russian text and keeps controls disabled until the profile loads', async () => {
     mockStore.dispatch(changeLanguage(LANGUAGES.russian));
     holdProfileResponse = true;
-    await renderWithProviders(<GroupNotificationSettings visible onDismiss={jest.fn()} />);
+    await renderWithProviders(<GroupNotificationSettings />);
 
     expect(await screen.findByTestId('group-notification-settings-loading')).toBeOnTheScreen();
-    expect(screen.getByText(GROUPS_COPY[LANGUAGES.russian].groupNotificationDeliveryHint)).toBeOnTheScreen();
     releaseProfileResponse?.();
   });
 });

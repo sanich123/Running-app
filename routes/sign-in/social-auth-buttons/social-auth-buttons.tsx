@@ -1,97 +1,16 @@
-import { useState } from 'react';
-import Svg, { Path } from 'react-native-svg';
-import { Linking, View, StyleSheet, Platform } from 'react-native';
-import { useRouter } from 'expo-router';
-import { Text, TouchableRipple } from 'react-native-paper';
-import {
-  useLoginWithVkNativeMutation,
-  useLoginWithYandexNativeMutation,
-} from '@R/services/authentication/authentication';
-import { setAuthSession } from '@R/slices/auth/auth';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { errorToast } from '@S/error-toast/error-toast';
-import { loginWithVkNative, loginWithYandexNative } from '../../../modules/runich-auth/src/RunichAuth';
-import { SOCIAL_AUTH_TEXT, VK_AUTH_URL, YANDEX_AUTH_URL } from '../const';
+import { StyleSheet, View } from 'react-native';
+import AppleAuthButton from './apple-auth-button/apple-auth-button';
+import VkAuthButton from './vk-auth-button/vk-auth-button';
+import YandexAuthButton from './yandex-auth-button/yandex-auth-button';
 
 export default function SocialAuthButtons() {
-  const { replace } = useRouter();
-  const { language } = useAppSelector(({ settings }) => settings);
-  const dispatch = useAppDispatch();
-  const copy = SOCIAL_AUTH_TEXT[language];
-  const [loginWithYandex] = useLoginWithYandexNativeMutation();
-  const [loginWithVk] = useLoginWithVkNativeMutation();
-  const [isNativeAuthLoading, setNativeAuthLoading] = useState(false);
-
-  const handleNativeLogin = async (provider: 'yandex' | 'vk') => {
-    setNativeAuthLoading(true);
-    try {
-      if (provider === 'yandex') {
-        const accessToken = await loginWithYandexNative();
-        if (!accessToken) return;
-        const session = await loginWithYandex({ accessToken }).unwrap();
-        dispatch(setAuthSession(session));
-        replace('/(tabs)/(home)');
-      } else {
-        const authorization = await loginWithVkNative();
-        if (!authorization) return;
-        const session = await loginWithVk(authorization).unwrap();
-        dispatch(setAuthSession(session));
-        replace('/(tabs)/(home)');
-      }
-    } catch (error) {
-      errorToast(`Не удалось войти через ${provider === 'yandex' ? 'Яндекс' : 'VK'}`, error);
-    } finally {
-      setNativeAuthLoading(false);
-    }
-  };
-
-  const handleYandexPress = () =>
-    Platform.OS === 'android' ? void handleNativeLogin('yandex') : void Linking.openURL(YANDEX_AUTH_URL);
-  const handleVkPress = () =>
-    Platform.OS === 'android' ? void handleNativeLogin('vk') : void Linking.openURL(VK_AUTH_URL);
-
   return (
     <View style={styles.layout}>
       <View style={styles.buttons}>
-        <TouchableRipple
-          testID="yandex-auth"
-          accessibilityLabel={copy.yandex}
-          style={[styles.button, styles.yandexButton]}
-          onPress={handleYandexPress}
-          disabled={isNativeAuthLoading}
-          accessibilityRole="button">
-          <View style={styles.buttonContent}>
-            <View style={styles.iconFrame}>
-              <Svg width={17} height={17} viewBox="3.5 3.5 17 17">
-                <Path
-                  d="M16.6 4.5h-5.1c-3.1 0-5.05 1.6-5.05 4.25 0 2.15 1.16 3.5 3.15 3.95L5.5 19.5h3.7l4.15-6.45h2.1v6.45h3.1v-15H16.6Zm-1.15 6.1h-3.2c-1.65 0-2.45-.6-2.45-1.8 0-1.25.85-1.9 2.45-1.9h3.2v3.7Z"
-                  fill="#FFFFFF"
-                />
-              </Svg>
-            </View>
-            <Text style={styles.buttonLabel}>{copy.yandex}</Text>
-          </View>
-        </TouchableRipple>
-        <TouchableRipple
-          testID="vk-auth"
-          accessibilityLabel={copy.vk}
-          style={[styles.button, styles.vkButton]}
-          onPress={handleVkPress}
-          disabled={isNativeAuthLoading}
-          accessibilityRole="button">
-          <View style={styles.buttonContent}>
-            <View style={styles.iconFrame}>
-              <Svg width={20} height={20} viewBox="5.8 9.5 16.2 10.5">
-                <Path
-                  d="M6.8 10.15c.118 5.723 3.13 9.16 8.093 9.16h.288v-3.26c1.808.183 3.156 1.53 3.707 3.26h2.606c-.707-2.606-2.54-4.05-3.68-4.6 1.139-.681 2.75-2.32 3.13-4.56h-2.371c-.498 1.82-1.978 3.473-3.392 3.63v-3.63h-2.409v6.35c-1.466-.367-3.379-2.147-3.457-6.35H6.8Z"
-                  fill="#FFFFFF"
-                />
-              </Svg>
-            </View>
-            <Text style={styles.buttonLabel}>{copy.vk}</Text>
-          </View>
-        </TouchableRipple>
+        <YandexAuthButton />
+        <VkAuthButton />
       </View>
+      <AppleAuthButton />
     </View>
   );
 }
@@ -99,23 +18,4 @@ export default function SocialAuthButtons() {
 const styles = StyleSheet.create({
   layout: { marginBottom: 4, width: '100%' },
   buttons: { flexDirection: 'row', gap: 12, width: '100%' },
-  button: {
-    flex: 1,
-    height: 48,
-    borderRadius: 8,
-    overflow: 'hidden',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonContent: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 8,
-    justifyContent: 'center',
-    width: '100%',
-  },
-  buttonLabel: { color: '#FFFFFF', fontWeight: '600' },
-  yandexButton: { backgroundColor: '#D12B16' },
-  vkButton: { backgroundColor: '#0061C9' },
-  iconFrame: { width: 24, height: 24, alignItems: 'center', justifyContent: 'center' },
 });

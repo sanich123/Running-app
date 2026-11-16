@@ -9,7 +9,7 @@ import MonthStatistics from '@Routes/statistic/month-statistics/month-statistics
 import { MOCK_SERVER_ACTIVITY, MOCK_SERVER_IDS } from '@T/responses/runich';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import type { MonthStatisticsResponse } from '@R/runich-api/types';
+import type { MonthStatisticsResponse } from '@R/runich-api/statistics-types';
 import type { MonthMetrics } from '@Routes/statistic/charts/types';
 import type * as MockNativeViewTools from '@T/utils/mock-native-view';
 import type { MockNativeViewProps } from '@T/utils/mock-native-view';

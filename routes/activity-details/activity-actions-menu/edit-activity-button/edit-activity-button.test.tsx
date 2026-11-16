@@ -3,9 +3,9 @@ import { LANGUAGES, ROUTES } from '@const/enums';
 import { MOCK_SERVER_ACTIVITY } from '@T/responses/runich';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import EditActivityButton from './edit-activity-button';
 import { ACTIVITY_ACTIONS_MENU } from '../const';
-import type { ActivityResponse } from '@R/runich-api/types';
+import EditActivityButton from './edit-activity-button';
+import type { ActivityResponse } from '@R/runich-api/activity-types';
 
 const mockPush = jest.fn();
 

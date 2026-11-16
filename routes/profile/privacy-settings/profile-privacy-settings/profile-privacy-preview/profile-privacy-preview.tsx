@@ -10,19 +10,26 @@ export default function ProfilePrivacyPreview({
   hideActivityStatistics,
   hideFollowingList,
   hideProfilePhotos,
+  hideHeading = false,
   language,
 }: ProfilePrivacyPreviewProps) {
   const { colors } = useTheme();
   const copy = PROFILE_PRIVACY_SETTINGS[language];
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background, borderColor: colors.outlineVariant }]}>
-      <View style={styles.heading}>
-        <Text variant="titleSmall">{copy.profilePreviewTitle}</Text>
-        <Text variant="labelSmall" style={{ color: colors.onSurfaceVariant }}>
-          {copy.profilePreviewHint}
-        </Text>
-      </View>
+    <View
+      style={[
+        hideHeading ? styles.accordionContent : styles.container,
+        { backgroundColor: colors.background, borderColor: colors.outlineVariant },
+      ]}>
+      {!hideHeading ? (
+        <View style={styles.heading}>
+          <Text variant="titleSmall">{copy.profilePreviewTitle}</Text>
+          <Text variant="labelSmall" style={{ color: colors.onSurfaceVariant }}>
+            {copy.profilePreviewHint}
+          </Text>
+        </View>
+      ) : null}
 
       <View
         testID="privacy-profile-preview-photos"
@@ -159,6 +166,7 @@ export default function ProfilePrivacyPreview({
 
 const styles = StyleSheet.create({
   container: { borderRadius: 12, borderWidth: 1, gap: 8, marginTop: 4, padding: 10 },
+  accordionContent: { gap: 8, padding: 10 },
   heading: { gap: 2 },
   photoStrip: { flexDirection: 'row', gap: 4, height: 76, overflow: 'hidden', position: 'relative' },
   photo: { borderRadius: 6, flex: 1 },

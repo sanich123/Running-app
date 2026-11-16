@@ -1,8 +1,8 @@
 import { screen, userEvent } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { MODERATION_DASHBOARD_COPY } from '../../const';
 import ReportQueue from './report-queue';
-import { MODERATION_DASHBOARD_COPY, REPORT_STATUS_OPTIONS } from '../../const';
 import type { ModerationAppealItem, ModerationReportItem } from '@R/services/moderation/types';
 
 const copy = MODERATION_DASHBOARD_COPY[LANGUAGES.english];
@@ -31,7 +31,7 @@ describe('ReportQueue', () => {
         isWideLayout={false}
         showQueue
         hasQueueItems
-        statusFilter="all"
+        statusFilter="new"
         onStatusFilterChange={onStatusFilterChange}
         reports={[report]}
         appeals={[]}
@@ -49,10 +49,10 @@ describe('ReportQueue', () => {
     );
 
     const user = userEvent.setup();
-    await user.press(screen.getByTestId('moderation-report-filter-open'));
+    await user.press(screen.getByTestId('moderation-report-filter-new'));
     await user.press(screen.getByTestId('moderation-report-report-1'));
 
-    expect(onStatusFilterChange).toHaveBeenCalledWith(REPORT_STATUS_OPTIONS[0]);
+    expect(onStatusFilterChange).toHaveBeenCalledWith('new');
     expect(onSelectReport).toHaveBeenCalledWith('report-1');
   });
 
@@ -72,7 +72,7 @@ describe('ReportQueue', () => {
         isWideLayout={false}
         showQueue
         hasQueueItems
-        statusFilter="all"
+        statusFilter="new"
         onStatusFilterChange={jest.fn()}
         reports={[]}
         appeals={[appeal]}

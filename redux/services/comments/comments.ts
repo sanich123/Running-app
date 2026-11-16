@@ -7,7 +7,7 @@ import type {
   CommentLikeSummaryResponse,
   CommentMutationResponse,
   CommentsResponse,
-} from '@R/runich-api/types';
+} from '@R/runich-api/comment-types';
 
 const { comment, like } = Routes;
 

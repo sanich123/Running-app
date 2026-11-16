@@ -2,18 +2,11 @@ import { useMemo } from 'react';
 import { ShapeSource, LineLayer } from '@rnmapbox/maps';
 import { useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
-import { getReducedLocations } from '@U/location/location-utils';
+import { getReducedLocations } from '@U/location/location-geometry';
+import type { MapRouteLineProps } from './types';
 import type { ActivityLocation } from '@S/card/types';
 
-export default function MapRouteLine({
-  locations,
-  segmentColors,
-  variant = 'activity',
-}: {
-  locations?: ActivityLocation[] | ActivityLocation[][];
-  segmentColors?: string[];
-  variant?: 'activity' | 'navigation';
-} = {}) {
+export default function MapRouteLine({ locations, segmentColors, variant = 'activity' }: MapRouteLineProps = {}) {
   const { colors } = useTheme();
   const { locationsWithPauses } = useAppSelector(({ location }) => location);
   const routeLocations = locations ?? locationsWithPauses;

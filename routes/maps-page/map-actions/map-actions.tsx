@@ -1,5 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 import { Button, IconButton, useTheme } from 'react-native-paper';
+import type { MapActionsProps } from './types';
 
 export default function MapActions({
   copy,
@@ -7,13 +8,7 @@ export default function MapActions({
   onDownloadOfflineMaps,
   onShowSavedTracks,
   onShowFavoriteActivities,
-}: {
-  copy: { importRoute: string; downloadOfflineMaps: string; showSavedTracks: string; favoriteActivities: string };
-  onImportRoute: () => void;
-  onDownloadOfflineMaps: () => void;
-  onShowSavedTracks: () => void;
-  onShowFavoriteActivities: () => void;
-}) {
+}: MapActionsProps) {
   const { colors } = useTheme();
 
   return (

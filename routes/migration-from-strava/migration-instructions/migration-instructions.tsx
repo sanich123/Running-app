@@ -61,8 +61,7 @@ export default function MigrationInstructions({ copy }: { copy: MigrationCopy })
       <View style={[styles.notice, { backgroundColor: colors.tertiaryContainer }]}>
         <MaterialCommunityIcons name="information-outline" size={22} color={colors.tertiary} />
         <Text variant="bodyMedium" style={{ color: colors.onTertiaryContainer, flex: 1 }}>
-          {copy.removeMedia} {copy.processUnZipping} {copy.wifiConnection} {copy.serverResponseTime}{' '}
-          {copy.backgroundUploadLimitations}
+          {copy.removeMedia} {copy.processUnZipping} {copy.wifiConnection} {copy.serverResponseTime}
         </Text>
       </View>
 

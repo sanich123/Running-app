@@ -4,16 +4,9 @@ import { Icon, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import { DISPLAY_ACTIVITY_MAP_TEXT } from '../../const';
 import { MARKER_CONFIG } from '../const';
-import type { ActivityMapMarkerType } from '../const';
-import type { ActivityLocation } from '@S/card/types';
+import type { ActivityMapMarkerProps } from './types';
 
-export default function ActivityMapMarker({
-  location,
-  type,
-}: {
-  location: ActivityLocation;
-  type: ActivityMapMarkerType;
-}) {
+export default function ActivityMapMarker({ location, type }: ActivityMapMarkerProps) {
   const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const { icon, testId } = MARKER_CONFIG[type];

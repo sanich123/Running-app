@@ -3,8 +3,8 @@ import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import GroupPostCard from './group-post-card';
 import { GROUPS_COPY } from '../../../const';
+import GroupPostCard from './group-post-card';
 import type { GroupPost } from '@R/services/groups/types';
 
 const mockPush = jest.fn();
@@ -95,5 +95,39 @@ describe('GroupPostCard', () => {
       uri: 'https://cdn.example.test/private-preview.jpg',
     });
     expect(screen.queryByTestId('group-post-photo-owner-pending-post-moderation-status')).toBeNull();
+  });
+
+  it('hides pending post text from other members and provides a manual status refresh', async () => {
+    const onRefreshStatus = jest.fn();
+    const post: GroupPost = {
+      id: 'pending-text-post',
+      text: 'This text must stay private',
+      moderationStatus: 'pending',
+      createdAt: '2026-10-29T10:00:00.000Z',
+      author: { userId: 'post-author', name: 'Alex Runner', profilePhoto: null },
+      photoUrl: null,
+    };
+    await renderWithProviders(<GroupPostCard post={post} onRefreshStatus={onRefreshStatus} />);
+
+    expect(screen.getByText(GROUPS_COPY[LANGUAGES.english].postTextPending)).toBeOnTheScreen();
+    expect(screen.queryByText('This text must stay private')).toBeNull();
+    fireEvent.press(screen.getByRole('button', { name: GROUPS_COPY[LANGUAGES.english].refreshModerationStatus }));
+    expect(onRefreshStatus).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps pending group post text visible to its author', async () => {
+    mockStore.dispatch(setMockUserId('post-author'));
+    const post: GroupPost = {
+      id: 'owner-pending-text-post',
+      text: 'My pending post',
+      moderationStatus: 'pending',
+      createdAt: '2026-10-29T10:00:00.000Z',
+      author: { userId: 'post-author', name: 'Alex Runner', profilePhoto: null },
+      photoUrl: null,
+    };
+    await renderWithProviders(<GroupPostCard post={post} />);
+
+    expect(screen.getByText('My pending post')).toBeOnTheScreen();
+    expect(screen.queryByText(GROUPS_COPY[LANGUAGES.english].refreshModerationStatus)).toBeNull();
   });
 });

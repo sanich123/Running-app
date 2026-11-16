@@ -17,3 +17,4 @@ export interface SearchInputProps {
 
 export const SEARCH_INPUT_TEST_ID = 'users-search-input';
 export const SEARCH_ICON_TEST_ID = 'users-search-icon';
+export const SEARCH_CLEAR_ICON_TEST_ID = 'users-search-clear-icon';

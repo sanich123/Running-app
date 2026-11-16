@@ -6,7 +6,9 @@ import { captureRef } from 'react-native-view-shot';
 import { Platform } from 'react-native';
 import type * as ReactNativeTypes from 'react-native';
 import { LANGUAGES, ROUTES } from '@const/enums';
+import { Tags } from '@R/runich-api/const';
 import { runichApi } from '@R/runich-api/runich-api';
+import { activityApi } from '@R/services/activity/activity';
 import { finishLoading, resetLoading, startLoading } from '@R/slices/loading/loading';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { clearSubscriptionSnapshot, setSubscriptionSnapshot } from '@R/slices/subscription/subscription';
@@ -16,7 +18,6 @@ import * as errorToastModule from '@S/error-toast/error-toast';
 import { TEST_URLS } from '@T/mocks/const';
 import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import * as fileSending from '@U/file-sending';
-import ActivityCard from './activity-card';
 import { MOCK_ACTIVITY } from '../../../tests/mocks/mock-activity';
 import { BASE_URL } from '../../../tests/utils/handlers';
 import { mockStore, setMockUserId } from '../../../tests/utils/mock-store';
@@ -25,9 +26,11 @@ import { renderWithProviders } from '../../../tests/utils/test-utils';
 import { COMMENT_ICON_TEST_ID, COMMENT_INPUT_TEST_ID } from '../../comments/comment-input/const';
 import { COMMENT_BTN_TEST_ID } from '../comment-btn/const';
 import { CARD_LIKE_BTN_TEST_ID_LIKED, CARD_LIKE_BTN_TEST_ID_NOT_LIKED } from '../like-btn/const';
+import ActivityCard from './activity-card';
+import { ACTIVITY_TEXT_MODERATION_COPY } from './const';
 import type { ActivityCardData, ActivityCardProps } from '../types';
 import type { SPORTS_BTNS_VALUES } from '@const/sports';
-import type { CommentResponse } from '@R/runich-api/types';
+import type { CommentResponse } from '@R/runich-api/comment-types';
 import type { ContentActionsMenuProps } from '@S/moderation/content-actions-menu/types';
 
 jest.mock('expo-sharing', () => ({ isAvailableAsync: jest.fn(), shareAsync: jest.fn() }));
@@ -136,6 +139,47 @@ describe('Activity card', () => {
     await renderCard({ mapPhotoUrl: 'https://api.mapbox.com/styles/v1/map.png' });
 
     expect(requests).toBe(0);
+  });
+
+  it('hides pending activity text from readers and provides a manual status refresh', async () => {
+    const activityId = 'pending-text-activity';
+    mockStore.dispatch(setMockUserId('reader-1'));
+    const dispatch = jest.spyOn(mockStore, 'dispatch');
+    await renderCard({
+      id: activityId,
+      title: 'Private pending title',
+      description: 'Private pending description',
+      textModerationStatus: 'pending',
+      userId: 'activity-owner',
+    });
+
+    expect(screen.getByText(ACTIVITY_TEXT_MODERATION_COPY[LANGUAGES.russian].pendingViewer)).toBeOnTheScreen();
+    const refreshButton = screen.getByRole('button', {
+      name: ACTIVITY_TEXT_MODERATION_COPY[LANGUAGES.russian].refresh,
+    });
+    expect(refreshButton).toBeOnTheScreen();
+    expect(screen.queryByText('Private pending title')).toBeNull();
+    expect(screen.queryByText('Private pending description')).toBeNull();
+
+    await userEvent.press(refreshButton);
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: activityApi.reducerPath + '/invalidateTags',
+        payload: [Tags.activities, { type: Tags.activities, id: activityId }],
+      }),
+    );
+  });
+
+  it('keeps pending activity text visible to its owner', async () => {
+    mockStore.dispatch(setMockUserId('activity-owner'));
+    await renderCard({
+      title: 'My pending workout title',
+      textModerationStatus: 'pending',
+      userId: 'activity-owner',
+    });
+
+    expect(screen.getByText(ACTIVITY_TEXT_MODERATION_COPY[LANGUAGES.russian].pendingOwner)).toBeOnTheScreen();
+    expect(screen.getByText('My pending workout title')).toBeOnTheScreen();
   });
 
   it('keeps the saved map preview in the full view', async () => {

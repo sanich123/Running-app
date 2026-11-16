@@ -1,18 +1,10 @@
-import { useEffect, useMemo, type RefObject } from 'react';
+import { useEffect, useMemo } from 'react';
 import MapRouteLine from '@S/display-activity-map/map-route-line/map-route-line';
 import { useActivityNavigationContext } from '../../navigation-context';
 import { getNavigationRouteBounds } from '../navigation/utils';
-import type { Camera } from '@rnmapbox/maps';
+import type { NavigationRouteLayerProps } from './types';
 
-export default function NavigationRouteLayer({
-  cameraRef,
-  canRenderMap,
-  hasMapLoaded,
-}: {
-  cameraRef: RefObject<Camera | null>;
-  canRenderMap: boolean;
-  hasMapLoaded: boolean;
-}) {
+export default function NavigationRouteLayer({ cameraRef, canRenderMap, hasMapLoaded }: NavigationRouteLayerProps) {
   const navigation = useActivityNavigationContext();
   const navigationBounds = useMemo(
     () => getNavigationRouteBounds(navigation?.navigationRoute ?? null),

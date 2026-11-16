@@ -2,7 +2,7 @@ import {
   getDistance,
   getElevationChangeBetweenLocations,
   getKilometerSplitCalculation,
-} from '@U/location/location-utils';
+} from '@U/location/location-geometry';
 import type { LastKmSplit } from '@R/slices/location/types';
 import type { ActivityKilometreSplit } from '@S/card/types';
 import type { LocationObject } from 'expo-location';

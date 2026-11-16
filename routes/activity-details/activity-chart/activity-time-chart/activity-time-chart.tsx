@@ -3,8 +3,6 @@ import Svg, { Line, Path, Text as SvgText } from 'react-native-svg';
 import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Icon, Menu, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
-import ActivityChartAxisMenu from './axis-selector-menu/axis-selector-menu';
-import { ACTIVITY_TIME_CHART_LAYOUT } from './const';
 import { HOME_ACTIVITY_FULL_VIEW } from '../../metrics/const';
 import {
   buildActivityChartPath,
@@ -17,6 +15,8 @@ import {
   getHeartRateZone,
   HEART_RATE_ZONE_COLORS,
 } from '../utils';
+import ActivityChartAxisMenu from './axis-selector-menu/axis-selector-menu';
+import { ACTIVITY_TIME_CHART_LAYOUT } from './const';
 import type { ActivityChartMetric, ActivityTimeChartProps } from '../types';
 
 export default function ActivityTimeChart({ chartSeries, zoneSettings, language }: ActivityTimeChartProps) {
@@ -110,6 +110,7 @@ export default function ActivityTimeChart({ chartSeries, zoneSettings, language 
               visible={visibleMenu === 'left'}
               onDismiss={() => setVisibleMenu(null)}
               anchorPosition="bottom"
+              statusBarHeight={0}
               elevation={3}
               contentStyle={[
                 styles.metricMenu,
@@ -208,6 +209,7 @@ export default function ActivityTimeChart({ chartSeries, zoneSettings, language 
                 visible={visibleMenu === 'right'}
                 onDismiss={() => setVisibleMenu(null)}
                 anchorPosition="bottom"
+                statusBarHeight={0}
                 elevation={3}
                 contentStyle={[
                   styles.metricMenu,

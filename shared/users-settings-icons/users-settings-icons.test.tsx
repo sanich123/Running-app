@@ -5,10 +5,10 @@ import { ACTIVITY_SAVE_BTN } from '@const/activity-save-btn';
 import { ROUTES } from '@const/enums';
 import { BASE_URL } from '@T/utils/handlers';
 import { server } from '@T/utils/server';
-import { NOTIFICATIONS_OVERFLOW_LABEL } from './notifications-btn/const';
-import UsersSettingsIcons from './users-settings-icons';
 import { mockStore, setMockUserId } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
+import { NOTIFICATIONS_OVERFLOW_LABEL } from './notifications-btn/const';
+import UsersSettingsIcons from './users-settings-icons';
 const mockPush = jest.fn();
 let mockAppStateListener: ((state: 'active') => void) | undefined;
 let mockIsFocused = true;
@@ -170,15 +170,13 @@ describe('User settings icons', () => {
     unmount();
   });
 
-  it('does not navigate when the current header route is already open', async () => {
-    const user = userEvent.setup();
+  it('hides the users action when the users page is already open', async () => {
     mockPathname = `/${ROUTES.users}`;
     mockParams = { userId: 'anotherUserId', id: '' };
     await renderWithProviders(<UsersSettingsIcons />);
 
-    await user.press(screen.getByTestId('usersIcon'));
-
-    expect(mockPush).not.toHaveBeenCalledWith(`/${ROUTES.users}`);
+    expect(screen.queryByTestId('usersIcon')).not.toBeOnTheScreen();
+    expect(mockPush).not.toHaveBeenCalled();
   });
 
   it('uses compact iOS header icon sizes', async () => {

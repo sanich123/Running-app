@@ -8,8 +8,7 @@ import {
   normalizeImagePlaceholder,
   shouldCheckDiskCache,
 } from './utils';
-import type { CacheStatus } from './types';
-import type { ImageContentFit, ImageProps } from 'expo-image';
+import type { CacheStatus, CustomImageProps } from './types';
 
 export default function CustomImage({
   style,
@@ -25,21 +24,7 @@ export default function CustomImage({
   blurRadius,
   onLoad,
   onError,
-}: {
-  style?: ImageProps['style'];
-  source: { uri: string | null | undefined };
-  contentFit?: ImageContentFit;
-  testID?: string;
-  placeholder?: string | null;
-  placeholderContentFit?: ImageContentFit;
-  priority?: ImageProps['priority'];
-  cachePolicy?: ImageProps['cachePolicy'];
-  recyclingKey?: string | null;
-  transition?: ImageProps['transition'];
-  blurRadius?: ImageProps['blurRadius'];
-  onLoad?: ImageProps['onLoad'];
-  onError?: () => void;
-}) {
+}: CustomImageProps) {
   const sourceUri = source.uri || '';
   const [fallbackSource, setFallbackSource] = useState<{ sourceUri: string; fallbackUri: string } | null>(null);
   const imageUri = fallbackSource?.sourceUri === sourceUri ? fallbackSource.fallbackUri : sourceUri;

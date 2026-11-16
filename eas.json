@@ -6,21 +6,7 @@
     "production": {
       "channel": "production",
       "autoIncrement": true,
-      "environment": "production",
-      "env": {
-        "EXPO_PUBLIC_BASE_URL": "https://api.runich-app.ru"
-      }
-    },
-    "preview-internal": {
-      "distribution": "internal",
-      "extends": "production",
-      "android": {
-        "buildType": "apk"
-      },
-      "env": {
-        "EXPO_PUBLIC_BASE_URL": "https://stage.runich-app.ru"
-      },
-      "channel": "preview-internal"
+      "environment": "production"
     },
     "preview-production": {
       "distribution": "internal",
@@ -28,10 +14,18 @@
       "android": {
         "buildType": "apk"
       },
-      "env": {
-        "EXPO_PUBLIC_BASE_URL": "https://api.runich-app.ru"
-      },
       "channel": "preview-production"
+    },
+    "preview-internal": {
+      "autoIncrement": true,
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_BASE_URL": "https://stage.runich-app.ru"
+      },
+      "channel": "preview-internal"
     },
     "development": {
       "extends": "production",

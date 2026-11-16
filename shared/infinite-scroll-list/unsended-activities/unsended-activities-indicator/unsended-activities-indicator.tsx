@@ -12,8 +12,8 @@ import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast
 import { successToast } from '@S/success-toast/success-toast';
 import { uploadRawRouteAndQueueOnFailure } from '@U/activity-track/upload-raw-route';
 import { MAX_SAVED_ROUTE_LOCATIONS } from '@U/location/const';
+import { getReducedLocations } from '@U/location/location-geometry';
 import { deactivateLocationJournal, readLocationJournal, removeLocationJournal } from '@U/location/location-journal';
-import { getReducedLocations } from '@U/location/location-utils';
 import { UNSYNCED_ACTIVITIES_TEXT } from '../const';
 
 export default function UnsendedActivitiesIndicator() {

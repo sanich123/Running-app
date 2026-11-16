@@ -42,6 +42,8 @@ jobs:
           yarn web:export:production
           test -s dist/index.html
           test -s dist/.well-known/assetlinks.json
+          test -s dist/.well-known/apple-app-site-association
+          node -e "JSON.parse(require('node:fs').readFileSync('dist/.well-known/apple-app-site-association', 'utf8'))"
           test -s dist/robots.txt
 
       - name: Deploy the exact export over SSH
@@ -85,6 +87,7 @@ jobs:
           chmod -R a+rX "$WEB_ROOT/$RELEASE"
           test -s "$WEB_ROOT/$RELEASE/index.html"
           test -s "$WEB_ROOT/$RELEASE/.well-known/assetlinks.json"
+          test -s "$WEB_ROOT/$RELEASE/.well-known/apple-app-site-association"
 
           previous=''
           if [ -L "$WEB_ROOT/current" ]; then
@@ -146,6 +149,16 @@ jobs:
               mv -Tf "$WEB_ROOT/current.rollback" "$WEB_ROOT/current"
             fi
             echo 'Production assetlinks check failed; restored the previous web release.' >&2
+            exit 1
+          fi
+
+          if ! curl --silent --show-error --max-time 10 -o /dev/null \
+            -w '%{http_code}' "https://$WEB_DOMAIN/.well-known/apple-app-site-association" | grep -qx '200'; then
+            if [ -n "$previous" ]; then
+              ln -sfn "$previous" "$WEB_ROOT/current.rollback"
+              mv -Tf "$WEB_ROOT/current.rollback" "$WEB_ROOT/current"
+            fi
+            echo 'Production Apple App Site Association check failed; restored the previous web release.' >&2
             exit 1
           fi
 

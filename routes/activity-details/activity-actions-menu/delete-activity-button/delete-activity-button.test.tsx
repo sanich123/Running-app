@@ -8,7 +8,7 @@ import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import DeleteActivityButton from './delete-activity-button';
-import type { ActivityResponse } from '@R/runich-api/types';
+import type { ActivityResponse } from '@R/runich-api/activity-types';
 
 const mockBack = jest.fn();
 const activity = MOCK_SERVER_ACTIVITY as unknown as ActivityResponse;

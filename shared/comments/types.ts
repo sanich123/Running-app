@@ -21,6 +21,7 @@ export interface CommentLikeBtnProps {
   activityId?: string;
   commentId: string;
   commentLikesFromComment: { authorId: string; id: string }[];
+  disabled?: boolean;
 }
 
 export interface CommentLikesLengthProps {

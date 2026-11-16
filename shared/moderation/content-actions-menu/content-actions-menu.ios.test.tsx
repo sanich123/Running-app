@@ -8,13 +8,24 @@ jest.mock('@expo/ui/swift-ui', () => {
   return {
     Button: ({ label, onPress, testID }: { label: string; onPress: () => void; testID: string }) =>
       React.createElement(MockPressable, { onPress, testID }, React.createElement(MockText, null, label)),
-    Host: ({ children }: { children: React.ReactNode }) => React.createElement(MockView, null, children),
     Label: ({ systemImage }: { systemImage: string }) => React.createElement(MockText, null, systemImage),
     Menu: ({ children, label, testID }: { children: React.ReactNode; label: React.ReactNode; testID: string }) =>
       React.createElement(MockView, { testID }, label, children),
   };
 });
-jest.mock('@expo/ui/swift-ui/modifiers', () => ({ accessibilityLabel: (label: string) => label }));
+jest.mock('@expo/ui', () => {
+  const { View: MockView } = jest.requireActual('react-native');
+  return { Host: ({ children }: { children: React.ReactNode }) => <MockView>{children}</MockView> };
+});
+jest.mock('@expo/ui/swift-ui/modifiers', () => ({
+  accessibilityLabel: (label: string) => label,
+  contentShape: () => ({}),
+  disabled: () => ({}),
+  frame: () => ({}),
+  foregroundStyle: () => ({}),
+  labelStyle: () => ({}),
+  shapes: { rectangle: () => ({}) },
+}));
 
 describe('iOS ContentActionsMenu', () => {
   it('uses native menu actions for report and block', async () => {

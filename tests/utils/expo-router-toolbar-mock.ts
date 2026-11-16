@@ -74,18 +74,30 @@ export function createExpoRouterToolbarMock({
   const ToolbarButton = ({
     accessibilityLabel,
     children,
+    icon,
     onPress,
+    testID,
   }: {
     accessibilityLabel?: string;
     children?: ReactNode;
+    icon?: string;
     onPress?: () => void;
-  }) => createElement(Pressable, { accessibilityRole: 'button', accessibilityLabel, onPress }, children);
+    testID?: string;
+  }) =>
+    createElement(
+      Pressable,
+      { accessibilityRole: 'button', accessibilityLabel, onPress, testID },
+      children ?? (icon ? createElement(Text, null, icon) : null),
+    );
+
+  const ToolbarSpacer = ({ width }: { width?: number }) => createElement(View, { style: { width } });
 
   const Toolbar = Object.assign(({ children }: { children?: ReactNode }) => createElement(View, null, children), {
     Button: ToolbarButton,
     Badge: ({ children }: { children?: string }) => createElement(Text, null, children),
     Menu,
     MenuAction,
+    Spacer: ToolbarSpacer,
   });
 
   return {

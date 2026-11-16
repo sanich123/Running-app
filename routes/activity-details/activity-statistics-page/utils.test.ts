@@ -1,7 +1,7 @@
 import { LANGUAGES } from '@const/enums';
 import { ACTIVITY_STATISTICS_PAGE_COPY } from './const';
 import { buildActivityStatisticSections } from './utils';
-import type { ActivityResponse } from '@R/runich-api/types';
+import type { ActivityResponse } from '@R/runich-api/activity-types';
 
 function createActivity(overrides: Partial<ActivityResponse> = {}): ActivityResponse {
   return {

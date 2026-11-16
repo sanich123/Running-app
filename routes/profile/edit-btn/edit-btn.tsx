@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Button, Text, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
@@ -25,7 +25,7 @@ export default function EditBtn() {
       }
       style={styles.layout}>
       {!isLoading && (
-        <Text variant="titleMedium" style={{ color: colors.primary }}>
+        <Text variant="titleMedium" style={{ color: Platform.OS === 'ios' ? colors.onSurface : colors.primary }}>
           {EDIT_BTN[language].edit}
         </Text>
       )}

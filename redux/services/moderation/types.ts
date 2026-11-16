@@ -1,5 +1,5 @@
 export type UserReportTargetType = 'activity' | 'comment' | 'media' | 'user' | 'group';
-type ContentReportTargetType = UserReportTargetType | 'media_upload';
+type ContentReportTargetType = UserReportTargetType | 'activity_text' | 'group_post' | 'media_upload';
 
 export type ContentReportReason =
   'threats' | 'harassment' | 'hate_speech' | 'sexual_content' | 'violence' | 'spam' | 'other';
@@ -11,7 +11,7 @@ export interface SubmitContentReportRequest {
   details?: string;
 }
 
-type ContentReportStatus = 'open' | 'in_review' | 'resolved' | 'rejected' | 'appealed';
+export type ContentReportStatus = 'open' | 'in_review' | 'resolved' | 'rejected' | 'appealed';
 export type ModerationActionType =
   | 'hide_content'
   | 'remove_content'
@@ -39,6 +39,7 @@ export interface ModerationReportItem {
   assignedModeratorId: string | null;
   createdAt: string;
   reviewedAt: string | null;
+  contextPreview?: string | null;
 }
 
 interface ModerationReportAction {
@@ -64,7 +65,17 @@ export interface ModerationReportContext {
   media?: { id: string; url: string | null; thumbnail: string | null }[] | null;
   activityId?: string | null;
   moderationStatus?:
-    'visible' | 'hidden' | 'removed' | 'queued' | 'processing' | 'review_required' | 'approved' | 'rejected' | 'failed';
+    | 'pending'
+    | 'processing'
+    | 'visible'
+    | 'hidden'
+    | 'removed'
+    | 'queued'
+    | 'review_required'
+    | 'approved'
+    | 'rejected'
+    | 'failed';
+  mediaStatus?: 'queued' | 'processing' | 'review_required' | 'approved' | 'rejected' | 'failed' | null;
   scores?: Record<string, number> | null;
   frameCount?: number | null;
   modelVersion?: string | null;
@@ -73,8 +84,18 @@ export interface ModerationReportContext {
 
 export interface ModerationReportDetails {
   report: ModerationReportItem;
+  reporter?: ModerationReportUser | null;
+  contentAuthor?: ModerationReportUser | null;
   context: ModerationReportContext | null;
   actions: ModerationReportAction[];
+}
+
+export interface ModerationReportUser {
+  userId: string;
+  name: string | null;
+  surname: string | null;
+  profilePhoto: string | null;
+  email: string | null;
 }
 
 export interface ModerationAppealItem {

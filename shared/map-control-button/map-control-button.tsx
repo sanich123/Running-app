@@ -1,7 +1,13 @@
 import { SymbolView } from 'expo-symbols';
 import { Platform, Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { ActivityIndicator, Icon, useTheme } from 'react-native-paper';
-import { getMapControlButtonSize, getMapControlButtonStyle } from './const';
+import {
+  getMapControlButtonSize,
+  getMapControlButtonStyle,
+  IOS_MAP_CONTROL_BACKGROUND_COLOR,
+  IOS_MAP_CONTROL_ICON_COLOR,
+  IOS_MAP_CONTROL_OUTLINE_COLOR,
+} from './const';
 import type { MapControlButtonProps } from './types';
 
 export default function MapControlButton({
@@ -22,13 +28,16 @@ export default function MapControlButton({
   const { width } = useWindowDimensions();
   const buttonSize = getMapControlButtonSize(width);
   const iconSize = Math.round(buttonSize * 0.43);
-  const resolvedIconColor = iconColor ?? colors.onSurface;
+  const isIOS = Platform.OS === 'ios';
+  const resolvedIconColor = isIOS ? IOS_MAP_CONTROL_ICON_COLOR : (iconColor ?? colors.onSurface);
+  const buttonBackgroundColor = isIOS ? IOS_MAP_CONTROL_BACKGROUND_COLOR : colors.surface;
+  const buttonOutlineColor = isIOS ? IOS_MAP_CONTROL_OUTLINE_COLOR : colors.outlineVariant;
   const isUnavailable = disabled || loading;
   const hasOverlayIcon = Boolean(androidOverlayIcon || iosOverlaySymbol);
   const buttonStyle = [
-    getMapControlButtonStyle(buttonSize, colors.surface, colors.outlineVariant),
+    getMapControlButtonStyle(buttonSize, buttonBackgroundColor, buttonOutlineColor),
     {
-      borderColor: selected ? colors.primary : colors.outlineVariant,
+      borderColor: selected ? (isIOS ? IOS_MAP_CONTROL_ICON_COLOR : colors.primary) : buttonOutlineColor,
       borderWidth: selected ? 1.5 : StyleSheet.hairlineWidth,
       opacity: isUnavailable ? 0.45 : 1,
     },
@@ -53,16 +62,16 @@ export default function MapControlButton({
           ) : (
             <Icon source={androidIcon} size={iconSize} color={resolvedIconColor} />
           )}
-          <View style={[styles.iconBadge, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}>
+          <View style={[styles.iconBadge, { backgroundColor: buttonBackgroundColor, borderColor: buttonOutlineColor }]}>
             {Platform.OS === 'ios' ? (
               <SymbolView
                 name={iosOverlaySymbol ?? 'arrow.down'}
                 size={10}
-                tintColor={colors.onSurface}
+                tintColor={resolvedIconColor}
                 weight="semibold"
               />
             ) : (
-              <Icon source={androidOverlayIcon ?? 'download'} size={11} color={colors.onSurface} />
+              <Icon source={androidOverlayIcon ?? 'download'} size={11} color={resolvedIconColor} />
             )}
           </View>
         </View>

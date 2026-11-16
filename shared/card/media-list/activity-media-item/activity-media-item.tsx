@@ -13,14 +13,14 @@ import { errorToast } from '@S/error-toast/error-toast';
 import MediaModerationPlaceholder from '@S/media-moderation-placeholder/media-moderation-placeholder';
 import ContentActionsMenu from '@S/moderation/content-actions-menu/content-actions-menu';
 import ReportContentDialog from '@S/moderation/report-content-dialog/report-content-dialog';
-import { ACTIVITY_MEDIA_COPY } from './const';
 import { useActivityCard } from '../../context';
 import ActivityMapOverlays from '../activity-map-overlays/activity-map-overlays';
 import { ACTIVITY_MEDIA_ASPECT_RATIO } from '../const';
 import { getActivityMediaDimensions } from '../utils';
 import VideoMedia from '../video-media/video-media';
-import type { ActivityMediaItemProps } from './types';
+import { ACTIVITY_MEDIA_COPY } from './const';
 import type { VideoMetadata } from '../types';
+import type { ActivityMediaItemProps } from './types';
 
 export default function ActivityMediaItem({
   item: { id: mediaId, url: mediaUrl, isMap = false, mediaReviewStatus, blurhash, thumbnail },
@@ -215,5 +215,5 @@ const styles = StyleSheet.create({
     top: 8,
     zIndex: 4,
   },
-  reportButton: { position: 'absolute', right: 4, top: 4 },
+  reportButton: { position: 'absolute', right: 4, top: 4, zIndex: 2 },
 });

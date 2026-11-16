@@ -8,10 +8,10 @@ import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { MODERATION_DASHBOARD_COPY } from '../profile/moderation/const';
 import { ADMIN_ACCESS_COPY } from './admin-access-management/const';
 import AdminDashboard from './admin-dashboard';
 import { ADMIN_DASHBOARD_COPY } from './const';
-import { MODERATION_DASHBOARD_COPY } from '../profile/moderation/const';
 
 const russianCopy = ADMIN_DASHBOARD_COPY[LANGUAGES.russian];
 
@@ -83,7 +83,7 @@ describe('AdminDashboard', () => {
     expect(await screen.findByText(russianCopy.emailOnly)).toBeOnTheScreen();
   });
 
-  it('shows moderation for a moderator', async () => {
+  it('shows the report queue for a moderator', async () => {
     setAccess({ roles: ['moderator'], permissions: ['moderation.manage'], isSuperuser: false });
     server.use(
       http.get(BASE_URL + '/moderation/reports', () => HttpResponse.json([])),
@@ -92,7 +92,8 @@ describe('AdminDashboard', () => {
 
     await renderWithProviders(<AdminDashboard />);
 
-    expect(await screen.findByText(russianCopy.moderation)).toBeOnTheScreen();
+    expect(await screen.findByText(MODERATION_DASHBOARD_COPY[LANGUAGES.russian].reports)).toBeOnTheScreen();
+    expect(screen.getByText(MODERATION_DASHBOARD_COPY[LANGUAGES.russian].emptyReports)).toBeOnTheScreen();
   });
 
   it('opens access management for an access manager and uses the selected language', async () => {

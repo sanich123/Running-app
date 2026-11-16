@@ -3,7 +3,7 @@ import { TextInput, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
-import { SEARCH_ICON_TEST_ID, SEARCH_INPUT, SEARCH_INPUT_TEST_ID } from './const';
+import { SEARCH_CLEAR_ICON_TEST_ID, SEARCH_ICON_TEST_ID, SEARCH_INPUT, SEARCH_INPUT_TEST_ID } from './const';
 import type { SearchInputProps } from './const';
 
 export default function SearchInput({ setSearch, setIsInitial, search }: SearchInputProps) {
@@ -15,13 +15,27 @@ export default function SearchInput({ setSearch, setIsInitial, search }: SearchI
       testID={SEARCH_INPUT_TEST_ID}
       mode="outlined"
       placeholder={SEARCH_INPUT[language].label}
-      right={
+      left={
         <TextInput.Icon
           testID={SEARCH_ICON_TEST_ID}
           icon="account-search-outline"
           onPress={() => setSearch(search)}
           disabled={!search}
         />
+      }
+      right={
+        search ? (
+          <TextInput.Icon
+            testID={SEARCH_CLEAR_ICON_TEST_ID}
+            icon="close"
+            size={26}
+            color={colors.onSurfaceVariant}
+            onPress={() => {
+              setSearch('');
+              setIsInitial(false);
+            }}
+          />
+        ) : undefined
       }
       autoCapitalize="none"
       autoCorrect={false}
@@ -51,8 +65,7 @@ export default function SearchInput({ setSearch, setIsInitial, search }: SearchI
 const styles = StyleSheet.create({
   content: {
     fontFamily: FONT_FAMILIES.regular,
-    paddingBottom: 8,
-    paddingTop: 2,
+    marginLeft: 50,
     textAlignVertical: 'center',
   },
   input: { fontSize: 15, minHeight: 52 },

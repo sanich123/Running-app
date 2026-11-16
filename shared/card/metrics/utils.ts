@@ -3,7 +3,7 @@ import {
   getSpeedInMinsInKm,
   isRunningActivity,
   isWalkingActivity,
-} from '@U/location/location-utils';
+} from '@U/location/activity-metrics';
 import { CARD_METRICS } from './const';
 import type { LANGUAGES } from '@const/enums';
 

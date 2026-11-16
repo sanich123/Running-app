@@ -18,6 +18,7 @@ jest.mock('expo-constants', () => ({
 jest.mock('expo-notifications', () => ({
   __esModule: true,
   AndroidImportance: { HIGH: 4 },
+  IosAuthorizationStatus: { PROVISIONAL: 3, EPHEMERAL: 4 },
   getPermissionsAsync: jest.fn().mockResolvedValue({ granted: true }),
   setNotificationChannelAsync: jest.fn().mockResolvedValue(undefined),
   getExpoPushTokenAsync: jest.fn().mockResolvedValue({ data: 'ExpoPushToken[device-token]' }),
@@ -77,5 +78,23 @@ describe('PushTokenRuntime', () => {
     expect(profileRequests).toBeGreaterThanOrEqual(2);
 
     unmount();
+  });
+
+  it('registers an iOS token without creating an Android notification channel', async () => {
+    let registrationBody: unknown;
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'ios' });
+    server.use(
+      http.get(BASE_URL + '/user/push-owner/profile', () => HttpResponse.json({ pushNotifications: true })),
+      http.post(BASE_URL + '/notification/push-token', async ({ request }) => {
+        registrationBody = await request.json();
+        return HttpResponse.json({ enabled: true });
+      }),
+    );
+
+    await renderWithProviders(<PushTokenRuntime />);
+
+    await waitFor(() => expect(registrationBody).toEqual({ token: 'ExpoPushToken[device-token]', platform: 'ios' }));
+    expect(notificationMocks.setNotificationChannelAsync).not.toHaveBeenCalled();
+    expect(notificationMocks.getExpoPushTokenAsync).toHaveBeenCalledWith({ projectId: 'project-1' });
   });
 });

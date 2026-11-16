@@ -15,8 +15,9 @@ import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId, resetMockLocation } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { getSpeedInMinsInKm } from '@U/location/activity-metrics';
 import * as backgroundLocation from '@U/location/expo-task-manager/background-location';
-import { getReducedLocations, getSpeedInMinsInKm } from '@U/location/location-utils';
+import { getReducedLocations } from '@U/location/location-geometry';
 import { getMillisecondsFromHoursMinutesSeconds } from '@U/time-formatter';
 import { getDeviceTimeZone } from '@U/time-zone';
 import { DATE_TIME_PICKER_BTN_ID } from './date-picker/const';
@@ -24,7 +25,7 @@ import { EMOTIONS_BTNS_TEST_IDS, EMOTIONS_BTNS_VALUES } from './emotion-btns/con
 import { INPUT_DISTANCE_ID, INPUT_HOURS_ID, INPUT_MINUTES_ID, INPUT_SECONDS_ID } from './inputs-distance-time/const';
 import SaveResult from './save-result/save-result';
 import { TEXT_INPUTS_DESCRIPTION_TEST_ID, TEXT_INPUTS_TITLE_TEST_ID } from './text-inputs/const';
-import type { ActivityResponse } from '@R/runich-api/types';
+import type { ActivityResponse } from '@R/runich-api/activity-types';
 
 const mockUserId = 'activity-flow-user';
 const mockActivityPhoto = { url: 'https://images.example.test/manual.jpg', thumbnail: null };

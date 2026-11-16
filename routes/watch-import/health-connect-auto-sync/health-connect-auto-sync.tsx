@@ -5,11 +5,11 @@ import { useWorkoutImport } from '../workout-import/use-workout-import';
 export default function HealthConnectAutoSync() {
   const pathname = usePathname();
   const isWorkoutImportPage = pathname === '/watch-import';
-  const isAndroid = Platform.OS === 'android';
+  const supportsHealthStoreAutoSync = Platform.OS === 'android' || Platform.OS === 'ios';
 
   useWorkoutImport({
-    autoSync: isAndroid && !isWorkoutImportPage,
-    enabled: isAndroid && !isWorkoutImportPage,
+    autoSync: supportsHealthStoreAutoSync && !isWorkoutImportPage,
+    enabled: supportsHealthStoreAutoSync && !isWorkoutImportPage,
   });
 
   return null;

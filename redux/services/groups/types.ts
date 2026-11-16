@@ -141,6 +141,7 @@ export interface GroupMonthlyStatisticsQuery {
 export interface GroupPost {
   id: string;
   text: string;
+  moderationStatus?: 'pending' | 'processing' | 'visible' | 'hidden' | 'removed';
   createdAt: string;
   author: { userId: string; name: string | null; profilePhoto: string | null } | null;
   photoUrl: string | null;

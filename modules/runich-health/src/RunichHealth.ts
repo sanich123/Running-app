@@ -54,7 +54,8 @@ export type WatchWorkoutRouteStatus =
   | 'route-not-provided'
   | 'consent-granted'
   | 'consent-granted-empty'
-  | 'consent-denied-or-error';
+  | 'consent-denied-or-error'
+  | 'route-read-error';
 
 export type HealthConnectReadStage =
   'availability' | 'exercise-sessions' | 'workout-measurements' | 'exercise-route' | 'complete';
@@ -85,16 +86,17 @@ interface WatchWorkoutDiagnostics {
   activeCaloriesPermissionGranted?: boolean;
   activeCaloriesRecordCount?: number;
   routeErrorCode?: string;
+  heartRateErrorCode?: string;
 }
 
 export interface HealthPermissionsResult {
   available: boolean;
-  granted: boolean;
+  granted?: boolean;
   details?: {
-    exerciseSession: boolean;
-    distance: boolean;
-    steps: boolean;
-    heartRate: boolean;
+    exerciseSession?: boolean;
+    distance?: boolean;
+    steps?: boolean;
+    heartRate?: boolean;
     activeCalories?: boolean;
   };
 }

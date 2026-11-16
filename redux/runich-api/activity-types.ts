@@ -1,6 +1,6 @@
 import type { ACTIVITY_MIGRATION_STATUS } from './migration-status';
 import type { ActivityVisibility } from '@const/activity-visibility';
-import type { ActivityHeartRateSample, ActivityKilometreSplit, ActivityLocation, ProfileType } from '@S/card/types';
+import type { ActivityHeartRateSample, ActivityKilometreSplit, ActivityLocation } from '@S/card/types';
 
 type ActivityMigrationStatus = (typeof ACTIVITY_MIGRATION_STATUS)[keyof typeof ACTIVITY_MIGRATION_STATUS];
 
@@ -68,6 +68,7 @@ export interface ActivityResponse {
   updatedAt?: string;
   description?: string | null;
   title?: string | null;
+  textModerationStatus?: 'pending' | 'processing' | 'visible' | 'hidden' | 'removed';
   sport: string;
   media?: ActivityMediaItemResponse[] | null;
   mapPhotoUrl?: string | null;
@@ -104,6 +105,7 @@ export type ActivityListItemResponse = Pick<
   | 'date'
   | 'timeZone'
   | 'title'
+  | 'textModerationStatus'
   | 'sport'
   | 'media'
   | 'mapPhotoUrl'
@@ -141,6 +143,7 @@ export interface ActivityMutationResponse {
   updatedAt: string;
   description?: string | null;
   title?: string | null;
+  textModerationStatus?: 'pending' | 'processing' | 'visible' | 'hidden' | 'removed';
   sport: string;
   media?: ActivityMediaItemResponse[] | null;
   mapPhotoUrl?: string | null;
@@ -230,172 +233,4 @@ interface ActivityChartLocationResponse {
 export interface ActivityChartDataResponse {
   heartRateSamples: ActivityHeartRateSample[];
   locations: ActivityChartLocationResponse[] | null;
-}
-
-export interface CommentMutationResponse {
-  authorId: string;
-  comment: string;
-  activityId: string;
-  profileId: string;
-  id: string;
-  date: string;
-}
-
-export interface CommentLikeSummaryResponse {
-  authorId: string;
-  id: string;
-}
-
-interface CommentProfileResponse {
-  name?: string | null;
-  surname?: string | null;
-  profilePhoto?: string | null;
-  profilePhotoBlurhash?: string | null;
-  user?: { email?: string | null } | null;
-}
-
-export interface CommentResponse {
-  authorId: string;
-  comment: string;
-  activityId: string;
-  profileId: string;
-  id: string;
-  date: string;
-  profile: CommentProfileResponse;
-  commentLike: CommentLikeSummaryResponse[];
-}
-
-export interface CommentsResponse {
-  comments: CommentResponse[];
-  hasMore: boolean;
-  nextCursor: string | null;
-}
-
-export interface CommentLikeResponse {
-  date: string;
-  authorId: string;
-  commentId: string;
-  profileId: string;
-  id: string;
-}
-
-export interface LikeResponse {
-  date: string;
-  authorId: string;
-  id: string;
-  activityId: string;
-  profileId: string;
-  profile?: ProfileType | null;
-}
-
-export interface LikeListResponse extends Omit<LikeResponse, 'profile'> {
-  profile: ProfileType;
-}
-
-export interface LikeListPageResponse {
-  likes: LikeListResponse[];
-  hasMore: boolean;
-  nextCursor: string | null;
-  currentUserLike: Pick<LikeListResponse, 'id' | 'authorId'> | null;
-}
-
-type FriendProfileResponse = Pick<
-  ProfileType,
-  'city' | 'name' | 'surname' | 'profilePhoto' | 'profilePhotoBlurhash' | 'allowNewFollowers'
->;
-
-export interface FollowingResponse {
-  createdAt: string;
-  updatedAt: string;
-  userId: string;
-  friendId: string;
-  profileId: string;
-  id: string;
-  profile?: FriendProfileResponse | null;
-}
-
-export interface FollowerResponse {
-  createdAt: string;
-  updatedAt: string;
-  userId: string;
-  friendId: string;
-  profileId: string;
-  id: string;
-  user: { profile?: FriendProfileResponse | null };
-}
-
-export interface StatisticMetricResponse {
-  totalDuration: number;
-  totalDistance: number;
-  totalItems: number;
-}
-
-interface YearCategoryMetricResponse extends StatisticMetricResponse {
-  totalSteps: number;
-  totalCaloriesActive: number;
-}
-
-export interface DailyActivityStatisticsResponse {
-  duration: number;
-  distance: number;
-  steps?: number | null;
-  caloriesActive?: number | null;
-  date: string;
-  sport: string;
-}
-
-type DailyActivitiesStatisticsResponse = Record<string, DailyActivityStatisticsResponse[]>;
-
-interface MonthActivityResponse {
-  duration: number;
-  distance: number;
-  speed: number;
-  date: string;
-  id: string;
-  sport: string;
-}
-
-export interface MonthStatisticsResponse {
-  activities: MonthActivityResponse[];
-  activitiesReducedBySport: Record<string, StatisticMetricResponse>;
-}
-
-export type YearStatisticsResponse = {
-  isUserHasActivities: boolean;
-} & Record<
-  string,
-  | boolean
-  | (Record<string, YearCategoryStatistics | DailyActivitiesStatisticsResponse> & {
-      dailyActivities?: DailyActivitiesStatisticsResponse;
-    })
->;
-
-type YearCategoryStatistics = YearCategoryMetricResponse & Record<string, number | YearCategoryMetricResponse>;
-
-export interface MessageResponse {
-  message: string;
-}
-
-export interface AuthResponse {
-  accessToken: string;
-  refreshToken?: string;
-}
-
-export interface ApiState {
-  auth: {
-    accessToken?: string;
-    refreshToken?: string;
-  };
-}
-
-export interface UserAuthResponse extends AuthResponse {
-  userId: string;
-}
-
-export interface LoginResponse extends UserAuthResponse {
-  refreshToken: string;
-}
-
-export interface AppConfigResponse {
-  appVersion: string;
 }

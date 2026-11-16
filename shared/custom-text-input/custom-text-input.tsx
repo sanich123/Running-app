@@ -55,14 +55,11 @@ export default function CustomTextInput<T extends FieldValues>({
               minHeight: multiline ? 96 : 52,
               opacity: shouldBeDisabled ? 0.7 : 1,
             }}
-            contentStyle={
-              compact
-                ? undefined
-                : {
-                    fontFamily: FONT_FAMILIES.regular,
-                    textAlignVertical: multiline ? 'top' : 'center',
-                  }
-            }
+            contentStyle={{
+              fontFamily: FONT_FAMILIES.regular,
+              ...(compact && !multiline ? { paddingBottom: 0, paddingTop: 0 } : {}),
+              textAlignVertical: multiline ? 'top' : 'center',
+            }}
             outlineStyle={{ borderRadius: 8 }}
             onChangeText={(text) => {
               let editedText = text;

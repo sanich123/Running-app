@@ -25,8 +25,9 @@ import { ACTIVITY_TRACKING_ERROR_COPY } from './const';
 import { ACTIVITY_SHOW_MAP_TEST_ID } from './show-map-btn/const';
 
 jest.mock('expo-router', () => ({
-  Stack: { Screen: () => null },
+  ...require('@T/utils/expo-router-toolbar-mock').createExpoRouterToolbarMock(),
   useGlobalSearchParams: () => ({ sport: 'run' }),
+  useRouter: () => ({ push: jest.fn() }),
 }));
 
 jest.mock('@Routes/activity/icon-choose-sport/icon-choose-sport', () => ({

@@ -4,16 +4,10 @@ import { Icon, Menu, RadioButton, Text, TouchableRipple, useTheme } from 'react-
 import { useAppSelector } from '@R/typed-hooks';
 import { getIconNameByTypeOfSport } from '@U/icon-utils';
 import { GROUPS_COPY, GROUP_SPORTS, getGroupSportLabels } from '../../const';
-import type { GroupCreationOptions } from '../types';
+import type { GroupOptionsFieldsProps } from './types';
 import type { GroupSport } from '@R/services/groups/types';
 
-export default function GroupOptionsFields({
-  options,
-  onChange,
-}: {
-  options: GroupCreationOptions;
-  onChange: (options: GroupCreationOptions) => void;
-}) {
+export default function GroupOptionsFields({ options, onChange }: GroupOptionsFieldsProps) {
   const { colors } = useTheme();
   const { width } = useWindowDimensions();
   const { language } = useAppSelector(({ settings }) => settings);

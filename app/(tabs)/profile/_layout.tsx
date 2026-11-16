@@ -8,7 +8,7 @@ import { useAppSelector } from '@R/typed-hooks';
 import FeedHeaderTitle from '@S/feed-header-title/feed-header-title';
 
 export default function ProfileStack() {
-  const { colors } = useTheme();
+  const { colors, dark } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const { back } = useRouter();
 
@@ -17,6 +17,7 @@ export default function ProfileStack() {
       screenOptions={{
         contentStyle: { backgroundColor: colors.background },
         headerBackButtonDisplayMode: Platform.OS === 'ios' || Platform.OS === 'web' ? 'minimal' : 'default',
+        headerUserInterfaceStyle: dark ? 'dark' : 'light',
         headerBackVisible: Platform.OS === 'android' ? false : undefined,
         headerLeft:
           Platform.OS === 'android'
@@ -46,10 +47,6 @@ export default function ProfileStack() {
       <Stack.Screen
         name={`${ROUTES.profileSettings}/${ROUTES.index}`}
         options={{ title: LABELS[language].profileSettings }}
-      />
-      <Stack.Screen
-        name={`${ROUTES.profilePrivacySettings}/${ROUTES.index}`}
-        options={{ title: LABELS[language].profilePrivacySettings }}
       />
     </Stack>
   );

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { getLocationAnimationDuration } from '@U/location/location-utils';
+import { getLocationAnimationDuration } from '@U/location/location-geometry';
 
 type Coordinate = [number, number];
 

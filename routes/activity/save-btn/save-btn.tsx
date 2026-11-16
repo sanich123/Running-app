@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { useTheme, Text, Button } from 'react-native-paper';
 import { ACTIVITY_SAVE_BTN, ACTIVITY_SAVE_BTN_TEST_ID } from '@const/activity-save-btn';
 import { useSaveActivity } from './use-save-activity';
@@ -16,7 +16,9 @@ export default function SaveBtn() {
       onPress={onSave}
       disabled={isSaveDisabled}>
       {!isSaving ? (
-        <Text variant="titleMedium" style={{ color: colors.onSurfaceVariant }}>
+        <Text
+          variant="titleMedium"
+          style={{ color: Platform.OS === 'ios' ? colors.onSurface : colors.onSurfaceVariant }}>
           {textOnBtn}
         </Text>
       ) : null}

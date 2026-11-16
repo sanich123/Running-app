@@ -44,7 +44,7 @@ describe('comments list modal', () => {
     expect(screen.getByTestId('comments-skeleton')).toBeOnTheScreen();
     expect(screen.queryByText(EMPTY_STATE_COPY[LANGUAGES.russian].comments.title)).not.toBeOnTheScreen();
     expect(screen.getByTestId('comments-composer')).toBeOnTheScreen();
-    expect(screen.getByTestId('comments-composer-keyboard-sticky').props.offset).toEqual({ opened: -8 });
+    expect(screen.getByTestId('comments-composer-keyboard-sticky').props.offset).toEqual({ opened: 4 });
     expect(screen.getByTestId('comments-input')).toBeOnTheScreen();
   });
 

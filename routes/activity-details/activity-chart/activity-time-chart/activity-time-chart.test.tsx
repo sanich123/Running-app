@@ -5,9 +5,9 @@ import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import ActivityTimeChart from './activity-time-chart';
 import { HOME_ACTIVITY_FULL_VIEW } from '../../metrics/const';
 import { ACTIVITY_CHART_METRIC_COLORS, HEART_RATE_ZONE_COLORS } from '../utils';
+import ActivityTimeChart from './activity-time-chart';
 import type { ActivityChartSeries } from '../types';
 
 const zoneSettings = { basis: 'activityMaximum' as const, maximumHeartRate: 150 };
@@ -100,7 +100,9 @@ jest.mock('@expo/ui/swift-ui', () => {
 jest.mock('@expo/ui/swift-ui/modifiers', () => ({
   accessibilityLabel: (accessibilityLabel: string) => ({ accessibilityLabel }),
   disabled: (isDisabled: boolean) => ({ disabled: isDisabled }),
+  frame: () => ({}),
   foregroundStyle: (color: string) => ({ color }),
+  padding: () => ({}),
 }));
 
 describe('ActivityTimeChart', () => {

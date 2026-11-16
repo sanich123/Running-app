@@ -1,14 +1,16 @@
 import { Suspense, useState } from 'react';
 import { Platform, View, StyleSheet } from 'react-native';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
+import { LABELS, ROUTES } from '@const/enums';
 import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
 import Card from '@S/card/activity-card/activity-card';
 import ConfirmDialog from '@S/confirm-dialog/confirm-dialog';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
 import ErrorComponent from '@S/error-component/error-component';
+import { IOS_HEADER_ITEM_SPACING, IOS_HEADER_ITEM_WIDTH_PROPS } from '@S/header-toolbar-const';
 import ReportContentDialog from '@S/moderation/report-content-dialog/report-content-dialog';
 import ActivityActionsMenu from './activity-actions-menu/activity-actions-menu';
 import { ACTIVITY_ACTIONS_MENU } from './activity-actions-menu/const';
@@ -22,6 +24,7 @@ export default function ActivityDetails() {
   const { colors } = useTheme();
   const { userId: currentUserId } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ settings }) => settings);
+  const { push } = useRouter();
   const { id: activityId } = useLocalSearchParams();
   const {
     isLoading,
@@ -57,31 +60,52 @@ export default function ActivityDetails() {
             );
           },
         }}>
-        {shouldShowToolbarMenu ? (
+        {Platform.OS === 'ios' ? (
           <Stack.Toolbar placement="right">
-            <Stack.Toolbar.Menu
-              icon="ellipsis"
-              accessibilityLabel={menuText.accessibilityLabel}
-              tintColor={colors.primary}>
-              {isActivityOwner ? (
-                [
-                  <Stack.Toolbar.MenuAction key="edit" icon="pencil" onPress={editActivityAction}>
-                    {menuText.edit}
-                  </Stack.Toolbar.MenuAction>,
-                  <Stack.Toolbar.MenuAction
-                    key="delete"
-                    icon="trash"
-                    destructive
-                    onPress={deleteActivityAction.onPress}>
-                    {menuText.delete}
-                  </Stack.Toolbar.MenuAction>,
-                ]
-              ) : (
-                <Stack.Toolbar.MenuAction icon="flag" onPress={() => setIsReportVisible(true)}>
-                  {menuText.report}
-                </Stack.Toolbar.MenuAction>
-              )}
-            </Stack.Toolbar.Menu>
+            {activity ? (
+              <Stack.Toolbar.Menu
+                {...IOS_HEADER_ITEM_WIDTH_PROPS}
+                icon="ellipsis"
+                accessibilityLabel={menuText.accessibilityLabel}
+                tintColor={colors.onSurface}>
+                {isActivityOwner ? (
+                  [
+                    <Stack.Toolbar.MenuAction key="edit" icon="pencil" onPress={editActivityAction}>
+                      {menuText.edit}
+                    </Stack.Toolbar.MenuAction>,
+                    <Stack.Toolbar.MenuAction
+                      key="delete"
+                      icon="trash"
+                      destructive
+                      onPress={deleteActivityAction.onPress}>
+                      {menuText.delete}
+                    </Stack.Toolbar.MenuAction>,
+                  ]
+                ) : (
+                  <Stack.Toolbar.MenuAction icon="flag" onPress={() => setIsReportVisible(true)}>
+                    {menuText.report}
+                  </Stack.Toolbar.MenuAction>
+                )}
+              </Stack.Toolbar.Menu>
+            ) : (
+              <Stack.Toolbar.Button
+                {...IOS_HEADER_ITEM_WIDTH_PROPS}
+                icon="person.2"
+                accessibilityLabel={LABELS[language].users}
+                tintColor={colors.onSurface}
+                onPress={() => push(`/${ROUTES.users}` as never)}
+              />
+            )}
+            {!activity ? <Stack.Toolbar.Spacer width={IOS_HEADER_ITEM_SPACING} /> : null}
+            {!activity ? (
+              <Stack.Toolbar.Button
+                {...IOS_HEADER_ITEM_WIDTH_PROPS}
+                icon="gearshape"
+                accessibilityLabel={LABELS[language].settings}
+                tintColor={colors.onSurface}
+                onPress={() => push(`/${ROUTES.settings}` as never)}
+              />
+            ) : null}
           </Stack.Toolbar>
         ) : null}
       </Stack.Screen>

@@ -6,5 +6,6 @@ export interface ProfilePrivacyPreviewProps {
   hideActivityStatistics: boolean;
   hideFollowingList: boolean;
   hideProfilePhotos: boolean;
+  hideHeading?: boolean;
   language: LANGUAGES;
 }

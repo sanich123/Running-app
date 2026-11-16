@@ -9,5 +9,6 @@ export interface ActivityPrivacyPreviewProps {
   allowActivityElevationViewing: boolean;
   allowActivityPaceViewing: boolean;
   allowActivitySharing: boolean;
+  hideHeading?: boolean;
   language: LANGUAGES;
 }

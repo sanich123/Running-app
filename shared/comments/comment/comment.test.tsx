@@ -1,12 +1,13 @@
 import { createRef } from 'react';
 import type { RefObject } from 'react';
-import { screen } from '@testing-library/react-native';
+import { fireEvent, screen } from '@testing-library/react-native';
 import { setIdOfUpdatingComment } from '@R/slices/comment/comment';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import Comment from './comment';
+import { COMMENT_MODERATION_COPY } from './const';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
-import type { CommentResponse } from '@R/runich-api/types';
+import type { CommentResponse } from '@R/runich-api/comment-types';
 
 jest.mock('@S/card/user-info/user-info', () => ({
   __esModule: true,
@@ -57,5 +58,34 @@ describe('comment', () => {
     await renderWithProviders(<Comment {...commentProps} />);
     expect(screen.getByText('Отличная тренировка!')).toBeOnTheScreen();
     expect(screen.queryByTestId('comment-input')).not.toBeOnTheScreen();
+  });
+
+  it('hides a pending comment from other users and lets them refresh its status', async () => {
+    const onRefreshStatus = jest.fn();
+    await renderWithProviders(
+      <Comment
+        {...commentProps}
+        comment="This text must stay private"
+        moderationStatus="pending"
+        onRefreshStatus={onRefreshStatus}
+      />,
+    );
+
+    expect(screen.getByText(COMMENT_MODERATION_COPY.russian.pending)).toBeOnTheScreen();
+    expect(screen.queryByText(COMMENT_MODERATION_COPY.russian.hiddenPlaceholder)).toBeNull();
+    expect(screen.queryByText('This text must stay private')).toBeNull();
+    expect(screen.queryByTestId('report-comment-comment-1')).toBeNull();
+    fireEvent.press(screen.getByTestId('refresh-comment-status-comment-1'));
+    expect(screen.queryByText(COMMENT_MODERATION_COPY.russian.refresh)).toBeNull();
+    expect(onRefreshStatus).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps a pending comment visible to its author', async () => {
+    mockStore.dispatch(setMockUserId('user-1'));
+    await renderWithProviders(<Comment {...commentProps} moderationStatus="pending" />);
+
+    expect(screen.queryByText(COMMENT_MODERATION_COPY.russian.pending)).toBeNull();
+    expect(screen.getByText('Отличная тренировка!')).toBeOnTheScreen();
+    expect(screen.queryByTestId('refresh-comment-status-comment-1')).toBeNull();
   });
 });

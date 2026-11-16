@@ -5,16 +5,13 @@ import { useAppSelector } from '@R/typed-hooks';
 import { SignInPageStates, signInMap } from '@U/validate-email-password';
 import { REGISTERED_USERS_ONLY_LABEL } from '../../const';
 import { EMAIL_LINK_NAVIGATION, LOGIN_NAVIGATION, REGISTER_NAVIGATION, RESET_NAVIGATION } from '../const';
+import type { RegisterNavigationProps } from './types';
 
 export default function RegisterNavigation({
   authStep = SignInPageStates.login,
   onAuthStepChange = () => undefined,
   showEmailLinkNavigation = true,
-}: {
-  authStep?: SignInPageStates;
-  onAuthStepChange?: (step: SignInPageStates) => void;
-  showEmailLinkNavigation?: boolean;
-}) {
+}: RegisterNavigationProps) {
   const { language } = useAppSelector(({ settings }) => settings);
   const { isDisabledWhenLogining } = useAppSelector(({ logining }) => logining);
   const { colors } = useTheme();
