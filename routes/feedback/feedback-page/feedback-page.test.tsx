@@ -1,16 +1,16 @@
-import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
+import { act, fireEvent, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { TEST_URLS } from '@T/mocks/const';
 import { BASE_URL } from '@T/utils/handlers';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { uploadFeedbackAttachments } from '@U/feedback-sending';
 import { deleteUploadedMedia, getAccessToGallery } from '@U/file-sending';
-import FeedbackPage from './feedback-page';
 import { FEEDBACK_TEXT } from '../const';
+import FeedbackPage from './feedback-page';
 
 jest.mock('@U/file-sending', () => ({
   deleteUploadedMedia: jest.fn().mockResolvedValue(true),
@@ -27,6 +27,7 @@ describe('feedback attachments', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockStore.dispatch(changeLanguage(LANGUAGES.english));
+    mockStore.dispatch(setMockUserId('feedback-test-user'));
   });
 
   it('shows previews for uploaded files, hides their URLs, and keeps links in the email request', async () => {
@@ -57,13 +58,6 @@ describe('feedback attachments', () => {
 
     await renderWithProviders(<FeedbackPage />);
     await user.press(screen.getByText(FEEDBACK_TEXT[LANGUAGES.english].bug));
-    await act(async () => {
-      screen.getAllByRole('switch')[0].props.onChange({ nativeEvent: { value: true } });
-    });
-    await waitFor(() => expect(screen.getAllByRole('switch')).toHaveLength(2));
-    await act(async () => {
-      screen.getAllByRole('switch')[1].props.onChange({ nativeEvent: { value: true } });
-    });
     await user.type(screen.getByPlaceholderText(FEEDBACK_TEXT[LANGUAGES.english].bugPlaceholder), 'A message');
     await user.press(screen.getByText(FEEDBACK_TEXT[LANGUAGES.english].addPhoto));
     expect(mockGetAccessToGallery).toHaveBeenCalledWith(['images', 'videos'], {
@@ -96,7 +90,9 @@ describe('feedback attachments', () => {
       `${FEEDBACK_TEXT[LANGUAGES.english].submitError}: 500, SMTP unavailable`,
     );
     await user.press(screen.getByTestId('feedback-remove-attachment-0'));
-    await waitFor(() => expect(mockDeleteUploadedMedia).toHaveBeenCalledWith([firstAttachment.url]));
+    await waitFor(() =>
+      expect(mockDeleteUploadedMedia).toHaveBeenCalledWith([firstAttachment.url], [], expect.any(String)),
+    );
     await waitFor(() => expect(screen.queryByTestId('feedback-attachment-preview-1')).not.toBeOnTheScreen());
     expect(screen.getByTestId('feedback-attachment-preview-0').props.source).toEqual({ uri: secondAttachment.url });
     expect(mockUploadFeedbackAttachments).toHaveBeenCalledWith(
@@ -130,13 +126,6 @@ describe('feedback attachments', () => {
 
     await renderWithProviders(<FeedbackPage />);
     await user.press(screen.getByText(FEEDBACK_TEXT[LANGUAGES.english].bug));
-    await act(async () => {
-      screen.getAllByRole('switch')[0].props.onChange({ nativeEvent: { value: true } });
-    });
-    await waitFor(() => expect(screen.getAllByRole('switch')).toHaveLength(2));
-    await act(async () => {
-      screen.getAllByRole('switch')[1].props.onChange({ nativeEvent: { value: true } });
-    });
     await user.type(screen.getByPlaceholderText(FEEDBACK_TEXT[LANGUAGES.english].bugPlaceholder), 'A message');
     await user.press(screen.getByText(FEEDBACK_TEXT[LANGUAGES.english].addPhoto));
 
@@ -152,7 +141,7 @@ describe('feedback attachments', () => {
     expect(screen.queryByTestId('feedback-pending-attachment-preview-0')).not.toBeOnTheScreen();
   });
 
-  it('submits a thank-you without consent or attachment fields', async () => {
+  it('submits a support question without attachment fields', async () => {
     const user = userEvent.setup();
     const submittedFeedback: unknown[] = [];
     server.use(
@@ -163,12 +152,13 @@ describe('feedback attachments', () => {
     );
 
     await renderWithProviders(<FeedbackPage />);
-    await user.press(screen.getByText(FEEDBACK_TEXT[LANGUAGES.english].thanks));
-    await user.type(screen.getByPlaceholderText(FEEDBACK_TEXT[LANGUAGES.english].thanksPlaceholder), 'Thanks!');
+    await user.press(screen.getByText(FEEDBACK_TEXT[LANGUAGES.english].question));
+    fireEvent.press(screen.getByText(FEEDBACK_TEXT[LANGUAGES.english].topics.account));
+    await user.type(screen.getByPlaceholderText(FEEDBACK_TEXT[LANGUAGES.english].questionPlaceholder), 'I need help');
     await user.press(screen.getByText(FEEDBACK_TEXT[LANGUAGES.english].send));
 
     await waitFor(() => expect(submittedFeedback).toHaveLength(1));
-    expect(submittedFeedback[0]).toMatchObject({ kind: 'thanks', text: 'Thanks!' });
+    expect(submittedFeedback[0]).toMatchObject({ kind: 'question', topic: 'account', text: 'I need help' });
     expect(submittedFeedback[0]).not.toHaveProperty('attachments');
     expect(screen.queryByTestId('feedback-error')).toBeNull();
   });
@@ -182,13 +172,6 @@ describe('feedback attachments', () => {
     mockGetAccessToGallery.mockResolvedValueOnce(result);
     await renderWithProviders(<FeedbackPage />);
     await user.press(screen.getByText(FEEDBACK_TEXT[LANGUAGES.english].bug));
-    await act(async () => {
-      screen.getAllByRole('switch')[0].props.onChange({ nativeEvent: { value: true } });
-    });
-    await waitFor(() => expect(screen.getAllByRole('switch')).toHaveLength(2));
-    await act(async () => {
-      screen.getAllByRole('switch')[1].props.onChange({ nativeEvent: { value: true } });
-    });
     await user.press(screen.getByText(FEEDBACK_TEXT[LANGUAGES.english].addPhoto));
 
     expect(mockUploadFeedbackAttachments).not.toHaveBeenCalled();
@@ -199,13 +182,6 @@ describe('feedback attachments', () => {
     mockGetAccessToGallery.mockRejectedValueOnce(new Error('permission denied'));
     await renderWithProviders(<FeedbackPage />);
     await user.press(screen.getByText(FEEDBACK_TEXT[LANGUAGES.english].bug));
-    await act(async () => {
-      screen.getAllByRole('switch')[0].props.onChange({ nativeEvent: { value: true } });
-    });
-    await waitFor(() => expect(screen.getAllByRole('switch')).toHaveLength(2));
-    await act(async () => {
-      screen.getAllByRole('switch')[1].props.onChange({ nativeEvent: { value: true } });
-    });
     await user.press(screen.getByText(FEEDBACK_TEXT[LANGUAGES.english].addPhoto));
 
     expect(await screen.findByTestId('feedback-error')).toHaveTextContent(
@@ -229,13 +205,6 @@ describe('feedback attachments', () => {
 
     await renderWithProviders(<FeedbackPage />);
     await user.press(screen.getByText(FEEDBACK_TEXT[LANGUAGES.english].bug));
-    await act(async () => {
-      screen.getAllByRole('switch')[0].props.onChange({ nativeEvent: { value: true } });
-    });
-    await waitFor(() => expect(screen.getAllByRole('switch')).toHaveLength(2));
-    await act(async () => {
-      screen.getAllByRole('switch')[1].props.onChange({ nativeEvent: { value: true } });
-    });
     await user.press(screen.getByText(FEEDBACK_TEXT[LANGUAGES.english].addPhoto));
     await waitFor(() => expect(screen.getByTestId('feedback-pending-attachment-preview-0')).toBeOnTheScreen());
     await user.press(screen.getByTestId('feedback-remove-pending-attachment-0'));
@@ -256,13 +225,6 @@ describe('feedback attachments', () => {
 
     await renderWithProviders(<FeedbackPage />);
     await user.press(screen.getByText(FEEDBACK_TEXT[LANGUAGES.english].bug));
-    await act(async () => {
-      screen.getAllByRole('switch')[0].props.onChange({ nativeEvent: { value: true } });
-    });
-    await waitFor(() => expect(screen.getAllByRole('switch')).toHaveLength(2));
-    await act(async () => {
-      screen.getAllByRole('switch')[1].props.onChange({ nativeEvent: { value: true } });
-    });
     await user.press(screen.getByText(FEEDBACK_TEXT[LANGUAGES.english].addPhoto));
 
     expect(await screen.findByTestId('feedback-error')).toHaveTextContent(

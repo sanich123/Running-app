@@ -43,6 +43,7 @@ interface PhotoUploadRequest {
 
 interface DeletePhotoRequest {
   url: string;
+  feedbackId?: string;
 }
 
 interface DeleteModerationUploadRequest {
@@ -158,7 +159,11 @@ export const photosApi = runichApi.injectEndpoints({
       invalidatesTags: [Tags.profile, Tags.activities],
     }),
     deletePhoto: mutation<void, DeletePhotoRequest>({
-      query: (body) => ({ url: '/photo', method: Methods.delete, body }),
+      query: ({ url, feedbackId }) => ({
+        url: feedbackId ? `/photo/feedback/${feedbackId}` : '/photo',
+        method: Methods.delete,
+        body: { url },
+      }),
       invalidatesTags: [Tags.profile, Tags.activities],
     }),
     deleteModerationUpload: mutation<void, DeleteModerationUploadRequest>({

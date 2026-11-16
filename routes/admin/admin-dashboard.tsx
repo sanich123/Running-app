@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ActivityIndicator, SegmentedButtons, Text, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { useGetAdminAccessQuery } from '@R/services/admin/admin';
@@ -8,13 +8,15 @@ import { useAppSelector } from '@R/typed-hooks';
 import ModerationDashboard from '@Routes/profile/moderation/moderation-dashboard';
 import ErrorComponent from '@S/error-component/error-component';
 import AdminAccessManagement from './admin-access-management/admin-access-management';
+import AdminFeedback from './admin-feedback/admin-feedback';
 import { ADMIN_DASHBOARD_COPY } from './const';
 
-type AdminSection = 'moderation' | 'access';
+type AdminSection = 'moderation' | 'feedback' | 'access';
 
 export default function AdminDashboard() {
   const { colors } = useTheme();
   const { replace } = useRouter();
+  const { feedbackId } = useLocalSearchParams<{ feedbackId?: string }>();
   const { language } = useAppSelector(({ settings }) => settings);
   const {
     data: access,
@@ -25,11 +27,30 @@ export default function AdminDashboard() {
   } = useGetAdminAccessQuery(undefined, {
     refetchOnMountOrArgChange: true,
   });
-  const [activeSection, setActiveSection] = useState<AdminSection>('moderation');
+  const [sectionSelection, setSectionSelection] = useState<{
+    feedbackId: string | undefined;
+    section: AdminSection;
+  } | null>(null);
   const canModerate = access?.permissions.includes('moderation.manage') === true;
+  const canManageFeedback = access?.permissions.includes('feedback.manage') === true;
   const canManageRoles = access?.permissions.includes('admin.roles.manage') === true;
   const hasPermissions = (access?.permissions.length ?? 0) > 0;
-  const hasSelectedSection = canModerate || canManageRoles;
+  const hasSelectedSection = canModerate || canManageFeedback || canManageRoles;
+  const sections: AdminSection[] = [
+    ...(canModerate ? ['moderation' as const] : []),
+    ...(canManageFeedback ? ['feedback' as const] : []),
+    ...(canManageRoles ? ['access' as const] : []),
+  ];
+  const activeSection =
+    sectionSelection && sectionSelection.feedbackId === feedbackId
+      ? sectionSelection.section
+      : feedbackId && canManageFeedback
+        ? 'feedback'
+        : canModerate
+          ? 'moderation'
+          : canManageFeedback
+            ? 'feedback'
+            : 'access';
   const copy = ADMIN_DASHBOARD_COPY[language];
 
   useEffect(() => {
@@ -55,27 +76,35 @@ export default function AdminDashboard() {
     return <Text style={[styles.message, { color: colors.onSurfaceVariant }]}>{copy.emailOnly}</Text>;
   }
 
-  if (canModerate && canManageRoles) {
+  if (sections.length > 1) {
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <SegmentedButtons
           value={activeSection}
-          onValueChange={(value) => setActiveSection(value as AdminSection)}
-          buttons={[
-            { value: 'moderation', label: copy.moderation, testID: 'admin-section-moderation' },
-            { value: 'access', label: copy.access, testID: 'admin-section-access' },
-          ]}
+          onValueChange={(value) => {
+            const selectedSection = sections.find((section) => section === value);
+            if (selectedSection) setSectionSelection({ feedbackId, section: selectedSection });
+          }}
+          buttons={sections.map((section) => ({
+            value: section,
+            label: copy[section],
+            testID: `admin-section-${section}`,
+          }))}
         />
-        {activeSection === 'moderation' ? (
-          <ModerationDashboard />
-        ) : (
+        {activeSection === 'moderation' && canModerate ? <ModerationDashboard /> : null}
+        {activeSection === 'feedback' && canManageFeedback ? (
+          <AdminFeedback key={feedbackId ?? 'feedback-queue'} />
+        ) : null}
+        {activeSection === 'access' && canManageRoles ? (
           <AdminAccessManagement isSuperuser={access.isSuperuser} />
-        )}
+        ) : null}
       </View>
     );
   }
 
-  return canModerate ? <ModerationDashboard /> : <AdminAccessManagement isSuperuser={access.isSuperuser} />;
+  if (canModerate) return <ModerationDashboard />;
+  if (canManageFeedback) return <AdminFeedback key={feedbackId ?? 'feedback-queue'} />;
+  return <AdminAccessManagement isSuperuser={access.isSuperuser} />;
 }
 
 const styles = StyleSheet.create({

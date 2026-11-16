@@ -5,7 +5,7 @@ import { runichApi } from '@R/runich-api/runich-api';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { ERROR_COMPONENT_COPY } from '@S/error-component/const';
 import { BASE_URL } from '@T/utils/handlers';
-import { mockStore } from '@T/utils/mock-store';
+import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { MODERATION_DASHBOARD_COPY } from '../profile/moderation/const';
@@ -137,6 +137,55 @@ describe('AdminDashboard', () => {
     expect(screen.getByText(ADMIN_ACCESS_COPY[LANGUAGES.russian].roles.superuser)).toBeOnTheScreen();
     await user.press(screen.getByTestId('admin-access-cancel'));
 
+    await user.press(screen.getByTestId('admin-section-moderation'));
+    expect(await screen.findByText(MODERATION_DASHBOARD_COPY[LANGUAGES.russian].emptyReports)).toBeOnTheScreen();
+  });
+});
+
+describe('AdminDashboard feedback access', () => {
+  beforeEach(() => {
+    mockStore.dispatch(runichApi.util.resetApiState());
+    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
+    mockStore.dispatch(setMockUserId('admin-1'));
+    mockRouteParams.current = {};
+    mockReplace.mockClear();
+  });
+
+  it('shows the support queue to an administrator with feedback permission', async () => {
+    setAccess({ roles: ['moderator'], permissions: ['feedback.manage'], isSuperuser: false });
+    server.use(http.get(BASE_URL + '/admin/feedback', () => HttpResponse.json([])));
+
+    await renderWithProviders(<AdminDashboard />);
+
+    expect(await screen.findByTestId('admin-feedback-status-open')).toBeOnTheScreen();
+  });
+});
+
+describe('AdminDashboard feedback section selection', () => {
+  beforeEach(() => {
+    mockStore.dispatch(runichApi.util.resetApiState());
+    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
+    mockRouteParams.current = {};
+    mockReplace.mockClear();
+  });
+
+  it('switches between moderation and feedback for an administrator with both permissions', async () => {
+    const user = userEvent.setup();
+    setAccess({
+      roles: ['moderator'],
+      permissions: ['moderation.manage', 'feedback.manage'],
+      isSuperuser: false,
+    });
+    server.use(
+      http.get(BASE_URL + '/admin/feedback', () => HttpResponse.json([])),
+      http.get(BASE_URL + '/moderation/reports', () => HttpResponse.json([])),
+      http.get(BASE_URL + '/moderation/appeals', () => HttpResponse.json([])),
+    );
+
+    await renderWithProviders(<AdminDashboard />);
+    expect(await screen.findByTestId('admin-section-moderation')).toBeOnTheScreen();
+    await user.press(screen.getByTestId('admin-section-feedback'));
+    expect(await screen.findByTestId('admin-feedback-status-open')).toBeOnTheScreen();
     await user.press(screen.getByTestId('admin-section-moderation'));
     expect(await screen.findByText(MODERATION_DASHBOARD_COPY[LANGUAGES.russian].emptyReports)).toBeOnTheScreen();
   });
