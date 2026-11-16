@@ -102,13 +102,21 @@ export default function AdminDashboard() {
     );
   }
 
-  if (canModerate) return <ModerationDashboard />;
-  if (canManageFeedback) return <AdminFeedback key={feedbackId ?? 'feedback-queue'} />;
-  return <AdminAccessManagement isSuperuser={access.isSuperuser} />;
+  return (
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      {canModerate ? (
+        <ModerationDashboard />
+      ) : canManageFeedback ? (
+        <AdminFeedback key={feedbackId ?? 'feedback-queue'} />
+      ) : (
+        <AdminAccessManagement isSuperuser={access.isSuperuser} />
+      )}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, gap: 12, padding: 12, paddingBottom: 40 },
+  container: { alignSelf: 'center', flex: 1, gap: 12, maxWidth: 1280, padding: 12, paddingBottom: 40, width: '100%' },
   loading: { padding: 24 },
   message: { alignSelf: 'center', padding: 24 },
 });
