@@ -123,7 +123,6 @@ export default function AdminFeedback() {
                           </Text>
                         ) : null}
                         <Text variant="bodyLarge">{expandedRequest.text}</Text>
-                        <Text variant="bodyMedium">{expandedRequest.email}</Text>
                         <Text variant="titleSmall">{copy.device}</Text>
                         <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
                           {expandedRequest.deviceInfo}

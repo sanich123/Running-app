@@ -102,11 +102,11 @@ export default function AdminDashboard() {
     );
   }
 
+  if (canModerate) return <ModerationDashboard />;
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      {canModerate ? (
-        <ModerationDashboard />
-      ) : canManageFeedback ? (
+      {canManageFeedback ? (
         <AdminFeedback key={feedbackId ?? 'feedback-queue'} />
       ) : (
         <AdminAccessManagement isSuperuser={access.isSuperuser} />
