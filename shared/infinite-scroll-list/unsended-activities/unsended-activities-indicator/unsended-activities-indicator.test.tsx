@@ -1,11 +1,13 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
+import { LANGUAGES } from '@const/enums';
 import {
   clearPendingRawRouteUploads,
   clearUnsyncedActivities,
   queuePendingRawRouteUpload,
   queueUnsyncedActivity,
 } from '@R/slices/activity/activity';
+import { changeLanguage } from '@R/slices/settings/settings';
 import { clearTrackingRecovery, startTrackingRecovery } from '@R/slices/tracking-recovery/tracking-recovery';
 import { MOCK_LOCATION } from '@T/mocks/mock-location';
 import { MOCK_UNSYNCED_ACTIVITY } from '@T/mocks/mock-unsynced-activity';
@@ -33,6 +35,23 @@ describe('unsended activities indicator', () => {
 
     expect(screen.queryByTestId('send-unsynced-activities')).not.toBeOnTheScreen();
     expect(screen.queryByTestId('delete-unsynced-activities')).not.toBeOnTheScreen();
+  });
+
+  it('uses singular English copy for one pending item', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
+    mockStore.dispatch(queueUnsyncedActivity(MOCK_UNSYNCED_ACTIVITY));
+    await renderWithProviders(<UnsendedActivitiesIndicator />);
+
+    expect(screen.getByText('1 saved activity or routes')).toBeOnTheScreen();
+  });
+
+  it('uses plural English copy for multiple pending items', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.english));
+    mockStore.dispatch(queueUnsyncedActivity(MOCK_UNSYNCED_ACTIVITY));
+    mockStore.dispatch(queueUnsyncedActivity({ ...MOCK_UNSYNCED_ACTIVITY, id: 'another-unsynced-activity' }));
+    await renderWithProviders(<UnsendedActivitiesIndicator />);
+
+    expect(screen.getByText('2 saved activities or routes')).toBeOnTheScreen();
   });
 
   it('handles activity state from an older persisted version without route queues', async () => {

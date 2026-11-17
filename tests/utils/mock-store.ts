@@ -3,6 +3,7 @@ import activity from '@R/slices/activity/activity';
 import activitySettings from '@R/slices/activity-settings/activity-settings';
 import auth, { setAuthSession } from '@R/slices/auth/auth';
 import comment from '@R/slices/comment/comment';
+import healthSync from '@R/slices/health-sync/health-sync';
 import loading from '@R/slices/loading/loading';
 import location from '@R/slices/location/location';
 import logining from '@R/slices/logining/logining';
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
   subscription,
   location,
   activity,
+  healthSync,
   trackingRecovery,
   mainFeed,
   migration,
