@@ -30,7 +30,7 @@ export default function CommentsListModal({ commentsModalRef, allowNewComments =
   }, [dispatch]);
   const renderFooter = useCallback(
     ({ animatedFooterPosition }: BottomSheetFooterProps) => (
-      <BottomSheetFooter animatedFooterPosition={animatedFooterPosition} bottomInset={bottomInset}>
+      <BottomSheetFooter animatedFooterPosition={animatedFooterPosition} bottomInset={Math.max(bottomInset - 10, 0)}>
         <KeyboardStickyView
           testID="comments-composer-keyboard-sticky"
           enabled={Platform.OS !== 'ios'}
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
   },
   composer: {
     borderTopWidth: 1,
-    paddingBottom: 8,
+    paddingBottom: 0,
   },
   stickyComposer: {
     width: '100%',
