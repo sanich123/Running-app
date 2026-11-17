@@ -24,7 +24,7 @@ export default {
     assetBundlePatterns: ['**/*'],
     ios: {
       usesAppleSignIn: true,
-      icon: './assets/images/runich-app-icon.icon',
+      icon: './assets/images/icon.png',
       associatedDomains: ['applinks:runich-app.ru', 'applinks:stage-web.runich-app.ru'],
       entitlements: {
         'com.apple.developer.networking.wifi-info': true,
@@ -218,14 +218,10 @@ export default {
       [
         'expo-splash-screen',
         {
-          backgroundColor: '#F8F6F2',
+          backgroundColor: '#1C1C1E',
           image: './assets/images/adaptive-icon.png',
           resizeMode: 'contain',
           imageWidth: 200,
-          dark: {
-            backgroundColor: '#1C1C1E',
-            image: './assets/images/adaptive-icon.png',
-          },
         },
       ],
     ],

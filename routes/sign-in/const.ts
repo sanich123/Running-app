@@ -85,11 +85,6 @@ export const SOCIAL_AUTH_TEXT = {
   },
 } as const;
 
-export const SIGN_IN_SUPPORT_TEXT = {
-  [LANGUAGES.english]: 'Contact support',
-  [LANGUAGES.russian]: 'Написать в поддержку',
-} as const;
-
 const AUTH_BASE_URL = process.env.EXPO_PUBLIC_BASE_URL ?? 'http://localhost:3000';
 
 export const YANDEX_AUTH_URL = `${AUTH_BASE_URL}/auth/yandex`;

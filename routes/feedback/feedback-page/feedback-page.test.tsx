@@ -64,7 +64,8 @@ describe('feedback attachments', () => {
       allowsMultipleSelection: true,
       selectionLimit: 10,
     });
-    expect(screen.getByText(FEEDBACK_TEXT[LANGUAGES.english].attachmentLimit)).toBeOnTheScreen();
+    expect(screen.queryByText(/You can add up to 10 photos or videos/)).not.toBeOnTheScreen();
+    expect(screen.queryByText(/Device and app version are included/)).not.toBeOnTheScreen();
     await waitFor(() => expect(screen.getByTestId('feedback-attachment-preview-1')).toBeOnTheScreen());
     expect(screen.getByTestId('feedback-attachment-preview-0').props.source).toEqual({
       uri: firstAttachment.url,

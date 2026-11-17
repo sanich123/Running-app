@@ -199,15 +199,6 @@ export default function FeedbackPage() {
         </Card>
       ) : (
         <>
-          <Card mode="contained" style={{ backgroundColor: colors.surface }}>
-            <Card.Content style={styles.cardContent}>
-              <Text variant="titleLarge">{copy.title}</Text>
-              <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant }}>
-                {copy.intro}
-              </Text>
-            </Card.Content>
-          </Card>
-
           {copy.faq.map(({ question, answer }, index) => (
             <Card key={question} mode="contained" style={{ backgroundColor: colors.surface }}>
               <List.Accordion id={`feedback-faq-${index}`} title={question} titleNumberOfLines={3}>
@@ -297,9 +288,6 @@ export default function FeedbackPage() {
                       onPress={() => void choosePhoto()}>
                       {attachments.length ? copy.photoUploaded : copy.addPhoto}
                     </Button>
-                    <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
-                      {copy.attachmentLimit}
-                    </Text>
                     <View style={styles.attachmentPreviews}>
                       {attachments.map((attachment, index) => (
                         <View key={`${attachment.url}-${index}`} style={styles.attachmentPreviewContainer}>
@@ -359,9 +347,6 @@ export default function FeedbackPage() {
                   onPress={() => void handleSubmit(submit)()}>
                   {copy.send}
                 </Button>
-                <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
-                  {copy.privacyNotice}
-                </Text>
               </Card.Content>
             </Card>
           )}
@@ -379,8 +364,8 @@ const styles = StyleSheet.create({
     padding: 12,
     gap: 12,
   },
-  cardContent: { gap: 12 },
-  faqAnswer: { paddingBottom: 12, paddingHorizontal: 16 },
+  cardContent: { gap: 12, paddingHorizontal: 16 },
+  faqAnswer: { paddingHorizontal: 16, paddingVertical: 12 },
   topics: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   textInput: { minHeight: 140 },
   attachmentPreviews: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
