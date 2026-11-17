@@ -13,8 +13,6 @@ export const FEEDBACK_TOPICS = [
 
 export const FEEDBACK_TEXT = {
   [LANGUAGES.english]: {
-    title: 'Feedback',
-    intro: 'Find a quick answer or send a message to Runich support.',
     faq: [
       {
         question: 'Can I contact support without an account?',
@@ -54,7 +52,6 @@ export const FEEDBACK_TEXT = {
     email: 'Reply email',
     emailHint: 'We will use this address to reply to your request.',
     emailRequired: 'Enter your email address to contact support.',
-    privacyNotice: 'Device and app version are included to help investigate your request.',
     acceptedTitle: 'We received your request',
     acceptedEmail: 'A confirmation was sent to',
     acceptedEmailFailed: 'Your request is saved, but we could not send the confirmation email.',
@@ -68,8 +65,6 @@ export const FEEDBACK_TEXT = {
     bugPlaceholder: 'Describe as precisely as possible how to reproduce the bug',
     featurePlaceholder: 'Describe the feature you would like',
     photoUploaded: 'Files uploaded',
-    attachmentLimit:
-      'You can add up to 10 photos or videos under 100 MB total. Uploading 10 files may take a while — check your connection speed.',
     addPhoto: 'Add a photo or video',
     removeAttachment: 'Remove attachment',
     send: 'Send',
@@ -78,8 +73,6 @@ export const FEEDBACK_TEXT = {
     submitError: 'Could not send feedback',
   },
   [LANGUAGES.russian]: {
-    title: 'Обратная связь',
-    intro: 'Найди быстрый ответ или напиши в поддержку Runich.',
     faq: [
       {
         question: 'Можно обратиться без аккаунта?',
@@ -119,7 +112,6 @@ export const FEEDBACK_TEXT = {
     email: 'Email для ответа',
     emailHint: 'Используем адрес только для ответа на обращение.',
     emailRequired: 'Укажи email, чтобы мы могли ответить.',
-    privacyNotice: 'Для разбора обращения автоматически приложим модель устройства и версию приложения.',
     acceptedTitle: 'Мы получили обращение',
     acceptedEmail: 'Подтверждение отправлено на адрес',
     acceptedEmailFailed: 'Обращение сохранено, но письмо-подтверждение отправить не удалось.',
@@ -133,8 +125,6 @@ export const FEEDBACK_TEXT = {
     bugPlaceholder: 'Максимально точно опишите, при каком сценарии можно воспроизвести баг',
     featurePlaceholder: 'Опишите желаемую функцию',
     photoUploaded: 'Файлы загружены',
-    attachmentLimit:
-      'Можно добавить до 10 фото или видео общим размером менее 100 МБ. Загрузка 10 файлов может занять время — обрати внимание на скорость соединения.',
     addPhoto: 'Добавить фото или видео',
     removeAttachment: 'Удалить вложение',
     send: 'Послать',

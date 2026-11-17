@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import Head from 'expo-router/head';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Button, Surface, Text } from 'react-native-paper';
+import { Surface, Text } from 'react-native-paper';
 import { useForm } from 'react-hook-form';
 import { ROUTES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
@@ -13,7 +13,7 @@ import { getEmailValidation, getPasswordValidation, getRegistrationEmailValidati
 import { SignInPageStates } from '@U/validate-email-password';
 import AuthDivider from './auth-divider/auth-divider';
 import AuthStepIntro from './auth-step-intro/auth-step-intro';
-import { SIGN_IN_ACCESS_DENIED_COPY, SIGN_IN_FIELD_LABELS, SIGN_IN_SEO, SIGN_IN_SUPPORT_TEXT } from './const';
+import { SIGN_IN_ACCESS_DENIED_COPY, SIGN_IN_FIELD_LABELS, SIGN_IN_SEO } from './const';
 import EmailRegistrationRestriction from './email-registration-restriction/email-registration-restriction';
 import LegalConsents from './legal-consents/legal-consents';
 import LoginRegisterBtn from './login-register-btn/login-register-btn';
@@ -125,11 +125,6 @@ export default function SignIn() {
             }
             showEmailLinkNavigation={false}
           />
-          <View style={styles.footer}>
-            <Button mode="text" compact onPress={() => push(`/${ROUTES.feedback}`)}>
-              {SIGN_IN_SUPPORT_TEXT[language]}
-            </Button>
-          </View>
         </Surface>
       </CrossPlatformLayout>
     </>
@@ -160,10 +155,6 @@ const styles = StyleSheet.create({
     padding: 12,
     width: '94%',
     maxWidth: 351,
-  },
-  footer: {
-    alignItems: 'center',
-    marginTop: 8,
   },
   accessDenied: { color: '#B3261E', paddingBottom: 12 },
 });
