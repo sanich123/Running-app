@@ -8098,14 +8098,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gifted-charts-core@npm:0.1.83":
-  version: 0.1.83
-  resolution: "gifted-charts-core@npm:0.1.83"
+"gifted-charts-core@npm:0.1.85":
+  version: 0.1.85
+  resolution: "gifted-charts-core@npm:0.1.85"
   peerDependencies:
     react: "*"
     react-native: "*"
     react-native-svg: "*"
-  checksum: 10c0/083cb6e3774f4b13e2eb6d32ecda47630a2779015ae70b5939f2ac6a0d440b7876c3e6a1da25f801b367193ada1943c6e51edd2e52835982ede641aa85899913
+  checksum: 10c0/7df648df4f9099378d1743a4e9970d4f374cbcd6d4f16d6c199658bb5f6d7734a8c89b339fbf3d1e7b3120fc90e2805a56cb80d7e2b0ee0b0da8ac8a232f88b4
   languageName: node
   linkType: hard
 
@@ -11902,11 +11902,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-gifted-charts@npm:^1.4.81":
-  version: 1.4.81
-  resolution: "react-native-gifted-charts@npm:1.4.81"
+"react-native-gifted-charts@npm:^1.4.83":
+  version: 1.4.83
+  resolution: "react-native-gifted-charts@npm:1.4.83"
   dependencies:
-    gifted-charts-core: "npm:0.1.83"
+    gifted-charts-core: "npm:0.1.85"
   peerDependencies:
     expo-linear-gradient: "*"
     react: "*"
@@ -11918,7 +11918,7 @@ __metadata:
       optional: true
     react-native-linear-gradient:
       optional: true
-  checksum: 10c0/db10e71bb77ed8da59410b9a3139f97fdbaf8fa394202ae6c0f61aaebe89d9d73b3a3e807510675be5fd428e344af985a42f2af2e4f3404e5549a98683e0dfa1
+  checksum: 10c0/7591c7e89c3a8de6d99b1526ed16f03df0f9122d5b2414b4e51342863529ddfd4217fe476e56eb776f662d658b745968581c628b279d76fa87f1cd4ad588f3e9
   languageName: node
   linkType: hard
 
@@ -12123,10 +12123,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-uuid@npm:^2.0.4":
-  version: 2.0.4
-  resolution: "react-native-uuid@npm:2.0.4"
-  checksum: 10c0/56bcf29fa59a3e4c6374e612d9adf4e2a5e7f1000e632451f0e4bf0fbeb00664eb8657a5af7e2adb64c435e96f42c535cc20529cffcc48a03581b41ba1761d2a
+"react-native-uuid@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "react-native-uuid@npm:3.0.0"
+  peerDependencies:
+    react-native: ">=0.74.0"
+  peerDependenciesMeta:
+    react-native:
+      optional: true
+  checksum: 10c0/ec910e5c80da370a7fd8efbeccf4b183538f72f954af8ab8520b77af471a12b0369c93e51099cfd3b404314a3f0e3a404e68a2048e28d0bc0db1c0840b2a645e
   languageName: node
   linkType: hard
 
@@ -12794,7 +12799,7 @@ __metadata:
     react-native-battery-optimization-check: "npm:^1.0.8"
     react-native-compressor: "npm:^2.0.6"
     react-native-gesture-handler: "npm:~3.3.0"
-    react-native-gifted-charts: "npm:^1.4.81"
+    react-native-gifted-charts: "npm:^1.4.83"
     react-native-health-connect: "npm:4.1.3"
     react-native-keyboard-controller: "npm:1.22.7"
     react-native-mmkv: "npm:4.3.2"
@@ -12809,7 +12814,7 @@ __metadata:
     react-native-svg: "npm:15.16.0"
     react-native-toast-message: "npm:2.5.2"
     react-native-url-polyfill: "npm:^4.0.0"
-    react-native-uuid: "npm:^2.0.4"
+    react-native-uuid: "npm:^3.0.0"
     react-native-view-recorder: "npm:0.4.1"
     react-native-view-shot: "npm:6.1.1"
     react-native-web: "npm:^0.21.4"
