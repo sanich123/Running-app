@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import UserProfileAvatar from '@S/avatar/user-profile-avatar/user-profile-avatar';
 import { getIconByTypeOfSport } from '@U/icon-utils';
 import { formatDate, getHoursMinutes } from '@U/time-formatter';
-import { USER_INFO_FALLBACK_NAME, USER_INFO_PROVENANCE_COPY, type UserInfoProps } from './const';
+import { USER_INFO_FALLBACK_NAME, type UserInfoProps } from './const';
 import type { SPORTS_BTNS_VALUES } from '@const/sports';
 
 export default function UserInfo({
@@ -18,10 +18,7 @@ export default function UserInfo({
   userId,
   size,
   commentsModalRef,
-  source,
   sourceAppName,
-  recordingDeviceManufacturer,
-  recordingDeviceModel,
 }: UserInfoProps) {
   const { colors } = useTheme();
   const { push } = useRouter();
@@ -32,26 +29,7 @@ export default function UserInfo({
     .filter((part): part is string => Boolean(part))
     .join(' ');
   const displayNameOrFallback = displayName || USER_INFO_FALLBACK_NAME[language];
-  const provenanceCopy = USER_INFO_PROVENANCE_COPY[language];
   const appName = sourceAppName?.trim();
-  const manufacturer = recordingDeviceManufacturer?.trim();
-  const model = recordingDeviceModel?.trim();
-  const deviceName =
-    model && manufacturer && model.toLowerCase().startsWith(manufacturer.toLowerCase())
-      ? model
-      : [manufacturer, model].filter((part): part is string => Boolean(part)).join(' ');
-  const importSource =
-    source === 'healthkit'
-      ? provenanceCopy.appleHealth
-      : source === 'health-connect'
-        ? provenanceCopy.healthConnect
-        : null;
-  const provenance = [
-    appName ? `${provenanceCopy.app}: ${appName}` : null,
-    importSource ? `${provenanceCopy.import}: ${importSource}` : null,
-  ]
-    .filter((value): value is string => Boolean(value))
-    .join(' · ');
 
   return (
     <TouchableRipple
@@ -98,25 +76,16 @@ export default function UserInfo({
               style={[styles.metaText, { color: colors.onSurfaceVariant }]}>
               {`${formatDate(date, language)} ${getHoursMinutes(date, language)}`}
             </Text>
-            {deviceName ? (
+            {appName ? (
               <Text
-                variant="bodySmall"
+                variant="labelSmall"
                 numberOfLines={1}
                 ellipsizeMode="tail"
-                style={[styles.deviceName, { color: colors.onSurfaceVariant }]}>
-                · {deviceName}
+                style={[styles.appNameText, { color: colors.onSurfaceVariant }]}>
+                · {appName}
               </Text>
             ) : null}
           </View>
-          {provenance ? (
-            <Text
-              variant="labelSmall"
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              style={{ color: colors.onSurfaceVariant }}>
-              {provenance}
-            </Text>
-          ) : null}
         </View>
       </View>
     </TouchableRipple>
@@ -147,5 +116,5 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: 0,
   },
-  deviceName: { flexShrink: 0, maxWidth: '50%' },
+  appNameText: { flexShrink: 0, maxWidth: '50%' },
 });
