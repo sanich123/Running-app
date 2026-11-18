@@ -12,7 +12,7 @@ export interface ReadDiagnostics {
   errorCode?: string;
 }
 
-export type UploadSkipReason = 'read-failed' | 'no-user' | 'no-workouts' | 'manual-selection';
+export type UploadSkipReason = 'read-failed' | 'no-user' | 'no-workouts' | 'already-synced' | 'manual-selection';
 
 export type WorkoutUploadOutcome = 'not-sent' | 'sending' | 'imported' | 'skipped' | 'error' | 'cancelled';
 

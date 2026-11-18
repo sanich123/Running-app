@@ -71,6 +71,12 @@ describe('useWorkoutImport', () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
     importedWorkoutBatches = [];
     server.use(
+      http.post(`${BASE_URL}/activity/:userId/watch-import/check`, async ({ request }) => {
+        const { workouts } = (await request.json()) as {
+          workouts: Pick<WatchWorkout, 'source' | 'sourceActivityId'>[];
+        };
+        return HttpResponse.json({ workoutsToSync: workouts });
+      }),
       http.post(`${BASE_URL}/activity/:userId/watch-import`, async ({ request }) => {
         importedWorkoutBatches.push({ url: new URL(request.url).pathname, body: await request.json() });
         return HttpResponse.json({
@@ -354,5 +360,49 @@ describe('useWorkoutImport', () => {
     expect(result.current.uploadDiagnostics?.skipReason).toBe('read-failed');
     expect(result.current.workouts).toEqual([]);
     expect(errorToast).toHaveBeenCalled();
+  });
+
+  it('auto-syncs only workouts returned as sync candidates', async () => {
+    const newWorkout: WatchWorkout = { ...workout, sourceActivityId: 'new-health-record' };
+    mockReadWorkouts.mockResolvedValue([workout, newWorkout]);
+    mockGetItemAsync.mockImplementation((key: string) =>
+      Promise.resolve(key === getConnectionKey('user-1') ? 'true' : null),
+    );
+    server.use(
+      http.post(`${BASE_URL}/activity/:userId/watch-import/check`, () =>
+        HttpResponse.json({
+          workoutsToSync: [{ source: newWorkout.source, sourceActivityId: newWorkout.sourceActivityId }],
+        }),
+      ),
+    );
+
+    const { result } = await renderHook(() => useWorkoutImport({ autoSync: true }), { wrapper: Wrapper });
+
+    await waitFor(() => expect(importedWorkoutBatches).toHaveLength(1));
+
+    expect(importedWorkoutBatches[0]?.body).toEqual({
+      workouts: [expect.objectContaining({ sourceActivityId: 'new-health-record' })],
+    });
+    expect(result.current.uploadDiagnostics).toMatchObject({ outcome: 'success', workoutCount: 1 });
+  });
+
+  it('uploads read workouts when the sync-candidate check is unavailable', async () => {
+    mockReadWorkouts.mockResolvedValue([workout]);
+    mockGetItemAsync.mockImplementation((key: string) =>
+      Promise.resolve(key === getConnectionKey('user-1') ? 'true' : null),
+    );
+    server.use(
+      http.post(`${BASE_URL}/activity/:userId/watch-import/check`, () => new HttpResponse(null, { status: 500 })),
+    );
+
+    const { result } = await renderHook(() => useWorkoutImport({ autoSync: true }), { wrapper: Wrapper });
+
+    await waitFor(() => expect(importedWorkoutBatches).toHaveLength(1));
+
+    expect(importedWorkoutBatches[0]?.body).toEqual({
+      workouts: [expect.objectContaining({ sourceActivityId: workout.sourceActivityId })],
+    });
+    expect(result.current.uploadDiagnostics).toMatchObject({ outcome: 'success', workoutCount: 1 });
+    expect(result.current.error).toBeNull();
   });
 });
