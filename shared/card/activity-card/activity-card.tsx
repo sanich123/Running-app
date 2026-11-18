@@ -67,10 +67,7 @@ export default function ActivityCard({ activity, isFullView = false, isShowDescr
           date={date}
           userId={userId}
           size={UserInfoSize.large}
-          source={activity.source}
           sourceAppName={activity.sourceAppName}
-          recordingDeviceManufacturer={activity.recordingDeviceManufacturer}
-          recordingDeviceModel={activity.recordingDeviceModel}
         />
         {displayedMapPhotoUrl || Boolean(media?.length) ? <MediaList /> : null}
         {isTextUnderModeration || isTextHiddenByModeration ? (
