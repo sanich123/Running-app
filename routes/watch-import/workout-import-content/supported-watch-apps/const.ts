@@ -19,6 +19,7 @@ export const SUPPORTED_WATCH_APPS: Record<'ios' | 'android', { direct: AppSuppor
       { name: 'Google Health · Fitbit', workout: 'yes', route: 'yes', heartRate: 'yes' },
       { name: 'Zepp · Amazfit', workout: 'yes', route: 'yes', heartRate: 'yes' },
       { name: 'Garmin Connect', workout: 'yes', route: 'no', heartRate: 'partial' },
+      { name: 'Suunto', workout: 'yes', route: 'no', heartRate: 'no' },
       { name: 'Polar Flow', workout: 'yes', route: 'unknown', heartRate: 'yes' },
       { name: 'COROS', workout: 'unknown', route: 'unknown', heartRate: 'unknown' },
       { name: 'HUAWEI Health', workout: 'unknown', route: 'unknown', heartRate: 'unknown' },

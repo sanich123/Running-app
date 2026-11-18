@@ -24,3 +24,24 @@ export const UNSYNCED_ACTIVITIES_TEXT = {
     remove: 'Удалить несинхронизированные активности',
   },
 } as const;
+
+export const HEALTH_SYNC_TEXT = {
+  [LANGUAGES.english]: {
+    title: (provider: string) => provider,
+    healthKit: 'Apple Health',
+    healthConnect: 'Health Connect',
+    reading: (foundCount: number | null) =>
+      foundCount === null ? 'Checking workouts' : `Found workouts: ${foundCount}`,
+    sending: (foundCount: number, processedCount: number) => `Sending to Runich · ${processedCount} of ${foundCount}`,
+    cancel: 'Cancel sync',
+  },
+  [LANGUAGES.russian]: {
+    title: (provider: string) => provider,
+    healthKit: 'Apple Health',
+    healthConnect: 'Health Connect',
+    reading: (foundCount: number | null) =>
+      foundCount === null ? 'Проверяем тренировки' : `Найдено тренировок: ${foundCount}`,
+    sending: (foundCount: number, processedCount: number) => `Отправляем в Runich · ${processedCount} из ${foundCount}`,
+    cancel: 'Отменить синхронизацию',
+  },
+} as const;

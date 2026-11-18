@@ -15,6 +15,7 @@ import { MAX_SAVED_ROUTE_LOCATIONS } from '@U/location/const';
 import { getReducedLocations } from '@U/location/location-geometry';
 import { deactivateLocationJournal, readLocationJournal, removeLocationJournal } from '@U/location/location-journal';
 import { UNSYNCED_ACTIVITIES_TEXT } from '../const';
+import HealthSyncIndicator from './health-sync-indicator';
 
 export default function UnsendedActivitiesIndicator() {
   const dispatch = useAppDispatch();
@@ -104,47 +105,53 @@ export default function UnsendedActivitiesIndicator() {
     dispatch(clearPendingRawRouteUploads());
   }
 
-  return pendingCount > 0 ? (
-    <View style={[styles.container, { backgroundColor: colors.primaryContainer, borderColor: colors.outlineVariant }]}>
-      <View style={styles.content}>
-        <View style={[styles.iconContainer, { backgroundColor: colors.primary }]}>
-          <Icon source="cloud-upload-outline" size={24} color={colors.onPrimary} />
+  return (
+    <>
+      <HealthSyncIndicator />
+      {pendingCount > 0 ? (
+        <View
+          style={[styles.container, { backgroundColor: colors.primaryContainer, borderColor: colors.outlineVariant }]}>
+          <View style={styles.content}>
+            <View style={[styles.iconContainer, { backgroundColor: colors.primary }]}>
+              <Icon source="cloud-upload-outline" size={24} color={colors.onPrimary} />
+            </View>
+            <View style={styles.copy}>
+              <Text variant="titleMedium" style={{ color: colors.onPrimaryContainer }}>
+                {copy.title(pendingCount)}
+              </Text>
+              <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
+                {isLoading || isRouteUploadLoading ? copy.sending : copy.pending}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.actions}>
+            <IconButton
+              icon="sync"
+              testID="send-unsynced-activities"
+              mode="contained-tonal"
+              iconColor={colors.primary}
+              containerColor={colors.surface}
+              loading={isLoading || isRouteUploadLoading}
+              disabled={isLoading || isRouteUploadLoading}
+              onPress={sendPending}
+              accessibilityLabel={copy.send}
+            />
+            <IconButton
+              icon="delete-outline"
+              testID="delete-unsynced-activities"
+              mode="contained-tonal"
+              iconColor={colors.error}
+              containerColor={colors.errorContainer}
+              loading={isLoading || isRouteUploadLoading}
+              disabled={isLoading || isRouteUploadLoading}
+              onPress={removePendingItems}
+              accessibilityLabel={copy.remove}
+            />
+          </View>
         </View>
-        <View style={styles.copy}>
-          <Text variant="titleMedium" style={{ color: colors.onPrimaryContainer }}>
-            {copy.title(pendingCount)}
-          </Text>
-          <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
-            {isLoading || isRouteUploadLoading ? copy.sending : copy.pending}
-          </Text>
-        </View>
-      </View>
-      <View style={styles.actions}>
-        <IconButton
-          icon="sync"
-          testID="send-unsynced-activities"
-          mode="contained-tonal"
-          iconColor={colors.primary}
-          containerColor={colors.surface}
-          loading={isLoading || isRouteUploadLoading}
-          disabled={isLoading || isRouteUploadLoading}
-          onPress={sendPending}
-          accessibilityLabel={copy.send}
-        />
-        <IconButton
-          icon="delete-outline"
-          testID="delete-unsynced-activities"
-          mode="contained-tonal"
-          iconColor={colors.error}
-          containerColor={colors.errorContainer}
-          loading={isLoading || isRouteUploadLoading}
-          disabled={isLoading || isRouteUploadLoading}
-          onPress={removePendingItems}
-          accessibilityLabel={copy.remove}
-        />
-      </View>
-    </View>
-  ) : null;
+      ) : null}
+    </>
+  );
 }
 
 const styles = StyleSheet.create({

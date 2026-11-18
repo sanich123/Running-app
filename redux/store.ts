@@ -9,6 +9,7 @@ import activitySettings from './slices/activity-settings/activity-settings';
 import auth from './slices/auth/auth';
 import { configureAuthPersistence, readPersistedAuth } from './slices/auth/persistence';
 import comment from './slices/comment/comment';
+import healthSync from './slices/health-sync/health-sync';
 import loading from './slices/loading/loading';
 import location from './slices/location/location';
 import logining from './slices/logining/logining';
@@ -43,6 +44,7 @@ const appReducer = combineReducers({
   subscription,
   location,
   activity,
+  healthSync,
   trackingRecovery,
   mainFeed,
   migration,

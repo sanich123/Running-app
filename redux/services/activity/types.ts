@@ -43,6 +43,9 @@ export interface ActivityToSend {
 export interface WatchWorkoutToSend extends FinishedActivity {
   source: 'health-connect' | 'healthkit';
   sourceActivityId: string;
+  sourceAppName?: string;
+  recordingDeviceManufacturer?: string;
+  recordingDeviceModel?: string;
   sport: SPORTS_BTNS_VALUES | string;
   title?: string;
   heartRateSamples?: ActivityHeartRateSample[];

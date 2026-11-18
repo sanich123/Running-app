@@ -1,4 +1,5 @@
 import { screen, userEvent } from '@testing-library/react-native';
+import { StyleSheet } from 'react-native';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { HOME_FEED, HOME_FEED_COPY } from '../const';
 import HomeFeedSwitcher from './home-feed-switcher';
@@ -12,6 +13,9 @@ describe('HomeFeedSwitcher', () => {
 
     expect(screen.getByRole('tab', { name: labels.followers, selected: true })).toBeOnTheScreen();
     expect(screen.getByRole('tab', { name: labels.favorites, selected: false })).toBeOnTheScreen();
+    expect(StyleSheet.flatten(screen.getByTestId('home-feed-switcher-wrapper').props.style)).toEqual(
+      expect.objectContaining({ marginBottom: 4 }),
+    );
   });
 
   it('changes the selected feed when a tab is pressed', async () => {

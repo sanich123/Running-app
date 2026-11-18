@@ -6,7 +6,7 @@ import { MOCK_PROFILE } from '@T/mocks/mock-location';
 import { createMockBottomSheetModalRef } from '@T/utils/mock-ref';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { USER_INFO_FALLBACK_NAME, UserInfoSize } from './const';
+import { USER_INFO_FALLBACK_NAME, USER_INFO_PROVENANCE_COPY, UserInfoSize } from './const';
 import UserInfo from './user-info';
 
 const mockPush = jest.fn();
@@ -57,6 +57,50 @@ describe('UserInfo', () => {
     );
 
     expect(screen.getByText(USER_INFO_FALLBACK_NAME.russian)).toBeOnTheScreen();
+  });
+
+  it('shows available workout source details and places the watch model beside the date', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
+    await renderWithProviders(
+      <UserInfo
+        profile={MOCK_PROFILE}
+        date="2026-11-17T16:45:00.000Z"
+        userId="someUserId"
+        size={UserInfoSize.large}
+        source="healthkit"
+        sourceAppName="Suunto"
+        recordingDeviceManufacturer="Suunto"
+        recordingDeviceModel="Suunto 9 Peak"
+      />,
+    );
+
+    expect(screen.getByText(/Suunto 9 Peak/)).toBeOnTheScreen();
+    expect(
+      screen.getByText(
+        `${USER_INFO_PROVENANCE_COPY.russian.app}: Suunto · ${USER_INFO_PROVENANCE_COPY.russian.import}: ${USER_INFO_PROVENANCE_COPY.russian.appleHealth}`,
+      ),
+    ).toBeOnTheScreen();
+  });
+
+  it('shows Health Connect as the import channel and omits a missing watch model', async () => {
+    mockStore.dispatch(changeLanguage(LANGUAGES.russian));
+    await renderWithProviders(
+      <UserInfo
+        profile={MOCK_PROFILE}
+        date="2026-11-17T16:45:00.000Z"
+        userId="someUserId"
+        size={UserInfoSize.large}
+        source="health-connect"
+        sourceAppName="Health Sync"
+      />,
+    );
+
+    expect(
+      screen.getByText(
+        `${USER_INFO_PROVENANCE_COPY.russian.app}: Health Sync · ${USER_INFO_PROVENANCE_COPY.russian.import}: ${USER_INFO_PROVENANCE_COPY.russian.healthConnect}`,
+      ),
+    ).toBeOnTheScreen();
+    expect(screen.queryByText(/Suunto 9 Peak/)).toBeNull();
   });
 
   it('opens the user profile and closes an enclosing comments modal', async () => {

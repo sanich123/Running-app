@@ -16,6 +16,9 @@ describe('watch import mapping', () => {
       mapWatchWorkoutToActivity({
         source: 'health-connect',
         sourceActivityId: 'record-1',
+        sourceAppName: 'Suunto',
+        recordingDeviceManufacturer: 'Suunto',
+        recordingDeviceModel: 'Suunto 9 Peak',
         date: '2026-10-05T07:00:00.000Z',
         timeZone: 'Europe/Moscow',
         sport: 'run',
@@ -32,6 +35,9 @@ describe('watch import mapping', () => {
     ).toMatchObject({
       source: 'health-connect',
       sourceActivityId: 'record-1',
+      sourceAppName: 'Suunto',
+      recordingDeviceManufacturer: 'Suunto',
+      recordingDeviceModel: 'Suunto 9 Peak',
       sport: 'run',
       duration: 600_000,
       distance: 2_000,

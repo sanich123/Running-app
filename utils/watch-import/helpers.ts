@@ -66,6 +66,11 @@ export function mapWatchWorkoutToActivity(workout: WatchWorkout): WatchWorkoutTo
   return {
     source: workout.source,
     sourceActivityId: workout.sourceActivityId,
+    ...(workout.sourceAppName ? { sourceAppName: workout.sourceAppName } : {}),
+    ...(workout.recordingDeviceManufacturer
+      ? { recordingDeviceManufacturer: workout.recordingDeviceManufacturer }
+      : {}),
+    ...(workout.recordingDeviceModel ? { recordingDeviceModel: workout.recordingDeviceModel } : {}),
     date: workout.date,
     timeZone: workout.timeZone,
     title: workout.title,

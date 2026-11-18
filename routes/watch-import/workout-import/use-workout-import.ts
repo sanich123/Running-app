@@ -2,8 +2,14 @@ import { useCallback, useMemo, useState } from 'react';
 import { Linking, Platform } from 'react-native';
 import { LANGUAGES } from '@const/enums';
 import { useImportWatchWorkoutsMutation } from '@R/services/activity/activity';
-import { useAppSelector } from '@R/typed-hooks';
+import { clearHealthSyncStatus, setHealthSyncStatus } from '@R/slices/health-sync/health-sync';
+import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
+import {
+  beginHealthSyncOperation,
+  finishHealthSyncOperation,
+  type HealthSyncOperation,
+} from '@U/watch-import/health-sync-cancellation';
 import { getWatchImportDateRange } from '@U/watch-import/helpers';
 import {
   HealthConnectReadError,
@@ -18,6 +24,7 @@ import { useAutoSyncPreference } from './use-auto-sync-preference';
 import { useHiddenWorkouts } from './use-hidden-workouts';
 import { useWorkoutImportConnection } from './use-workout-import-connection';
 import type { ReadDiagnostics, UploadDiagnostics, UploadSkipReason } from './types';
+import type { WorkoutUploadOptions } from './upload-workout-batches';
 
 interface UseWorkoutImportOptions {
   autoSync?: boolean;
@@ -25,6 +32,7 @@ interface UseWorkoutImportOptions {
 }
 
 export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkoutImportOptions = {}) {
+  const dispatch = useAppDispatch();
   const { language } = useAppSelector(({ settings }) => settings);
   const { userId } = useAppSelector(({ auth }) => auth);
   const isRussian = language === LANGUAGES.russian;
@@ -77,99 +85,161 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
     });
   }, []);
 
-  const readWorkouts = useCallback(async (): Promise<WatchWorkout[] | null> => {
-    setIsReading(true);
-    setError(null);
-    const { startDate, endDate } = getWatchImportDateRange();
-    const readAt = new Date().toISOString();
-    setReadDiagnostics({ at: readAt, startDate, endDate, outcome: 'reading', workoutCount: 0, stage: 'availability' });
-    try {
-      const result = await RunichHealth.readWorkouts(startDate, endDate, (progress: HealthConnectReadProgress) => {
-        setReadDiagnostics((current) =>
-          current?.at === readAt
-            ? {
-                ...current,
-                outcome: 'reading',
-                stage: progress.stage,
-                sessionCount: progress.sessionCount ?? current.sessionCount,
-                processedSessionCount: progress.processedSessionCount ?? current.processedSessionCount,
-                workoutCount: progress.processedSessionCount ?? current.workoutCount,
-              }
-            : current,
-        );
-      });
-      setWorkouts(result);
-      const availableWorkouts = result.filter((workout) => !hiddenWorkoutIdsRef.current.has(getWorkoutId(workout)));
-      setSelectedIds(new Set(availableWorkouts.map(getWorkoutId)));
+  const readWorkouts = useCallback(
+    async (healthSyncOperation?: HealthSyncOperation): Promise<WatchWorkout[] | null> => {
+      setIsReading(true);
+      setError(null);
+      const { startDate, endDate } = getWatchImportDateRange();
+      const readAt = new Date().toISOString();
       setReadDiagnostics({
         at: readAt,
         startDate,
         endDate,
-        outcome: 'success',
-        workoutCount: result.length,
-        stage: 'complete',
-        sessionCount: result.length,
-        processedSessionCount: result.length,
-      });
-      return availableWorkouts;
-    } catch (readError) {
-      setWorkouts([]);
-      setSelectedIds(new Set());
-      setReadDiagnostics({
-        at: readAt,
-        startDate,
-        endDate,
-        outcome: 'error',
+        outcome: 'reading',
         workoutCount: 0,
-        ...(readError instanceof HealthConnectReadError
-          ? { stage: readError.stage, errorCode: readError.errorCode }
-          : { errorCode: getDiagnosticErrorCode(readError) }),
+        stage: 'availability',
       });
-      setError(
-        Platform.OS === 'ios'
-          ? isRussian
-            ? 'Не удалось прочитать тренировки. Проверьте доступ Runich к тренировкам в Apple Health.'
-            : 'Could not read workouts. Check Runich workout access in Apple Health.'
-          : isRussian
-            ? 'Не удалось получить тренировки из хранилища здоровья.'
-            : 'Could not read workouts.',
-      );
-      errorToast('', readError);
-      return null;
-    } finally {
-      setIsReading(false);
-    }
-  }, [hiddenWorkoutIdsRef, isRussian]);
+      const markReadCancelled = () =>
+        setReadDiagnostics((current) => (current?.at === readAt ? { ...current, outcome: 'cancelled' } : current));
+      try {
+        const result = await RunichHealth.readWorkouts(startDate, endDate, (progress: HealthConnectReadProgress) => {
+          if (healthSyncOperation?.signal.aborted) return;
+          setReadDiagnostics((current) =>
+            current?.at === readAt
+              ? {
+                  ...current,
+                  outcome: 'reading',
+                  stage: progress.stage,
+                  sessionCount: progress.sessionCount ?? current.sessionCount,
+                  processedSessionCount: progress.processedSessionCount ?? current.processedSessionCount,
+                  workoutCount: progress.processedSessionCount ?? current.workoutCount,
+                }
+              : current,
+          );
+        });
+        if (healthSyncOperation?.signal.aborted) {
+          markReadCancelled();
+          return null;
+        }
+        setWorkouts(result);
+        const availableWorkouts = result.filter((workout) => !hiddenWorkoutIdsRef.current.has(getWorkoutId(workout)));
+        setSelectedIds(new Set(availableWorkouts.map(getWorkoutId)));
+        if (healthSyncOperation) {
+          dispatch(
+            setHealthSyncStatus({
+              id: healthSyncOperation.id,
+              source: Platform.OS === 'ios' ? 'healthkit' : 'health-connect',
+              phase: 'sending',
+              foundCount: availableWorkouts.length,
+              processedCount: 0,
+            }),
+          );
+        }
+        setReadDiagnostics({
+          at: readAt,
+          startDate,
+          endDate,
+          outcome: 'success',
+          workoutCount: result.length,
+          stage: 'complete',
+          sessionCount: result.length,
+          processedSessionCount: result.length,
+        });
+        return availableWorkouts;
+      } catch (readError) {
+        if (healthSyncOperation?.signal.aborted) {
+          markReadCancelled();
+          return null;
+        }
+        setWorkouts([]);
+        setSelectedIds(new Set());
+        setReadDiagnostics({
+          at: readAt,
+          startDate,
+          endDate,
+          outcome: 'error',
+          workoutCount: 0,
+          ...(readError instanceof HealthConnectReadError
+            ? { stage: readError.stage, errorCode: readError.errorCode }
+            : { errorCode: getDiagnosticErrorCode(readError) }),
+        });
+        setError(
+          Platform.OS === 'ios'
+            ? isRussian
+              ? 'Не удалось прочитать тренировки. Проверьте доступ Runich к тренировкам в Apple Health.'
+              : 'Could not read workouts. Check Runich workout access in Apple Health.'
+            : isRussian
+              ? 'Не удалось получить тренировки из хранилища здоровья.'
+              : 'Could not read workouts.',
+        );
+        errorToast('', readError);
+        return null;
+      } finally {
+        setIsReading(false);
+      }
+    },
+    [dispatch, hiddenWorkoutIdsRef, isRussian],
+  );
 
   const sendWorkoutsToRunich = useCallback(
-    (id: string, sourceWorkouts: WatchWorkout[]) =>
-      uploadWorkoutBatches(id, sourceWorkouts, importWorkouts, setUploadDiagnostics),
+    (id: string, sourceWorkouts: WatchWorkout[], options?: WorkoutUploadOptions) =>
+      uploadWorkoutBatches(id, sourceWorkouts, importWorkouts, setUploadDiagnostics, options),
     [importWorkouts],
   );
 
   const syncLatestWorkouts = useCallback(
     async (autoImport: boolean, autoImportAllowed = autoSyncEnabledRef.current) => {
-      const result = await readWorkouts();
-      if (result === null) {
-        markUploadSkipped('read-failed');
-        return;
+      const shouldShowHealthSync = autoImport && autoImportAllowed && Boolean(userId);
+      const healthSyncOperation = shouldShowHealthSync ? beginHealthSyncOperation() : null;
+      if (shouldShowHealthSync && !healthSyncOperation) return;
+      if (healthSyncOperation) {
+        setIsAutoSyncing(true);
+        dispatch(
+          setHealthSyncStatus({
+            id: healthSyncOperation.id,
+            source: Platform.OS === 'ios' ? 'healthkit' : 'health-connect',
+            phase: 'reading',
+            foundCount: null,
+            processedCount: 0,
+          }),
+        );
       }
-      if (!autoImport || !autoImportAllowed) {
-        markUploadSkipped('manual-selection', result);
-        return;
-      }
-      if (!userId) {
-        markUploadSkipped('no-user', result);
-        return;
-      }
-      if (result.length === 0) {
-        markUploadSkipped('no-workouts');
-        return;
-      }
-
-      setIsAutoSyncing(true);
       try {
-        const resultOfImport = await sendWorkoutsToRunich(userId, result);
+        const result = await readWorkouts(healthSyncOperation ?? undefined);
+        if (healthSyncOperation?.signal.aborted) return;
+        if (result === null) {
+          markUploadSkipped('read-failed');
+          return;
+        }
+        if (!autoImport || !autoImportAllowed) {
+          markUploadSkipped('manual-selection', result);
+          return;
+        }
+        if (!userId) {
+          markUploadSkipped('no-user', result);
+          return;
+        }
+        if (result.length === 0) {
+          markUploadSkipped('no-workouts');
+          return;
+        }
+
+        const uploadOptions: WorkoutUploadOptions | undefined = healthSyncOperation
+          ? {
+              signal: healthSyncOperation.signal,
+              onProgress: (processedCount) =>
+                dispatch(
+                  setHealthSyncStatus({
+                    id: healthSyncOperation.id,
+                    source: Platform.OS === 'ios' ? 'healthkit' : 'health-connect',
+                    phase: 'sending',
+                    foundCount: result.length,
+                    processedCount,
+                  }),
+                ),
+            }
+          : undefined;
+        const resultOfImport = await sendWorkoutsToRunich(userId, result, uploadOptions);
         setImportResult(
           isRussian
             ? `Автосинхронизация: новых тренировок ${resultOfImport.imported}, уже были в Runich: ${resultOfImport.skipped}.`
@@ -177,15 +247,20 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
         );
         setSelectedIds(new Set());
       } catch (importError) {
+        if (healthSyncOperation?.signal.aborted) return;
         setError(
           isRussian ? 'Не удалось автоматически сохранить тренировки в Runich.' : 'Auto-sync could not save workouts.',
         );
         errorToast('', importError);
       } finally {
-        setIsAutoSyncing(false);
+        if (healthSyncOperation) {
+          dispatch(clearHealthSyncStatus(healthSyncOperation.id));
+          finishHealthSyncOperation(healthSyncOperation.id);
+          setIsAutoSyncing(false);
+        }
       }
     },
-    [autoSyncEnabledRef, isRussian, markUploadSkipped, readWorkouts, sendWorkoutsToRunich, userId],
+    [autoSyncEnabledRef, dispatch, isRussian, markUploadSkipped, readWorkouts, sendWorkoutsToRunich, userId],
   );
 
   const { availability, connect, healthPermissions, isConnected, isLoading, refreshHealthConnection } =

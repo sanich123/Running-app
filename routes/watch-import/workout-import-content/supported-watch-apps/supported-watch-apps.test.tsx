@@ -1,6 +1,7 @@
 import { fireEvent, screen } from '@testing-library/react-native';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { WORKOUT_IMPORT_COPY } from '../../workout-import/const';
+import { SUPPORTED_WATCH_APPS } from './const';
 import SupportedWatchApps from './supported-watch-apps';
 
 describe('SupportedWatchApps', () => {
@@ -10,7 +11,18 @@ describe('SupportedWatchApps', () => {
 
     expect(screen.getByText(WORKOUT_IMPORT_COPY.ru.supportedApps.ios)).toBeOnTheScreen();
     expect(screen.getByText('Apple Watch')).toBeOnTheScreen();
+    expect(screen.getAllByText('Suunto')).toHaveLength(2);
     expect(screen.getAllByText(/Garmin Connect/)).toHaveLength(2);
+    expect(SUPPORTED_WATCH_APPS.ios.direct).toContainEqual({
+      name: 'Suunto',
+      workout: 'yes',
+      route: 'no',
+      heartRate: 'no',
+    });
+    expect(screen.getByTestId('watch-app-status-legend-item-close')).toBeOnTheScreen();
+    expect(screen.getByTestId('watch-app-status-legend-item-minus')).toBeOnTheScreen();
+    expect(screen.getByTestId('watch-app-status-legend-item-help')).toBeOnTheScreen();
+    expect(screen.queryByTestId('watch-app-status-legend-item-check')).toBeNull();
     expect(screen.queryByText(WORKOUT_IMPORT_COPY.ru.supportedApps.android)).toBeNull();
   });
 

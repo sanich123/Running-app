@@ -182,8 +182,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: 10,
     paddingVertical: 4,
+    position: 'relative',
   },
-  author: { flex: 1, minWidth: 0 },
+  author: { flex: 1, minWidth: 0, paddingRight: 48 },
   commentWrapper: {
     flex: 1,
     flexDirection: 'row',
@@ -215,7 +216,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   likesLeadingActions: { display: 'flex', flexDirection: 'row', alignItems: 'center' },
-  actions: { alignItems: 'center', justifyContent: 'center', marginLeft: 8 },
+  actions: { alignItems: 'center', justifyContent: 'center', position: 'absolute', right: 10, top: 12 },
   dateTimeWrapper: {
     display: 'flex',
     flexDirection: 'row',

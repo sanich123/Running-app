@@ -4,7 +4,7 @@ export interface ReadDiagnostics {
   at: string;
   startDate: string;
   endDate: string;
-  outcome: 'reading' | 'success' | 'error';
+  outcome: 'reading' | 'success' | 'error' | 'cancelled';
   workoutCount: number;
   stage?: HealthConnectReadStage;
   sessionCount?: number;
@@ -14,7 +14,7 @@ export interface ReadDiagnostics {
 
 export type UploadSkipReason = 'read-failed' | 'no-user' | 'no-workouts' | 'manual-selection';
 
-export type WorkoutUploadOutcome = 'not-sent' | 'sending' | 'imported' | 'skipped' | 'error';
+export type WorkoutUploadOutcome = 'not-sent' | 'sending' | 'imported' | 'skipped' | 'error' | 'cancelled';
 
 export interface WorkoutUploadDiagnostic {
   source: HealthStore;
@@ -26,7 +26,7 @@ export interface WorkoutUploadDiagnostic {
 
 export interface UploadDiagnostics {
   at: string;
-  outcome: 'sending' | 'success' | 'error' | 'skipped';
+  outcome: 'sending' | 'success' | 'error' | 'skipped' | 'cancelled';
   workoutCount: number;
   sourceRoutePointCount: number;
   payloadRoutePointCount: number;

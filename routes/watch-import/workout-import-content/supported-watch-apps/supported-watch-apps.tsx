@@ -58,12 +58,11 @@ export default function SupportedWatchApps({
               </View>
               <View style={styles.statusLegend}>
                 {[
-                  { icon: 'check', label: copy.yes, color: colors.tertiary },
                   { icon: 'close', label: copy.no, color: colors.error },
                   { icon: 'minus', label: copy.partial, color: warningColor },
                   { icon: 'help', label: copy.unknown, color: warningColor },
                 ].map(({ icon, label, color }) => (
-                  <View key={icon} style={styles.legendItem}>
+                  <View key={icon} testID={`watch-app-status-legend-item-${icon}`} style={styles.legendItem}>
                     <Icon source={icon} size={13} color={color} />
                     <Text variant="labelSmall" style={styles.legendStatusText}>
                       {label}
