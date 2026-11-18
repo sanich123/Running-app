@@ -24,7 +24,7 @@ export default {
     assetBundlePatterns: ['**/*'],
     ios: {
       usesAppleSignIn: true,
-      icon: './assets/images/icon.png',
+      icon: IS_DEV ? './assets/images/icon-dev.png' : './assets/images/icon.png',
       associatedDomains: ['applinks:runich-app.ru', 'applinks:stage-web.runich-app.ru'],
       entitlements: {
         'com.apple.developer.networking.wifi-info': true,
