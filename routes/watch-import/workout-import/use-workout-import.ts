@@ -1,7 +1,10 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Linking, Platform } from 'react-native';
 import { LANGUAGES } from '@const/enums';
-import { useImportWatchWorkoutsMutation } from '@R/services/activity/activity';
+import {
+  useCheckWatchWorkoutSyncCandidatesMutation,
+  useImportWatchWorkoutsMutation,
+} from '@R/services/activity/activity';
 import { clearHealthSyncStatus, setHealthSyncStatus } from '@R/slices/health-sync/health-sync';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
@@ -18,6 +21,7 @@ import {
   type WatchWorkout,
 } from '../../../modules/runich-health/src/RunichHealth';
 import { HEALTH_CONNECT_PLAY_STORE_URL } from '../const';
+import { WATCH_WORKOUT_SYNC_CANDIDATE_BATCH_SIZE } from './const';
 import { getDiagnosticErrorCode, getHeartRateSampleCount, getWorkoutId, getRoutePointCount } from './helpers';
 import { uploadWorkoutBatches } from './upload-workout-batches';
 import { useAutoSyncPreference } from './use-auto-sync-preference';
@@ -52,6 +56,7 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
   const [readDiagnostics, setReadDiagnostics] = useState<ReadDiagnostics | null>(null);
   const [uploadDiagnostics, setUploadDiagnostics] = useState<UploadDiagnostics | null>(null);
   const [importWorkouts, { isLoading: isImporting }] = useImportWatchWorkoutsMutation();
+  const [checkWatchWorkoutSyncCandidates] = useCheckWatchWorkoutSyncCandidatesMutation();
   const selectedWorkouts = useMemo(
     () => workouts.filter((workout) => selectedIds.has(getWorkoutId(workout))),
     [selectedIds, workouts],
@@ -124,17 +129,6 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
         setWorkouts(result);
         const availableWorkouts = result.filter((workout) => !hiddenWorkoutIdsRef.current.has(getWorkoutId(workout)));
         setSelectedIds(new Set(availableWorkouts.map(getWorkoutId)));
-        if (healthSyncOperation) {
-          dispatch(
-            setHealthSyncStatus({
-              id: healthSyncOperation.id,
-              source: Platform.OS === 'ios' ? 'healthkit' : 'health-connect',
-              phase: 'sending',
-              foundCount: availableWorkouts.length,
-              processedCount: 0,
-            }),
-          );
-        }
         setReadDiagnostics({
           at: readAt,
           startDate,
@@ -178,7 +172,7 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
         setIsReading(false);
       }
     },
-    [dispatch, hiddenWorkoutIdsRef, isRussian],
+    [hiddenWorkoutIdsRef, isRussian],
   );
 
   const sendWorkoutsToRunich = useCallback(
@@ -194,15 +188,6 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
       if (shouldShowHealthSync && !healthSyncOperation) return;
       if (healthSyncOperation) {
         setIsAutoSyncing(true);
-        dispatch(
-          setHealthSyncStatus({
-            id: healthSyncOperation.id,
-            source: Platform.OS === 'ios' ? 'healthkit' : 'health-connect',
-            phase: 'reading',
-            foundCount: null,
-            processedCount: 0,
-          }),
-        );
       }
       try {
         const result = await readWorkouts(healthSyncOperation ?? undefined);
@@ -224,22 +209,87 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
           return;
         }
 
+        let workoutsToSync = result;
+        let canShowSyncIndicator = false;
+        if (healthSyncOperation) {
+          const uniqueWorkoutsById = new Map<string, WatchWorkout>();
+          result.forEach((workout) => {
+            const workoutId = getWorkoutId(workout);
+            if (!uniqueWorkoutsById.has(workoutId)) uniqueWorkoutsById.set(workoutId, workout);
+          });
+          const uniqueWorkouts = [...uniqueWorkoutsById.values()];
+          try {
+            const candidateIds = new Set<string>();
+            for (let offset = 0; offset < uniqueWorkouts.length; offset += WATCH_WORKOUT_SYNC_CANDIDATE_BATCH_SIZE) {
+              if (healthSyncOperation.signal.aborted) return;
+              const batch = uniqueWorkouts.slice(offset, offset + WATCH_WORKOUT_SYNC_CANDIDATE_BATCH_SIZE);
+              const checkRequest = checkWatchWorkoutSyncCandidates({
+                id: userId,
+                workouts: batch.map(
+                  ({ source, sourceActivityId, sourceAppName, recordingDeviceManufacturer, recordingDeviceModel }) => ({
+                    source,
+                    sourceActivityId,
+                    ...(sourceAppName ? { sourceAppName } : {}),
+                    ...(recordingDeviceManufacturer ? { recordingDeviceManufacturer } : {}),
+                    ...(recordingDeviceModel ? { recordingDeviceModel } : {}),
+                  }),
+                ),
+              });
+              const abortCandidateCheck = () => checkRequest.abort();
+              healthSyncOperation.signal.addEventListener('abort', abortCandidateCheck, { once: true });
+              try {
+                const response = await checkRequest.unwrap();
+                response.workoutsToSync.forEach(({ source, sourceActivityId }) => {
+                  candidateIds.add(`${source}:${sourceActivityId}`);
+                });
+              } finally {
+                healthSyncOperation.signal.removeEventListener('abort', abortCandidateCheck);
+              }
+            }
+            if (healthSyncOperation.signal.aborted) return;
+            workoutsToSync = uniqueWorkouts.filter((workout) => candidateIds.has(getWorkoutId(workout)));
+            canShowSyncIndicator = true;
+          } catch {
+            if (healthSyncOperation.signal.aborted) return;
+          }
+        }
+
+        if (workoutsToSync.length === 0) {
+          markUploadSkipped('already-synced', result);
+          return;
+        }
+
         const uploadOptions: WorkoutUploadOptions | undefined = healthSyncOperation
           ? {
               signal: healthSyncOperation.signal,
-              onProgress: (processedCount) =>
-                dispatch(
-                  setHealthSyncStatus({
-                    id: healthSyncOperation.id,
-                    source: Platform.OS === 'ios' ? 'healthkit' : 'health-connect',
-                    phase: 'sending',
-                    foundCount: result.length,
-                    processedCount,
-                  }),
-                ),
+              ...(canShowSyncIndicator
+                ? {
+                    onProgress: (processedCount: number) =>
+                      dispatch(
+                        setHealthSyncStatus({
+                          id: healthSyncOperation.id,
+                          source: Platform.OS === 'ios' ? 'healthkit' : 'health-connect',
+                          phase: 'sending',
+                          foundCount: workoutsToSync.length,
+                          processedCount,
+                        }),
+                      ),
+                  }
+                : {}),
             }
           : undefined;
-        const resultOfImport = await sendWorkoutsToRunich(userId, result, uploadOptions);
+        if (healthSyncOperation && canShowSyncIndicator) {
+          dispatch(
+            setHealthSyncStatus({
+              id: healthSyncOperation.id,
+              source: Platform.OS === 'ios' ? 'healthkit' : 'health-connect',
+              phase: 'sending',
+              foundCount: workoutsToSync.length,
+              processedCount: 0,
+            }),
+          );
+        }
+        const resultOfImport = await sendWorkoutsToRunich(userId, workoutsToSync, uploadOptions);
         setImportResult(
           isRussian
             ? `Автосинхронизация: новых тренировок ${resultOfImport.imported}, уже были в Runich: ${resultOfImport.skipped}.`
@@ -260,7 +310,16 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
         }
       }
     },
-    [autoSyncEnabledRef, dispatch, isRussian, markUploadSkipped, readWorkouts, sendWorkoutsToRunich, userId],
+    [
+      autoSyncEnabledRef,
+      checkWatchWorkoutSyncCandidates,
+      dispatch,
+      isRussian,
+      markUploadSkipped,
+      readWorkouts,
+      sendWorkoutsToRunich,
+      userId,
+    ],
   );
 
   const { availability, connect, healthPermissions, isConnected, isLoading, refreshHealthConnection } =

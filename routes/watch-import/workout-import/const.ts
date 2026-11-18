@@ -6,10 +6,13 @@ export const READ_STAGE_LABELS = {
   complete: ['чтение завершено', 'read complete'],
 } as const;
 
+export const WATCH_WORKOUT_SYNC_CANDIDATE_BATCH_SIZE = 50;
+
 export const UPLOAD_SKIP_REASON_LABELS = {
   'read-failed': ['чтение завершилось ошибкой', 'the health store read failed'],
   'no-user': ['аккаунт Runich не определён', 'Runich account is unavailable'],
   'no-workouts': ['не найдено тренировок для отправки', 'no workouts were found to upload'],
+  'already-synced': ['новых тренировок для синхронизации нет', 'all workouts are already synced'],
   'manual-selection': ['выберите тренировки для первого импорта', 'select workouts for the first import'],
 } as const;
 

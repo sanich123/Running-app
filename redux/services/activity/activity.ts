@@ -12,6 +12,7 @@ import type {
   GetActivitiesWithRoutesRequest,
   GetActivityMediaRequest,
   WatchWorkoutsImportRequest,
+  WatchWorkoutSyncCandidatesRequest,
   SetActivityFavoriteRequest,
   UploadRawActivityLocationsRequest,
 } from './types';
@@ -29,6 +30,7 @@ import type {
   ActivityFavoriteMutationResponse,
   HomeActivityFeedsResponse,
   WatchWorkoutBatchImportResponse,
+  WatchWorkoutSyncCandidatesResponse,
 } from '@R/runich-api/activity-types';
 import type { HomeFeed } from '@Routes/home-page/const';
 
@@ -168,6 +170,13 @@ export const activityApi = runichApi.injectEndpoints({
       }),
       invalidatesTags: (result) => (result ? [Tags.activities, Tags.statistics] : []),
     }),
+    checkWatchWorkoutSyncCandidates: mutation<WatchWorkoutSyncCandidatesResponse, WatchWorkoutSyncCandidatesRequest>({
+      query: ({ id, workouts }) => ({
+        url: `/activity/${id}/watch-import/check`,
+        method: Methods.post,
+        body: { workouts },
+      }),
+    }),
     deleteActivityById: mutation<void, string>({
       query: (id: string) => ({
         url: `/activity/${id}`,
@@ -202,6 +211,7 @@ export const {
   useAddActivityByUserIdMutation,
   useUploadRawActivityLocationsMutation,
   useImportWatchWorkoutsMutation,
+  useCheckWatchWorkoutSyncCandidatesMutation,
   useDeleteActivityByIdMutation,
   useGetSeveralActivitiesByTheirIdsQuery,
 } = activityApi;

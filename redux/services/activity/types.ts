@@ -1,5 +1,6 @@
 import type { ActivityVisibility } from '@const/activity-visibility';
 import type { SPORTS_BTNS_VALUES } from '@const/sports';
+import type { WatchWorkoutImportIdentity } from '@R/runich-api/activity-types';
 import type { LastKmSplit } from '@R/slices/location/types';
 import type { EMOTIONS_BTNS_VALUES } from '@Routes/save-activity-page/emotion-btns/const';
 import type { ActivityHeartRateSample } from '@S/card/types';
@@ -55,6 +56,11 @@ export interface WatchWorkoutToSend extends FinishedActivity {
 export interface WatchWorkoutsImportRequest {
   id: string;
   workouts: WatchWorkoutToSend[];
+}
+
+export interface WatchWorkoutSyncCandidatesRequest {
+  id: string;
+  workouts: WatchWorkoutImportIdentity[];
 }
 
 type ActivityEditableInfo = Pick<

@@ -180,6 +180,18 @@ export interface WatchWorkoutBatchImportResponse {
   activities: ActivityMutationResponse[];
 }
 
+export interface WatchWorkoutImportIdentity {
+  source: 'health-connect' | 'healthkit';
+  sourceActivityId: string;
+  sourceAppName?: string;
+  recordingDeviceManufacturer?: string;
+  recordingDeviceModel?: string;
+}
+
+export interface WatchWorkoutSyncCandidatesResponse {
+  workoutsToSync: WatchWorkoutImportIdentity[];
+}
+
 export interface ActivityMediaMutationResponse {
   success: true;
   media: (ActivityMediaItemResponse & { id: string; activityId: string })[];
