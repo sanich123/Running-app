@@ -94,6 +94,9 @@ export interface ActivityResponse {
   kilometresSplit?: ActivityKilometreSplitResponse[] | null;
   source?: string | null;
   sourceActivityId?: string | null;
+  sourceAppName?: string | null;
+  recordingDeviceManufacturer?: string | null;
+  recordingDeviceModel?: string | null;
   profile: ActivityProfileResponse;
   _count: ActivityCountResponse;
 }
@@ -122,6 +125,10 @@ export type ActivityListItemResponse = Pick<
   | 'elevationGain'
   | 'steps'
   | 'emotion'
+  | 'source'
+  | 'sourceAppName'
+  | 'recordingDeviceManufacturer'
+  | 'recordingDeviceModel'
   | 'visibility'
   | 'isFavorite'
   | 'profile'

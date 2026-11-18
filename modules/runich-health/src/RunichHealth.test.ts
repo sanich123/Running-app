@@ -257,6 +257,45 @@ describe('RunichHealth', () => {
     );
   });
 
+  it('imports source app and recording device details from Health Connect metadata', async () => {
+    const health = loadHealth();
+    const session = makeSession(getHealthConnectModule().ExerciseType.RUNNING, {
+      metadata: {
+        id: 'record-suunto',
+        dataOrigin: 'com.stt.android.suunto',
+        device: { manufacturer: 'Suunto', model: 'Suunto 9 Peak' },
+      },
+    });
+    mockReadRecords.mockImplementation(async (recordType: string) =>
+      recordType === 'ExerciseSession' ? { records: [session] } : { records: [] },
+    );
+
+    const [workout] = await health.RunichHealth.readWorkouts('start', 'end');
+
+    expect(workout).toEqual(
+      expect.objectContaining({
+        sourceAppName: 'Suunto',
+        recordingDeviceManufacturer: 'Suunto',
+        recordingDeviceModel: 'Suunto 9 Peak',
+        diagnostics: expect.objectContaining({ dataOrigin: 'com.stt.android.suunto' }),
+      }),
+    );
+  });
+
+  it('labels Health Sync as the Health Connect record writer', async () => {
+    const health = loadHealth();
+    const session = makeSession(getHealthConnectModule().ExerciseType.RUNNING, {
+      metadata: { id: 'record-health-sync', dataOrigin: 'com.example.healthsync' },
+    });
+    mockReadRecords.mockImplementation(async (recordType: string) =>
+      recordType === 'ExerciseSession' ? { records: [session] } : { records: [] },
+    );
+
+    const [workout] = await health.RunichHealth.readWorkouts('start', 'end');
+
+    expect(workout.sourceAppName).toBe('Health Sync');
+  });
+
   it('reads paginated workouts, maps sports and route diagnostics, and reports progress', async () => {
     const health = loadHealth();
     const { ExerciseType } = getHealthConnectModule();

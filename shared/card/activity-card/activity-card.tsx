@@ -61,7 +61,17 @@ export default function ActivityCard({ activity, isFullView = false, isShowDescr
           },
           Platform.OS === 'web' ? styles.webStyles : null,
         ]}>
-        <UserInfo profile={profile} sport={sport} date={date} userId={userId} size={UserInfoSize.large} />
+        <UserInfo
+          profile={profile}
+          sport={sport}
+          date={date}
+          userId={userId}
+          size={UserInfoSize.large}
+          source={activity.source}
+          sourceAppName={activity.sourceAppName}
+          recordingDeviceManufacturer={activity.recordingDeviceManufacturer}
+          recordingDeviceModel={activity.recordingDeviceModel}
+        />
         {displayedMapPhotoUrl || Boolean(media?.length) ? <MediaList /> : null}
         {isTextUnderModeration || isTextHiddenByModeration ? (
           <View style={[styles.moderationNotice, { backgroundColor: colors.surfaceVariant }]}>

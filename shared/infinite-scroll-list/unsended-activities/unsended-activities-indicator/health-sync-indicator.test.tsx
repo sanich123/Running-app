@@ -26,8 +26,8 @@ describe('Health sync indicator', () => {
 
     await renderWithProviders(<HealthSyncIndicator />);
 
-    expect(screen.getByText('Syncing with Apple Health (HealthKit)')).toBeOnTheScreen();
-    expect(screen.getByText('Checking for workouts… Found: —')).toBeOnTheScreen();
+    expect(screen.getByText('Apple Health')).toBeOnTheScreen();
+    expect(screen.getByText('Checking workouts')).toBeOnTheScreen();
   });
 
   it('shows the discovered workout count in English', async () => {
@@ -43,7 +43,7 @@ describe('Health sync indicator', () => {
 
     await renderWithProviders(<HealthSyncIndicator />);
 
-    expect(screen.getByText('Checking workouts… Found: 5')).toBeOnTheScreen();
+    expect(screen.getByText('Found workouts: 5')).toBeOnTheScreen();
   });
 
   it('formats an unknown workout count in Russian', async () => {
@@ -60,7 +60,7 @@ describe('Health sync indicator', () => {
 
     await renderWithProviders(<HealthSyncIndicator />);
 
-    expect(screen.getByText('Проверяем тренировки… Найдено: —')).toBeOnTheScreen();
+    expect(screen.getByText('Проверяем тренировки')).toBeOnTheScreen();
   });
 
   it('formats the discovered workout count in Russian', async () => {
@@ -77,7 +77,7 @@ describe('Health sync indicator', () => {
 
     await renderWithProviders(<HealthSyncIndicator />);
 
-    expect(screen.getByText('Проверяем тренировки… Найдено: 5')).toBeOnTheScreen();
+    expect(screen.getByText('Найдено тренировок: 5')).toBeOnTheScreen();
   });
 
   it('shows Health Connect upload progress with a zero fallback for an unknown count', async () => {
@@ -93,8 +93,8 @@ describe('Health sync indicator', () => {
 
     await renderWithProviders(<HealthSyncIndicator />);
 
-    expect(screen.getByText('Syncing with Health Connect')).toBeOnTheScreen();
-    expect(screen.getByText('Found 0 workouts · Sent 2 of 0')).toBeOnTheScreen();
+    expect(screen.getByText('Health Connect')).toBeOnTheScreen();
+    expect(screen.getByText('Sending to Runich · 2 of 0')).toBeOnTheScreen();
   });
 
   it('cancels the active sync and clears its visible status', async () => {

@@ -81,6 +81,7 @@ public final class RunichHealthModule: Module {
   private func makeWorkout(_ workout: HKWorkout) async -> [String: Any] {
     let (locations, routeErrorCode) = await routeLocationsWithDiagnostics(for: workout)
     let (heartRateSamples, heartRateErrorCode) = await heartRateSamples(for: workout)
+    let sourceAppName = workout.sourceRevision.source.name.trimmingCharacters(in: .whitespacesAndNewlines)
     var diagnostics: [String: Any] = [
       "dataOrigin": workout.sourceRevision.source.name,
       "routeStatus": routeErrorCode == nil ? (locations.isEmpty ? "no-route-data" : "route-in-record") : "route-read-error",
@@ -101,6 +102,18 @@ public final class RunichHealthModule: Module {
       "locations": locations,
       "diagnostics": diagnostics
     ]
+    if !sourceAppName.isEmpty { result["sourceAppName"] = sourceAppName }
+
+    if let device = workout.device {
+      if let manufacturer = device.manufacturer?.trimmingCharacters(in: .whitespacesAndNewlines),
+        !manufacturer.isEmpty {
+        result["recordingDeviceManufacturer"] = manufacturer
+      }
+      if let model = device.model?.trimmingCharacters(in: .whitespacesAndNewlines),
+        !model.isEmpty {
+        result["recordingDeviceModel"] = model
+      }
+    }
 
     if !heartRateSamples.isEmpty { result["heartRateSamples"] = heartRateSamples }
 

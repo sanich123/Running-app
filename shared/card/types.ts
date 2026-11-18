@@ -106,6 +106,10 @@ export interface ActivityCardData {
   maxHeartRate?: number | null;
   steps?: number | null;
   emotion?: string | null;
+  source?: string | null;
+  sourceAppName?: string | null;
+  recordingDeviceManufacturer?: string | null;
+  recordingDeviceModel?: string | null;
   profile: ProfileType;
   commentsLength: number;
   likesLength?: number;

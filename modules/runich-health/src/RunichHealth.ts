@@ -35,6 +35,9 @@ interface WatchWorkoutLocation {
 export interface WatchWorkout {
   source: HealthStore;
   sourceActivityId: string;
+  sourceAppName?: string;
+  recordingDeviceManufacturer?: string;
+  recordingDeviceModel?: string;
   date: string;
   timeZone: string;
   title?: string;
@@ -242,6 +245,25 @@ function mapRouteLocation(location: Awaited<ReturnType<typeof requestExerciseRou
   };
 }
 
+const HEALTH_CONNECT_SOURCE_APPS = [
+  ['healthsync', 'Health Sync'],
+  ['suunto', 'Suunto'],
+  ['garmin', 'Garmin Connect'],
+  ['polar', 'Polar Flow'],
+  ['strava', 'Strava'],
+  ['fitbit', 'Fitbit'],
+  ['shealth', 'Samsung Health'],
+  ['samsunghealth', 'Samsung Health'],
+  ['oura', 'Oura'],
+  ['zepp', 'Zepp'],
+] as const;
+
+function getHealthConnectSourceAppName(dataOrigin?: string): string | undefined {
+  if (!dataOrigin) return undefined;
+  const normalizedOrigin = dataOrigin.toLowerCase();
+  return HEALTH_CONNECT_SOURCE_APPS.find(([packageHint]) => normalizedOrigin.includes(packageHint))?.[1] ?? dataOrigin;
+}
+
 async function readAndroidWorkouts(
   startDate: string,
   endDate: string,
@@ -354,9 +376,16 @@ async function readAndroidWorkouts(
       return typeof calories === 'number' && Number.isFinite(calories) && calories >= 0 ? total + calories : total;
     }, 0);
     const fallbackId = `${session.startTime}:${session.endTime}:${session.exerciseType}`;
+    const dataOrigin = session.metadata?.dataOrigin;
+    const sourceAppName = getHealthConnectSourceAppName(dataOrigin);
+    const recordingDeviceManufacturer = session.metadata?.device?.manufacturer?.trim();
+    const recordingDeviceModel = session.metadata?.device?.model?.trim();
     const workout: WatchWorkout = {
       source: 'health-connect',
       sourceActivityId: session.metadata?.id ?? fallbackId,
+      ...(sourceAppName ? { sourceAppName } : {}),
+      ...(recordingDeviceManufacturer ? { recordingDeviceManufacturer } : {}),
+      ...(recordingDeviceModel ? { recordingDeviceModel } : {}),
       date: session.startTime,
       timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
       sport: mapSport(session.exerciseType),
@@ -364,7 +393,7 @@ async function readAndroidWorkouts(
       distance: Math.max(0, distance),
       locations: route.map(mapRouteLocation),
       diagnostics: {
-        dataOrigin: session.metadata?.dataOrigin,
+        dataOrigin,
         sessionRecordId: session.metadata?.id,
         routeStatus,
         routePointCount: route.length,
