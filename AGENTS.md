@@ -42,6 +42,10 @@
 
 - Do not create a helper for a simple one-line expression used once; keep it at the call site. Extract a helper when the logic is reused, non-obvious, or a useful name makes the domain intent clearer.
 
+## SOLID review
+
+- Before completing a change, review the new and modified code against the SOLID principles: single responsibility, open/closed, Liskov substitution, interface segregation, and dependency inversion. Refactor concrete violations when appropriate, avoid adding abstractions solely to satisfy a checklist, and call out any remaining justified tradeoffs.
+
 ## Component encapsulation
 
 - Keep data and state inside the lowest-level component that needs them when higher-level components do not use them. For example, if a component uses or updates a single query parameter, read and manage that parameter inside the component instead of passing it through its parents.
@@ -134,6 +138,7 @@ Run `npx @expo/agent-cli dev` before `navigate`, `runtime:reload` or `runtime:st
 For Expo or EAS work, start with the `expo-overview` skill when it is available in your agent’s skill list. It routes your goal to the relevant Expo or EAS skill. Then read any matching package skills listed below for guidance specific to the installed packages.
 
 <!-- BEGIN EXPO PACKAGE SKILLS -->
+
 ## Package skills
 
 No linked package skills are available.

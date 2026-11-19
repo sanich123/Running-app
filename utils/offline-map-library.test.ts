@@ -83,6 +83,7 @@ describe('offline map library', () => {
         { id: 'region-1', title: 'Moscow' },
         { id: '', title: 'Empty id' },
         { id: 'region-2', title: 42 },
+        { id: 'region-3', title: 'Invalid thumbnail', thumbnailAspectRatio: 'wide' },
         null,
       ]),
     );

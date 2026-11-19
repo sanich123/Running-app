@@ -93,20 +93,23 @@ function getActivityTrackGpxTitle(track: SavedActivityTrack) {
   return `${date} ${getTrackSportLabel(track.sport)}${timestamp} - ${track.title}`;
 }
 
+function isSavedActivityTrack(value: unknown): value is SavedActivityTrack {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) return false;
+  if (!('id' in value) || typeof value.id !== 'string') return false;
+  if (!('activityId' in value) || typeof value.activityId !== 'string') return false;
+  if (!('title' in value) || typeof value.title !== 'string') return false;
+  if (!('date' in value) || typeof value.date !== 'string') return false;
+  if (!('pointCount' in value) || !Number.isInteger(value.pointCount)) return false;
+  if ('distanceMeters' in value && typeof value.distanceMeters !== 'number') return false;
+  if ('sport' in value && typeof value.sport !== 'string') return false;
+  return true;
+}
+
 function readIndex(value: string | null): SavedActivityTrack[] {
   if (!value) return [];
   try {
-    const tracks = JSON.parse(value) as SavedActivityTrack[];
-    return Array.isArray(tracks)
-      ? tracks.filter(
-          (track) =>
-            typeof track.id === 'string' &&
-            typeof track.activityId === 'string' &&
-            typeof track.title === 'string' &&
-            typeof track.date === 'string' &&
-            Number.isInteger(track.pointCount),
-        )
-      : [];
+    const tracks: unknown = JSON.parse(value);
+    return Array.isArray(tracks) ? tracks.filter(isSavedActivityTrack) : [];
   } catch {
     return [];
   }
