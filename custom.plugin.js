@@ -4,11 +4,34 @@ const {
   withAppBuildGradle,
   withDangerousMod,
   withGradleProperties,
+  withPodfile,
   withProjectBuildGradle,
 } = require('expo/config-plugins');
 
 const HUAWEI_MAVEN_REPOSITORY = "maven { url 'https://developer.huawei.com/repo/' }";
 const AGCONNECT_PLUGIN_VERSION = '1.9.6.300';
+const REACHABILITY_SWIFT_VERSION = '5.2.3';
+
+function withReachabilitySwiftPrivacyManifest(config) {
+  return withPodfile(config, (exportedConfig) => {
+    let contents = exportedConfig.modResults.contents;
+    const podDeclaration = `pod 'ReachabilitySwift', '${REACHABILITY_SWIFT_VERSION}'`;
+    const existingDeclaration = /^\s*pod\s+['"]ReachabilitySwift['"].*$/m;
+
+    if (existingDeclaration.test(contents)) {
+      contents = contents.replace(existingDeclaration, `  ${podDeclaration}`);
+    } else {
+      const appTarget = /(target\s+'Runich'\s+do\s*\n)/;
+      if (!appTarget.test(contents)) {
+        throw new Error('Could not pin ReachabilitySwift in the Runich iOS target.');
+      }
+      contents = contents.replace(appTarget, `$1  ${podDeclaration}\n`);
+    }
+
+    exportedConfig.modResults.contents = contents;
+    return exportedConfig;
+  });
+}
 
 function setGradlePropertiesValue(config, key, value) {
   return withGradleProperties(config, (exportedConfig) => {
@@ -112,5 +135,7 @@ module.exports = function withCustomPlugin(config) {
     '-Xmx4096m -XX:MaxMetaspaceSize=2048m --enable-native-access=ALL-UNNAMED',
   );
 
-  return withHuaweiLocationBuildConfig(config, process.env.HUAWEI_AGCONNECT_SERVICES_FILE);
+  return withReachabilitySwiftPrivacyManifest(
+    withHuaweiLocationBuildConfig(config, process.env.HUAWEI_AGCONNECT_SERVICES_FILE),
+  );
 };
