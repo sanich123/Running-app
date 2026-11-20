@@ -1,5 +1,5 @@
 import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
-import { AppState, Linking, Platform } from 'react-native';
+import { Linking, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LANGUAGES } from '@const/enums';
 import { useLoginWithVkNativeMutation } from '@R/services/authentication/authentication';
@@ -46,7 +46,8 @@ describe('VkAuthButton', () => {
     jest.restoreAllMocks();
   });
 
-  it('shows progress while opening VK and clears it after returning to the app', async () => {
+  it('opens VK in the browser on web and clears loading when the launch finishes', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
     let resolveOpenURL: (() => void) | undefined;
     jest.spyOn(Linking, 'openURL').mockImplementation(
       () =>
@@ -54,35 +55,26 @@ describe('VkAuthButton', () => {
           resolveOpenURL = resolve;
         }),
     );
-    const appStateListeners: ((nextAppState: string) => void)[] = [];
-    jest.spyOn(AppState, 'addEventListener').mockImplementation((_eventType, listener) => {
-      appStateListeners.push(listener as (nextAppState: string) => void);
-      return { remove: jest.fn() };
-    });
-
     await renderWithProviders(<VkAuthButton />);
     const user = userEvent.setup();
     await user.press(screen.getByTestId('vk-auth'));
 
     expect(Linking.openURL).toHaveBeenCalledWith(VK_AUTH_URL);
+    expect(loginWithVkNative).not.toHaveBeenCalled();
     await waitFor(() => expect(screen.getByTestId('vk-auth').props.accessibilityState.disabled).toBe(true));
     expect(screen.getByRole('progressbar')).toBeTruthy();
     expect(screen.queryByTestId('vk-auth-icon-container')).toBeNull();
     expect(screen.queryByText(russianCopy.vk)).toBeNull();
 
-    expect(appStateListeners.length).toBeGreaterThan(0);
     await act(async () => {
-      appStateListeners.forEach((listener) => listener('background'));
-      await Promise.resolve();
-      appStateListeners.forEach((listener) => listener('active'));
-      await Promise.resolve();
+      resolveOpenURL?.();
     });
     await waitFor(() => expect(screen.queryByRole('progressbar')).toBeNull());
     expect(screen.getByTestId('vk-auth').props.accessibilityState.disabled).toBe(false);
-    resolveOpenURL?.();
   });
 
   it('clears loading and reports an external launch failure', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
     jest.spyOn(Linking, 'openURL').mockRejectedValueOnce(new Error('launch failed'));
 
     await renderWithProviders(<VkAuthButton />);
@@ -94,39 +86,46 @@ describe('VkAuthButton', () => {
     expect(screen.queryByRole('progressbar')).toBeNull();
   });
 
-  it('exchanges a native VK authorization and navigates after success on Android', async () => {
-    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
-    jest.mocked(loginWithVkNative).mockResolvedValue({
-      code: 'authorization-code',
-      deviceId: 'device-id',
-      codeVerifier: 'verifier',
-    });
+  it.each(['android', 'ios'])(
+    'exchanges a native VK authorization and navigates after success on %s',
+    async (platform) => {
+      Object.defineProperty(Platform, 'OS', { configurable: true, value: platform });
+      jest.mocked(loginWithVkNative).mockResolvedValue({
+        code: 'authorization-code',
+        deviceId: 'device-id',
+        codeVerifier: 'verifier',
+      });
 
-    await renderWithProviders(<VkAuthButton />);
-    const user = userEvent.setup();
-    await user.press(screen.getByTestId('vk-auth'));
+      await renderWithProviders(<VkAuthButton />);
+      const user = userEvent.setup();
+      await user.press(screen.getByTestId('vk-auth'));
 
-    await waitFor(() => expect(mockReplace).toHaveBeenCalledWith('/(tabs)/(home)'));
-    expect(mockLoginMutation).toHaveBeenCalledWith({
-      code: 'authorization-code',
-      deviceId: 'device-id',
-      codeVerifier: 'verifier',
-    });
-    expect(screen.queryByRole('progressbar')).toBeNull();
-    expect(screen.getByTestId('vk-auth').props.accessibilityState.disabled).toBe(false);
-  });
+      await waitFor(() => expect(mockReplace).toHaveBeenCalledWith('/(tabs)/(home)'));
+      expect(Linking.openURL).not.toHaveBeenCalled();
+      expect(mockLoginMutation).toHaveBeenCalledWith({
+        code: 'authorization-code',
+        deviceId: 'device-id',
+        codeVerifier: 'verifier',
+      });
+      expect(screen.queryByRole('progressbar')).toBeNull();
+      expect(screen.getByTestId('vk-auth').props.accessibilityState.disabled).toBe(false);
+    },
+  );
 
-  it('clears native loading and reports an error when VK returns no authorization data', async () => {
-    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
-    jest.mocked(loginWithVkNative).mockResolvedValue(null);
+  it.each(['android', 'ios'])(
+    'clears native loading and reports an error when VK returns no authorization data on %s',
+    async (platform) => {
+      Object.defineProperty(Platform, 'OS', { configurable: true, value: platform });
+      jest.mocked(loginWithVkNative).mockResolvedValue(null);
 
-    await renderWithProviders(<VkAuthButton />);
-    const user = userEvent.setup();
-    await user.press(screen.getByTestId('vk-auth'));
+      await renderWithProviders(<VkAuthButton />);
+      const user = userEvent.setup();
+      await user.press(screen.getByTestId('vk-auth'));
 
-    await waitFor(() => expect(errorToast).toHaveBeenCalledWith('Не удалось войти через VK', expect.any(Error)));
-    expect(mockLoginMutation).not.toHaveBeenCalled();
-    expect(screen.queryByRole('progressbar')).toBeNull();
-    expect(screen.getByTestId('vk-auth').props.accessibilityState.disabled).toBe(false);
-  });
+      await waitFor(() => expect(errorToast).toHaveBeenCalledWith('Не удалось войти через VK', expect.any(Error)));
+      expect(mockLoginMutation).not.toHaveBeenCalled();
+      expect(screen.queryByRole('progressbar')).toBeNull();
+      expect(screen.getByTestId('vk-auth').props.accessibilityState.disabled).toBe(false);
+    },
+  );
 });

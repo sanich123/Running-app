@@ -10221,10 +10221,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mapbox-gl@npm:^3.35.1":
-  version: 3.35.1
-  resolution: "mapbox-gl@npm:3.35.1"
-  checksum: 10c0/50ef62af7b35eb10550291c28e7e1b7ebb6dba1afdb6c233801150a8918b31c2dc384225f560d34527c99cba12b00c115830aee81187d1f35e87906f0c067fd7
+"mapbox-gl@npm:^3.35.2":
+  version: 3.35.2
+  resolution: "mapbox-gl@npm:3.35.2"
+  checksum: 10c0/acb329fa9cb737406ac76f53048d7dfc5fda6655fd43a6afc7475125e865b643c967b363104885dde2b746c944a993ce344c39e2383dfba29e9d15db248eac04
   languageName: node
   linkType: hard
 
@@ -12787,7 +12787,7 @@ __metadata:
     jest-expo: "npm:~58.0.15"
     lint-staged: "npm:^17.6.1"
     madge: "npm:^8.0.0"
-    mapbox-gl: "npm:^3.35.1"
+    mapbox-gl: "npm:^3.35.2"
     moment: "npm:^2.31.0"
     msw: "npm:^2.15.0"
     npm-check-updates: "npm:^23.1.1"

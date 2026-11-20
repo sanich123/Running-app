@@ -1,5 +1,5 @@
 import { act, screen, userEvent, waitFor } from '@testing-library/react-native';
-import { AppState, Linking, Platform } from 'react-native';
+import { Linking, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LANGUAGES } from '@const/enums';
 import { useLoginWithYandexNativeMutation } from '@R/services/authentication/authentication';
@@ -46,7 +46,8 @@ describe('YandexAuthButton', () => {
     jest.restoreAllMocks();
   });
 
-  it('shows progress while opening Yandex and clears it after returning to the app', async () => {
+  it('opens Yandex in the browser on web and clears loading when the launch finishes', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
     let resolveOpenURL: (() => void) | undefined;
     jest.spyOn(Linking, 'openURL').mockImplementation(
       () =>
@@ -54,35 +55,26 @@ describe('YandexAuthButton', () => {
           resolveOpenURL = resolve;
         }),
     );
-    const appStateListeners: ((nextAppState: string) => void)[] = [];
-    jest.spyOn(AppState, 'addEventListener').mockImplementation((_eventType, listener) => {
-      appStateListeners.push(listener as (nextAppState: string) => void);
-      return { remove: jest.fn() };
-    });
-
     await renderWithProviders(<YandexAuthButton />);
     const user = userEvent.setup();
     await user.press(screen.getByTestId('yandex-auth'));
 
     expect(Linking.openURL).toHaveBeenCalledWith(YANDEX_AUTH_URL);
+    expect(loginWithYandexNative).not.toHaveBeenCalled();
     await waitFor(() => expect(screen.getByTestId('yandex-auth').props.accessibilityState.disabled).toBe(true));
     expect(screen.getByRole('progressbar')).toBeTruthy();
     expect(screen.queryByTestId('yandex-auth-icon-container')).toBeNull();
     expect(screen.queryByText(russianCopy.yandex)).toBeNull();
 
-    expect(appStateListeners.length).toBeGreaterThan(0);
     await act(async () => {
-      appStateListeners.forEach((listener) => listener('background'));
-      await Promise.resolve();
-      appStateListeners.forEach((listener) => listener('active'));
-      await Promise.resolve();
+      resolveOpenURL?.();
     });
     await waitFor(() => expect(screen.queryByRole('progressbar')).toBeNull());
     expect(screen.getByTestId('yandex-auth').props.accessibilityState.disabled).toBe(false);
-    resolveOpenURL?.();
   });
 
   it('clears loading and reports an external launch failure', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
     jest.spyOn(Linking, 'openURL').mockRejectedValueOnce(new Error('launch failed'));
 
     await renderWithProviders(<YandexAuthButton />);
@@ -94,8 +86,8 @@ describe('YandexAuthButton', () => {
     expect(screen.queryByRole('progressbar')).toBeNull();
   });
 
-  it('exchanges a native Yandex token and navigates after success on Android', async () => {
-    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
+  it.each(['android', 'ios'])('exchanges a native Yandex token and navigates after success on %s', async (platform) => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: platform });
     jest.mocked(loginWithYandexNative).mockResolvedValue('yandex-access-token');
 
     await renderWithProviders(<YandexAuthButton />);
@@ -103,22 +95,26 @@ describe('YandexAuthButton', () => {
     await user.press(screen.getByTestId('yandex-auth'));
 
     await waitFor(() => expect(mockReplace).toHaveBeenCalledWith('/(tabs)/(home)'));
+    expect(Linking.openURL).not.toHaveBeenCalled();
     expect(mockLoginMutation).toHaveBeenCalledWith({ accessToken: 'yandex-access-token' });
     expect(screen.queryByRole('progressbar')).toBeNull();
     expect(screen.getByTestId('yandex-auth').props.accessibilityState.disabled).toBe(false);
   });
 
-  it('clears native loading and reports an error when Yandex returns no access token', async () => {
-    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'android' });
-    jest.mocked(loginWithYandexNative).mockResolvedValue(null);
+  it.each(['android', 'ios'])(
+    'clears native loading and reports an error when Yandex returns no access token on %s',
+    async (platform) => {
+      Object.defineProperty(Platform, 'OS', { configurable: true, value: platform });
+      jest.mocked(loginWithYandexNative).mockResolvedValue(null);
 
-    await renderWithProviders(<YandexAuthButton />);
-    const user = userEvent.setup();
-    await user.press(screen.getByTestId('yandex-auth'));
+      await renderWithProviders(<YandexAuthButton />);
+      const user = userEvent.setup();
+      await user.press(screen.getByTestId('yandex-auth'));
 
-    await waitFor(() => expect(errorToast).toHaveBeenCalledWith('Не удалось войти через Яндекс', expect.any(Error)));
-    expect(mockLoginMutation).not.toHaveBeenCalled();
-    expect(screen.queryByRole('progressbar')).toBeNull();
-    expect(screen.getByTestId('yandex-auth').props.accessibilityState.disabled).toBe(false);
-  });
+      await waitFor(() => expect(errorToast).toHaveBeenCalledWith('Не удалось войти через Яндекс', expect.any(Error)));
+      expect(mockLoginMutation).not.toHaveBeenCalled();
+      expect(screen.queryByRole('progressbar')).toBeNull();
+      expect(screen.getByTestId('yandex-auth').props.accessibilityState.disabled).toBe(false);
+    },
+  );
 });

@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import Svg, { Path } from 'react-native-svg';
-import { AppState, Linking, Platform, StyleSheet } from 'react-native';
+import { Linking, Platform, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Button } from 'react-native-paper';
 import { useLoginWithYandexNativeMutation } from '@R/services/authentication/authentication';
@@ -17,27 +17,8 @@ export default function YandexAuthButton() {
   const copy = SOCIAL_AUTH_TEXT[language];
   const [loginWithYandex] = useLoginWithYandexNativeMutation();
   const [isLoading, setLoading] = useState(false);
-  const authFlowTypeRef = useRef<'external' | 'native' | null>(null);
-
-  useEffect(() => {
-    if (Platform.OS !== 'ios') return;
-    let didLeaveAppForExternalAuth = false;
-    const subscription = AppState.addEventListener('change', (nextAppState) => {
-      if (nextAppState !== 'active' && authFlowTypeRef.current === 'external') {
-        didLeaveAppForExternalAuth = true;
-      } else if (nextAppState === 'active' && didLeaveAppForExternalAuth) {
-        didLeaveAppForExternalAuth = false;
-        if (authFlowTypeRef.current === 'external') {
-          authFlowTypeRef.current = null;
-          setLoading(false);
-        }
-      }
-    });
-    return () => subscription.remove();
-  }, []);
 
   const handleNativeLogin = async () => {
-    authFlowTypeRef.current = 'native';
     setLoading(true);
     try {
       const accessToken = await loginWithYandexNative();
@@ -48,20 +29,18 @@ export default function YandexAuthButton() {
     } catch (error) {
       errorToast('Не удалось войти через Яндекс', error);
     } finally {
-      authFlowTypeRef.current = null;
       setLoading(false);
     }
   };
 
   const handleExternalLogin = async () => {
-    authFlowTypeRef.current = 'external';
     setLoading(true);
     try {
       await Linking.openURL(YANDEX_AUTH_URL);
     } catch (error) {
-      authFlowTypeRef.current = null;
-      setLoading(false);
       errorToast('Не удалось открыть Яндекс', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -92,7 +71,7 @@ export default function YandexAuthButton() {
       }
       loading={isLoading}
       disabled={isLoading}
-      onPress={() => (Platform.OS === 'android' ? void handleNativeLogin() : void handleExternalLogin())}>
+      onPress={() => (Platform.OS === 'web' ? void handleExternalLogin() : void handleNativeLogin())}>
       {isLoading ? '' : copy.yandex}
     </Button>
   );
