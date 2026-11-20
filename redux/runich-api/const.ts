@@ -92,7 +92,9 @@ const baseQuery = fetchBaseQuery({
     }
     headers.set('x-device-id', deviceId);
     headers.set('x-device-name', deviceName);
-    headers.set('x-platform', platform);
+    const platformHeader =
+      endpoint === 'loginWithVkNative' ? deviceMetadata.osName?.toLowerCase() || platform : platform;
+    headers.set('x-platform', platformHeader);
     const deviceHeaders = {
       'x-device-model': deviceMetadata.model,
       'x-device-manufacturer': deviceMetadata.manufacturer,

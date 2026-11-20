@@ -8,7 +8,7 @@ public class RunichAuthModule: Module, AuthCodeHandler, YandexLoginSDKObserver {
   private var vkPromise: Promise?
   private var yandexClientId: String?
   private var isYandexObserverRegistered = false
-  private var isVkConfigured = false
+  private static var isVkConfigured = false
 
   public func definition() -> ModuleDefinition {
     Name("RunichAuth")
@@ -29,10 +29,11 @@ public class RunichAuthModule: Module, AuthCodeHandler, YandexLoginSDKObserver {
 
       do {
         try self.activateYandexIfNeeded(clientId: clientId)
+        try YandexLoginSDK.shared.logout()
         self.yandexPromise = promise
         try YandexLoginSDK.shared.authorize(
           with: viewController,
-          authorizationStrategy: .default
+          authorizationStrategy: .webOnly
         )
       } catch {
         self.yandexPromise = nil
@@ -51,7 +52,7 @@ public class RunichAuthModule: Module, AuthCodeHandler, YandexLoginSDKObserver {
       }
 
       do {
-        try self.configureVkIfNeeded()
+        try Self.configureVkIfNeeded()
       } catch {
         promise.reject(error)
         return
@@ -133,15 +134,15 @@ public class RunichAuthModule: Module, AuthCodeHandler, YandexLoginSDKObserver {
       isYandexObserverRegistered = true
     }
     guard yandexClientId != clientId else { return }
-    try YandexLoginSDK.shared.activate(with: clientId)
+    try YandexLoginSDK.shared.activate(with: clientId, authorizationStrategy: .webOnly)
     yandexClientId = clientId
   }
 
-  private func configureVkIfNeeded() throws {
+  private static func configureVkIfNeeded() throws {
     guard !isVkConfigured else { return }
     guard
-      let clientId = Self.infoValue("VK_NATIVE_IOS_CLIENT_ID"),
-      let clientSecret = Self.infoValue("VK_NATIVE_IOS_CLIENT_SECRET")
+      let clientId = infoValue("VK_NATIVE_IOS_CLIENT_ID"),
+      let clientSecret = infoValue("VK_NATIVE_IOS_CLIENT_SECRET")
     else {
       throw NativeAuthConfigurationError("VK iOS credentials are missing from the iOS build.")
     }
@@ -152,6 +153,22 @@ public class RunichAuthModule: Module, AuthCodeHandler, YandexLoginSDKObserver {
       )
     )
     isVkConfigured = true
+  }
+
+  fileprivate static func handleVkOpenURLIfNeeded(_ url: URL) -> Bool {
+    guard
+      let clientId = infoValue("VK_NATIVE_IOS_CLIENT_ID"),
+      url.scheme == "vk\(clientId)"
+    else {
+      return false
+    }
+
+    do {
+      try configureVkIfNeeded()
+    } catch {
+      return false
+    }
+    return VKID.shared.open(url: url)
   }
 
   private static func infoValue(_ key: String) -> String? {
@@ -184,9 +201,8 @@ public class RunichAuthAppDelegateSubscriber: ExpoAppDelegateSubscriber {
     open url: URL,
     options: [UIApplication.OpenURLOptionsKey: Any] = [:]
   ) -> Bool {
-    let yandexHandled = YandexLoginSDK.shared.tryHandleOpenURL(url)
-    let vkHandled = VKID.shared.open(url: url)
-    return yandexHandled || vkHandled
+    if YandexLoginSDK.shared.tryHandleOpenURL(url) { return true }
+    return RunichAuthModule.handleVkOpenURLIfNeeded(url)
   }
 
   public func application(
@@ -194,8 +210,8 @@ public class RunichAuthAppDelegateSubscriber: ExpoAppDelegateSubscriber {
     continue userActivity: NSUserActivity,
     restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
   ) -> Bool {
-    let yandexHandled = YandexLoginSDK.shared.tryHandleUserActivity(userActivity)
-    let vkHandled = userActivity.webpageURL.map { VKID.shared.open(url: $0) } ?? false
-    return yandexHandled || vkHandled
+    if YandexLoginSDK.shared.tryHandleUserActivity(userActivity) { return true }
+    guard let url = userActivity.webpageURL else { return false }
+    return RunichAuthModule.handleVkOpenURLIfNeeded(url)
   }
 }

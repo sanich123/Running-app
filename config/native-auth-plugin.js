@@ -103,7 +103,25 @@ function withIosNativeAuth(config, yandexClientId, vkClientId, vkClientSecret) {
       infoPlist.CFBundleURLTypes = urlTypes;
     }
 
-    if (vkClientId) infoPlist.VK_NATIVE_IOS_CLIENT_ID = vkClientId;
+    if (vkClientId) {
+      infoPlist.VK_NATIVE_IOS_CLIENT_ID = vkClientId;
+
+      const querySchemes = Array.isArray(infoPlist.LSApplicationQueriesSchemes)
+        ? infoPlist.LSApplicationQueriesSchemes
+        : [];
+      infoPlist.LSApplicationQueriesSchemes = Array.from(new Set([...querySchemes, 'vkauthorize-silent']));
+
+      const urlTypes = Array.isArray(infoPlist.CFBundleURLTypes) ? infoPlist.CFBundleURLTypes : [];
+      const vkUrlScheme = `vk${vkClientId}`;
+      const vkUrlType = urlTypes.find((urlType) => urlType.CFBundleURLName === 'VKID');
+      if (vkUrlType) {
+        const schemes = Array.isArray(vkUrlType.CFBundleURLSchemes) ? vkUrlType.CFBundleURLSchemes : [];
+        vkUrlType.CFBundleURLSchemes = Array.from(new Set([...schemes, vkUrlScheme]));
+      } else {
+        urlTypes.push({ CFBundleURLName: 'VKID', CFBundleURLSchemes: [vkUrlScheme] });
+      }
+      infoPlist.CFBundleURLTypes = urlTypes;
+    }
     if (vkClientSecret) infoPlist.VK_NATIVE_IOS_CLIENT_SECRET = vkClientSecret;
     return exportedConfig;
   });
