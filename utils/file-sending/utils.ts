@@ -1,5 +1,4 @@
 import { errorToast } from '@S/error-toast/error-toast';
-import { FILE_SENDING_ERROR_COPY } from './const';
 import {
   compressMediaFile,
   createVideoThumbnail,
@@ -7,6 +6,7 @@ import {
   uploadMediaFiles,
   waitForMediaUploadReview,
 } from '../file-sending';
+import { FILE_SENDING_ERROR_COPY } from './const';
 import type {
   MediaSource,
   MediaSourceMetadata,
@@ -61,21 +61,15 @@ export async function uploadMediaWithThumbnail(
       return uploadedMedia;
     }
 
-    const thumbnailSource = await createVideoThumbnail(compressedFile.file);
-    if (!thumbnailSource) {
-      reportProgress(control, 1);
-      return uploadedMedia;
-    }
-
-    const compressedThumbnail = await compressMediaFile(thumbnailSource);
-    if (!compressedThumbnail) {
+    const thumbnailFile = await createVideoThumbnail(compressedFile.file);
+    if (!thumbnailFile) {
       reportProgress(control, 1);
       return uploadedMedia;
     }
 
     const uploadedThumbnail = control
-      ? await uploadMediaFile(compressedThumbnail, uploadOptions, undefined, control)
-      : await uploadMediaFile(compressedThumbnail, uploadOptions);
+      ? await uploadMediaFile(thumbnailFile, uploadOptions, undefined, control)
+      : await uploadMediaFile(thumbnailFile, uploadOptions);
     reportProgress(control, 1);
     const reviewedThumbnail = uploadedThumbnail
       ? isActivityUpload
@@ -183,8 +177,8 @@ export async function uploadMediaBatchWithThumbnails(
         const uploadedFile = uploadedByMediaId.get(item.mediaId);
         if (!uploadedFile?.url && !(isActivityUpload && uploadedFile?.assetId)) return null;
 
-        const thumbnailSource = await createVideoThumbnail(file.file);
-        return thumbnailSource ? { mediaId: item.mediaId, file: await compressMediaFile(thumbnailSource) } : null;
+        const thumbnailFile = await createVideoThumbnail(file.file);
+        return thumbnailFile ? { mediaId: item.mediaId, file: thumbnailFile } : null;
       },
       MEDIA_BATCH_CONCURRENCY,
       (completed) => reportUploadProgress(control, 0.8 + (completed / videoItems.length) * 0.1),

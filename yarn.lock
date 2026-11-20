@@ -7032,6 +7032,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-image-manipulator@npm:~58.0.16":
+  version: 58.0.16
+  resolution: "expo-image-manipulator@npm:58.0.16"
+  dependencies:
+    expo-image-loader: "npm:~58.0.3"
+  peerDependencies:
+    expo: "*"
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/2f0a67655b809bd607c16027a1663b963b10f3c9208ea8c930d67b3bb0a93729f8933bc0b744252369d0acf4f42d625bce933edbf9b43af5dc4113e3daf6a625
+  languageName: node
+  linkType: hard
+
 "expo-image-picker@npm:~58.0.10":
   version: 58.0.10
   resolution: "expo-image-picker@npm:58.0.10"
@@ -7524,15 +7537,6 @@ __metadata:
   bin:
     expo-updates: bin/cli.js
   checksum: 10c0/b9e7616bc5638d8d4d5c52cd9c28f786893f09289784723c1b3172eed8535c2cb66455db48a006b6c98fe2f215354cca4997f39d53d22fe251b19cdef98939f0
-  languageName: node
-  linkType: hard
-
-"expo-video-thumbnails@npm:~58.0.3":
-  version: 58.0.3
-  resolution: "expo-video-thumbnails@npm:58.0.3"
-  peerDependencies:
-    expo: "*"
-  checksum: 10c0/bfb7aa0797d281b7a0ef060c3e664c14ce1453dbecb2f27719fe021149814013190f9897dec6c3d3bde59e178ba637d59f66462834de64adafc5d4e576a0310e
   languageName: node
   linkType: hard
 
@@ -12757,6 +12761,7 @@ __metadata:
     expo-font: "npm:~58.0.12"
     expo-haptics: "npm:~58.0.8"
     expo-image: "npm:~58.0.18"
+    expo-image-manipulator: "npm:~58.0.16"
     expo-image-picker: "npm:~58.0.10"
     expo-intent-launcher: "npm:~58.0.3"
     expo-keep-awake: "npm:~58.0.4"
@@ -12780,7 +12785,6 @@ __metadata:
     expo-task-manager: "npm:~58.0.14"
     expo-updates: "npm:~58.0.22"
     expo-video: "npm:~58.0.14"
-    expo-video-thumbnails: "npm:~58.0.3"
     expo-vpn-checker: "npm:^0.1.4"
     husky: "npm:^9.1.7"
     jest: "npm:30.5.2"

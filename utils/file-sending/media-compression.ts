@@ -1,4 +1,5 @@
-import * as VideoThumbnails from 'expo-video-thumbnails';
+import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
+import { createVideoPlayer } from 'expo-video';
 import { Image as ImageCompressor, Video as VideoCompressor, getVideoMetaData } from 'react-native-compressor';
 import { Platform } from 'react-native';
 import { errorToast } from '@S/error-toast/error-toast';
@@ -90,18 +91,42 @@ function waitForCompressionOrAbort<T>(compression: Promise<T | null>, signal?: A
   });
 }
 
-export async function createVideoThumbnail(videoSource: MediaSource): Promise<string | null> {
-  if (Platform.OS === 'web') return null;
+export async function createVideoThumbnail(videoSource: MediaSource): Promise<CompressedMediaFile | null> {
+  if (Platform.OS === 'web' || typeof videoSource !== 'string') return null;
 
-  let objectUrl: string | null = null;
   try {
-    if (typeof videoSource !== 'string') objectUrl = URL.createObjectURL(videoSource);
-    const { uri } = await VideoThumbnails.getThumbnailAsync(objectUrl ?? (videoSource as string));
-    return uri;
+    const player = createVideoPlayer(videoSource);
+    try {
+      const [thumbnail] = await player.generateThumbnailsAsync(0, { maxWidth: VIDEO_MAX_SIZE });
+      if (!thumbnail) return null;
+
+      try {
+        const context = ImageManipulator.manipulate(thumbnail);
+        try {
+          const image = await context.renderAsync();
+          try {
+            const { uri } = await image.saveAsync({ compress: 0.85, format: SaveFormat.WEBP });
+            return {
+              file: uri,
+              originalName: 'thumbnail.webp',
+              extension: 'webp',
+              isVideo: false,
+              mimeType: 'image/webp',
+            };
+          } finally {
+            image.release();
+          }
+        } finally {
+          context.release();
+        }
+      } finally {
+        thumbnail.release();
+      }
+    } finally {
+      player.release();
+    }
   } catch {
     return null;
-  } finally {
-    if (objectUrl) URL.revokeObjectURL(objectUrl);
   }
 }
 

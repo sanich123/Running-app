@@ -15,7 +15,6 @@ defaultConfig.resolver.resolveRequest = (context, moduleName, platform) => {
       [
         '@rnmapbox/maps',
         'react-native-pager-view',
-        'expo-video-thumbnails',
         'react-native-zip-archive',
         'react-native-compressor',
         'react-native-battery-optimization-check',
