@@ -1,5 +1,6 @@
+import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
-import * as VideoThumbnails from 'expo-video-thumbnails';
+import { createVideoPlayer } from 'expo-video';
 import { http, HttpResponse } from 'msw';
 import { Image as ImageCompressor, Video as VideoCompressor, getVideoMetaData } from 'react-native-compressor';
 import { Platform } from 'react-native';
@@ -26,7 +27,10 @@ import { FILE_SENDING_ERROR_COPY } from './file-sending/const';
 import { MAX_MEDIA_BATCH_SIZE, MAX_MEDIA_FILE_SIZE } from './file-sending/file-utils';
 
 jest.mock('expo-image-picker', () => ({ launchImageLibraryAsync: jest.fn() }));
-jest.mock('expo-video-thumbnails', () => ({ getThumbnailAsync: jest.fn() }));
+jest.mock('expo-image-manipulator', () => ({
+  ImageManipulator: { manipulate: jest.fn() },
+  SaveFormat: { WEBP: 'webp' },
+}));
 jest.mock('react-native-compressor', () => ({
   Image: { compress: jest.fn() },
   Video: { compress: jest.fn() },
@@ -69,6 +73,10 @@ describe('file sending', () => {
     jest.clearAllMocks();
     store.dispatch(runichApi.util.resetApiState());
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'ios' });
+    jest.mocked(createVideoPlayer).mockReturnValue({
+      generateThumbnailsAsync: jest.fn().mockResolvedValue([]),
+      release: jest.fn(),
+    } as never);
     (ImageCompressor.compress as jest.Mock).mockResolvedValue('compressed-image.jpg');
     (VideoCompressor.compress as jest.Mock).mockResolvedValue('compressed-video.mp4');
     (getVideoMetaData as jest.Mock).mockResolvedValue({ size: 1_000, duration: 10 });
@@ -217,8 +225,6 @@ describe('file sending', () => {
     });
     expect(VideoCompressor.compress).toHaveBeenCalledWith('activity.MP4', { maxSize: 720 });
 
-    const thumbnail = await createVideoThumbnail(TEST_URLS.exampleVideo);
-    expect(thumbnail).toBeNull();
     expect(errorToast).not.toHaveBeenCalled();
   });
 
@@ -227,15 +233,39 @@ describe('file sending', () => {
 
     await expect(createVideoThumbnail(TEST_URLS.exampleVideo)).resolves.toBeNull();
 
-    expect(VideoThumbnails.getThumbnailAsync).not.toHaveBeenCalled();
+    expect(createVideoPlayer).not.toHaveBeenCalled();
     expect(errorToast).not.toHaveBeenCalled();
   });
 
   it('creates a video thumbnail as a separate operation', async () => {
-    (VideoThumbnails.getThumbnailAsync as jest.Mock).mockResolvedValue({ uri: 'thumbnail.jpg' });
+    const thumbnail = { release: jest.fn() };
+    const player = {
+      generateThumbnailsAsync: jest.fn().mockResolvedValue([thumbnail]),
+      release: jest.fn(),
+    };
+    const image = {
+      saveAsync: jest.fn().mockResolvedValue({ uri: 'thumbnail.webp' }),
+      release: jest.fn(),
+    };
+    const context = { renderAsync: jest.fn().mockResolvedValue(image), release: jest.fn() };
+    jest.mocked(createVideoPlayer).mockReturnValue(player as never);
+    jest.mocked(ImageManipulator.manipulate).mockReturnValue(context as never);
 
-    await expect(createVideoThumbnail(TEST_URLS.exampleVideo)).resolves.toBe('thumbnail.jpg');
-    expect(VideoThumbnails.getThumbnailAsync).toHaveBeenCalledWith(TEST_URLS.exampleVideo);
+    await expect(createVideoThumbnail(TEST_URLS.exampleVideo)).resolves.toEqual({
+      file: 'thumbnail.webp',
+      originalName: 'thumbnail.webp',
+      extension: 'webp',
+      isVideo: false,
+      mimeType: 'image/webp',
+    });
+    expect(createVideoPlayer).toHaveBeenCalledWith(TEST_URLS.exampleVideo);
+    expect(player.generateThumbnailsAsync).toHaveBeenCalledWith(0, { maxWidth: 720 });
+    expect(ImageManipulator.manipulate).toHaveBeenCalledWith(thumbnail);
+    expect(image.saveAsync).toHaveBeenCalledWith({ compress: 0.85, format: SaveFormat.WEBP });
+    expect(image.release).toHaveBeenCalledTimes(1);
+    expect(context.release).toHaveBeenCalledTimes(1);
+    expect(thumbnail.release).toHaveBeenCalledTimes(1);
+    expect(player.release).toHaveBeenCalledTimes(1);
   });
 
   it('reports unsupported and oversized files during compression', async () => {
@@ -282,8 +312,13 @@ describe('file sending', () => {
     expect(errorToast).toHaveBeenCalledWith(FILE_SENDING_ERROR_COPY.uploadFailed, uploadError);
 
     const thumbnailError = new Error('thumbnail failed');
-    (VideoThumbnails.getThumbnailAsync as jest.Mock).mockRejectedValue(thumbnailError);
+    const player = {
+      generateThumbnailsAsync: jest.fn().mockRejectedValue(thumbnailError),
+      release: jest.fn(),
+    };
+    jest.mocked(createVideoPlayer).mockReturnValue(player as never);
     await expect(createVideoThumbnail(TEST_URLS.exampleVideo)).resolves.toBeNull();
+    expect(player.release).toHaveBeenCalledTimes(1);
     expect(errorToast).toHaveBeenCalledTimes(2);
   });
 

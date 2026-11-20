@@ -28,13 +28,21 @@ function getOfflineMapThumbnailFile(id: string) {
   return new File(new Directory(Paths.document, OFFLINE_MAP_THUMBNAILS_DIRECTORY), `${encodeURIComponent(id)}.png`);
 }
 
+function isSavedOfflineMap(value: unknown): value is SavedOfflineMap {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) return false;
+  if (!('id' in value) || typeof value.id !== 'string' || !value.id) return false;
+  if (!('title' in value) || typeof value.title !== 'string') return false;
+  if ('sizeBytes' in value && typeof value.sizeBytes !== 'number') return false;
+  if ('thumbnailUri' in value && typeof value.thumbnailUri !== 'string') return false;
+  if ('thumbnailAspectRatio' in value && typeof value.thumbnailAspectRatio !== 'number') return false;
+  return true;
+}
+
 function parseOfflineMaps(value: string | null) {
   if (!value) return [];
   try {
-    const maps = JSON.parse(value) as SavedOfflineMap[];
-    return Array.isArray(maps)
-      ? maps.filter((map) => typeof map?.id === 'string' && Boolean(map.id) && typeof map?.title === 'string')
-      : [];
+    const maps: unknown = JSON.parse(value);
+    return Array.isArray(maps) ? maps.filter(isSavedOfflineMap) : [];
   } catch {
     return [];
   }

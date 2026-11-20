@@ -1,6 +1,5 @@
 import { errorToast } from '@S/error-toast/error-toast';
 import { TEST_URLS } from '@T/mocks/const';
-import { FILE_SENDING_ERROR_COPY } from './const';
 import {
   compressMediaFile,
   createVideoThumbnail,
@@ -8,6 +7,7 @@ import {
   uploadMediaFiles,
   waitForMediaUploadReview,
 } from '../file-sending';
+import { FILE_SENDING_ERROR_COPY } from './const';
 import { uploadMediaBatchWithThumbnails, uploadMediaWithThumbnail } from './utils';
 import type { CompressedMediaFile, MediaUploadControl } from './file-sending-types';
 import type { UploadedPhotoBatchResponse } from '@R/services/photos/photos';
@@ -33,6 +33,14 @@ const compressedImage = (file = 'compressed.jpg'): CompressedMediaFile => ({
   extension: 'jpg',
   isVideo: false,
   mimeType: 'image/jpeg',
+});
+
+const compressedWebp = (file = 'thumbnail.webp'): CompressedMediaFile => ({
+  file,
+  originalName: file,
+  extension: 'webp',
+  isVideo: false,
+  mimeType: 'image/webp',
 });
 
 const compressedVideo = (file: CompressedMediaFile['file'] = 'compressed.mp4'): CompressedMediaFile => ({
@@ -80,18 +88,18 @@ describe('uploadMediaWithThumbnail', () => {
       isVideo: true,
       mimeType: 'video/mp4',
     };
-    const compressedThumbnail = {
-      file: 'compressed-thumbnail.jpg',
-      originalName: 'thumbnail.jpg',
-      extension: 'jpg',
+    const thumbnailFile = {
+      file: 'thumbnail.webp',
+      originalName: 'thumbnail.webp',
+      extension: 'webp',
       isVideo: false,
-      mimeType: 'image/jpeg',
+      mimeType: 'image/webp',
     };
-    mockCompressMediaFile.mockResolvedValueOnce(compressedVideo).mockResolvedValueOnce(compressedThumbnail);
+    mockCompressMediaFile.mockResolvedValueOnce(compressedVideo);
     mockUploadMediaFile
       .mockResolvedValueOnce({ url: TEST_URLS.cdnVideo, key: 'video.mp4', contentType: 'video/mp4' })
-      .mockResolvedValueOnce({ url: TEST_URLS.cdnThumbnail, key: 'thumbnail.jpg', contentType: 'image/jpeg' });
-    mockCreateVideoThumbnail.mockResolvedValue('thumbnail.jpg');
+      .mockResolvedValueOnce({ url: TEST_URLS.cdnThumbnail, key: 'thumbnail.webp', contentType: 'image/webp' });
+    mockCreateVideoThumbnail.mockResolvedValue(thumbnailFile);
     const options = { scope: 'feedback' as const, feedbackId: 'feedback-id' };
 
     await expect(uploadMediaWithThumbnail('video.mp4', options, 'Upload failed')).resolves.toEqual({
@@ -100,17 +108,16 @@ describe('uploadMediaWithThumbnail', () => {
       contentType: 'video/mp4',
     });
     expect(mockUploadMediaFile).toHaveBeenNthCalledWith(1, compressedVideo, options);
-    expect(mockUploadMediaFile).toHaveBeenNthCalledWith(2, compressedThumbnail, options);
+    expect(mockUploadMediaFile).toHaveBeenNthCalledWith(2, thumbnailFile, options);
+    expect(mockCompressMediaFile).toHaveBeenCalledTimes(1);
   });
 
   it('does not attach a rejected moderation thumbnail to an uploaded feedback video', async () => {
-    mockCompressMediaFile
-      .mockResolvedValueOnce(compressedVideo())
-      .mockResolvedValueOnce(compressedImage('thumbnail.jpg'));
+    mockCompressMediaFile.mockResolvedValueOnce(compressedVideo());
     mockUploadMediaFile
       .mockResolvedValueOnce({ url: TEST_URLS.cdnVideo, key: 'video.mp4', contentType: 'video/mp4' })
-      .mockResolvedValueOnce({ assetId: 'rejected-thumbnail', status: 'queued', contentType: 'image/jpeg' });
-    mockCreateVideoThumbnail.mockResolvedValue('thumbnail.jpg');
+      .mockResolvedValueOnce({ assetId: 'rejected-thumbnail', status: 'queued', contentType: 'image/webp' });
+    mockCreateVideoThumbnail.mockResolvedValue(compressedWebp());
     mockWaitForMediaUploadReview
       .mockResolvedValueOnce([
         {
@@ -123,7 +130,7 @@ describe('uploadMediaWithThumbnail', () => {
         {
           assetId: 'rejected-thumbnail',
           status: 'rejected',
-          contentType: 'image/jpeg',
+          contentType: 'image/webp',
         },
       ]);
 
@@ -183,13 +190,11 @@ describe('uploadMediaWithThumbnail', () => {
   });
 
   it('keeps a video and its thumbnail attached while both are queued for moderation', async () => {
-    mockCompressMediaFile
-      .mockResolvedValueOnce(compressedVideo())
-      .mockResolvedValueOnce(compressedImage('thumbnail.jpg'));
-    mockCreateVideoThumbnail.mockResolvedValue('thumbnail.jpg');
+    mockCompressMediaFile.mockResolvedValueOnce(compressedVideo());
+    mockCreateVideoThumbnail.mockResolvedValue(compressedWebp());
     mockUploadMediaFile
       .mockResolvedValueOnce({ assetId: 'video-asset', status: 'queued', contentType: 'video/mp4' })
-      .mockResolvedValueOnce({ assetId: 'thumbnail-asset', status: 'queued', contentType: 'image/jpeg' });
+      .mockResolvedValueOnce({ assetId: 'thumbnail-asset', status: 'queued', contentType: 'image/webp' });
 
     await expect(uploadMediaWithThumbnail('video.mp4', { scope: 'activity' }, 'Upload failed')).resolves.toEqual({
       thumbnail: null,
@@ -241,13 +246,13 @@ describe('uploadMediaWithThumbnail', () => {
     expect(errorToast).toHaveBeenCalledWith(FILE_SENDING_ERROR_COPY.mediaReviewFailed);
   });
 
-  it('keeps an uploaded video when thumbnail generation or compression fails', async () => {
-    mockCompressMediaFile
-      .mockResolvedValueOnce(compressedVideo())
-      .mockResolvedValueOnce(compressedVideo())
-      .mockResolvedValueOnce(null);
-    mockUploadMediaFile.mockResolvedValue({ url: TEST_URLS.cdnVideo, key: 'video.mp4', contentType: 'video/mp4' });
-    mockCreateVideoThumbnail.mockResolvedValueOnce(null).mockResolvedValueOnce('thumbnail.jpg');
+  it('keeps an uploaded video when thumbnail generation fails and uploads a WebP thumbnail directly', async () => {
+    mockCompressMediaFile.mockResolvedValue(compressedVideo());
+    mockUploadMediaFile
+      .mockResolvedValueOnce({ url: TEST_URLS.cdnVideo, key: 'video.mp4', contentType: 'video/mp4' })
+      .mockResolvedValueOnce({ url: TEST_URLS.cdnVideo, key: 'video.mp4', contentType: 'video/mp4' })
+      .mockResolvedValueOnce({ url: TEST_URLS.cdnThumbnail, key: 'thumbnail.webp', contentType: 'image/webp' });
+    mockCreateVideoThumbnail.mockResolvedValueOnce(null).mockResolvedValueOnce(compressedWebp());
 
     await expect(uploadMediaWithThumbnail('video.mp4', {}, 'Upload failed')).resolves.toEqual({
       url: TEST_URLS.cdnVideo,
@@ -256,10 +261,11 @@ describe('uploadMediaWithThumbnail', () => {
     });
     await expect(uploadMediaWithThumbnail('video.mp4', {}, 'Upload failed')).resolves.toEqual({
       url: TEST_URLS.cdnVideo,
-      thumbnail: null,
+      thumbnail: TEST_URLS.cdnThumbnail,
       contentType: 'video/mp4',
     });
-    expect(mockUploadMediaFile).toHaveBeenCalledTimes(2);
+    expect(mockCompressMediaFile).toHaveBeenCalledTimes(2);
+    expect(mockUploadMediaFile).toHaveBeenCalledTimes(3);
   });
 
   it('reports upload progress and suppresses errors for an aborted upload', async () => {
@@ -349,22 +355,21 @@ describe('uploadMediaWithThumbnail', () => {
   });
 
   it('uploads a video thumbnail in a second manifest batch with the same mediaId', async () => {
-    mockCompressMediaFile
-      .mockResolvedValueOnce({
-        file: 'compressed-video.mp4',
-        originalName: 'video.mp4',
-        extension: 'mp4',
-        isVideo: true,
-        mimeType: 'video/mp4',
-      })
-      .mockResolvedValueOnce({
-        file: 'compressed-thumbnail.jpg',
-        originalName: 'thumbnail.jpg',
-        extension: 'jpg',
-        isVideo: false,
-        mimeType: 'image/jpeg',
-      });
-    mockCreateVideoThumbnail.mockResolvedValue('thumbnail.jpg');
+    mockCompressMediaFile.mockResolvedValueOnce({
+      file: 'compressed-video.mp4',
+      originalName: 'video.mp4',
+      extension: 'mp4',
+      isVideo: true,
+      mimeType: 'video/mp4',
+    });
+    const thumbnailFile = {
+      file: 'thumbnail.webp',
+      originalName: 'thumbnail.webp',
+      extension: 'webp',
+      isVideo: false,
+      mimeType: 'image/webp',
+    };
+    mockCreateVideoThumbnail.mockResolvedValue(thumbnailFile);
     mockUploadMediaFiles
       .mockResolvedValueOnce([
         {
@@ -378,8 +383,8 @@ describe('uploadMediaWithThumbnail', () => {
       .mockResolvedValueOnce([
         {
           url: TEST_URLS.cdnVideoThumbnail,
-          key: 'video-thumbnail.jpg',
-          contentType: 'image/jpeg',
+          key: 'video-thumbnail.webp',
+          contentType: 'image/webp',
           mediaId: 'video-1',
           role: 'thumbnail',
         },
@@ -394,6 +399,7 @@ describe('uploadMediaWithThumbnail', () => {
         contentType: 'video/mp4',
       },
     ]);
+    expect(mockCompressMediaFile).toHaveBeenCalledTimes(1);
     expect(mockUploadMediaFiles).toHaveBeenNthCalledWith(2, expect.any(Array), {}, [
       { mediaId: 'video-1', role: 'thumbnail' },
     ]);
@@ -494,7 +500,7 @@ describe('uploadMediaWithThumbnail', () => {
 
   it('uses the uploaded video URL for browser thumbnails and tolerates a failed thumbnail upload', async () => {
     const browserVideo = { name: 'video.mp4', size: 10, type: 'video/mp4' } as File;
-    mockCompressMediaFile.mockResolvedValueOnce(compressedVideo(browserVideo)).mockResolvedValueOnce(compressedImage());
+    mockCompressMediaFile.mockResolvedValueOnce(compressedVideo(browserVideo));
     mockUploadMediaFiles
       .mockResolvedValueOnce([
         {
@@ -506,7 +512,13 @@ describe('uploadMediaWithThumbnail', () => {
         },
       ])
       .mockResolvedValueOnce(null);
-    mockCreateVideoThumbnail.mockResolvedValue('browser-thumbnail.jpg');
+    mockCreateVideoThumbnail.mockResolvedValue({
+      file: 'browser-thumbnail.webp',
+      originalName: 'thumbnail.webp',
+      extension: 'webp',
+      isVideo: false,
+      mimeType: 'image/webp',
+    });
 
     await expect(
       uploadMediaBatchWithThumbnails([{ fileSrc: browserVideo, mediaId: 'video' }], {}, 'Upload failed'),
@@ -517,11 +529,17 @@ describe('uploadMediaWithThumbnail', () => {
 
   it('uses an uploaded video URL for the individual browser thumbnail and tolerates a failed upload', async () => {
     const browserVideo = { name: 'video.mp4', size: 10, type: 'video/mp4' } as File;
-    mockCompressMediaFile.mockResolvedValueOnce(compressedVideo(browserVideo)).mockResolvedValueOnce(compressedImage());
+    mockCompressMediaFile.mockResolvedValueOnce(compressedVideo(browserVideo));
     mockUploadMediaFile
       .mockResolvedValueOnce({ url: TEST_URLS.cdnVideo, key: 'video.mp4', contentType: 'video/mp4' })
       .mockResolvedValueOnce(null);
-    mockCreateVideoThumbnail.mockResolvedValue('browser-thumbnail.jpg');
+    mockCreateVideoThumbnail.mockResolvedValue({
+      file: 'browser-thumbnail.webp',
+      originalName: 'thumbnail.webp',
+      extension: 'webp',
+      isVideo: false,
+      mimeType: 'image/webp',
+    });
 
     await expect(uploadMediaWithThumbnail(browserVideo, {}, 'Upload failed')).resolves.toEqual({
       url: TEST_URLS.cdnVideo,

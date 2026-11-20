@@ -160,8 +160,31 @@ describe('activity track library', () => {
     await expect(listSavedActivityTracks()).resolves.toEqual([]);
     mockStorage.__mockStorage.set(TRACK_INDEX_KEY, '{bad json');
     await expect(listSavedActivityTracks()).resolves.toEqual([]);
-    mockStorage.__mockStorage.set(TRACK_INDEX_KEY, JSON.stringify([{ id: 'missing' }, { id: 'activity-run-4' }]));
-    await expect(listSavedActivityTracks()).resolves.toEqual([]);
+    const savedTrack = {
+      id: 'route-1',
+      activityId: 'activity-1',
+      title: 'Loop',
+      date: '2026-10-29T06:00:00.000Z',
+      pointCount: 12,
+    };
+    mockFiles.__mockFiles.set('file:///documents/runich-tracks/route-1.json', '[]');
+    mockStorage.__mockStorage.set(
+      TRACK_INDEX_KEY,
+      JSON.stringify([
+        savedTrack,
+        null,
+        {
+          id: 'route-2',
+          activityId: 'activity-2',
+          title: 'Invalid distance',
+          date: 'today',
+          pointCount: 4,
+          distanceMeters: 'bad',
+        },
+        { id: 'missing' },
+      ]),
+    );
+    await expect(listSavedActivityTracks()).resolves.toEqual([savedTrack]);
   });
 
   it('filters malformed saved points and reports a missing route file', async () => {

@@ -15,7 +15,9 @@ interface RunichAuthNativeModule {
 }
 
 const nativeModule =
-  Platform.OS === 'android' ? requireOptionalNativeModule<RunichAuthNativeModule>('RunichAuth') : null;
+  Platform.OS === 'android' || Platform.OS === 'ios'
+    ? requireOptionalNativeModule<RunichAuthNativeModule>('RunichAuth')
+    : null;
 
 async function getProviderResult(provider: 'yandex' | 'vk') {
   if (!nativeModule) throw new Error('Native social sign-in is not available in this build.');

@@ -124,8 +124,20 @@ describe('RunichAuth', () => {
     expect(requireOptionalNativeModule).toHaveBeenCalledTimes(1);
   });
 
-  it('does not load the Android module on other platforms', async () => {
-    const { nativeAuth, requireOptionalNativeModule } = loadNativeAuthModule(null, 'ios');
+  it.each(['ios', 'android'])('loads the native module on %s', async (platformOS) => {
+    const loginWithYandex = jest.fn().mockResolvedValue({ accessToken: 'yandex-token', cancelled: false });
+    const { nativeAuth, requireOptionalNativeModule } = loadNativeAuthModule(
+      { loginWithYandex, loginWithVk: jest.fn() },
+      platformOS,
+    );
+
+    await expect(nativeAuth.loginWithYandexNative()).resolves.toBe('yandex-token');
+    expect(requireOptionalNativeModule).toHaveBeenCalledWith('RunichAuth');
+    expect(loginWithYandex).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not load the native module on web', async () => {
+    const { nativeAuth, requireOptionalNativeModule } = loadNativeAuthModule(null, 'web');
 
     await expect(nativeAuth.loginWithYandexNative()).rejects.toThrow(
       'Native social sign-in is not available in this build.',

@@ -10,7 +10,7 @@ export default {
     name: IS_DEV ? 'Runich(dev)' : 'Runich',
     slug: 'running-app',
     scheme: IS_DEV ? 'runich-dev' : 'runich',
-    version: '1.5.0',
+    version: '1.5.1',
     orientation: 'portrait',
     runtimeVersion: { policy: 'appVersion' },
     icon: IS_DEV ? './assets/images/icon-dev.png' : './assets/images/icon.png',
@@ -25,7 +25,13 @@ export default {
     ios: {
       usesAppleSignIn: true,
       icon: IS_DEV ? './assets/images/icon-dev.png' : './assets/images/icon.png',
-      associatedDomains: ['applinks:runich-app.ru', 'applinks:stage-web.runich-app.ru'],
+      associatedDomains: [
+        'applinks:runich-app.ru',
+        'applinks:stage-web.runich-app.ru',
+        ...(process.env.YANDEX_NATIVE_CLIENT_ID
+          ? [`applinks:yx${process.env.YANDEX_NATIVE_CLIENT_ID}.oauth.yandex.ru`]
+          : []),
+      ],
       entitlements: {
         'com.apple.developer.networking.wifi-info': true,
         'com.apple.developer.healthkit': true,
@@ -150,7 +156,8 @@ export default {
     extra: {
       eas: { projectId: '413aa829-bbae-467c-9201-4688b894f2f7' },
       yandexClientId: process.env.YANDEX_NATIVE_CLIENT_ID,
-      vkIdClientId: process.env.VK_NATIVE_CLIENT_ID,
+      vkAndroidClientId: process.env.VK_NATIVE_ANDROID_CLIENT_ID,
+      vkIosClientId: process.env.VK_NATIVE_IOS_CLIENT_ID,
     },
     plugins: [
       './custom.plugin',

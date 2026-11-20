@@ -3056,13 +3056,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-segmented-control/segmented-control@npm:2.5.8":
-  version: 2.5.8
-  resolution: "@react-native-segmented-control/segmented-control@npm:2.5.8"
+"@react-native-segmented-control/segmented-control@npm:2.5.7":
+  version: 2.5.7
+  resolution: "@react-native-segmented-control/segmented-control@npm:2.5.7"
   peerDependencies:
     react: ">=16.0"
     react-native: ">=0.62"
-  checksum: 10c0/12b8094d1776d9db668befce55b77926dc936d0a00e3f2aa0561d67608235db7fb9e8fd2be2a9a089e078dc14ead95688884e41c68dbb401f976bc4bd168493e
+  checksum: 10c0/4f684cbcac813d53598107a88056ae8c9e7a5e4e0ed94776706f400828f50ff3bf87e1fda3a34b437b9c5776331f8a4fab4b080b3260534db5183dcc3f20a3c7
   languageName: node
   linkType: hard
 
@@ -7032,6 +7032,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-image-manipulator@npm:~58.0.16":
+  version: 58.0.16
+  resolution: "expo-image-manipulator@npm:58.0.16"
+  dependencies:
+    expo-image-loader: "npm:~58.0.3"
+  peerDependencies:
+    expo: "*"
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/2f0a67655b809bd607c16027a1663b963b10f3c9208ea8c930d67b3bb0a93729f8933bc0b744252369d0acf4f42d625bce933edbf9b43af5dc4113e3daf6a625
+  languageName: node
+  linkType: hard
+
 "expo-image-picker@npm:~58.0.10":
   version: 58.0.10
   resolution: "expo-image-picker@npm:58.0.10"
@@ -7524,15 +7537,6 @@ __metadata:
   bin:
     expo-updates: bin/cli.js
   checksum: 10c0/b9e7616bc5638d8d4d5c52cd9c28f786893f09289784723c1b3172eed8535c2cb66455db48a006b6c98fe2f215354cca4997f39d53d22fe251b19cdef98939f0
-  languageName: node
-  linkType: hard
-
-"expo-video-thumbnails@npm:~58.0.3":
-  version: 58.0.3
-  resolution: "expo-video-thumbnails@npm:58.0.3"
-  peerDependencies:
-    expo: "*"
-  checksum: 10c0/bfb7aa0797d281b7a0ef060c3e664c14ce1453dbecb2f27719fe021149814013190f9897dec6c3d3bde59e178ba637d59f66462834de64adafc5d4e576a0310e
   languageName: node
   linkType: hard
 
@@ -10221,10 +10225,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mapbox-gl@npm:^3.35.1":
-  version: 3.35.1
-  resolution: "mapbox-gl@npm:3.35.1"
-  checksum: 10c0/50ef62af7b35eb10550291c28e7e1b7ebb6dba1afdb6c233801150a8918b31c2dc384225f560d34527c99cba12b00c115830aee81187d1f35e87906f0c067fd7
+"mapbox-gl@npm:^3.35.2":
+  version: 3.35.2
+  resolution: "mapbox-gl@npm:3.35.2"
+  checksum: 10c0/acb329fa9cb737406ac76f53048d7dfc5fda6655fd43a6afc7475125e865b643c967b363104885dde2b746c944a993ce344c39e2383dfba29e9d15db248eac04
   languageName: node
   linkType: hard
 
@@ -12721,7 +12725,7 @@ __metadata:
     "@gorhom/bottom-sheet": "npm:5.2.14"
     "@mapbox/polyline": "npm:^1.2.1"
     "@react-native-community/netinfo": "npm:12.0.1"
-    "@react-native-segmented-control/segmented-control": "npm:2.5.8"
+    "@react-native-segmented-control/segmented-control": "npm:2.5.7"
     "@react-native-vector-icons/material-design-icons": "npm:^14.0.0"
     "@react-native/jest-preset": "npm:~0.88.1"
     "@reduxjs/toolkit": "npm:^2.15.0"
@@ -12757,6 +12761,7 @@ __metadata:
     expo-font: "npm:~58.0.12"
     expo-haptics: "npm:~58.0.8"
     expo-image: "npm:~58.0.18"
+    expo-image-manipulator: "npm:~58.0.16"
     expo-image-picker: "npm:~58.0.10"
     expo-intent-launcher: "npm:~58.0.3"
     expo-keep-awake: "npm:~58.0.4"
@@ -12780,14 +12785,13 @@ __metadata:
     expo-task-manager: "npm:~58.0.14"
     expo-updates: "npm:~58.0.22"
     expo-video: "npm:~58.0.14"
-    expo-video-thumbnails: "npm:~58.0.3"
     expo-vpn-checker: "npm:^0.1.4"
     husky: "npm:^9.1.7"
     jest: "npm:30.5.2"
     jest-expo: "npm:~58.0.15"
     lint-staged: "npm:^17.6.1"
     madge: "npm:^8.0.0"
-    mapbox-gl: "npm:^3.35.1"
+    mapbox-gl: "npm:^3.35.2"
     moment: "npm:^2.31.0"
     msw: "npm:^2.15.0"
     npm-check-updates: "npm:^23.1.1"
@@ -12827,7 +12831,7 @@ __metadata:
     ts-prune: "npm:^0.10.3"
     turf-linestring: "npm:^1.0.2"
     turf-point: "npm:^2.0.1"
-    typescript: "npm:~6.0.3"
+    typescript: "npm:^6.0.2"
     typescript-eslint: "npm:^8.73.0"
     validator: "npm:^13.15.35"
   languageName: unknown
@@ -14148,7 +14152,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:~6.0.3":
+"typescript@npm:^6.0.2":
   version: 6.0.3
   resolution: "typescript@npm:6.0.3"
   bin:
@@ -14168,7 +14172,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A~6.0.3#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A^6.0.2#optional!builtin<compat/typescript>":
   version: 6.0.3
   resolution: "typescript@patch:typescript@npm%3A6.0.3#optional!builtin<compat/typescript>::version=6.0.3&hash=5786d5"
   bin:
