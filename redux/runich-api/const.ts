@@ -1,6 +1,7 @@
 import { fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Mutex } from 'async-mutex';
 import { fetch as nitroFetch } from 'react-native-nitro-fetch';
+import { Platform } from 'react-native';
 import { router } from 'expo-router';
 import { ROUTES } from '@const/enums';
 import { resetAuthSlice, setAuthTokens } from '@R/slices/auth/auth';
@@ -93,7 +94,7 @@ const baseQuery = fetchBaseQuery({
     headers.set('x-device-id', deviceId);
     headers.set('x-device-name', deviceName);
     const platformHeader =
-      endpoint === 'loginWithVkNative' ? deviceMetadata.osName?.toLowerCase() || platform : platform;
+      endpoint === 'loginWithVkNative' && (Platform.OS === 'ios' || Platform.OS === 'android') ? Platform.OS : platform;
     headers.set('x-platform', platformHeader);
     const deviceHeaders = {
       'x-device-model': deviceMetadata.model,
