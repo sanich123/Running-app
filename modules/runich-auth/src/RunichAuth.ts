@@ -6,6 +6,8 @@ interface NativeAuthResult {
   code?: string;
   deviceId?: string;
   codeVerifier?: string;
+  state?: string;
+  redirectUri?: string;
   cancelled: boolean;
 }
 
@@ -26,7 +28,7 @@ async function getProviderResult(provider: 'yandex' | 'vk') {
   if (provider === 'yandex' && !result.accessToken) {
     throw new Error('The Yandex SDK did not return an access token.');
   }
-  if (provider === 'vk' && (!result.code || !result.deviceId || !result.codeVerifier)) {
+  if (provider === 'vk' && (!result.code || !result.deviceId || !result.codeVerifier || !result.state)) {
     throw new Error('The VK SDK did not return an authorization code.');
   }
   return result;
@@ -40,5 +42,11 @@ export async function loginWithYandexNative() {
 export async function loginWithVkNative() {
   const result = await getProviderResult('vk');
   if (!result) return null;
-  return { code: result.code!, deviceId: result.deviceId!, codeVerifier: result.codeVerifier! };
+  return {
+    code: result.code!,
+    deviceId: result.deviceId!,
+    codeVerifier: result.codeVerifier!,
+    state: result.state!,
+    redirectUri: result.redirectUri,
+  };
 }
