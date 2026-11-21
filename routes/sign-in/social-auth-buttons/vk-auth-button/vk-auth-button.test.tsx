@@ -94,6 +94,8 @@ describe('VkAuthButton', () => {
         code: 'authorization-code',
         deviceId: 'device-id',
         codeVerifier: 'verifier',
+        state: 'vk-state',
+        redirectUri: 'vk123://id.vk.ru/blank.html',
       });
 
       await renderWithProviders(<VkAuthButton />);
@@ -106,6 +108,8 @@ describe('VkAuthButton', () => {
         code: 'authorization-code',
         deviceId: 'device-id',
         codeVerifier: 'verifier',
+        state: 'vk-state',
+        redirectUri: 'vk123://id.vk.ru/blank.html',
       });
       expect(screen.queryByRole('progressbar')).toBeNull();
       expect(screen.getByTestId('vk-auth').props.accessibilityState.disabled).toBe(false);

@@ -27,6 +27,8 @@ export interface NativeVkAuthCode {
   code: string;
   deviceId: string;
   codeVerifier: string;
+  state: string;
+  redirectUri?: string;
 }
 
 export interface NativeAppleAuthToken {

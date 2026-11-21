@@ -3,6 +3,8 @@ interface NativeAuthResult {
   code?: string;
   deviceId?: string;
   codeVerifier?: string;
+  state?: string;
+  redirectUri?: string;
   cancelled: boolean;
 }
 
@@ -13,7 +15,13 @@ interface NativeAuthModule {
 
 interface NativeAuthApi {
   loginWithYandexNative: () => Promise<string | null>;
-  loginWithVkNative: () => Promise<{ code: string; deviceId: string; codeVerifier: string } | null>;
+  loginWithVkNative: () => Promise<{
+    code: string;
+    deviceId: string;
+    codeVerifier: string;
+    state: string;
+    redirectUri?: string;
+  } | null>;
 }
 
 function loadNativeAuthModule(nativeModule: NativeAuthModule | null, platformOS = 'android') {
@@ -78,6 +86,8 @@ describe('RunichAuth', () => {
       code: 'authorization-code',
       deviceId: 'device-id',
       codeVerifier: 'code-verifier',
+      state: 'vk-state',
+      redirectUri: 'vk123://id.vk.ru/blank.html',
       cancelled: false,
     });
     const { nativeAuth } = loadNativeAuthModule({ loginWithYandex: jest.fn(), loginWithVk });
@@ -86,6 +96,8 @@ describe('RunichAuth', () => {
       code: 'authorization-code',
       deviceId: 'device-id',
       codeVerifier: 'code-verifier',
+      state: 'vk-state',
+      redirectUri: 'vk123://id.vk.ru/blank.html',
     });
     expect(loginWithVk).toHaveBeenCalledTimes(1);
   });

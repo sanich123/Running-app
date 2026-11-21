@@ -97,6 +97,8 @@ class RunichAuthModule : Module() {
       val codeChallenge = MessageDigest.getInstance("SHA-256")
         .digest(codeVerifier.toByteArray(Charsets.US_ASCII))
         .let { Base64.encodeToString(it, Base64.URL_SAFE or Base64.NO_WRAP or Base64.NO_PADDING) }
+      val oauthState = ByteArray(32).also { SecureRandom().nextBytes(it) }
+        .let { Base64.encodeToString(it, Base64.URL_SAFE or Base64.NO_WRAP or Base64.NO_PADDING) }
       val callback = object : VKIDAuthCallback {
         override fun onAuth(accessToken: AccessToken) {
           if (settled.compareAndSet(false, true)) {
@@ -111,6 +113,7 @@ class RunichAuthModule : Module() {
                 "code" to data.code,
                 "deviceId" to data.deviceId,
                 "codeVerifier" to codeVerifier,
+                "state" to oauthState,
                 "cancelled" to false,
               ),
             )
@@ -133,6 +136,7 @@ class RunichAuthModule : Module() {
           callback = callback,
           params = VKIDAuthParams {
             this.codeChallenge = codeChallenge
+            this.state = oauthState
             scopes = setOf("vkid.personal_info", "email")
           },
         )

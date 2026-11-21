@@ -122,6 +122,8 @@ public class RunichAuthModule: Module, AuthCodeHandler, YandexLoginSDKObserver {
         "code": code.code,
         "deviceId": code.deviceId,
         "codeVerifier": codeVerifier,
+        "state": code.state,
+        "redirectUri": code.redirectURI,
         "cancelled": false,
       ])
       finishFlow()
