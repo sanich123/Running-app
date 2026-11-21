@@ -4,6 +4,7 @@
   },
   "build": {
     "production": {
+      "corepack": true,
       "channel": "production",
       "autoIncrement": true,
       "environment": "production"
@@ -17,6 +18,7 @@
       "channel": "preview-production"
     },
     "preview-internal": {
+      "corepack": true,
       "autoIncrement": true,
       "distribution": "internal",
       "android": {
