@@ -11977,9 +11977,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-nitro-fetch@npm:^1.10.0":
-  version: 1.10.0
-  resolution: "react-native-nitro-fetch@npm:1.10.0"
+"react-native-nitro-fetch@npm:^1.11.0":
+  version: 1.11.0
+  resolution: "react-native-nitro-fetch@npm:1.11.0"
   dependencies:
     web-streams-polyfill: "npm:^4.2.0"
   peerDependencies:
@@ -11990,7 +11990,7 @@ __metadata:
   peerDependenciesMeta:
     react-native-worklets:
       optional: true
-  checksum: 10c0/ba314781a8c5f65dd6fb69f5643d913eb252e76b634f3878e66af6ddbdc169a691a73207374bef61b2f517438de0bf347bf96fc6e5f6dac388ac776fb2f50f44
+  checksum: 10c0/44a593bbcb22afe18128608325475fb4a2c77b70c0b1a2cf5c44d6e48b34a758eb3e4a233bbf1cb994e0ee23b4847e2026cb88d5ae71ec457fe0bbfc95f6413a
   languageName: node
   linkType: hard
 
@@ -12807,7 +12807,7 @@ __metadata:
     react-native-health-connect: "npm:4.1.3"
     react-native-keyboard-controller: "npm:1.22.7"
     react-native-mmkv: "npm:4.3.2"
-    react-native-nitro-fetch: "npm:^1.10.0"
+    react-native-nitro-fetch: "npm:^1.11.0"
     react-native-nitro-modules: "npm:0.37.2"
     react-native-pager-view: "npm:9.0.7"
     react-native-paper: "npm:^5.15.5"

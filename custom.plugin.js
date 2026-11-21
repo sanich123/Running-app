@@ -21,9 +21,9 @@ function withReachabilitySwiftPrivacyManifest(config) {
     if (existingDeclaration.test(contents)) {
       contents = contents.replace(existingDeclaration, `  ${podDeclaration}`);
     } else {
-      const appTarget = /(target\s+'Runich'\s+do\s*\n)/;
+      const appTarget = /^([ \t]*target\s+['"][^'"]+['"]\s+do\s*\n)/m;
       if (!appTarget.test(contents)) {
-        throw new Error('Could not pin ReachabilitySwift in the Runich iOS target.');
+        throw new Error('Could not find the iOS app target to pin ReachabilitySwift.');
       }
       contents = contents.replace(appTarget, `$1  ${podDeclaration}\n`);
     }

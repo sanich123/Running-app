@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
+import * as SecureStore from 'expo-secure-store';
 import { Linking, Platform } from 'react-native';
 import { LANGUAGES } from '@const/enums';
 import {
@@ -22,7 +23,14 @@ import {
 } from '../../../modules/runich-health/src/RunichHealth';
 import { HEALTH_CONNECT_PLAY_STORE_URL } from '../const';
 import { WATCH_WORKOUT_SYNC_CANDIDATE_BATCH_SIZE } from './const';
-import { getDiagnosticErrorCode, getHeartRateSampleCount, getWorkoutId, getRoutePointCount } from './helpers';
+import {
+  getDiagnosticErrorCode,
+  getHeartRateSampleCount,
+  getWorkoutId,
+  getRoutePointCount,
+  isHealthKitAuthorizationNotDetermined,
+  getHealthKitAuthorizationRequestKey,
+} from './helpers';
 import { uploadWorkoutBatches } from './upload-workout-batches';
 import { useAutoSyncPreference } from './use-auto-sync-preference';
 import { useHiddenWorkouts } from './use-hidden-workouts';
@@ -157,22 +165,48 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
             ? { stage: readError.stage, errorCode: readError.errorCode }
             : { errorCode: getDiagnosticErrorCode(readError) }),
         });
+        const healthKitAuthorizationNotDetermined =
+          Platform.OS === 'ios' && isHealthKitAuthorizationNotDetermined(readError);
+        if (healthKitAuthorizationNotDetermined) {
+          const authorizationRequestKey = getHealthKitAuthorizationRequestKey(userId);
+          if (authorizationRequestKey) {
+            try {
+              await SecureStore.deleteItemAsync(authorizationRequestKey);
+            } catch {
+              // A stale connection must not keep blocking sign-in if keychain cleanup fails.
+            }
+          }
+        }
         setError(
-          Platform.OS === 'ios'
+          healthKitAuthorizationNotDetermined
             ? isRussian
-              ? 'Не удалось прочитать тренировки. Проверьте доступ Runich к тренировкам в Apple Health.'
-              : 'Could not read workouts. Check Runich workout access in Apple Health.'
-            : isRussian
-              ? 'Не удалось получить тренировки из хранилища здоровья.'
-              : 'Could not read workouts.',
+              ? 'Доступ к тренировкам в Apple Health не подключён. Подключите его в настройках импорта.'
+              : 'Apple Health workout access is not connected. Connect it in import settings.'
+            : Platform.OS === 'ios'
+              ? isRussian
+                ? 'Не удалось прочитать тренировки. Проверьте доступ Runich к тренировкам в Apple Health.'
+                : 'Could not read workouts. Check Runich workout access in Apple Health.'
+              : isRussian
+                ? 'Не удалось получить тренировки из хранилища здоровья.'
+                : 'Could not read workouts.',
         );
-        errorToast('', readError);
+        if (healthKitAuthorizationNotDetermined) {
+          if (!autoSync) {
+            errorToast(
+              isRussian
+                ? 'Подключите доступ к тренировкам в Apple Health в настройках импорта.'
+                : 'Connect Apple Health workout access in import settings.',
+            );
+          }
+        } else {
+          errorToast('', readError);
+        }
         return null;
       } finally {
         setIsReading(false);
       }
     },
-    [hiddenWorkoutIdsRef, isRussian],
+    [autoSync, hiddenWorkoutIdsRef, isRussian, userId],
   );
 
   const sendWorkoutsToRunich = useCallback(
@@ -325,7 +359,6 @@ export function useWorkoutImport({ autoSync = false, enabled = true }: UseWorkou
   const { availability, connect, healthPermissions, isConnected, isLoading, refreshHealthConnection } =
     useWorkoutImportConnection({
       autoSync,
-      autoSyncEnabled,
       enabled,
       isRussian,
       userId,

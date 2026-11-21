@@ -19,7 +19,6 @@ import type {
 
 interface UseWorkoutImportConnectionOptions {
   autoSync: boolean;
-  autoSyncEnabled: boolean;
   enabled: boolean;
   isRussian: boolean;
   userId: string | null;
@@ -35,7 +34,6 @@ interface UseWorkoutImportConnectionOptions {
 
 export function useWorkoutImportConnection({
   autoSync,
-  autoSyncEnabled,
   enabled,
   isRussian,
   userId,
@@ -88,7 +86,10 @@ export function useWorkoutImportConnection({
             : permissions.granted || savedConnectionValue === 'true');
         setIsConnected(connected);
         if (connected && autoSync && userId && savedAutoSyncEnabled) {
-          void syncLatestWorkouts(true, true);
+          await syncLatestWorkouts(true, true);
+          if (Platform.OS === 'ios' && connectionKey && (await SecureStore.getItemAsync(connectionKey)) !== 'true') {
+            if (isActive()) setIsConnected(false);
+          }
         } else if (connected && !autoSync) {
           void readWorkouts();
         }
@@ -137,25 +138,10 @@ export function useWorkoutImportConnection({
     const subscription = AppState.addEventListener('change', (nextAppState) => {
       const returnedToApp = previousAppState.current !== 'active' && nextAppState === 'active' && Boolean(userId);
       previousAppState.current = nextAppState;
-      if (returnedToApp) {
-        if (availability === 'available' && isConnected) {
-          if (autoSync && autoSyncEnabled) void syncLatestWorkouts(true);
-          else if (!autoSync) void readWorkouts();
-        } else void refreshHealthConnection();
-      }
+      if (returnedToApp) void refreshHealthConnection();
     });
     return () => subscription.remove();
-  }, [
-    autoSync,
-    autoSyncEnabled,
-    availability,
-    enabled,
-    isConnected,
-    readWorkouts,
-    refreshHealthConnection,
-    syncLatestWorkouts,
-    userId,
-  ]);
+  }, [enabled, refreshHealthConnection, userId]);
 
   const connect = useCallback(async () => {
     setError(null);
@@ -182,6 +168,9 @@ export function useWorkoutImportConnection({
       }
       await setAutoSyncEnabled(true);
       await syncLatestWorkouts(true, true);
+      if (Platform.OS === 'ios' && connectionKey && (await SecureStore.getItemAsync(connectionKey)) !== 'true') {
+        setIsConnected(false);
+      }
     } catch (connectError) {
       setHealthStatusErrorCode(getDiagnosticErrorCode(connectError));
       setError(isRussian ? 'Не удалось подключить хранилище здоровья.' : 'Could not connect the health store.');
