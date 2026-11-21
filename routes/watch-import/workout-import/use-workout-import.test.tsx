@@ -25,6 +25,7 @@ const mockRequestPermissions = jest.fn();
 const mockReadWorkouts = jest.fn();
 const mockGetItemAsync = jest.fn();
 const mockSetItemAsync = jest.fn();
+const mockDeleteItemAsync = jest.fn();
 const originalPlatformOS = Platform.OS;
 
 jest.mock('../../../modules/runich-health/src/RunichHealth', () => ({
@@ -39,6 +40,7 @@ jest.mock('../../../modules/runich-health/src/RunichHealth', () => ({
 jest.mock('expo-secure-store', () => ({
   getItemAsync: mockGetItemAsync,
   setItemAsync: mockSetItemAsync,
+  deleteItemAsync: mockDeleteItemAsync,
 }));
 
 const { useWorkoutImport } = require('./use-workout-import') as typeof WorkoutImportModule;
@@ -100,6 +102,7 @@ describe('useWorkoutImport', () => {
     mockReadWorkouts.mockResolvedValue([workout]);
     mockGetItemAsync.mockResolvedValue(null);
     mockSetItemAsync.mockResolvedValue(undefined);
+    mockDeleteItemAsync.mockResolvedValue(undefined);
     appStateListener = undefined;
     jest.spyOn(AppState, 'addEventListener').mockImplementation(((
       _event: string,
@@ -131,6 +134,35 @@ describe('useWorkoutImport', () => {
     expect(mockReadWorkouts).toHaveBeenCalledTimes(1);
     expect(importedWorkoutBatches).toHaveLength(0);
     expect(result.current.selectedWorkouts).toHaveLength(1);
+  });
+
+  it('clears a stale HealthKit connection after an undetermined read without interrupting background sign-in', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'ios' });
+    mockGetPermissions.mockResolvedValue({ available: true });
+    let healthKitAuthorizationRequested = true;
+    mockGetItemAsync.mockImplementation((key: string) =>
+      Promise.resolve(
+        key === getHealthKitAuthorizationRequestKey('user-1')
+          ? healthKitAuthorizationRequested
+            ? 'true'
+            : null
+          : null,
+      ),
+    );
+    mockDeleteItemAsync.mockImplementation(async (key: string) => {
+      if (key === getHealthKitAuthorizationRequestKey('user-1')) healthKitAuthorizationRequested = false;
+    });
+    mockReadWorkouts.mockRejectedValueOnce(new Error('Authorization not determined'));
+    const errorToast = jest.spyOn(errorToastModule, 'errorToast').mockImplementation(() => undefined);
+
+    const { result } = await renderHook(() => useWorkoutImport({ autoSync: true }), { wrapper: Wrapper });
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(mockDeleteItemAsync).toHaveBeenCalledWith(getHealthKitAuthorizationRequestKey('user-1'));
+    expect(result.current.isConnected).toBe(false);
+    expect(errorToast).not.toHaveBeenCalled();
+    expect(importedWorkoutBatches).toHaveLength(0);
   });
 
   it('does not enable automatic sync as a side effect of a manual import', async () => {
@@ -246,9 +278,19 @@ describe('useWorkoutImport', () => {
   it('ignores the legacy connection marker on iOS until the user requests HealthKit access', async () => {
     Object.defineProperty(Platform, 'OS', { configurable: true, value: 'ios' });
     mockGetPermissions.mockResolvedValue({ available: true });
+    let healthKitAuthorizationRequested = false;
     mockGetItemAsync.mockImplementation((key: string) =>
-      Promise.resolve(key === getConnectionKey('user-1') ? 'true' : null),
+      Promise.resolve(
+        key === getConnectionKey('user-1')
+          ? 'true'
+          : key === getHealthKitAuthorizationRequestKey('user-1') && healthKitAuthorizationRequested
+            ? 'true'
+            : null,
+      ),
     );
+    mockSetItemAsync.mockImplementation(async (key: string) => {
+      if (key === getHealthKitAuthorizationRequestKey('user-1')) healthKitAuthorizationRequested = true;
+    });
 
     const { result } = await renderHook(() => useWorkoutImport(), { wrapper: Wrapper });
     await waitFor(() => expect(result.current.isLoading).toBe(false));

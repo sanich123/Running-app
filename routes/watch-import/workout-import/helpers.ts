@@ -61,6 +61,16 @@ export function getDiagnosticErrorCode(error: unknown): string {
   return 'UnknownError';
 }
 
+export function isHealthKitAuthorizationNotDetermined(error: unknown): boolean {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'message' in error &&
+    typeof error.message === 'string' &&
+    /authorization not determined/i.test(error.message)
+  );
+}
+
 export function getRequestErrorStatus(error: unknown): string {
   if (typeof error === 'object' && error !== null && 'status' in error) {
     const status = error.status;
