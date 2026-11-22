@@ -104,7 +104,7 @@ describe('AppleAuthButton', () => {
     jest.restoreAllMocks();
   });
 
-  it('creates a nonce, shows progress, and finishes Apple sign-in', async () => {
+  it('creates a nonce without showing progress and finishes Apple sign-in', async () => {
     let resolveLogin: ((response: { accessToken: string; refreshToken: string; userId: string }) => void) | undefined;
     mockLoginMutation.mockReturnValue({
       unwrap: jest.fn(
@@ -136,7 +136,8 @@ describe('AppleAuthButton', () => {
         AppleAuthentication.AppleAuthenticationScope.EMAIL,
       ],
     });
-    expect(screen.getByText(`${russianCopy.signingInWith} ${russianCopy.apple}…`)).toBeTruthy();
+    expect(screen.queryByText(`${russianCopy.signingInWith} ${russianCopy.apple}…`)).toBeNull();
+    expect(screen.queryByTestId('apple-auth-progress')).toBeNull();
     expect(screen.getByTestId('apple-auth').props.accessibilityState.disabled).toBe(true);
 
     await act(async () =>

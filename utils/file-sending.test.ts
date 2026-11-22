@@ -239,15 +239,30 @@ describe('file sending', () => {
 
   it('creates a video thumbnail as a separate operation', async () => {
     const thumbnail = { release: jest.fn() };
+    let notifySourceLoad: (() => void) | undefined;
+    let isSourceLoaded = false;
     const player = {
+      addListener: jest.fn((event: string, listener: (payload: never) => void) => {
+        if (event === 'sourceLoad') notifySourceLoad = () => listener(undefined as never);
+        return { remove: jest.fn() };
+      }),
+      replaceAsync: jest.fn(async () => {
+        isSourceLoaded = true;
+        notifySourceLoad?.();
+      }),
       generateThumbnailsAsync: jest.fn().mockResolvedValue([thumbnail]),
       release: jest.fn(),
+      status: 'idle',
     };
     const image = {
       saveAsync: jest.fn().mockResolvedValue({ uri: 'thumbnail.webp' }),
       release: jest.fn(),
     };
     const context = { renderAsync: jest.fn().mockResolvedValue(image), release: jest.fn() };
+    player.generateThumbnailsAsync.mockImplementation(async () => {
+      expect(isSourceLoaded).toBe(true);
+      return [thumbnail];
+    });
     jest.mocked(createVideoPlayer).mockReturnValue(player as never);
     jest.mocked(ImageManipulator.manipulate).mockReturnValue(context as never);
 
@@ -258,13 +273,74 @@ describe('file sending', () => {
       isVideo: false,
       mimeType: 'image/webp',
     });
-    expect(createVideoPlayer).toHaveBeenCalledWith(TEST_URLS.exampleVideo);
-    expect(player.generateThumbnailsAsync).toHaveBeenCalledWith(0, { maxWidth: 720 });
+    expect(createVideoPlayer).toHaveBeenCalledWith(null);
+    expect(player.replaceAsync).toHaveBeenCalledWith(TEST_URLS.exampleVideo);
+    expect(player.generateThumbnailsAsync).toHaveBeenCalledWith([0], { maxWidth: 720 });
     expect(ImageManipulator.manipulate).toHaveBeenCalledWith(thumbnail);
     expect(image.saveAsync).toHaveBeenCalledWith({ compress: 0.85, format: SaveFormat.WEBP });
     expect(image.release).toHaveBeenCalledTimes(1);
     expect(context.release).toHaveBeenCalledTimes(1);
     expect(thumbnail.release).toHaveBeenCalledTimes(1);
+    expect(player.release).toHaveBeenCalledTimes(1);
+  });
+
+  it('skips thumbnail generation when the video source fails to load', async () => {
+    const player = {
+      addListener: jest.fn(() => ({ remove: jest.fn() })),
+      replaceAsync: jest.fn().mockRejectedValue(new Error('video load failed')),
+      generateThumbnailsAsync: jest.fn(),
+      release: jest.fn(),
+      status: 'idle',
+    };
+    jest.mocked(createVideoPlayer).mockReturnValue(player as never);
+
+    await expect(createVideoThumbnail(TEST_URLS.exampleVideo)).resolves.toBeNull();
+
+    expect(player.generateThumbnailsAsync).not.toHaveBeenCalled();
+    expect(player.release).toHaveBeenCalledTimes(1);
+  });
+
+  it('generates a thumbnail immediately when the video source is already ready', async () => {
+    const thumbnail = { release: jest.fn() };
+    const image = {
+      saveAsync: jest.fn().mockResolvedValue({ uri: 'ready-thumbnail.webp' }),
+      release: jest.fn(),
+    };
+    const context = { renderAsync: jest.fn().mockResolvedValue(image), release: jest.fn() };
+    const player = {
+      addListener: jest.fn(() => ({ remove: jest.fn() })),
+      replaceAsync: jest.fn(),
+      generateThumbnailsAsync: jest.fn().mockResolvedValue([thumbnail]),
+      release: jest.fn(),
+      status: 'readyToPlay',
+    };
+    jest.mocked(createVideoPlayer).mockReturnValue(player as never);
+    jest.mocked(ImageManipulator.manipulate).mockReturnValue(context as never);
+
+    await expect(createVideoThumbnail(TEST_URLS.exampleVideo)).resolves.toMatchObject({
+      file: 'ready-thumbnail.webp',
+      isVideo: false,
+    });
+
+    expect(player.replaceAsync).not.toHaveBeenCalled();
+    expect(player.generateThumbnailsAsync).toHaveBeenCalledWith([0], { maxWidth: 720 });
+    expect(player.release).toHaveBeenCalledTimes(1);
+  });
+
+  it('skips thumbnail generation when the video player is already in an error state', async () => {
+    const player = {
+      addListener: jest.fn(() => ({ remove: jest.fn() })),
+      replaceAsync: jest.fn(),
+      generateThumbnailsAsync: jest.fn(),
+      release: jest.fn(),
+      status: 'error',
+    };
+    jest.mocked(createVideoPlayer).mockReturnValue(player as never);
+
+    await expect(createVideoThumbnail(TEST_URLS.exampleVideo)).resolves.toBeNull();
+
+    expect(player.replaceAsync).not.toHaveBeenCalled();
+    expect(player.generateThumbnailsAsync).not.toHaveBeenCalled();
     expect(player.release).toHaveBeenCalledTimes(1);
   });
 

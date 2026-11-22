@@ -3,7 +3,6 @@ import * as AppleAuthentication from 'expo-apple-authentication';
 import * as Crypto from 'expo-crypto';
 import { Platform, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ActivityIndicator, Text } from 'react-native-paper';
 import { useLoginWithAppleNativeMutation } from '@R/services/authentication/authentication';
 import { setAuthSession } from '@R/slices/auth/auth';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
@@ -72,14 +71,6 @@ export default function AppleAuthButton() {
         pointerEvents={isLoading ? 'none' : 'auto'}
         accessibilityState={{ disabled: isLoading }}
       />
-      {isLoading ? (
-        <View accessibilityRole="progressbar" style={styles.progressStatus} testID="apple-auth-progress">
-          <ActivityIndicator size="small" />
-          <Text>
-            {copy.signingInWith} {copy.apple}…
-          </Text>
-        </View>
-      ) : null}
     </View>
   ) : null;
 }
@@ -87,5 +78,4 @@ export default function AppleAuthButton() {
 const styles = StyleSheet.create({
   root: { width: '100%' },
   appleButton: { height: 48, marginTop: 12, width: '100%' },
-  progressStatus: { alignItems: 'center', flexDirection: 'row', gap: 8, justifyContent: 'center', marginTop: 12 },
 });
