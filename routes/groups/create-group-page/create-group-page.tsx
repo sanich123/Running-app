@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Button, Text, useTheme } from 'react-native-paper';
@@ -15,6 +16,7 @@ import type { GroupCreationDetails, GroupCreationOptions } from './types';
 export default function CreateGroupPage() {
   const router = useRouter();
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   const { language } = useAppSelector(({ settings }) => settings);
   const { createIntroTitle, createIntroText, nameRequired, chooseSport, saveError, createButton } =
     GROUPS_COPY[language];
@@ -38,7 +40,9 @@ export default function CreateGroupPage() {
     <KeyboardAvoidingView
       style={[styles.screen, { backgroundColor: colors.background }]}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+      <ScrollView
+        contentContainerStyle={[styles.content, { paddingBottom: Platform.OS === 'ios' ? insets.bottom + 72 : 32 }]}
+        keyboardShouldPersistTaps="handled">
         <Text variant="headlineSmall" style={styles.heading}>
           {createIntroTitle}
         </Text>
