@@ -15,6 +15,7 @@ import {
 import type { CompressedMediaFile, MediaSource, MediaSourceMetadata, MediaUploadControl } from './file-sending-types';
 
 const VIDEO_MAX_SIZE = 720;
+const VIDEO_THUMBNAIL_LOAD_TIMEOUT_MS = 15_000;
 
 export async function compressMediaFile(
   fileSrc: MediaSource,
@@ -95,9 +96,10 @@ export async function createVideoThumbnail(videoSource: MediaSource): Promise<Co
   if (Platform.OS === 'web' || typeof videoSource !== 'string') return null;
 
   try {
-    const player = createVideoPlayer(videoSource);
+    const player = createVideoPlayer(null);
     try {
-      const [thumbnail] = await player.generateThumbnailsAsync(0, { maxWidth: VIDEO_MAX_SIZE });
+      await loadVideoSourceForThumbnail(player, videoSource);
+      const [thumbnail] = await player.generateThumbnailsAsync([0], { maxWidth: VIDEO_MAX_SIZE });
       if (!thumbnail) return null;
 
       try {
@@ -128,6 +130,36 @@ export async function createVideoThumbnail(videoSource: MediaSource): Promise<Co
   } catch {
     return null;
   }
+}
+
+function loadVideoSourceForThumbnail(player: ReturnType<typeof createVideoPlayer>, videoSource: string) {
+  return new Promise<void>((resolve, reject) => {
+    let isSettled = false;
+    const subscriptions: { remove: () => void }[] = [];
+    const finish = (error?: unknown) => {
+      if (isSettled) return;
+      isSettled = true;
+      clearTimeout(timeout);
+      subscriptions.forEach(({ remove }) => remove());
+      if (error) reject(error);
+      else resolve();
+    };
+    const timeout = setTimeout(
+      () => finish(new Error('Время ожидания загрузки видео для создания превью истекло')),
+      VIDEO_THUMBNAIL_LOAD_TIMEOUT_MS,
+    );
+
+    subscriptions.push(player.addListener('sourceLoad', () => finish()));
+    subscriptions.push(
+      player.addListener('statusChange', ({ status }) => {
+        if (status === 'error') finish(new Error('Видео не загрузилось для создания превью'));
+      }),
+    );
+    if (player.status === 'readyToPlay') return finish();
+    if (player.status === 'error') return finish(new Error('Видео не загрузилось для создания превью'));
+
+    void player.replaceAsync(videoSource).catch(finish);
+  });
 }
 
 async function compressVideo(fileSrc: MediaSource, control?: MediaUploadControl): Promise<MediaSource | null> {
