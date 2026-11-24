@@ -55,13 +55,12 @@ export default function EditGroupPage() {
       name,
       description: description ?? '',
       locationName: locationName ?? '',
-      isWorldwide: locationName === null,
     },
     options: { sports, privacy },
   };
   const form = formState?.groupId === id ? formState.value : initialForm;
   const { details, options } = form;
-  const { name: editedName, description: editedDescription, locationName: editedLocationName, isWorldwide } = details;
+  const { name: editedName, description: editedDescription, locationName: editedLocationName } = details;
   const { sports: selectedSports, privacy: selectedPrivacy } = options;
 
   return isLoading ? (
@@ -117,7 +116,7 @@ export default function EditGroupPage() {
                   categoryTags,
                   ...(photoAssetId !== undefined ? { photoAssetId } : {}),
                   privacy: selectedPrivacy,
-                  locationName: isWorldwide ? null : editedLocationName.trim() || null,
+                  locationName: editedLocationName.trim() || null,
                 }).unwrap();
                 successToast(groupUpdated);
                 router.replace(`/groups/${id}` as never);

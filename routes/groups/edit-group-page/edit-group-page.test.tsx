@@ -107,10 +107,10 @@ describe('EditGroupPage', () => {
     expect(mockReplace).toHaveBeenCalledWith('/groups/group-1');
   });
 
-  it('saves a worldwide group without a location name', async () => {
+  it('keeps a group without a location when its location field stays blank', async () => {
     await renderLoadedPage();
     const user = userEvent.setup();
-    await user.press(screen.getByTestId('group-worldwide-toggle'));
+    await user.clear(screen.getByTestId('group-location-input'));
     await user.press(screen.getByTestId('edit-group-submit'));
 
     await waitFor(() => expect(updateRequests[0]).toEqual(expect.objectContaining({ locationName: null })));

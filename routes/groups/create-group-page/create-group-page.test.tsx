@@ -156,7 +156,7 @@ describe('CreateGroupPage', () => {
     expect(mockUploadMediaFile).not.toHaveBeenCalled();
   });
 
-  it('uploads a group photo and creates a worldwide group', async () => {
+  it('uploads a group photo and creates a group without a location', async () => {
     mockGetAccessToGallery.mockResolvedValueOnce({
       canceled: false,
       assets: [{ uri: 'file:///group-photo.jpg', fileName: 'group-photo.jpg' }],
@@ -169,7 +169,6 @@ describe('CreateGroupPage', () => {
       expect(mockUploadMediaFile).toHaveBeenCalledWith('file:///compressed-group-photo.jpg', { scope: 'group' }),
     );
     await user.type(screen.getByTestId('group-name-input'), 'Global running team');
-    await user.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].worldwide));
     await user.press(screen.getByTestId('create-group-submit'));
 
     await waitFor(() =>

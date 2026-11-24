@@ -66,6 +66,8 @@ export default function GroupOptionsFields({ options, onChange }: GroupOptionsFi
             title={sportLabels[sport]}
             leadingIcon={getIconNameByTypeOfSport(sport)}
             trailingIcon={selectedSport === sport ? 'check' : undefined}
+            contentStyle={styles.sportOptionContent}
+            style={styles.sportOption}
             testID={`group-sport-option-${sport}`}
             onPress={() => {
               toggleSport(sport);
@@ -121,6 +123,8 @@ export default function GroupOptionsFields({ options, onChange }: GroupOptionsFi
 const styles = StyleSheet.create({
   section: { gap: 8 },
   sectionTitle: { fontWeight: '700', marginTop: 8 },
+  sportOptionContent: { flex: 1 },
+  sportOption: { width: '100%' },
   dropdown: { borderRadius: 14, borderWidth: 1, overflow: 'hidden', width: '100%' },
   dropdownContent: {
     alignItems: 'center',

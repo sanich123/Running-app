@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, useWindowDimensions, View } from 'react-native';
 import {
   Icon,
   IconButton,
@@ -17,6 +17,7 @@ import type { GroupsFilterControlsProps } from './types';
 
 export default function GroupsFilterControls({ filters, onChange }: GroupsFilterControlsProps) {
   const { colors } = useTheme();
+  const { width } = useWindowDimensions();
   const { language } = useAppSelector(({ settings }) => settings);
   const { allGroups, myGroups, allActivities, search: searchCopy, closeSearch } = GROUPS_COPY[language];
   const sportLabels = getGroupSportLabels(language);
@@ -32,8 +33,8 @@ export default function GroupsFilterControls({ filters, onChange }: GroupsFilter
           onChange({ ...filters, scope });
         }}
         buttons={[
-          { value: 'all', label: allGroups },
-          { value: 'mine', label: myGroups },
+          { value: 'all', label: allGroups, style: styles.scopeButton },
+          { value: 'mine', label: myGroups, style: styles.scopeButton },
         ]}
       />
       <View style={styles.filterRow} testID="groups-filter-row">
@@ -41,7 +42,10 @@ export default function GroupsFilterControls({ filters, onChange }: GroupsFilter
           visible={isSportMenuVisible}
           onDismiss={() => setIsSportMenuVisible(false)}
           elevation={3}
-          contentStyle={[styles.sportMenu, { backgroundColor: colors.surface }]}
+          contentStyle={[
+            styles.sportMenu,
+            { backgroundColor: colors.surface, width: Math.min(Math.max(width - 32, 220), 360) },
+          ]}
           anchor={
             <TouchableRipple
               accessibilityLabel={sport ? sportLabels[sport] : allActivities}
@@ -61,6 +65,8 @@ export default function GroupsFilterControls({ filters, onChange }: GroupsFilter
           <Menu.Item
             title={allActivities}
             trailingIcon={sport === null ? 'check' : undefined}
+            contentStyle={styles.sportOptionContent}
+            style={styles.sportOption}
             testID="groups-sport-filter-all"
             onPress={() => {
               onChange({ ...filters, sport: null });
@@ -73,6 +79,8 @@ export default function GroupsFilterControls({ filters, onChange }: GroupsFilter
               title={sportLabels[activitySport]}
               leadingIcon={getIconNameByTypeOfSport(activitySport)}
               trailingIcon={sport === activitySport ? 'check' : undefined}
+              contentStyle={styles.sportOptionContent}
+              style={styles.sportOption}
               testID={`groups-sport-filter-${activitySport}`}
               onPress={() => {
                 onChange({ ...filters, sport: activitySport });
@@ -110,6 +118,7 @@ export default function GroupsFilterControls({ filters, onChange }: GroupsFilter
 const styles = StyleSheet.create({
   controls: { gap: 12, paddingHorizontal: 16, paddingTop: 12, paddingBottom: 8 },
   filterRow: { alignItems: 'center', flexDirection: 'row', gap: 8 },
+  scopeButton: { overflow: 'hidden' },
   filterSearch: {
     borderRadius: 24,
     borderWidth: 1,
@@ -118,11 +127,14 @@ const styles = StyleSheet.create({
     height: 48,
     margin: 0,
     minHeight: 48,
+    overflow: 'hidden',
     width: '100%',
   },
   filterSearchInput: { fontSize: 14, lineHeight: 18, minHeight: 40, paddingVertical: 0 },
   searchClear: { height: 40, margin: 0, width: 40 },
   sportFilter: { alignSelf: 'flex-start', borderRadius: 24, borderWidth: 1, overflow: 'hidden' },
+  sportOptionContent: { flex: 1 },
+  sportOption: { width: '100%' },
   sportFilterContent: {
     alignItems: 'center',
     borderRadius: 24,

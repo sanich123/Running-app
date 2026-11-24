@@ -8,6 +8,7 @@ import {
 } from '@R/services/comments/comments';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
+import CommentLikesLength from '../comment-likes-length/comment-likes-length';
 import { COMMENT_LIKE_BTN } from './const';
 import type { CommentLikeBtnProps } from '../types';
 
@@ -16,6 +17,8 @@ export default function CommentLikeBtn({
   commentId,
   commentLikesFromComment,
   disabled = false,
+  showLikeButton = true,
+  showCount = false,
 }: CommentLikeBtnProps) {
   const { colors } = useTheme();
   const { userId } = useAppSelector(({ auth }) => auth);
@@ -24,15 +27,19 @@ export default function CommentLikeBtn({
   const [sendLikeToComment, { isLoading: isSendingLike }] = useSendLikeToCommentMutation();
   const [deleteLikeToComment, { isLoading: isDeletingLike }] = useDeleteLikeToCommentMutation();
   const [optimisticLike, setOptimisticLike] = useState<{ authorId: string; id: string } | null>(null);
+  const [optimisticallyDeletedLikeId, setOptimisticallyDeletedLikeId] = useState<string | null>(null);
   const {
     isError: isErrorToGetLikes,
     data: commentLikes,
+    error: errorToGetLikes,
     isLoading: isLoadingLikes,
   } = useGetLikesByCommentIdQuery(commentId, {
     skip: !commentId || (!commentLikesFromComment.length && !optimisticLike),
   });
 
-  const whatCommentLikesToIterate = [...(commentLikes ?? commentLikesFromComment ?? [])];
+  const whatCommentLikesToIterate = (commentLikes ?? commentLikesFromComment).filter(
+    ({ id }) => id !== optimisticallyDeletedLikeId,
+  );
   if (optimisticLike && !whatCommentLikesToIterate.some(({ id }) => id === optimisticLike.id)) {
     whatCommentLikesToIterate.push(optimisticLike);
   }
@@ -60,29 +67,46 @@ export default function CommentLikeBtn({
   }, [likeScale]);
 
   return (
-    <Animated.View style={{ transform: [{ scale: likeScale }] }}>
-      <IconButton
-        testID={`commentLikeBtn${youGaveCommentLike?.length ? '-active' : ''}`}
-        icon={whatCommentLikesToIterate.length ? 'cards-heart' : 'cards-heart-outline'}
-        size={youGaveCommentLike.length ? 24 : 20}
-        iconColor={youGaveCommentLike.length ? colors.primary : hasLikesFromOthers ? colors.secondary : colors.primary}
-        onPress={async () => {
-          animateLike();
-          try {
-            if (youGaveCommentLike?.length) {
-              await deleteLikeToComment({ likeId: youGaveCommentLike[0].id, commentId }).unwrap();
-              setOptimisticLike(null);
-            } else {
-              const result = await sendLikeToComment({ body: { commentId }, commentId, activityId }).unwrap();
-              setOptimisticLike({ id: result.id, authorId: result.authorId ?? userId });
+    <>
+      {showLikeButton ? (
+        <Animated.View style={{ transform: [{ scale: likeScale }] }}>
+          <IconButton
+            testID={`commentLikeBtn${youGaveCommentLike?.length ? '-active' : ''}`}
+            icon={whatCommentLikesToIterate.length ? 'cards-heart' : 'cards-heart-outline'}
+            size={youGaveCommentLike.length ? 24 : 20}
+            iconColor={
+              youGaveCommentLike.length ? colors.primary : hasLikesFromOthers ? colors.secondary : colors.primary
             }
-          } catch (error) {
-            errorToast(COMMENT_LIKE_BTN[language].errorSending, error);
-          }
-        }}
-        disabled={disabled || isLoadingLikes || isErrorToGetLikes}
-        loading={isSendingLike || isDeletingLike}
-      />
-    </Animated.View>
+            onPress={async () => {
+              animateLike();
+              try {
+                if (youGaveCommentLike?.length) {
+                  await deleteLikeToComment({ likeId: youGaveCommentLike[0].id, commentId }).unwrap();
+                  setOptimisticLike(null);
+                  setOptimisticallyDeletedLikeId(youGaveCommentLike[0].id);
+                } else {
+                  const result = await sendLikeToComment({ body: { commentId }, commentId, activityId }).unwrap();
+                  setOptimisticallyDeletedLikeId(null);
+                  setOptimisticLike({ id: result.id, authorId: result.authorId ?? userId });
+                }
+              } catch (error) {
+                errorToast(COMMENT_LIKE_BTN[language].errorSending, error);
+              }
+            }}
+            disabled={disabled || isLoadingLikes || isErrorToGetLikes}
+            loading={isSendingLike || isDeletingLike}
+          />
+        </Animated.View>
+      ) : null}
+      {showCount ? (
+        <CommentLikesLength
+          commentId={commentId}
+          commentLikesFromComment={commentLikesFromComment}
+          providedLikes={whatCommentLikesToIterate}
+          error={errorToGetLikes}
+          isError={isErrorToGetLikes}
+        />
+      ) : null}
+    </>
   );
 }

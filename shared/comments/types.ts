@@ -22,6 +22,8 @@ export interface CommentLikeBtnProps {
   commentId: string;
   commentLikesFromComment: { authorId: string; id: string }[];
   disabled?: boolean;
+  showLikeButton?: boolean;
+  showCount?: boolean;
 }
 
 export interface CommentLikesLengthProps {
@@ -30,6 +32,9 @@ export interface CommentLikesLengthProps {
     authorId: string;
     id: string;
   }[];
+  providedLikes?: { authorId: string; id: string }[];
+  error?: unknown;
+  isError?: boolean;
 }
 
 interface CommentModalProps {

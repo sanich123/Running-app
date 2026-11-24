@@ -14,7 +14,7 @@ export default function GroupsPageHeaderActions() {
   return (
     <View style={styles.headerActions}>
       <IconButton
-        icon={getHeaderIconSource('account-multiple-plus-outline', 'plus', colors.onSurface)}
+        icon={getHeaderIconSource('plus', 'plus', colors.onSurface)}
         iconColor={Platform.OS === 'ios' ? colors.onSurface : colors.primary}
         accessibilityLabel={create}
         onPress={() => router.push('/groups/create' as never)}
