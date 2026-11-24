@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { SymbolView } from 'expo-symbols';
 import PagerView from 'react-native-pager-view';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import uuid from 'react-native-uuid';
+import { validate as isValidUuid } from 'react-native-uuid';
 import { View, Platform, StyleSheet, Pressable } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Icon, useTheme } from 'react-native-paper';
@@ -32,7 +32,7 @@ export default function PhotoViewer() {
   const { data: activity } = useGetActivityByActivityIdQuery(
     { activityId: `${photoUrl}`, viewerId: ownerId ?? '' },
     {
-      skip: !photoUrl || !uuid.validate(`${photoUrl}`) || !ownerId,
+      skip: !photoUrl || !isValidUuid(`${photoUrl}`) || !ownerId,
     },
   );
   const {
@@ -47,7 +47,7 @@ export default function PhotoViewer() {
     { skip: !take },
   );
   const userMedia = photoPages?.pages.flatMap(({ media }) => media) ?? [];
-  const isActivityMedia = uuid.validate(`${photoUrl}`);
+  const isActivityMedia = isValidUuid(`${photoUrl}`);
   const canSeeMediaStage = isActivityMedia
     ? Boolean(activity?.userId && activity.userId !== ownerId)
     : Boolean(userId && userId !== ownerId);

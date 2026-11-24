@@ -4,9 +4,9 @@ import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import GroupDistanceList from './group-distance-list';
 import { GROUPS_COPY } from '../../../const';
 import { GROUP_FIXTURE } from '../../../test-fixtures';
+import GroupDistanceList from './group-distance-list';
 import type { GroupDetails } from '@R/services/groups/types';
 
 const mockUseGroupDistanceList = jest.fn();

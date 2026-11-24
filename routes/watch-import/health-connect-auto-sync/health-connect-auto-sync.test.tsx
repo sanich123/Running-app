@@ -1,8 +1,8 @@
 import { render } from '@testing-library/react-native';
 import { Platform } from 'react-native';
 import type * as ExpoRouterModule from 'expo-router';
-import type * as AutoSyncModule from './health-connect-auto-sync';
 import type * as WorkoutImportModule from '../workout-import/use-workout-import';
+import type * as AutoSyncModule from './health-connect-auto-sync';
 
 jest.mock('expo-router', () => ({ usePathname: jest.fn() }));
 jest.mock('../workout-import/use-workout-import', () => ({ useWorkoutImport: jest.fn() }));

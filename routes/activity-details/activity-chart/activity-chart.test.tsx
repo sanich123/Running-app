@@ -7,8 +7,8 @@ import { setMockUserId, mockStore } from '@T/utils/mock-store';
 import { errorResponse, loadingResponse } from '@T/utils/response-states';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
-import ActivityChart from './activity-chart';
 import { HOME_ACTIVITY_FULL_VIEW } from '../metrics/const';
+import ActivityChart from './activity-chart';
 
 const ACTIVITY_IDS = {
   loading: 'chart-loading',

@@ -1,9 +1,9 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { FlatList, Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useAppSelector } from '@R/typed-hooks';
+import { useActivityCard } from '../context';
 import ActivityMediaItem from './activity-media-item/activity-media-item';
 import { getActivityMediaDimensions, getDisplayedMediaData } from './utils';
-import { useActivityCard } from '../context';
 import type { DisplayedMediaItem } from './types';
 
 export default function MediaList() {

@@ -11,13 +11,13 @@ import { setActivityIdWhichLikesToUpdate } from '@R/slices/main-feed/main-feed';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { useActivityCard } from '../context';
+import { LIKE_BTN } from '../likes/const';
 import {
   CARD_LIKE_BTN_TEST_ID_LIKED,
   CARD_LIKE_BTN_TEST_ID_NOT_LIKED,
   CARD_LIKE_BTN_ICON_LIKED,
   CARD_LIKE_BTN_ICON_NOT_LIKED,
 } from './const';
-import { LIKE_BTN } from '../likes/const';
 
 export default function LikeBtn() {
   const { activity } = useActivityCard();

@@ -9,8 +9,8 @@ import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
-import GroupEventForm from './group-event-form';
 import { GROUPS_COPY, GROUP_SPORT_LABELS } from '../../const';
+import GroupEventForm from './group-event-form';
 
 const mockErrorToast = jest.fn();
 const eventRequests: { groupId: string; body: Record<string, unknown> }[] = [];

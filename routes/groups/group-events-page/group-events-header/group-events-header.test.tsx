@@ -1,8 +1,8 @@
 import { fireEvent, screen } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
-import GroupEventsHeader from './group-events-header';
 import { GROUPS_COPY } from '../../const';
+import GroupEventsHeader from './group-events-header';
 
 describe('GroupEventsHeader', () => {
   it('shows the group event tabs and reports period changes', async () => {

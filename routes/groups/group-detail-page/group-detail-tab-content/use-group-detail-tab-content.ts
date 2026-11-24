@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useLocalSearchParams } from 'expo-router';
 import { useAppSelector } from '@R/typed-hooks';
-import { GROUP_DETAIL_TABS } from './const';
 import { GROUPS_COPY } from '../../const';
+import { GROUP_DETAIL_TABS } from './const';
 import type { GroupDetailTab } from '../types';
 
 export default function useGroupDetailTabContent() {

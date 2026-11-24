@@ -7,9 +7,9 @@ import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
-import GroupDetailTabContent from './group-detail-tab-content';
 import { GROUPS_COPY } from '../../const';
 import { GROUP_FIXTURE } from '../../test-fixtures';
+import GroupDetailTabContent from './group-detail-tab-content';
 import type { GroupDetails } from '@R/services/groups/types';
 
 const groupRequests: string[] = [];

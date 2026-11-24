@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Svg, { Line, Path, Text as SvgText } from 'react-native-svg';
-import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
-import { Icon, Menu, Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { StyleSheet, useWindowDimensions, View } from 'react-native';
+import { useTheme } from 'react-native-paper';
 import { MAX_MOBILE_WIDTH } from '@const/const';
 import { HOME_ACTIVITY_FULL_VIEW } from '../../metrics/const';
 import {
@@ -31,11 +31,6 @@ export default function ActivityTimeChart({ chartSeries, zoneSettings, language 
   const defaultAxes = getDefaultActivityChartAxes(chartSeries);
   const [selectedLeftMetric, setSelectedLeftMetric] = useState<ActivityChartMetric | null>(null);
   const [selectedRightMetric, setSelectedRightMetric] = useState<ActivityChartMetric | null>(null);
-  const [visibleMenu, setVisibleMenu] = useState<'left' | 'right' | null>(null);
-  const [hasOpenedLeftMenu, setHasOpenedLeftMenu] = useState(false);
-  const [hasOpenedRightMenu, setHasOpenedRightMenu] = useState(false);
-  const [leftSelectorWidth, setLeftSelectorWidth] = useState(0);
-  const [rightSelectorWidth, setRightSelectorWidth] = useState(0);
   const leftMetric =
     chartSeries.find(({ metric }) => metric === selectedLeftMetric)?.metric ??
     defaultAxes.leftMetric ??
@@ -86,220 +81,26 @@ export default function ActivityTimeChart({ chartSeries, zoneSettings, language 
     ...option,
     color: ACTIVITY_CHART_METRIC_COLORS[option.metric],
   }));
-  const leftOption = metricOptions.find(({ metric }) => metric === leftMetric) ?? metricOptions[0];
-  const rightOption = metricOptions.find(({ metric }) => metric === rightMetric) ?? metricOptions[0];
-  const defaultSelectorWidth = chartWidth / (metricOptions.length > 1 ? 2 : 1);
-
   return (
     <>
       <View style={[styles.axisSelectors, { borderColor: colors.outlineVariant }]}>
-        <View
-          style={styles.axisSelectorColumn}
-          onLayout={({ nativeEvent }) => setLeftSelectorWidth(nativeEvent.layout.width)}>
-          {Platform.OS === 'ios' ? (
-            <ActivityChartAxisMenu
-              side="left"
-              axisLabel={labels.chartLeftAxis}
-              options={axisMenuOptions}
-              selectedMetric={leftMetric}
-              otherMetric={rightMetric}
-              onSelect={setSelectedLeftMetric}
-            />
-          ) : hasOpenedLeftMenu ? (
-            <Menu
-              visible={visibleMenu === 'left'}
-              onDismiss={() => setVisibleMenu(null)}
-              anchorPosition="bottom"
-              statusBarHeight={0}
-              elevation={3}
-              contentStyle={[
-                styles.metricMenu,
-                {
-                  backgroundColor: colors.surface,
-                  borderColor: colors.outlineVariant,
-                  width: leftSelectorWidth || defaultSelectorWidth,
-                },
-              ]}
-              testID="activity-chart-left-menu"
-              anchor={
-                <TouchableRipple
-                  testID="activity-chart-left-selector"
-                  accessibilityRole="button"
-                  accessibilityLabel={`${labels.chartLeftAxis}: ${leftOption.axisTitle}`}
-                  accessibilityState={{ expanded: visibleMenu === 'left' }}
-                  onPress={() => setVisibleMenu('left')}
-                  style={styles.axisSelector}>
-                  <View style={styles.axisSelectorContent}>
-                    <View testID="activity-chart-left-value" style={styles.axisValue}>
-                      <View style={[styles.metricDot, { backgroundColor: ACTIVITY_CHART_METRIC_COLORS[leftMetric] }]} />
-                      <Text variant="labelLarge" numberOfLines={1} style={styles.axisSelectorText}>
-                        {leftOption.axisTitle}
-                      </Text>
-                      <Icon source="chevron-down" size={16} color={colors.onSurfaceVariant} />
-                    </View>
-                  </View>
-                </TouchableRipple>
-              }>
-              {metricOptions.map(({ metric, title }) => {
-                const isSelected = leftMetric === metric;
-                const isDisabled = metric === rightMetric && metric !== leftMetric;
-                return (
-                  <Menu.Item
-                    key={`left-${metric}`}
-                    title={title}
-                    dense
-                    trailingIcon={isSelected ? 'check' : undefined}
-                    disabled={isDisabled}
-                    style={[
-                      styles.metricMenuItem,
-                      isSelected ? { backgroundColor: colors.secondaryContainer } : undefined,
-                    ]}
-                    titleStyle={[
-                      styles.metricMenuItemTitle,
-                      { color: isDisabled ? colors.onSurfaceVariant : colors.onSurface },
-                    ]}
-                    accessibilityState={{ selected: isSelected }}
-                    testID={`activity-chart-left-metric-${metric}`}
-                    onPress={() => {
-                      setSelectedLeftMetric(metric);
-                      setVisibleMenu(null);
-                    }}
-                  />
-                );
-              })}
-            </Menu>
-          ) : (
-            <TouchableRipple
-              testID="activity-chart-left-selector"
-              accessibilityRole="button"
-              accessibilityLabel={`${labels.chartLeftAxis}: ${leftOption.axisTitle}`}
-              accessibilityState={{ expanded: visibleMenu === 'left' }}
-              onPress={() => {
-                setHasOpenedLeftMenu(true);
-                setVisibleMenu('left');
-              }}
-              style={styles.axisSelector}>
-              <View style={styles.axisSelectorContent}>
-                <View testID="activity-chart-left-value" style={styles.axisValue}>
-                  <View style={[styles.metricDot, { backgroundColor: ACTIVITY_CHART_METRIC_COLORS[leftMetric] }]} />
-                  <Text variant="labelLarge" numberOfLines={1} style={styles.axisSelectorText}>
-                    {leftOption.axisTitle}
-                  </Text>
-                  <Icon source="chevron-down" size={16} color={colors.onSurfaceVariant} />
-                </View>
-              </View>
-            </TouchableRipple>
-          )}
-        </View>
+        <ActivityChartAxisMenu
+          side="left"
+          axisLabel={labels.chartLeftAxis}
+          options={axisMenuOptions}
+          selectedMetric={leftMetric}
+          otherMetric={rightMetric}
+          onSelect={setSelectedLeftMetric}
+        />
         {metricOptions.length > 1 ? (
-          <View
-            style={styles.axisSelectorColumn}
-            onLayout={({ nativeEvent }) => setRightSelectorWidth(nativeEvent.layout.width)}>
-            {Platform.OS === 'ios' ? (
-              <ActivityChartAxisMenu
-                side="right"
-                axisLabel={labels.chartRightAxis}
-                options={axisMenuOptions}
-                selectedMetric={rightMetric}
-                otherMetric={leftMetric}
-                onSelect={setSelectedRightMetric}
-              />
-            ) : hasOpenedRightMenu ? (
-              <Menu
-                visible={visibleMenu === 'right'}
-                onDismiss={() => setVisibleMenu(null)}
-                anchorPosition="bottom"
-                statusBarHeight={0}
-                elevation={3}
-                contentStyle={[
-                  styles.metricMenu,
-                  {
-                    backgroundColor: colors.surface,
-                    borderColor: colors.outlineVariant,
-                    width: rightSelectorWidth || defaultSelectorWidth,
-                  },
-                ]}
-                testID="activity-chart-right-menu"
-                anchor={
-                  <TouchableRipple
-                    testID="activity-chart-right-selector"
-                    accessibilityRole="button"
-                    accessibilityLabel={`${labels.chartRightAxis}: ${rightOption.axisTitle}`}
-                    accessibilityState={{ expanded: visibleMenu === 'right' }}
-                    onPress={() => setVisibleMenu('right')}
-                    style={[styles.axisSelector, styles.rightAxisSelector]}>
-                    <View style={[styles.axisSelectorContent, styles.rightAxisSelectorContent]}>
-                      <View testID="activity-chart-right-value" style={[styles.axisValue, styles.rightAxisValue]}>
-                        <View
-                          style={[styles.metricDot, { backgroundColor: ACTIVITY_CHART_METRIC_COLORS[rightMetric] }]}
-                        />
-                        <Text
-                          variant="labelLarge"
-                          numberOfLines={1}
-                          testID="activity-chart-right-label"
-                          style={[styles.axisSelectorText, styles.rightAxisSelectorText]}>
-                          {rightOption.axisTitle}
-                        </Text>
-                        <Icon source="chevron-down" size={16} color={colors.onSurfaceVariant} />
-                      </View>
-                    </View>
-                  </TouchableRipple>
-                }>
-                {metricOptions.map(({ metric, title }) => {
-                  const isSelected = rightMetric === metric;
-                  const isDisabled = metric === leftMetric && metric !== rightMetric;
-                  return (
-                    <Menu.Item
-                      key={`right-${metric}`}
-                      title={title}
-                      dense
-                      trailingIcon={isSelected ? 'check' : undefined}
-                      disabled={isDisabled}
-                      style={[
-                        styles.metricMenuItem,
-                        isSelected ? { backgroundColor: colors.secondaryContainer } : undefined,
-                      ]}
-                      titleStyle={[
-                        styles.metricMenuItemTitle,
-                        { color: isDisabled ? colors.onSurfaceVariant : colors.onSurface },
-                      ]}
-                      accessibilityState={{ selected: isSelected }}
-                      testID={`activity-chart-right-metric-${metric}`}
-                      onPress={() => {
-                        setSelectedRightMetric(metric);
-                        setVisibleMenu(null);
-                      }}
-                    />
-                  );
-                })}
-              </Menu>
-            ) : (
-              <TouchableRipple
-                testID="activity-chart-right-selector"
-                accessibilityRole="button"
-                accessibilityLabel={`${labels.chartRightAxis}: ${rightOption.axisTitle}`}
-                accessibilityState={{ expanded: visibleMenu === 'right' }}
-                onPress={() => {
-                  setHasOpenedRightMenu(true);
-                  setVisibleMenu('right');
-                }}
-                style={[styles.axisSelector, styles.rightAxisSelector]}>
-                <View style={[styles.axisSelectorContent, styles.rightAxisSelectorContent]}>
-                  <View testID="activity-chart-right-value" style={[styles.axisValue, styles.rightAxisValue]}>
-                    <View style={[styles.metricDot, { backgroundColor: ACTIVITY_CHART_METRIC_COLORS[rightMetric] }]} />
-                    <Text
-                      variant="labelLarge"
-                      numberOfLines={1}
-                      testID="activity-chart-right-label"
-                      style={[styles.axisSelectorText, styles.rightAxisSelectorText]}>
-                      {rightOption.axisTitle}
-                    </Text>
-                    <Icon source="chevron-down" size={16} color={colors.onSurfaceVariant} />
-                  </View>
-                </View>
-              </TouchableRipple>
-            )}
-          </View>
+          <ActivityChartAxisMenu
+            side="right"
+            axisLabel={labels.chartRightAxis}
+            options={axisMenuOptions}
+            selectedMetric={rightMetric}
+            otherMetric={leftMetric}
+            onSelect={setSelectedRightMetric}
+          />
         ) : null}
       </View>
       <View style={styles.chart}>
@@ -445,61 +246,6 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     flexDirection: 'row',
     overflow: 'hidden',
-  },
-  axisSelector: {
-    minWidth: 0,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    width: '100%',
-  },
-  axisSelectorColumn: {
-    flex: 1,
-    minWidth: 0,
-  },
-  rightAxisSelector: {
-    alignItems: 'flex-end',
-  },
-  axisSelectorContent: {
-    gap: 3,
-  },
-  rightAxisSelectorContent: {
-    alignItems: 'flex-end',
-    width: '100%',
-  },
-  axisValue: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 4,
-  },
-  rightAxisValue: {
-    justifyContent: 'flex-end',
-    width: '100%',
-  },
-  axisSelectorText: {
-    flexShrink: 1,
-  },
-  rightAxisSelectorText: {
-    textAlign: 'right',
-  },
-  metricMenu: {
-    borderRadius: 12,
-    borderWidth: StyleSheet.hairlineWidth,
-    paddingHorizontal: 6,
-    paddingVertical: 6,
-  },
-  metricMenuItem: {
-    borderRadius: 8,
-    height: 40,
-    marginHorizontal: 2,
-  },
-  metricMenuItemTitle: {
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  metricDot: {
-    borderRadius: 4,
-    height: 8,
-    width: 8,
   },
   chart: {
     alignItems: 'center',

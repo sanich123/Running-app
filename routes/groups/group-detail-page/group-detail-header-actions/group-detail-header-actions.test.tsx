@@ -6,9 +6,9 @@ import { BASE_URL } from '@T/utils/handlers';
 import { createMockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
-import GroupDetailHeaderActions from './group-detail-header-actions';
 import { GROUPS_COPY } from '../../const';
 import { GROUP_FIXTURE } from '../../test-fixtures';
+import GroupDetailHeaderActions from './group-detail-header-actions';
 import type { GroupDetails } from '@R/services/groups/types';
 import type { AppStore } from '@T/utils/mock-store';
 
@@ -59,7 +59,7 @@ describe('GroupDetailHeaderActions', () => {
     await user.press(screen.getByLabelText(copy.groupActions));
     await user.press(screen.getByText(copy.deleteGroup));
     expect(screen.getByText(copy.deleteGroupTitle)).toBeOnTheScreen();
-    await user.press(screen.getByText(copy.deleteGroupConfirm));
+    await user.press(screen.getByTestId('delete-group-confirm-button'));
 
     await waitFor(() => {
       expect(deletedGroupId).toBe(group.id);

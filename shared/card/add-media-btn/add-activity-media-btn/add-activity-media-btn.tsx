@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import uuid from 'react-native-uuid';
+import { v4 as generateUuid } from 'react-native-uuid';
 import { ActivityIndicator, Icon } from 'react-native-paper';
 import { useAppendActivityMediaMutation } from '@R/services/activity/activity';
 import { finishLoading, startLoading } from '@R/slices/loading/loading';
@@ -43,7 +43,7 @@ export default function AddActivityMediaBtn({ activityId, media }: AddActivityMe
           const uploadItems: MediaUploadItem[] = assets.map((asset) => ({
             fileSrc: asset.file ?? asset.uri,
             metadata: { fileName: asset.fileName, mimeType: asset.mimeType, mediaType: 'image' },
-            mediaId: String(uuid.v4()),
+            mediaId: String(generateUuid()),
           }));
           const uploadedMedia = (await uploadActivityMediaBatch(uploadItems)).filter(
             (item): item is NonNullable<typeof item> => Boolean(item),

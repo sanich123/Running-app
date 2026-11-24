@@ -15,7 +15,6 @@ import {
   getActiveLocationJournalId,
 } from '@U/location/location-journal';
 import { getLocationProvider, stripLocationProvider } from '@U/location/location-provider';
-import { getMetricsTaskManager, saveMetricsToStoreTaskManager } from './utils';
 import {
   BACKGROUND_LOCATION_ERROR_COPY,
   BACKGROUND_NOTIFICATION,
@@ -23,6 +22,7 @@ import {
   LOCATION_TRACKING,
   TIME_INTERVAL,
 } from '../const';
+import { getMetricsTaskManager, saveMetricsToStoreTaskManager } from './utils';
 import type { TaskManagerLocationEvent } from '../const';
 import type { LocationObject } from 'expo-location';
 

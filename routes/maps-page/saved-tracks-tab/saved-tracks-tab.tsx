@@ -22,9 +22,9 @@ import {
   type SavedActivityTrack,
 } from '@U/activity-track/track-library';
 import { MAP_SPORT_TO_TITLE } from '@U/icon-utils';
-import { formatSavedTrackCount, formatStorageSize } from './utils';
 import { formatRouteActivityDate } from '../add-track-page/utils';
 import TrackActionsMenu from './track-actions-menu/track-actions-menu';
+import { formatSavedTrackCount, formatStorageSize } from './utils';
 import type { MapsPageCopy } from '../const';
 
 export default function SavedTracksTab({ copy }: { copy: MapsPageCopy }) {

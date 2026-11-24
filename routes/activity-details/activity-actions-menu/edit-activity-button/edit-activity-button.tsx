@@ -1,7 +1,7 @@
 import { useAppSelector } from '@R/typed-hooks';
 import { ACTIVITY_ACTIONS_MENU, ACTIVITY_ACTIONS_MENU_TEST_IDS } from '../const';
-import useEditActivityAction from './use-edit-activity-action';
 import MenuItem from '../menu-item/menu-item';
+import useEditActivityAction from './use-edit-activity-action';
 import type { EditActivityButtonProps } from './types';
 
 export default function EditActivityButton({ activity }: EditActivityButtonProps) {

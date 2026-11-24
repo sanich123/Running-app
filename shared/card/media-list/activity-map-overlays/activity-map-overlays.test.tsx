@@ -3,8 +3,8 @@ import { ROUTES } from '@const/enums';
 import { DEFAULT_ACTIVITY_CARD } from '@T/mocks/const';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import ActivityMapOverlays from './activity-map-overlays';
 import { ActivityCardContext } from '../../context';
+import ActivityMapOverlays from './activity-map-overlays';
 import type { ActivityCardData } from '../../types';
 
 const mockPush = jest.fn();

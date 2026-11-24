@@ -2,8 +2,8 @@ import type { ReactNode } from 'react';
 import { screen, userEvent } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
-import DateFilters from './date-filters';
 import { MAPS_PAGE_COPY } from '../../const';
+import DateFilters from './date-filters';
 
 jest.mock('@expo/ui/swift-ui', () => {
   const React = jest.requireActual('react');

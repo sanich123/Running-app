@@ -3,8 +3,8 @@ import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { listSavedOfflineMaps } from '@U/offline-map-library';
-import OfflineMapPage from './offline-map-page';
 import { MAPS_PAGE_COPY } from '../const';
+import OfflineMapPage from './offline-map-page';
 
 const mockGetPack = jest.fn();
 const mockBack = jest.fn();

@@ -7,8 +7,8 @@ import { BASE_URL } from '@T/utils/handlers';
 import { createMockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
-import EditGroupPage from './edit-group-page';
 import { GROUPS_COPY } from '../const';
+import EditGroupPage from './edit-group-page';
 import type { GroupDetails } from '@R/services/groups/types';
 
 const mockReplace = jest.fn();

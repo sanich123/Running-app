@@ -137,10 +137,14 @@ export default function GroupDetailPage() {
                     <Text variant="bodyMedium">{actionCopy.deleteGroupMessage}</Text>
                   </Dialog.Content>
                   <Dialog.Actions>
-                    <Button onPress={() => setIsDeleteDialogVisible(false)} disabled={isDeletingGroup}>
+                    <Button
+                      testID="delete-group-cancel-button"
+                      onPress={() => setIsDeleteDialogVisible(false)}
+                      disabled={isDeletingGroup}>
                       {actionCopy.deleteGroupCancel}
                     </Button>
                     <Button
+                      testID="delete-group-confirm-button"
                       onPress={() => void deleteCurrentGroup()}
                       loading={isDeletingGroup}
                       disabled={isDeletingGroup}>

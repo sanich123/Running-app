@@ -6,8 +6,8 @@ import { BASE_URL } from '@T/utils/handlers';
 import { createMockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
-import GroupRequestsPage from './group-requests-page';
 import { GROUPS_COPY } from '../const';
+import GroupRequestsPage from './group-requests-page';
 
 const mockErrorToast = jest.fn();
 const groupRequests: string[] = [];

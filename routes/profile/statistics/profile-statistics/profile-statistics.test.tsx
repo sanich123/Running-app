@@ -9,8 +9,8 @@ import { mockStore } from '@T/utils/mock-store';
 import { errorResponse, loadingResponse } from '@T/utils/response-states';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
-import ProfileStatistics from './profile-statistics';
 import { PROFILE_SECTIONS } from '../../const';
+import ProfileStatistics from './profile-statistics';
 
 describe('ProfileStatistics', () => {
   beforeEach(() => mockStore.dispatch(changeLanguage(LANGUAGES.english)));

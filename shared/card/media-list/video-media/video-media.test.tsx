@@ -3,8 +3,8 @@ import * as ExpoVideo from 'expo-video';
 import { TEST_URLS } from '@T/mocks/const';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { formatVideoDuration } from '../const';
-import VideoMedia from './video-media';
 import VideoPlaybackProvider from '../video-playback-provider/video-playback-provider';
+import VideoMedia from './video-media';
 
 jest.mock('expo-video', () => {
   const { View } = jest.requireActual('react-native');

@@ -5,9 +5,9 @@ import { MEDIA_MODERATION_PLACEHOLDER_COPY } from '@S/media-moderation-placehold
 import { DEFAULT_ACTIVITY_CARD, TEST_URLS } from '@T/mocks/const';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { ActivityCardContext } from '../../context';
 import ActivityMediaItem from './activity-media-item';
 import { ACTIVITY_MEDIA_COPY } from './const';
-import { ActivityCardContext } from '../../context';
 import type { ActivityCardData } from '../../types';
 import type { DisplayedMediaItem } from '../types';
 

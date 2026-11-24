@@ -3,8 +3,8 @@ import { SegmentedButtons } from 'react-native-paper';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
-import { LANGUAGE_SWITCHER_COPY } from './const';
 import SettingsRow from '../settings-row/settings-row';
+import { LANGUAGE_SWITCHER_COPY } from './const';
 
 export default function LanguageSwitcher() {
   const { language } = useAppSelector(({ settings }) => settings);

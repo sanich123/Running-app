@@ -3,8 +3,8 @@ import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { removeOfflineMap, renameOfflineMap } from '@U/offline-map-library';
-import OfflineMapList from './offline-map-list';
 import { MAPS_PAGE_COPY } from '../../const';
+import OfflineMapList from './offline-map-list';
 
 jest.mock('@rnmapbox/maps', () => ({ __esModule: true, default: { offlineManager: { deletePack: jest.fn() } } }));
 jest.mock('@U/offline-map-library', () => ({ removeOfflineMap: jest.fn(), renameOfflineMap: jest.fn() }));

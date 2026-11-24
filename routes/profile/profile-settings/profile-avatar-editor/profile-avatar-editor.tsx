@@ -7,8 +7,8 @@ import ProfileImage from '@Routes/profile/avatar/profile-avatar/profile-avatar';
 import UploadProgress from '@Routes/save-activity-page/upload-progress/upload-progress';
 import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
 import { compressMediaFile, getAccessToGallery, uploadMediaFile, type MediaSource } from '@U/file-sending';
-import { ProfileAvatarEditorTestIds } from './const';
 import { useProfileFormParams } from '../profile-settings-params';
+import { ProfileAvatarEditorTestIds } from './const';
 import type { ProfileAvatarEditorProps } from './types';
 
 export default function ProfileAvatarEditor({ isDisabled, setIsDisabled }: ProfileAvatarEditorProps) {

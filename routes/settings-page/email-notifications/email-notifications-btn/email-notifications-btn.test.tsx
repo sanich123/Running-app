@@ -7,8 +7,8 @@ import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
-import EmailNotificationsBtn from './email-notifications-btn';
 import { EMAIL_NOTIFICATIONS_COPY } from '../const';
+import EmailNotificationsBtn from './email-notifications-btn';
 
 jest.mock('@S/error-toast/error-toast', () => ({ errorToast: jest.fn() }));
 const mockErrorToast = (jest.requireMock('@S/error-toast/error-toast') as { errorToast: jest.Mock }).errorToast;

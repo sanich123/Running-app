@@ -1,8 +1,8 @@
 import { StyleSheet, View } from 'react-native';
 import { Icon, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
-import { GENDER_BTNS, GENDER_BTNS_TEST_IDS, GENDER_BTNS_VALUES } from './const';
 import { useProfileFormParams, useSetProfileFormParams } from '../profile-settings-params';
+import { GENDER_BTNS, GENDER_BTNS_TEST_IDS, GENDER_BTNS_VALUES } from './const';
 
 export default function GenderBtns({ isDisabled }: { isDisabled: boolean }) {
   const { language } = useAppSelector(({ settings }) => settings);

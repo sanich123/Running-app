@@ -6,8 +6,8 @@ import { useTheme, Button, Text } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import MapControlButton from '@S/map-control-button/map-control-button';
-import { BATTERY_OPTIMIZATION } from './const';
 import { useActivityMapContext } from '../map/activity-map-context';
+import { BATTERY_OPTIMIZATION } from './const';
 import type { BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
 
 export default function BatteryOptimizationModal() {

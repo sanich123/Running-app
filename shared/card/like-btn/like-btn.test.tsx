@@ -6,9 +6,9 @@ import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { ActivityCardContext } from '../context';
 import { CARD_LIKE_BTN_TEST_ID_LIKED, CARD_LIKE_BTN_TEST_ID_NOT_LIKED } from './const';
 import ActivityCardLikeBtn from './like-btn';
-import { ActivityCardContext } from '../context';
 import type { ActivityCardData } from '../types';
 
 function renderLikeBtn({

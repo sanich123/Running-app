@@ -13,10 +13,10 @@ import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { errorResponse, loadingResponse } from '@T/utils/response-states';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { REPORT_CONTENT_COPY } from '../../shared/moderation/report-content-dialog/const';
 import ActivityActionsMenu from './activity-actions-menu/activity-actions-menu';
 import { ACTIVITY_ACTIONS_MENU, ACTIVITY_DELETE_CONFIRMATION } from './activity-actions-menu/const';
 import ActivityDetails from './activity-details';
-import { REPORT_CONTENT_COPY } from '../../shared/moderation/report-content-dialog/const';
 
 const mockHeaderRight: { current?: () => ReactNode } = {};
 const mockPush = jest.fn();
@@ -156,7 +156,7 @@ describe('ActivityDetails', () => {
     await screen.findByTestId('full-view-card');
 
     expect(screen.getByLabelText(ACTIVITY_ACTIONS_MENU[LANGUAGES.russian].accessibilityLabel)).toBeOnTheScreen();
-    await user.press(screen.getByText(ACTIVITY_ACTIONS_MENU[LANGUAGES.russian].report));
+    await user.press(screen.getAllByText(ACTIVITY_ACTIONS_MENU[LANGUAGES.russian].report)[0]);
     expect(screen.getByText(REPORT_CONTENT_COPY[LANGUAGES.russian].title)).toBeOnTheScreen();
   });
 

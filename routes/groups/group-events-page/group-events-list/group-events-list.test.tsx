@@ -5,8 +5,8 @@ import { BASE_URL } from '@T/utils/handlers';
 import { loadingResponse } from '@T/utils/response-states';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
-import GroupEventsList from './group-events-list';
 import { GROUPS_COPY } from '../../const';
+import GroupEventsList from './group-events-list';
 
 describe('GroupEventsList', () => {
   it('shows event details returned for the selected period', async () => {

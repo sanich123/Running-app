@@ -2,8 +2,8 @@ import { screen } from '@testing-library/react-native';
 import { Platform, StyleSheet } from 'react-native';
 import { LANGUAGES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
-import ActivitySettingsButton from './activity-settings-button';
 import { ACTIVITY_SETTINGS } from '../const';
+import ActivitySettingsButton from './activity-settings-button';
 
 describe('ActivitySettingsButton', () => {
   it('renders the activity settings action in the header', async () => {

@@ -3,10 +3,10 @@ import { STATUSES } from '@const/enums';
 import { setNavigationTrackId } from '@R/slices/location/location';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { MAPS_PAGE_COPY, type OfflineBounds } from '@Routes/maps-page/const';
-import useNavigationAlerts from './use-navigation-alerts';
-import useNavigationRoute from './use-navigation-route';
 import { ACTIVITY_SETTINGS } from '../activity-settings/const';
 import { NAVIGATION_SETTINGS_COPY } from '../navigation-settings/const';
+import useNavigationAlerts from './use-navigation-alerts';
+import useNavigationRoute from './use-navigation-route';
 import type { ActivityNavigationContextValue } from '../navigation-context';
 
 export default function useActivityNavigation(isLocationReady: boolean) {

@@ -3,9 +3,9 @@ import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import GroupCard from './group-card';
 import { GROUPS_COPY, GROUP_CATEGORY_LABELS, getGroupMemberCountLabel, getGroupSportLabels } from '../../const';
 import { GROUP_FIXTURE } from '../../test-fixtures';
+import GroupCard from './group-card';
 
 const mockPush = jest.fn();
 jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush }) }));

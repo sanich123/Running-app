@@ -1,8 +1,8 @@
 import { useRef } from 'react';
 import { LANGUAGES } from '@const/enums';
 import { useAppSelector } from '@R/typed-hooks';
-import LegalInformationModal from './legal-information-modal/legal-information-modal';
 import SettingsRow from '../settings-row/settings-row';
+import LegalInformationModal from './legal-information-modal/legal-information-modal';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 export default function LegalInformation() {

@@ -11,9 +11,9 @@ import {
 } from '@R/slices/comment/comment';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import CommentsListModal from '@S/comments/comments-list-modal/comments-list-modal';
+import { useActivityCard } from '../context';
 import CommentCountBadge from './comment-count-badge/comment-count-badge';
 import { COMMENT_BTN_TEST_ID, COMMENT_BTN_ICON } from './const';
-import { useActivityCard } from '../context';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 export default function CommentBtn() {

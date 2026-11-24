@@ -1,9 +1,9 @@
 import { ScrollView, StyleSheet } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import ErrorComponent from '@S/error-component/error-component';
-import useGroupEventsTab from './use-group-events-tab';
 import GroupEventsHeader from '../../../group-events-page/group-events-header/group-events-header';
 import GroupEventsList from '../../../group-events-page/group-events-list/group-events-list';
+import useGroupEventsTab from './use-group-events-tab';
 import type { GroupDetails } from '@R/services/groups/types';
 
 export default function GroupEventsTab({ group }: { group: GroupDetails }) {

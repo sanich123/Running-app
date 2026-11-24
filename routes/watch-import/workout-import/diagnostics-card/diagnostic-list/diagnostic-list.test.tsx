@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react-native';
 import { renderWithProviders } from '@T/utils/test-utils';
-import DiagnosticList from './diagnostic-list';
 import { WORKOUT_IMPORT_COPY } from '../../const';
+import DiagnosticList from './diagnostic-list';
 
 describe('DiagnosticList', () => {
   it('shows each diagnostic label and value', async () => {

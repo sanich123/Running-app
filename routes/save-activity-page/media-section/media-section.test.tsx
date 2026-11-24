@@ -2,8 +2,8 @@ import { screen } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import MediaSection from './media-section';
 import { UPLOAD_PHOTO_BTN } from '../upload-photos-btn/ const';
+import MediaSection from './media-section';
 
 describe('MediaSection', () => {
   it('shows photos and videos with delete controls when editing an activity', async () => {

@@ -8,12 +8,12 @@ import UserAvatar from '@S/avatar/user-avatar/user-avatar';
 import CustomImage from '@S/custom-image/custom-image';
 import { getIconNameByTypeOfSport, MAP_SPORT_TO_TITLE } from '@U/icon-utils';
 import { formatDuration } from '@U/time-formatter';
-import { SHARE_IMAGE_WIDTH } from './const';
-import Metric from './metric/metric';
-import { formatShareDate } from './utils';
 import MapMetaOverlay from '../map-meta-overlay/map-meta-overlay';
 import { CARD_METRICS } from '../metrics/const';
 import { getCardSpeedMetric } from '../metrics/utils';
+import { SHARE_IMAGE_WIDTH } from './const';
+import Metric from './metric/metric';
+import { formatShareDate } from './utils';
 import type { ShareActivityImageProps } from './types';
 
 export default function ShareActivityImage({

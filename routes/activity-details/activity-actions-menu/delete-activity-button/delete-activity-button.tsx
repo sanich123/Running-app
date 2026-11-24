@@ -1,8 +1,8 @@
 import { useAppSelector } from '@R/typed-hooks';
 import ConfirmDialog from '@S/confirm-dialog/confirm-dialog';
 import { ACTIVITY_ACTIONS_MENU, ACTIVITY_ACTIONS_MENU_TEST_IDS } from '../const';
-import useDeleteActivityAction from './use-delete-activity-action';
 import MenuItem from '../menu-item/menu-item';
+import useDeleteActivityAction from './use-delete-activity-action';
 import type { DeleteActivityButtonProps } from './types';
 
 export default function DeleteActivityButton({ activity, renderMenu }: DeleteActivityButtonProps) {

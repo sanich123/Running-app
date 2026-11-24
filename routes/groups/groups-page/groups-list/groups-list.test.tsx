@@ -6,9 +6,9 @@ import { BASE_URL } from '@T/utils/handlers';
 import { createMockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
-import GroupsList from './groups-list';
 import { GROUPS_COPY } from '../../const';
 import { GROUP_FIXTURE } from '../../test-fixtures';
+import GroupsList from './groups-list';
 import type { GroupSport } from '@R/services/groups/types';
 
 const mockPush = jest.fn();

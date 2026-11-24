@@ -8,10 +8,10 @@ import { IconButton, Portal, useTheme } from 'react-native-paper';
 import { finishLoading, startLoading } from '@R/slices/loading/loading';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
-import { SHARE_BUTTON_TEXT } from './const';
 import { useActivityCard } from '../context';
-import { waitForShareImageRender } from './utils';
 import ShareActivityImage from '../share-activity-image/share-activity-image';
+import { SHARE_BUTTON_TEXT } from './const';
+import { waitForShareImageRender } from './utils';
 
 export default function ShareBtn() {
   const { activity } = useActivityCard();

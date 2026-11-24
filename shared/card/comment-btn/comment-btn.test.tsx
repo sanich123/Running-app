@@ -10,8 +10,8 @@ import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
-import ActivityCardCommentBtn from './comment-btn';
 import { ActivityCardContext } from '../context';
+import ActivityCardCommentBtn from './comment-btn';
 
 jest.mock('react-native-paper', () => {
   const actual = jest.requireActual('react-native-paper');

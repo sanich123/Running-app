@@ -4,8 +4,8 @@ import { LANGUAGES } from '@const/enums';
 import { ACTIVITY_ROUTE_REPLAY_MAP_STYLES } from '@S/activity-route-replay/const';
 import * as errorToastModule from '@S/error-toast/error-toast';
 import { renderWithProviders } from '@T/utils/test-utils';
-import MapRegionDownloader from './map-region-downloader';
 import { MAPS_PAGE_COPY } from '../../const';
+import MapRegionDownloader from './map-region-downloader';
 
 const mockCreatePack = jest.fn();
 const mockDeletePack = jest.fn();

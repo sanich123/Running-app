@@ -32,7 +32,7 @@ describe('ProfileHeaderToolbar', () => {
     expect(screen.getByTestId('profile-user-safety-menu')).toBeOnTheScreen();
     expect(screen.getByLabelText(LABELS[LANGUAGES.russian].users)).toBeOnTheScreen();
     expect(screen.getByLabelText(LABELS[LANGUAGES.russian].settings)).toBeOnTheScreen();
-    await user.press(screen.getByText(USER_SAFETY_MENU_COPY[LANGUAGES.russian].report));
+    await user.press(screen.getAllByText(USER_SAFETY_MENU_COPY[LANGUAGES.russian].report)[0]);
 
     expect(screen.getByText(REPORT_CONTENT_COPY[LANGUAGES.russian].title)).toBeOnTheScreen();
   });

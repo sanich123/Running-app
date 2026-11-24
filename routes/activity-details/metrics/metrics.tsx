@@ -4,8 +4,8 @@ import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
 import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
 import ErrorComponent from '@S/error-component/error-component';
-import { HOME_ACTIVITY_FULL_VIEW } from './const';
 import ActivityChart from '../activity-chart/activity-chart';
+import { HOME_ACTIVITY_FULL_VIEW } from './const';
 
 export default function Metrics() {
   const { id: activityId } = useLocalSearchParams();
