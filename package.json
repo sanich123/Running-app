@@ -133,6 +133,13 @@
   },
   "resolutions": {
     "expo-location": "patch:expo-location@npm%3A58.0.22#~/.yarn/patches/expo-location-npm-58.0.22-3465f3691e.patch",
+    "glob@npm:^10.4.1": "npm:^14.0.2",
+    "glob@npm:^13.0.6": "npm:^14.0.2",
+    "minimatch@npm:^10.2.2": "npm:^11.0.1",
+    "minimatch@npm:^10.2.6": "npm:^11.0.1",
+    "minimatch@npm:^7.4.6": "npm:^11.0.1",
+    "minimatch@npm:^9.0.4": "npm:^11.0.1",
+    "node-forge@npm:^1.4.0": "npm:^1.4.3",
     "react-native-view-recorder": "patch:react-native-view-recorder@npm%3A0.4.1#~/.yarn/patches/react-native-view-recorder-npm-0.4.1-f65f857d14.patch"
   },
   "devDependencies": {
