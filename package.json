@@ -1,6 +1,6 @@
 {
   "name": "runich-running-app",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "private": true,
   "workspaces": [
     "modules/runich-auth"
@@ -50,15 +50,13 @@
     "@expo/metro-runtime": "~58.0.17",
     "@expo/ui": "~58.0.29",
     "@gorhom/bottom-sheet": "5.2.14",
-    "@mapbox/polyline": "^1.2.1",
     "@react-native-community/netinfo": "12.0.1",
     "@react-native-segmented-control/segmented-control": "2.5.7",
     "@react-native-vector-icons/material-design-icons": "^14.0.0",
     "@reduxjs/toolkit": "^2.15.0",
-    "@rnmapbox/maps": "^10.3.18",
+    "@rnmapbox/maps": "^10.3.19",
     "@turf/bbox": "^7.4.0",
     "@turf/distance": "^7.4.0",
-    "aes-js": "^3.1.2",
     "async-mutex": "^0.5.0",
     "expo": "~58.0.26",
     "expo-apple-authentication": "~58.0.3",
@@ -121,7 +119,6 @@
     "react-native-screens": "~4.30.1",
     "react-native-svg": "15.16.0",
     "react-native-toast-message": "2.5.2",
-    "react-native-url-polyfill": "^4.0.0",
     "react-native-uuid": "^3.0.0",
     "react-native-view-recorder": "0.4.1",
     "react-native-view-shot": "6.1.1",
@@ -136,6 +133,13 @@
   },
   "resolutions": {
     "expo-location": "patch:expo-location@npm%3A58.0.22#~/.yarn/patches/expo-location-npm-58.0.22-3465f3691e.patch",
+    "glob@npm:^10.4.1": "npm:^14.0.2",
+    "glob@npm:^13.0.6": "npm:^14.0.2",
+    "minimatch@npm:^10.2.2": "npm:^11.0.1",
+    "minimatch@npm:^10.2.6": "npm:^11.0.1",
+    "minimatch@npm:^7.4.6": "npm:^11.0.1",
+    "minimatch@npm:^9.0.4": "npm:^11.0.1",
+    "node-forge@npm:^1.4.0": "npm:^1.4.3",
     "react-native-view-recorder": "patch:react-native-view-recorder@npm%3A0.4.1#~/.yarn/patches/react-native-view-recorder-npm-0.4.1-f65f857d14.patch"
   },
   "devDependencies": {
@@ -168,7 +172,7 @@
     "test-renderer": "^1.3.1",
     "ts-prune": "^0.10.3",
     "typescript": "^6.0.2",
-    "typescript-eslint": "^8.73.0"
+    "typescript-eslint": "^8.74.0"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,mjs,cjs}": [

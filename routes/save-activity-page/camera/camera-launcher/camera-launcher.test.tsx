@@ -1,8 +1,8 @@
 import { screen } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
-import CameraLauncher from './camera-launcher';
 import { CAMERA_TEXT } from '../const';
+import CameraLauncher from './camera-launcher';
 import type * as MockNativeViewTools from '@T/utils/mock-native-view';
 import type { MockNativeViewProps } from '@T/utils/mock-native-view';
 

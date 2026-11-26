@@ -4,8 +4,8 @@ import { LANGUAGES, THEMES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import ChangeTheme from './change-theme';
 import { THEMES_ARRAY } from '../change-theme-modal/const';
+import ChangeTheme from './change-theme';
 
 describe('change theme', () => {
   it('applies a theme selected by the user', async () => {

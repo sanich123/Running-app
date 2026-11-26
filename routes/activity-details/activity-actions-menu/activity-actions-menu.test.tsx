@@ -39,7 +39,7 @@ describe('activity actions menu', () => {
     await renderWithProviders(<ActivityActionsMenu activity={activity} />);
 
     await user.press(screen.getByTestId('activity-actions-menu-trigger'));
-    await user.press(screen.getByText(ACTIVITY_ACTIONS_MENU[LANGUAGES.russian].report));
+    await user.press(screen.getByTestId('activity-actions-menu-report'));
     expect(screen.getAllByText(REPORT_CONTENT_COPY[LANGUAGES.russian].title)).toHaveLength(2);
     expect(screen.queryByTestId('activity-actions-menu-edit')).toBeNull();
     expect(screen.queryByTestId('activity-actions-menu-delete')).toBeNull();

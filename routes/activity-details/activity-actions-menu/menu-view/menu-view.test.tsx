@@ -1,7 +1,7 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import { renderWithProviders } from '@T/utils/test-utils';
-import MenuView from './menu-view';
 import MenuItem from '../menu-item/menu-item';
+import MenuView from './menu-view';
 
 describe('activity actions menu view', () => {
   it('opens from the trigger, runs the selected action, and closes', async () => {

@@ -3,8 +3,8 @@ import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import GroupPhotoPicker from './group-photo-picker';
 import { GROUPS_COPY } from '../../const';
+import GroupPhotoPicker from './group-photo-picker';
 
 const mockGetAccessToGallery = jest.fn();
 const mockCompressMediaFile = jest.fn();

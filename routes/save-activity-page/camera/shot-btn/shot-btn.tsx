@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import * as MediaLibrary from 'expo-media-library';
-import uuid from 'react-native-uuid';
+import { v4 as generateUuid } from 'react-native-uuid';
 import { Pressable, View, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { useAppendActivityMediaMutation } from '@R/services/activity/activity';
@@ -61,7 +61,7 @@ export default function ShotBtn({ cameraRef, setPhotos, photos, maxPhotos = 10, 
                             mimeType: 'image/jpeg',
                             mediaType: 'image',
                           },
-                          mediaId: String(uuid.v4()),
+                          mediaId: String(generateUuid()),
                         },
                       ],
                       { onProgress: setUploadProgress, signal: controller.signal },

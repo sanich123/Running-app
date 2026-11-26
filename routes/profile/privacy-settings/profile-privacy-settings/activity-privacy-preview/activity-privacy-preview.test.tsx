@@ -1,9 +1,9 @@
 import { screen, userEvent, within } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { PROFILE_PRIVACY_SETTINGS } from '../../const';
 import ActivityPrivacyPreview from './activity-privacy-preview';
 import { ACTIVITY_PREVIEW_HEART_RATE_ZONES } from './const';
-import { PROFILE_PRIVACY_SETTINGS } from '../../const';
 
 const copy = PROFILE_PRIVACY_SETTINGS[LANGUAGES.russian];
 

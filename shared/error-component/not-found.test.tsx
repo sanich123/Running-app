@@ -2,8 +2,8 @@ import type { ReactNode } from 'react';
 import { screen, userEvent } from '@testing-library/react-native';
 import { ROUTES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
-import { NOT_FOUND_SCREEN_COPY } from './const';
 import NotFoundScreen from '../../app/+not-found';
+import { NOT_FOUND_SCREEN_COPY } from './const';
 
 const mockNavigate = jest.fn();
 jest.mock('expo-router', () => ({

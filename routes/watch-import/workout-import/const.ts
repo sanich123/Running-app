@@ -22,9 +22,9 @@ export const WORKOUT_IMPORT_COPY = {
     intro:
       'Каждый раз, когда вы заходите в Runich, приложение синхронизирует импортированные тренировки из Health Connect. Если тренировка с GPS-маршрутом не появляется, проверьте список совместимых приложений и разрешения ниже.',
     iosIntro:
-      'При открытии Runich и возвращении в приложение он проверяет Apple Health на наличие тренировок за последние 30 дней. Новые тренировки импортируются автоматически, если включена автосинхронизация; уже импортированные не дублируются.',
+      'Runich использует Apple Health (HealthKit), чтобы проверять тренировки за последние 30 дней и импортировать их в ваш аккаунт. Приложение считывает сведения о тренировках, GPS-маршруты, шаги и доступные измерения пульса. Автосинхронизация работает, только если она включена.',
     iosUnavailable: 'Apple Health недоступно на этом устройстве.',
-    iosConnect: 'Подключить Runich к Apple Health',
+    iosConnect: 'Подключить Runich к Apple Health (HealthKit)',
     iosRequestPermissions: 'Запросить разрешения ещё раз',
     iosNoWorkouts: 'Завершённых тренировок в Apple Health за последние 30 дней нет.',
     workoutSignals: {
@@ -135,9 +135,9 @@ export const WORKOUT_IMPORT_COPY = {
     intro:
       'Each time you open Runich, the app syncs imported workouts from Health Connect. If a workout with a GPS route does not appear, check the compatible-app list and permissions below.',
     iosIntro:
-      'When you open Runich or return to it, the app checks Apple Health for workouts from the last 30 days. New workouts are imported automatically when auto-sync is enabled; workouts already imported are skipped.',
+      'Runich uses Apple Health (HealthKit) to check for workouts from the last 30 days and import them into your account. It reads workout details, GPS routes, steps, and available heart-rate data. Auto-sync runs only when enabled.',
     iosUnavailable: 'Apple Health is not available on this device.',
-    iosConnect: 'Connect Runich to Apple Health',
+    iosConnect: 'Connect Runich to Apple Health (HealthKit)',
     iosRequestPermissions: 'Request permissions again',
     iosNoWorkouts: 'No completed workouts in Apple Health from the last 30 days.',
     workoutSignals: {

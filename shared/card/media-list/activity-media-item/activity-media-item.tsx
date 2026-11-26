@@ -7,7 +7,6 @@ import { createSearchParams } from '@R/runich-api/create-search-params';
 import { activityApi, useDeleteActivityMediaMutation } from '@R/services/activity/activity';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import { isVideoUrl } from '@Routes/photo-viewer/utils';
-import ActivityMediaDeleteBtn from '@S/activity-media/activity-media-delete-btn/activity-media-delete-btn';
 import CustomImage from '@S/custom-image/custom-image';
 import { errorToast } from '@S/error-toast/error-toast';
 import MediaModerationPlaceholder from '@S/media-moderation-placeholder/media-moderation-placeholder';
@@ -25,9 +24,6 @@ import type { ActivityMediaItemProps } from './types';
 export default function ActivityMediaItem({
   item: { id: mediaId, url: mediaUrl, isMap = false, mediaReviewStatus, blurhash, thumbnail },
   index,
-  selectedMediaId,
-  onToggleDelete,
-  onDeleteSuccess,
 }: ActivityMediaItemProps) {
   const { width } = useWindowDimensions();
   const { mediaWidth, mediaHeight } = getActivityMediaDimensions(width);
@@ -48,11 +44,10 @@ export default function ActivityMediaItem({
     if (!mediaId) return;
     try {
       await deleteActivityMedia({ activityId, mediaId }).unwrap();
-      onDeleteSuccess();
     } catch (error) {
       errorToast('', error);
     }
-  }, [activityId, deleteActivityMedia, mediaId, onDeleteSuccess]);
+  }, [activityId, deleteActivityMedia, mediaId]);
   const handleMediaMetadata = useCallback(({ aspectRatio }: VideoMetadata) => {
     if (!aspectRatio || !Number.isFinite(aspectRatio)) return;
     setMediaAspectRatio((current) => (current === aspectRatio ? current : aspectRatio));
@@ -129,7 +124,6 @@ export default function ActivityMediaItem({
       ) : (
         <TouchableRipple
           testID={isMap ? 'activity-map-media-item' : `activity-media-${mediaId ?? index}`}
-          onLongPress={!isMap && isOwnActivity && mediaId ? () => onToggleDelete(mediaId) : undefined}
           disabled={isMap && hideMap && !isOwnActivity}
           onPress={handleMediaPress}
           borderless={false}
@@ -174,13 +168,8 @@ export default function ActivityMediaItem({
       {!isOwnActivity && isAwaitingReview ? (
         <MediaModerationPlaceholder status={mediaReviewStatus} compact overlay />
       ) : null}
-      {!isMap && isOwnActivity && mediaId && selectedMediaId === mediaId ? (
-        <View style={styles.deleteButton}>
-          <ActivityMediaDeleteBtn onDelete={() => void handleDeleteMedia()} isDeleting={isDeletingMedia} />
-        </View>
-      ) : null}
       {isMap ? <ActivityMapOverlays /> : null}
-      {!isOwnActivity && !isMap && mediaId ? (
+      {!isMap && mediaId ? (
         <View style={styles.reportButton}>
           <ContentActionsMenu
             accessibilityLabel={mediaActions}
@@ -189,6 +178,22 @@ export default function ActivityMediaItem({
             reportLabel={report}
             reportTestID={`report-media-${mediaId}`}
             onReport={() => setReportedMediaId(mediaId)}
+            showReport={!isOwnActivity}
+            additionalActions={
+              isOwnActivity
+                ? [
+                    {
+                      label: ACTIVITY_MEDIA_COPY[language].deleteMedia,
+                      testID: `delete-media-${mediaId}`,
+                      leadingIcon: 'delete-outline',
+                      systemImage: 'trash',
+                      onPress: () => void handleDeleteMedia(),
+                      destructive: true,
+                      disabled: isDeletingMedia,
+                    },
+                  ]
+                : undefined
+            }
           />
         </View>
       ) : null}
@@ -208,12 +213,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: 'hidden',
     position: 'relative',
-  },
-  deleteButton: {
-    position: 'absolute',
-    right: 8,
-    top: 8,
-    zIndex: 4,
   },
   reportButton: { position: 'absolute', right: 4, top: 4, zIndex: 2 },
 });

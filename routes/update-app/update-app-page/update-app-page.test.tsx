@@ -2,8 +2,8 @@ import { screen, userEvent } from '@testing-library/react-native';
 import * as Linking from 'expo-linking';
 import { LANGUAGES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
-import UpdateAppPage from './update-app-page';
 import { UPDATE_APP_TEXT } from '../const';
+import UpdateAppPage from './update-app-page';
 
 const mockOpenURL = jest.spyOn(Linking, 'openURL').mockResolvedValue(true);
 

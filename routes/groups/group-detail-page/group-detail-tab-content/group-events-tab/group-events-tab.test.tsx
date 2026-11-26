@@ -7,9 +7,9 @@ import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
-import GroupEventsTab from './group-events-tab';
 import { GROUPS_COPY } from '../../../const';
 import { GROUP_FIXTURE } from '../../../test-fixtures';
+import GroupEventsTab from './group-events-tab';
 import type { GroupDetails } from '@R/services/groups/types';
 
 const group: GroupDetails = { ...GROUP_FIXTURE, updatedAt: GROUP_FIXTURE.createdAt };

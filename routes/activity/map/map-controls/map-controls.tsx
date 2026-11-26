@@ -11,6 +11,7 @@ export default function MapControls() {
       <MapControlButton
         testID="increase-map-zoom"
         androidIcon="plus"
+        androidAppearance="light"
         iosSymbol="plus"
         disabled={mapZoomLevel >= 20}
         onPress={onZoomIn}
@@ -19,6 +20,7 @@ export default function MapControls() {
       <MapControlButton
         testID="decrease-map-zoom"
         androidIcon="minus"
+        androidAppearance="light"
         iosSymbol="minus"
         disabled={mapZoomLevel <= 3}
         onPress={onZoomOut}
@@ -27,6 +29,7 @@ export default function MapControls() {
       <MapControlButton
         testID="move-to-current-location"
         androidIcon="crosshairs-gps"
+        androidAppearance="light"
         iosSymbol="scope"
         loading={isCenteringOnCurrentLocation}
         loadingTestID="current-location-loading"

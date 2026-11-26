@@ -1,8 +1,8 @@
 import { screen } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
-import ProfilePrivacyPreview from './profile-privacy-preview';
 import { PROFILE_PRIVACY_SETTINGS } from '../../const';
+import ProfilePrivacyPreview from './profile-privacy-preview';
 
 const copy = PROFILE_PRIVACY_SETTINGS[LANGUAGES.russian];
 

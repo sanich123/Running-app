@@ -8,13 +8,13 @@ import { BASE_URL } from '@T/utils/handlers';
 import { mockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { runichApi } from '../../runich-api/runich-api';
+import { statisticsApi } from '../statistics/statistics';
 import {
   activityApi,
   useGetActivitiesWithRoutesInfiniteQuery,
   useGetFavoriteActivitiesInfiniteQuery,
 } from './activity';
-import { runichApi } from '../../runich-api/runich-api';
-import { statisticsApi } from '../statistics/statistics';
 
 function FavoriteActivitiesPaginationProbe() {
   const { isSuccess, fetchNextPage } = useGetFavoriteActivitiesInfiniteQuery();

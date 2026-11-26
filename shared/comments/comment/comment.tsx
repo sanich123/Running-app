@@ -12,7 +12,6 @@ import useCommentDeleteAction from '../comment-delete-btn/use-comment-delete-act
 import { COMMENT_EDIT_BTN } from '../comment-edit-btn/const';
 import useCommentEditAction from '../comment-edit-btn/use-comment-edit-action';
 import CommentLikeBtn from '../comment-like-btn/comment-like-btn';
-import CommentLikesLength from '../comment-likes-length/comment-likes-length';
 import { COMMENT_MODERATION_COPY } from './const';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 import type { CommentResponse } from '@R/runich-api/comment-types';
@@ -136,17 +135,16 @@ export default function Comment({
       {moderationStatus === 'visible' || isPending ? (
         <View style={styles.likesWrapper}>
           <View style={styles.likesLeadingActions}>
-            {(isPending || canInteract || commentLike.some(({ authorId: likerId }) => likerId === userId)) && (
-              <CommentLikeBtn
-                activityId={activityId}
-                commentId={id}
-                commentLikesFromComment={commentLike}
-                disabled={isPending}
-              />
-            )}
-            {moderationStatus === 'visible' ? (
-              <CommentLikesLength commentId={id} commentLikesFromComment={commentLike} />
-            ) : null}
+            <CommentLikeBtn
+              activityId={activityId}
+              commentId={id}
+              commentLikesFromComment={commentLike}
+              disabled={isPending}
+              showLikeButton={
+                isPending || canInteract || commentLike.some(({ authorId: likerId }) => likerId === userId)
+              }
+              showCount={moderationStatus === 'visible'}
+            />
           </View>
           {isPending && !isYouAuthor && onRefreshStatus ? (
             <IconButton

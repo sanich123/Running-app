@@ -13,8 +13,8 @@ import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { deleteUploadedMedia } from '@U/file-sending';
-import ShotBtn from './shot-btn';
 import { uploadActivityMediaBatch } from '../../utils';
+import ShotBtn from './shot-btn';
 import type { CameraView } from 'expo-camera';
 
 jest.mock('expo-media-library', () => ({ Asset: { create: jest.fn().mockResolvedValue({}) } }));

@@ -1,9 +1,9 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { FlatList, Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useAppSelector } from '@R/typed-hooks';
+import { useActivityCard } from '../context';
 import ActivityMediaItem from './activity-media-item/activity-media-item';
 import { getActivityMediaDimensions, getDisplayedMediaData } from './utils';
-import { useActivityCard } from '../context';
 import type { DisplayedMediaItem } from './types';
 
 export default function MediaList() {
@@ -12,7 +12,6 @@ export default function MediaList() {
   const { userId: currentUserId } = useAppSelector(({ auth }) => auth);
   const { width } = useWindowDimensions();
   const mediaListRef = useRef<FlatList<DisplayedMediaItem>>(null);
-  const [selectedMediaId, setSelectedMediaId] = useState<string | null>(null);
   const { mediaWidth, mediaHeight } = getActivityMediaDimensions(width);
   const initialMediaOffset = mediaWidth / 2;
   const isOwnActivity = activityOwnerId === currentUserId;
@@ -34,21 +33,9 @@ export default function MediaList() {
     shouldApplyInitialOffset.current = false;
     mediaListRef.current.scrollToOffset({ offset: initialMediaOffset, animated: false });
   }, [initialMediaOffset, showSideBySideMedia]);
-  const handleToggleDelete = useCallback((mediaId: string) => {
-    setSelectedMediaId((selectedId) => (selectedId === mediaId ? null : mediaId));
-  }, []);
-  const handleMediaDeleted = useCallback(() => setSelectedMediaId(null), []);
   const renderItem = useCallback(
-    ({ item, index }: { item: DisplayedMediaItem; index: number }) => (
-      <ActivityMediaItem
-        item={item}
-        index={index}
-        selectedMediaId={selectedMediaId}
-        onToggleDelete={handleToggleDelete}
-        onDeleteSuccess={handleMediaDeleted}
-      />
-    ),
-    [handleMediaDeleted, handleToggleDelete, selectedMediaId],
+    ({ item, index }: { item: DisplayedMediaItem; index: number }) => <ActivityMediaItem item={item} index={index} />,
+    [],
   );
 
   return displayedData.length ? (

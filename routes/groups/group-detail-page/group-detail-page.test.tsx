@@ -9,9 +9,9 @@ import { createMockStore } from '@T/utils/mock-store';
 import { loadingResponse } from '@T/utils/response-states';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
-import GroupDetailPage from './group-detail-page';
 import { GROUP_CATEGORY_LABELS, GROUPS_COPY } from '../const';
 import { GROUP_FIXTURE } from '../test-fixtures';
+import GroupDetailPage from './group-detail-page';
 import type { AppStore } from '@T/utils/mock-store';
 
 const mockBack = jest.fn();
@@ -827,7 +827,7 @@ describe('GroupDetailPage', () => {
     await user.press(screen.getByLabelText(GROUPS_COPY[LANGUAGES.english].groupActions));
     await user.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].deleteGroup));
     expect(screen.getByText(GROUPS_COPY[LANGUAGES.english].deleteGroupTitle)).toBeOnTheScreen();
-    await user.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].deleteGroupConfirm));
+    await user.press(screen.getByTestId('delete-group-confirm-button'));
 
     await waitFor(() => expect(deleteGroupRequestIds).toContain(GROUP_FIXTURE.id));
     expect(mockSuccessToast).toHaveBeenCalledWith(GROUPS_COPY[LANGUAGES.english].groupDeleted);
@@ -892,12 +892,12 @@ describe('GroupDetailPage', () => {
     const user = userEvent.setup();
     await user.press(screen.getByLabelText(GROUPS_COPY[LANGUAGES.english].groupActions));
     await user.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].deleteGroup));
-    await user.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].deleteGroupCancel));
+    await user.press(screen.getByTestId('delete-group-cancel-button'));
 
     expect(deleteGroupRequestIds).toHaveLength(0);
     await user.press(screen.getByLabelText(GROUPS_COPY[LANGUAGES.english].groupActions));
     await user.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].deleteGroup));
-    await user.press(screen.getByText(GROUPS_COPY[LANGUAGES.english].deleteGroupConfirm));
+    await user.press(screen.getByTestId('delete-group-confirm-button'));
 
     await waitFor(() =>
       expect(mockErrorToast).toHaveBeenCalledWith(GROUPS_COPY[LANGUAGES.english].deleteGroupError, {

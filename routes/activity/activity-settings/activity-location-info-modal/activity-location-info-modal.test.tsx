@@ -3,8 +3,8 @@ import type { PropsWithChildren } from 'react';
 import { screen } from '@testing-library/react-native';
 import { LANGUAGES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
-import ActivityLocationInfoModal from './activity-location-info-modal';
 import { ACTIVITY_SETTINGS } from '../const';
+import ActivityLocationInfoModal from './activity-location-info-modal';
 
 jest.mock('@gorhom/bottom-sheet', () => {
   const { ScrollView, View } = require('react-native');

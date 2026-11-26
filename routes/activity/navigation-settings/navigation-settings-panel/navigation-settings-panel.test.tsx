@@ -12,8 +12,8 @@ import {
 } from '@R/slices/activity-settings/types';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import NavigationSettingsPanel from './navigation-settings-panel';
 import { NAVIGATION_SETTINGS_COPY } from '../const';
+import NavigationSettingsPanel from './navigation-settings-panel';
 
 describe('NavigationSettingsPanel', () => {
   beforeEach(() => {

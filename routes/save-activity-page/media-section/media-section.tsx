@@ -6,8 +6,8 @@ import PreviewImages from '../preview-images/preview-images';
 import ShowCameraBtn from '../show-camera-btn/show-camera-btn';
 import { MAX_ACTIVITY_MEDIA, UPLOAD_PHOTO_BTN } from '../upload-photos-btn/ const';
 import UploadPhotosBtn from '../upload-photos-btn/upload-photos-btn';
-import type { MediaSectionProps } from './types';
 import type { MediaUploadStatus } from '../upload-photos-btn/ const';
+import type { MediaSectionProps } from './types';
 
 export default function MediaSection({ images, isEditingActivity, activityId, setImages }: MediaSectionProps) {
   const { colors } = useTheme();

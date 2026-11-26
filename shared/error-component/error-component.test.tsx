@@ -1,8 +1,8 @@
 import { screen, userEvent } from '@testing-library/react-native';
-import { ERROR_COMPONENT_TEXT } from './const';
-import ErrorComponent from './error-component';
 import { mockStore } from '../../tests/utils/mock-store';
 import { renderWithProviders } from '../../tests/utils/test-utils';
+import { ERROR_COMPONENT_TEXT } from './const';
+import ErrorComponent from './error-component';
 
 describe('Error component', () => {
   it('should correctly renders info', async () => {

@@ -3,9 +3,9 @@ import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import ChooseMetricsBtns from './choose-metrics-btns';
 import { getMetricsBtnsValues } from '../const';
 import { ChooseMetricsBtnsValues } from '../types';
+import ChooseMetricsBtns from './choose-metrics-btns';
 
 describe('choose metrics btns', () => {
   it('changes the metric displayed on the chart', async () => {

@@ -4,8 +4,8 @@ import { View, StyleSheet } from 'react-native';
 import { useTheme, Text, Button } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
-import { BACKGROUND_LOCATIONS } from './const';
 import LocationConsent from '../location-consent/location-consent';
+import { BACKGROUND_LOCATIONS } from './const';
 import type { BackgroundLocationModalProps } from '../types';
 import type { BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
 

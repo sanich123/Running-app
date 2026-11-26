@@ -14,7 +14,7 @@ function escapeGroovyString(value) {
   return value.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
 }
 
-function withVkRepository(config, vkClientId, vkClientSecret) {
+function withVkRepository(config) {
   config = withSettingsGradle(config, (exportedConfig) => {
     let contents = exportedConfig.modResults.contents;
     if (!contents.includes(VK_MAVEN_REPOSITORY)) {
@@ -34,25 +34,37 @@ function withVkRepository(config, vkClientId, vkClientSecret) {
   return withProjectBuildGradle(config, (exportedConfig) => {
     let contents = exportedConfig.modResults.contents;
     if (!contents.includes(VK_MAVEN_REPOSITORY)) {
-      const rootPlugin = "plugins { id 'vkid.manifest.placeholders' version '1.1.0' apply true }";
-      if (!contents.includes(rootPlugin)) {
-        const allProjectsBlock = /\nallprojects\s*\{/;
-        if (!allProjectsBlock.test(contents)) {
-          throw new Error('Could not find the Android allprojects block for VK ID setup.');
-        }
-        contents = contents.replace(allProjectsBlock, `\n${rootPlugin}\n\nallprojects {`);
-      }
-
       contents = contents.replace(
         /allprojects\s*\{\s*repositories\s*\{/,
         (match) => `${match}\n    ${VK_MAVEN_REPOSITORY}`,
       );
+      if (!contents.includes(VK_MAVEN_REPOSITORY)) {
+        throw new Error('Could not add the VK ID Maven repository to allprojects.repositories.');
+      }
+      exportedConfig.modResults.contents = contents;
+    }
+    return exportedConfig;
+  });
+}
+
+function withVkManifestPlaceholders(config, vkClientId, vkClientSecret) {
+  return withProjectBuildGradle(config, (exportedConfig) => {
+    let contents = exportedConfig.modResults.contents;
+    const rootPlugin = "plugins { id 'vkid.manifest.placeholders' version '1.1.0' apply true }";
+    if (!contents.includes(rootPlugin)) {
+      const allProjectsBlock = /\nallprojects\s*\{/;
+      if (!allProjectsBlock.test(contents)) {
+        throw new Error('Could not find the Android allprojects block for VK ID setup.');
+      }
+      contents = contents.replace(allProjectsBlock, `\n${rootPlugin}\n\nallprojects {`);
+    }
+    if (!contents.includes('vkidManifestPlaceholders {')) {
       contents = contents.replace(
         /apply plugin: "expo-root-project"/,
         `vkidManifestPlaceholders {\n  init('${escapeGroovyString(vkClientId)}', '${escapeGroovyString(vkClientSecret)}')\n}\n\napply plugin: "expo-root-project"`,
       );
-      exportedConfig.modResults.contents = contents;
     }
+    exportedConfig.modResults.contents = contents;
     return exportedConfig;
   });
 }
@@ -167,8 +179,9 @@ module.exports = function withNativeAuth(config) {
   const vkIosClientSecret = process.env.VK_NATIVE_IOS_CLIENT_SECRET || '';
   const hasAndroidVkCredentials = Boolean(vkAndroidClientId && vkAndroidClientSecret);
 
+  config = withVkRepository(config);
   if (hasAndroidVkCredentials) {
-    config = withVkRepository(config, vkAndroidClientId, vkAndroidClientSecret);
+    config = withVkManifestPlaceholders(config, vkAndroidClientId, vkAndroidClientSecret);
   }
   if (hasAndroidVkCredentials || yandexClientId) {
     config = withVkAppPlugin(config, yandexClientId, hasAndroidVkCredentials);

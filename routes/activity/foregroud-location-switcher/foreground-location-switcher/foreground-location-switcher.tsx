@@ -36,7 +36,7 @@ export default function ForegroundLocationSwitcher({ requestForegroundPermission
             }
           }}>
           {' '}
-          {language === LANGUAGES.russian ? 'Разрешить' : 'Allow'}{' '}
+          {language === LANGUAGES.russian ? 'Продолжить' : 'Continue'}{' '}
         </Button>
       </View>
       <LocationConsent accepted={locationConsentAccepted} onChange={setLocationConsentAccepted} />

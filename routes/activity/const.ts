@@ -1,8 +1,16 @@
 import { StyleSheet } from 'react-native';
 import type { GestureResponderEvent, ViewStyle } from 'react-native';
+import {
+  ANDROID_MAP_CONTROL_BACKGROUND_COLOR,
+  ANDROID_MAP_CONTROL_ICON_COLOR,
+  ANDROID_MAP_CONTROL_OUTLINE_COLOR,
+} from '@S/map-control-button/const';
 
 export const IOS_ACTIVITY_HEADER_ICON_COLOR = '#000000';
+export const ANDROID_ACTIVITY_HEADER_ICON_COLOR = ANDROID_MAP_CONTROL_ICON_COLOR;
 export const ACTIVITY_HEADER_BUTTON_SIZE = 40;
+export const ANDROID_ACTIVITY_HEADER_BACKGROUND_COLOR = ANDROID_MAP_CONTROL_BACKGROUND_COLOR;
+export const ANDROID_ACTIVITY_HEADER_OUTLINE_COLOR = ANDROID_MAP_CONTROL_OUTLINE_COLOR;
 export const ACTIVITY_TRACKING_ERROR_COPY = {
   start: 'Не удалось запустить отслеживание геопозиции',
   stop: 'Не удалось остановить отслеживание геопозиции',

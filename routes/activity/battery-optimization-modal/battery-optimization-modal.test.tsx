@@ -2,8 +2,8 @@ import type { ForwardedRef, PropsWithChildren } from 'react';
 import { screen, userEvent } from '@testing-library/react-native';
 import { startActivityAsync } from 'expo-intent-launcher';
 import { renderWithProviders } from '@T/utils/test-utils';
-import BatteryOptimizationModal from './battery-optimization-modal';
 import ActivityMapContext from '../map/activity-map-context';
+import BatteryOptimizationModal from './battery-optimization-modal';
 import type { ActivityMapContextValue } from '../map/activity-map-context';
 
 jest.mock('@gorhom/bottom-sheet', () => {

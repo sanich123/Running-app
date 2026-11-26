@@ -5,9 +5,9 @@ import { MEDIA_MODERATION_PLACEHOLDER_COPY } from '@S/media-moderation-placehold
 import { DEFAULT_ACTIVITY_CARD, TEST_URLS } from '@T/mocks/const';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
+import { ActivityCardContext } from '../../context';
 import ActivityMediaItem from './activity-media-item';
 import { ACTIVITY_MEDIA_COPY } from './const';
-import { ActivityCardContext } from '../../context';
 import type { ActivityCardData } from '../../types';
 import type { DisplayedMediaItem } from '../types';
 
@@ -28,15 +28,9 @@ jest.mock('@S/custom-image/custom-image', () => ({
 async function renderActivityMediaItem({
   item,
   activity,
-  selectedMediaId = null,
-  onToggleDelete = jest.fn(),
-  onDeleteSuccess = jest.fn(),
 }: {
   item: DisplayedMediaItem;
   activity?: Partial<ActivityCardData>;
-  selectedMediaId?: string | null;
-  onToggleDelete?: (mediaId: string) => void;
-  onDeleteSuccess?: () => void;
 }) {
   return await renderWithProviders(
     <ActivityCardContext.Provider
@@ -45,13 +39,7 @@ async function renderActivityMediaItem({
         isFullView: false,
         isShowDescription: false,
       }}>
-      <ActivityMediaItem
-        item={item}
-        index={0}
-        selectedMediaId={selectedMediaId}
-        onToggleDelete={onToggleDelete}
-        onDeleteSuccess={onDeleteSuccess}
-      />
+      <ActivityMediaItem item={item} index={0} />
     </ActivityCardContext.Provider>,
   );
 }
@@ -111,15 +99,15 @@ describe('ActivityMediaItem', () => {
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.media}/activity-id?indexOfPhoto=0&blurhash=photo-blurhash`);
   });
 
-  it('reports a long-pressed owner photo selection to the list', async () => {
-    const onToggleDelete = jest.fn();
+  it('shows the delete action in the media menu for the owner', async () => {
+    const user = userEvent.setup();
     await renderActivityMediaItem({
       item: { id: 'photo-id', url: 'https://images.example.test/photo.jpg', thumbnail: null },
-      onToggleDelete,
     });
 
-    await fireEvent(screen.getByTestId('activity-media-photo-id'), 'longPress');
+    await user.press(screen.getByTestId('media-actions-menu-photo-id'));
 
-    expect(onToggleDelete).toHaveBeenCalledWith('photo-id');
+    expect(await screen.findByTestId('delete-media-photo-id')).toBeOnTheScreen();
+    expect(screen.queryByTestId('report-media-photo-id')).not.toBeOnTheScreen();
   });
 });

@@ -7,8 +7,8 @@ import { BASE_URL } from '@T/utils/handlers';
 import { mockStore, setMockUserId } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
-import LogoutBtn from './logout-btn';
 import { SETTINGS } from '../../const';
+import LogoutBtn from './logout-btn';
 
 const mockReplace = jest.fn();
 jest.mock('expo-router', () => ({

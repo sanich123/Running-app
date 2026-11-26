@@ -1,8 +1,8 @@
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
 import ErrorComponent from '@S/error-component/error-component';
-import useGroupMembersList from './use-group-members-list';
 import GroupMemberRow from '../../../group-member-row/group-member-row';
+import useGroupMembersList from './use-group-members-list';
 import type { GroupDetails } from '@R/services/groups/types';
 
 export default function GroupMembersList({ group }: { group: GroupDetails }) {

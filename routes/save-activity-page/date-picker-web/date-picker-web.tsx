@@ -2,10 +2,10 @@ import { View, StyleSheet } from 'react-native';
 import { Icon, useTheme } from 'react-native-paper';
 import { FONT_FAMILIES } from '@const/fonts';
 import { useAppSelector } from '@R/typed-hooks';
-import { toDateTimeInputValue } from './utils';
 import { DATE_TIME_PICKER } from '../date-picker/const';
 import { clampDateToMaximum } from '../date-picker/utils';
 import { useManualActivityParams, useSetManualActivityParams } from '../manual-activity-params';
+import { toDateTimeInputValue } from './utils';
 import type { DatePickerWebProps } from './types';
 
 export default function DatePickerWeb({ maximumDate }: DatePickerWebProps) {

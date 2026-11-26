@@ -560,7 +560,7 @@ describe('media list', () => {
     }
   });
 
-  it('updates photo dimensions for valid metadata and toggles delete without navigating after long press', async () => {
+  it('updates photo dimensions and does not reveal deletion on long press', async () => {
     const photoUrl = 'https://images.example.test/activity-metadata.jpg';
     await renderMediaList({
       mapPhotoUrl: undefined,
@@ -576,17 +576,7 @@ describe('media list', () => {
     await fireEvent(media, 'load', { source: { width: 200, height: 100 } });
     expect(StyleSheet.flatten(screen.getByTestId(photoUrl).props.style).width).not.toBe(initialWidth);
 
-    const longPressMedia = async () => {
-      await fireEvent(touchTarget, 'longPress');
-    };
-
-    await longPressMedia();
-
-    expect(screen.getByTestId('activity-media-delete-button')).toBeOnTheScreen();
-    expect(mockPush).not.toHaveBeenCalled();
-
-    await longPressMedia();
-
+    await fireEvent(touchTarget, 'longPress');
     expect(screen.queryByTestId('activity-media-delete-button')).not.toBeOnTheScreen();
     expect(mockPush).not.toHaveBeenCalled();
   });
@@ -655,22 +645,38 @@ describe('media list', () => {
     errorToastSpy.mockRestore();
   });
 
-  it('offers media deletion after a long press only to the activity owner', async () => {
+  it('deletes media from the owner actions menu', async () => {
+    const user = userEvent.setup();
+    let deleteCalls = 0;
     const media = {
       id: 'media-1',
       activityId: 'activity-id',
       url: TEST_URLS.activityPhoto,
       thumbnail: null,
     };
-    await renderMediaList({ mapPhotoUrl: undefined, media: [media] });
+    const restorePlatform = overridePlatformOS('android');
+    server.use(
+      http.delete(`${BASE_URL}/activity/${media.activityId}/media/${media.id}`, () => {
+        deleteCalls += 1;
+        return new HttpResponse(null, { status: 204 });
+      }),
+    );
 
-    await fireEvent(screen.getByTestId(`activity-media-${media.id}`), 'longPress');
+    try {
+      await renderMediaList({ mapPhotoUrl: undefined, media: [media] });
 
-    expect(screen.getByTestId('activity-media-delete-button')).toBeOnTheScreen();
-    expect(mockPush).not.toHaveBeenCalled();
+      await user.press(screen.getByTestId(`media-actions-menu-${media.id}`));
+      await user.press(await screen.findByTestId(`delete-media-${media.id}`));
+
+      await waitFor(() => expect(deleteCalls).toBe(1));
+      expect(mockPush).not.toHaveBeenCalled();
+    } finally {
+      restorePlatform();
+    }
   });
 
-  it('does not offer media deletion to users viewing another activity', async () => {
+  it('offers a report but no delete action to users viewing another activity', async () => {
+    const user = userEvent.setup();
     const media = {
       id: 'media-2',
       activityId: 'activity-id',
@@ -678,18 +684,21 @@ describe('media list', () => {
       thumbnail: null,
     };
     mockStore.dispatch(setMockUserId('another-user'));
-    await renderMediaList({ mapPhotoUrl: undefined, media: [media] });
+    const restorePlatform = overridePlatformOS('android');
+    try {
+      await renderMediaList({ mapPhotoUrl: undefined, media: [media] });
+      await user.press(screen.getByTestId(`media-actions-menu-${media.id}`));
 
-    await fireEvent(screen.getByTestId(`activity-media-${media.id}`), 'longPress');
-
-    expect(screen.queryByTestId('activity-media-delete-button')).not.toBeOnTheScreen();
+      expect(await screen.findByTestId(`report-media-${media.id}`)).toBeOnTheScreen();
+      expect(screen.queryByTestId(`delete-media-${media.id}`)).not.toBeOnTheScreen();
+    } finally {
+      restorePlatform();
+    }
   });
 
-  it('does not offer media deletion for the activity map', async () => {
+  it('does not show media actions for the activity map', async () => {
     await renderMediaList({ mapPhotoUrl: TEST_URLS.activityCardMap, media: [] });
 
-    await fireEvent(screen.getByTestId('activity-map-media-item'), 'longPress');
-
-    expect(screen.queryByTestId('activity-media-delete-button')).not.toBeOnTheScreen();
+    expect(screen.queryByTestId(/^media-actions-menu-/)).not.toBeOnTheScreen();
   });
 });

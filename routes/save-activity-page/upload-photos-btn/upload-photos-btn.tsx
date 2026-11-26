@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import uuid from 'react-native-uuid';
+import { v4 as generateUuid } from 'react-native-uuid';
 import { Platform, Pressable, View, StyleSheet } from 'react-native';
 import { Icon, useTheme } from 'react-native-paper';
 import { useAppendActivityMediaMutation } from '@R/services/activity/activity';
@@ -137,7 +137,7 @@ export default function UploadPhotosBtn({
                         mimeType: fileSrc.type,
                         mediaType: fileSrc.type?.startsWith('video/') ? 'video' : 'image',
                       },
-                      mediaId: String(uuid.v4()),
+                      mediaId: String(generateUuid()),
                     })),
                   );
                 } catch (error) {
@@ -182,7 +182,7 @@ export default function UploadPhotosBtn({
                       mimeType: asset.mimeType,
                       mediaType: asset.type === 'video' ? 'video' : 'image',
                     },
-                    mediaId: String(uuid.v4()),
+                    mediaId: String(generateUuid()),
                   })),
                 );
               }

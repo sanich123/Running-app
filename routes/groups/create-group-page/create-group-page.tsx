@@ -24,7 +24,6 @@ export default function CreateGroupPage() {
     name: '',
     description: '',
     locationName: '',
-    isWorldwide: false,
   });
   const [options, setOptions] = useState<GroupCreationOptions>({
     sports: [SPORTS_BTNS_VALUES.run],
@@ -33,7 +32,7 @@ export default function CreateGroupPage() {
   const [photoAssetId, setPhotoAssetId] = useState<string | null>(null);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [createGroup, { isLoading }] = useCreateGroupMutation();
-  const { name, description, locationName, isWorldwide } = details;
+  const { name, description, locationName } = details;
   const { sports, privacy } = options;
 
   return (
@@ -68,7 +67,7 @@ export default function CreateGroupPage() {
               const group = await createGroup({
                 name: name.trim(),
                 description: description.trim() || undefined,
-                locationName: isWorldwide ? undefined : locationName.trim() || undefined,
+                locationName: locationName.trim() || undefined,
                 sports,
                 ...(photoAssetId ? { photoAssetId } : {}),
                 privacy,

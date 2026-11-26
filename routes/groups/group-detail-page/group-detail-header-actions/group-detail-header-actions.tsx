@@ -116,10 +116,17 @@ export default function GroupDetailHeaderActions({ group, isActiveMember }: Grou
             <Text variant="bodyMedium">{deleteGroupMessage}</Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={() => setIsDeleteDialogVisible(false)} disabled={isDeletingGroup}>
+            <Button
+              testID="delete-group-cancel-button"
+              onPress={() => setIsDeleteDialogVisible(false)}
+              disabled={isDeletingGroup}>
               {deleteGroupCancel}
             </Button>
-            <Button onPress={() => void deleteCurrentGroup()} loading={isDeletingGroup} disabled={isDeletingGroup}>
+            <Button
+              testID="delete-group-confirm-button"
+              onPress={() => void deleteCurrentGroup()}
+              loading={isDeletingGroup}
+              disabled={isDeletingGroup}>
               {deleteGroupConfirm}
             </Button>
           </Dialog.Actions>

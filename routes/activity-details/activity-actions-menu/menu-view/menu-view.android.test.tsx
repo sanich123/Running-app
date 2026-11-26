@@ -1,7 +1,7 @@
 import { screen, userEvent, waitFor } from '@testing-library/react-native';
 import { renderWithProviders } from '@T/utils/test-utils';
-import type { MenuViewProps } from './types';
 import type { MenuItemProps } from '../menu-item/types';
+import type { MenuViewProps } from './types';
 
 const AndroidMenuView = require('./menu-view.tsx').default as (props: MenuViewProps) => React.JSX.Element;
 const AndroidMenuItem = require('../menu-item/menu-item.tsx').default as (props: MenuItemProps) => React.JSX.Element;

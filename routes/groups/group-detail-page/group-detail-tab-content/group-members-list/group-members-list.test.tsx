@@ -4,9 +4,9 @@ import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import GroupMembersList from './group-members-list';
 import { GROUPS_COPY } from '../../../const';
 import { GROUP_FIXTURE } from '../../../test-fixtures';
+import GroupMembersList from './group-members-list';
 import type { GroupDetails, GroupMember } from '@R/services/groups/types';
 
 const mockUseGroupMembersList = jest.fn();

@@ -1,8 +1,8 @@
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, IconButton, Text } from 'react-native-paper';
 import ErrorComponent from '@S/error-component/error-component';
-import useGroupDistanceList from './use-group-distance-list';
 import GroupMemberRow from '../../../group-member-row/group-member-row';
+import useGroupDistanceList from './use-group-distance-list';
 import type { GroupDetails } from '@R/services/groups/types';
 
 export default function GroupDistanceList({ group }: { group: GroupDetails }) {

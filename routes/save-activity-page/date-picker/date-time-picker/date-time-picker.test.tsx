@@ -5,8 +5,8 @@ import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { DATE_TIME_PICKER, DATE_TIME_PICKER_BTN_ID } from '../const';
-import DateTimePicker from './date-time-picker';
 import { formatSelectedDate, setTimeOnDate } from '../utils';
+import DateTimePicker from './date-time-picker';
 import type * as MockNativeViewTools from '@T/utils/mock-native-view';
 import type { MockNativeViewProps } from '@T/utils/mock-native-view';
 

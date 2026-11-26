@@ -48,7 +48,7 @@ describe('UserSafetyDialogs', () => {
     );
 
     expect(screen.getByText(copy.blockTitle)).toBeOnTheScreen();
-    await user.press(screen.getByText(copy.cancel));
+    await user.press(screen.getByTestId('confirm-dialog-cancel-button'));
     expect(onBlockDismiss).toHaveBeenCalledTimes(1);
   });
 });

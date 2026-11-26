@@ -7,8 +7,8 @@ import { BASE_URL } from '@T/utils/handlers';
 import { createMockStore } from '@T/utils/mock-store';
 import { server } from '@T/utils/server';
 import { renderWithProviders } from '@T/utils/test-utils';
-import EditGroupPage from './edit-group-page';
 import { GROUPS_COPY } from '../const';
+import EditGroupPage from './edit-group-page';
 import type { GroupDetails } from '@R/services/groups/types';
 
 const mockReplace = jest.fn();
@@ -107,10 +107,10 @@ describe('EditGroupPage', () => {
     expect(mockReplace).toHaveBeenCalledWith('/groups/group-1');
   });
 
-  it('saves a worldwide group without a location name', async () => {
+  it('keeps a group without a location when its location field stays blank', async () => {
     await renderLoadedPage();
     const user = userEvent.setup();
-    await user.press(screen.getByTestId('group-worldwide-toggle'));
+    await user.clear(screen.getByTestId('group-location-input'));
     await user.press(screen.getByTestId('edit-group-submit'));
 
     await waitFor(() => expect(updateRequests[0]).toEqual(expect.objectContaining({ locationName: null })));

@@ -5,18 +5,26 @@ import { NUMBER_OF_LIKES } from '@S/card/number-of-likes/const';
 import { getErrorMessageFromError } from '@S/error-toast/error-toast';
 import type { CommentLikesLengthProps } from '../types';
 
-export default function CommentLikesLength({ commentId, commentLikesFromComment }: CommentLikesLengthProps) {
+export default function CommentLikesLength({
+  commentId,
+  commentLikesFromComment,
+  providedLikes,
+  error: providedError,
+  isError: isProvidedError,
+}: CommentLikesLengthProps) {
   const { userId } = useAppSelector(({ auth }) => auth);
   const { language } = useAppSelector(({ settings }) => settings);
   const {
     data: commentLikes,
-    error,
-    isError,
+    error: queryError,
+    isError: isQueryError,
   } = useGetLikesByCommentIdQuery(commentId, {
-    skip: !commentId || commentLikesFromComment.length === 0,
+    skip: providedLikes !== undefined || !commentId || commentLikesFromComment.length === 0,
   });
 
-  const whatCommentLikesToIterate = commentLikes ?? commentLikesFromComment ?? [];
+  const whatCommentLikesToIterate = providedLikes ?? commentLikes ?? commentLikesFromComment;
+  const error = providedLikes === undefined ? queryError : providedError;
+  const isError = providedLikes === undefined ? isQueryError : isProvidedError;
   const youGaveCommentLike = whatCommentLikesToIterate?.length
     ? whatCommentLikesToIterate?.some(({ authorId }: { authorId: string }) => authorId === userId)
     : false;

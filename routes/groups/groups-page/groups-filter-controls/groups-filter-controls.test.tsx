@@ -3,8 +3,8 @@ import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
-import GroupsFilterControls from './groups-filter-controls';
 import { GROUPS_COPY } from '../../const';
+import GroupsFilterControls from './groups-filter-controls';
 
 describe('GroupsFilterControls', () => {
   beforeEach(() => mockStore.dispatch(changeLanguage(LANGUAGES.english)));

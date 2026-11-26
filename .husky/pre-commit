@@ -1,6 +1,9 @@
 #!/usr/bin/env sh
 set -e
 
+# 0. Проверка зависимостей на уязвимости уровня high и critical
+yarn npm audit --recursive --severity high
+
 # 1. Проверка TypeScript
 yarn tsc
 

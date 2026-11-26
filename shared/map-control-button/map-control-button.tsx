@@ -4,6 +4,10 @@ import { ActivityIndicator, Icon, useTheme } from 'react-native-paper';
 import {
   getMapControlButtonSize,
   getMapControlButtonStyle,
+  ANDROID_MAP_CONTROL_BACKGROUND_COLOR,
+  ANDROID_MAP_CONTROL_ICON_COLOR,
+  ANDROID_MAP_CONTROL_OUTLINE_COLOR,
+  ANDROID_MAP_CONTROL_RIPPLE_COLOR,
   IOS_MAP_CONTROL_BACKGROUND_COLOR,
   IOS_MAP_CONTROL_ICON_COLOR,
   IOS_MAP_CONTROL_OUTLINE_COLOR,
@@ -23,21 +27,41 @@ export default function MapControlButton({
   loading = false,
   loadingTestID,
   selected = false,
+  androidAppearance = 'theme',
 }: MapControlButtonProps) {
   const { colors } = useTheme();
   const { width } = useWindowDimensions();
   const buttonSize = getMapControlButtonSize(width);
   const iconSize = Math.round(buttonSize * 0.43);
   const isIOS = Platform.OS === 'ios';
-  const resolvedIconColor = isIOS ? IOS_MAP_CONTROL_ICON_COLOR : (iconColor ?? colors.onSurface);
-  const buttonBackgroundColor = isIOS ? IOS_MAP_CONTROL_BACKGROUND_COLOR : colors.surface;
-  const buttonOutlineColor = isIOS ? IOS_MAP_CONTROL_OUTLINE_COLOR : colors.outlineVariant;
+  const useLightAndroidAppearance = !isIOS && androidAppearance === 'light';
+  const resolvedIconColor = isIOS
+    ? IOS_MAP_CONTROL_ICON_COLOR
+    : useLightAndroidAppearance
+      ? ANDROID_MAP_CONTROL_ICON_COLOR
+      : (iconColor ?? colors.onSurface);
+  const buttonBackgroundColor = isIOS
+    ? IOS_MAP_CONTROL_BACKGROUND_COLOR
+    : useLightAndroidAppearance
+      ? ANDROID_MAP_CONTROL_BACKGROUND_COLOR
+      : colors.surface;
+  const buttonOutlineColor = isIOS
+    ? IOS_MAP_CONTROL_OUTLINE_COLOR
+    : useLightAndroidAppearance
+      ? ANDROID_MAP_CONTROL_OUTLINE_COLOR
+      : colors.outlineVariant;
   const isUnavailable = disabled || loading;
   const hasOverlayIcon = Boolean(androidOverlayIcon || iosOverlaySymbol);
   const buttonStyle = [
     getMapControlButtonStyle(buttonSize, buttonBackgroundColor, buttonOutlineColor),
     {
-      borderColor: selected ? (isIOS ? IOS_MAP_CONTROL_ICON_COLOR : colors.primary) : buttonOutlineColor,
+      borderColor: selected
+        ? isIOS
+          ? IOS_MAP_CONTROL_ICON_COLOR
+          : useLightAndroidAppearance
+            ? ANDROID_MAP_CONTROL_OUTLINE_COLOR
+            : colors.primary
+        : buttonOutlineColor,
       borderWidth: selected ? 1.5 : StyleSheet.hairlineWidth,
       opacity: isUnavailable ? 0.45 : 1,
     },
@@ -48,7 +72,14 @@ export default function MapControlButton({
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
       accessibilityState={{ disabled: isUnavailable, selected }}
-      android_ripple={Platform.OS === 'android' ? { color: colors.onSurface, radius: buttonSize / 2 } : undefined}
+      android_ripple={
+        Platform.OS === 'android'
+          ? {
+              color: useLightAndroidAppearance ? ANDROID_MAP_CONTROL_RIPPLE_COLOR : colors.onSurface,
+              radius: buttonSize / 2,
+            }
+          : undefined
+      }
       disabled={isUnavailable}
       onPress={onPress}
       style={buttonStyle}

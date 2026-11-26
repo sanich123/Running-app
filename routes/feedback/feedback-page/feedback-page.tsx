@@ -1,6 +1,6 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
-import uuid from 'react-native-uuid';
+import { v4 as generateUuid } from 'react-native-uuid';
 import { View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Button, Card, Chip, IconButton, List, RadioButton, Text, TextInput, useTheme } from 'react-native-paper';
@@ -13,14 +13,10 @@ import { getEmailValidation } from '@S/custom-text-input/types';
 import { errorToast, getErrorMessageFromError } from '@S/error-toast/error-toast';
 import MediaThumbnail from '@S/media-thumbnail/media-thumbnail';
 import { deviceMetadata, deviceName, platform } from '@U/device/device-id';
-import { uploadFeedbackAttachments } from '@U/feedback-sending';
-import { deleteUploadedMedia, getAccessToGallery } from '@U/file-sending';
 import { MAX_FEEDBACK_ATTACHMENTS } from './const';
-import type { FeedbackContactForm, PendingAttachmentPreview } from './types';
-import type { FeedbackAttachment } from '@R/services/feedback/feedback';
+import useFeedbackAttachments from './use-feedback-attachments';
+import type { FeedbackContactForm } from './types';
 import type { FeedbackKind, FeedbackTopic } from '@Routes/feedback/const';
-import type { MediaUploadItem } from '@U/file-sending';
-import type * as ImagePicker from 'expo-image-picker';
 
 export default function FeedbackPage() {
   const { colors } = useTheme();
@@ -40,103 +36,26 @@ export default function FeedbackPage() {
   const [kind, setKind] = useState<FeedbackKind | null>(null);
   const [topic, setTopic] = useState<FeedbackTopic | null>(null);
   const [text, setText] = useState('');
-  const [attachments, setAttachments] = useState<FeedbackAttachment[]>([]);
-  const [pendingAttachmentPreviews, setPendingAttachmentPreviews] = useState<PendingAttachmentPreview[]>([]);
-  const [deletingAttachments, setDeletingAttachments] = useState<string[]>([]);
-  const removedPendingMediaIds = useRef(new Set<string>());
-  const [feedbackId, setFeedbackId] = useState(() => String(uuid.v4()));
-  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [feedbackId, setFeedbackId] = useState(() => String(generateUuid()));
   const [feedbackError, setFeedbackError] = useState<string | null>(null);
   const [receipt, setReceipt] = useState<{ id: string; email: string; confirmationEmailSent: boolean } | null>(null);
   const [sendFeedback, { isLoading }] = useSendFeedbackMutation();
+  const {
+    attachments,
+    pendingAttachmentPreviews,
+    deletingAttachments,
+    isUploadingPhoto,
+    choosePhoto,
+    removeAttachment,
+    removePendingAttachment,
+    clearAttachments,
+  } = useFeedbackAttachments({ feedbackId, copy, setFeedbackError });
 
   const isBug = kind === 'bug';
   const isFeature = kind === 'feature';
   const isQuestion = kind === 'question';
   const canWrite = kind !== null;
   const hasValidEmail = Boolean(userId) || getEmailValidation(language).validate(contactEmail ?? '') === true;
-  async function choosePhoto() {
-    if (attachments.length >= MAX_FEEDBACK_ATTACHMENTS) return;
-
-    let result: ImagePicker.ImagePickerResult | undefined;
-    try {
-      result = await getAccessToGallery(['images', 'videos'], {
-        allowsMultipleSelection: true,
-        selectionLimit: MAX_FEEDBACK_ATTACHMENTS - attachments.length,
-      });
-    } catch (error) {
-      errorToast(copy.openGalleryError, error);
-      setFeedbackError(`${copy.openGalleryError}: ${getErrorMessageFromError(error)}`);
-      return;
-    }
-
-    if (!result || result.canceled || !result.assets?.length) return;
-
-    const selectedPhotos = result.assets.slice(0, MAX_FEEDBACK_ATTACHMENTS - attachments.length);
-    const mediaItems: MediaUploadItem[] = selectedPhotos.map((photo) => ({
-      fileSrc: photo.file ?? photo.uri,
-      metadata: {
-        fileName: photo.fileName,
-        mimeType: photo.mimeType,
-        mediaType: photo.type === 'video' ? 'video' : 'image',
-      },
-      mediaId: String(uuid.v4()),
-    }));
-    removedPendingMediaIds.current.clear();
-    setFeedbackError(null);
-    setPendingAttachmentPreviews(
-      selectedPhotos.map(({ uri, type }, index) => ({
-        mediaId: mediaItems[index].mediaId,
-        uri,
-        isVideo: type === 'video',
-      })),
-    );
-    setIsUploadingPhoto(true);
-    try {
-      const uploadedAttachments = await uploadFeedbackAttachments(mediaItems, feedbackId);
-      const successfulUploadCount = uploadedAttachments.filter(Boolean).length;
-      const successfulAttachments = uploadedAttachments.flatMap((attachment, index) =>
-        attachment?.url && !removedPendingMediaIds.current.has(mediaItems[index].mediaId)
-          ? [{ ...attachment, url: attachment.url }]
-          : [],
-      );
-      if (successfulAttachments.length) {
-        setAttachments((currentAttachments) => [...currentAttachments, ...successfulAttachments]);
-      }
-      if (successfulUploadCount !== selectedPhotos.length) {
-        setFeedbackError(copy.attachmentUploadError);
-      }
-    } catch (error) {
-      errorToast(copy.attachmentUploadError, error);
-      setFeedbackError(`${copy.attachmentUploadError}: ${getErrorMessageFromError(error)}`);
-    } finally {
-      setPendingAttachmentPreviews([]);
-      removedPendingMediaIds.current.clear();
-      setIsUploadingPhoto(false);
-    }
-  }
-
-  async function removeAttachment(attachment: FeedbackAttachment) {
-    if (deletingAttachments.includes(attachment.url)) return;
-
-    setDeletingAttachments((current) => [...current, attachment.url]);
-    setAttachments((current) => current.filter(({ url }) => url !== attachment.url));
-    try {
-      await deleteUploadedMedia(
-        [attachment.url, attachment.thumbnail].filter((url): url is string => Boolean(url)),
-        [],
-        feedbackId,
-      );
-    } finally {
-      setDeletingAttachments((current) => current.filter((url) => url !== attachment.url));
-    }
-  }
-
-  function removePendingAttachment(mediaId: string) {
-    removedPendingMediaIds.current.add(mediaId);
-    setPendingAttachmentPreviews((current) => current.filter((preview) => preview.mediaId !== mediaId));
-  }
-
   async function submit({ email }: FeedbackContactForm) {
     if (!kind || !text.trim() || !canWrite || (!userId && !email.trim())) return;
     setFeedbackError(null);
@@ -158,8 +77,6 @@ export default function FeedbackPage() {
     } catch (error) {
       errorToast(copy.submitError, error);
       setFeedbackError(`${copy.submitError}: ${getErrorMessageFromError(error)}`);
-    } finally {
-      setIsUploadingPhoto(false);
     }
   }
 
@@ -183,11 +100,11 @@ export default function FeedbackPage() {
               mode="outlined"
               onPress={() => {
                 setReceipt(null);
-                setFeedbackId(String(uuid.v4()));
+                setFeedbackId(String(generateUuid()));
                 setKind(null);
                 setTopic(null);
                 setText('');
-                setAttachments([]);
+                clearAttachments();
                 resetContactForm();
               }}>
               {copy.sendAnother}

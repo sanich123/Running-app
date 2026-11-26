@@ -1,5 +1,4 @@
-import { Pressable, StyleSheet, View } from 'react-native';
-import { Icon, Text, useTheme } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { useAppSelector } from '@R/typed-hooks';
 import CustomTextInput from '@S/custom-text-input/custom-text-input';
@@ -8,10 +7,9 @@ import type { GroupCreationTextFields } from '../types';
 import type { GroupDetailsFieldsProps } from './types';
 
 export default function GroupDetailsFields({ details, onChange }: GroupDetailsFieldsProps) {
-  const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
-  const { groupName, nameRequired, description: descriptionCopy, worldwide, location } = GROUPS_COPY[language];
-  const { name, description, locationName, isWorldwide } = details;
+  const { groupName, nameRequired, description: descriptionCopy, location } = GROUPS_COPY[language];
+  const { name, description, locationName } = details;
   const { control } = useForm<GroupCreationTextFields>({
     defaultValues: { name, description, locationName },
   });
@@ -38,31 +36,19 @@ export default function GroupDetailsFields({ details, onChange }: GroupDetailsFi
         testID="group-description-input"
         validation={{ required: '' }}
       />
-      <Pressable
-        accessibilityRole="checkbox"
-        accessibilityState={{ checked: isWorldwide }}
-        testID="group-worldwide-toggle"
-        onPress={() => onChange({ ...details, isWorldwide: !isWorldwide })}
-        style={styles.worldwideOption}>
-        <Icon source={isWorldwide ? 'checkbox-marked' : 'checkbox-blank-outline'} size={22} color={colors.primary} />
-        <Text variant="bodyMedium">{worldwide}</Text>
-      </Pressable>
-      {!isWorldwide ? (
-        <CustomTextInput<GroupCreationTextFields>
-          control={control}
-          fieldName="locationName"
-          label={location}
-          callback={(locationName) => onChange({ ...details, locationName })}
-          maxLength={160}
-          testID="group-location-input"
-          validation={{ required: '' }}
-        />
-      ) : null}
+      <CustomTextInput<GroupCreationTextFields>
+        control={control}
+        fieldName="locationName"
+        label={location}
+        callback={(locationName) => onChange({ ...details, locationName })}
+        maxLength={160}
+        testID="group-location-input"
+        validation={{ required: '' }}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   section: { gap: 12 },
-  worldwideOption: { alignItems: 'center', flexDirection: 'row', gap: 8, paddingVertical: 4 },
 });

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, useWindowDimensions, View } from 'react-native';
 import {
   Icon,
   IconButton,
@@ -17,6 +17,7 @@ import type { GroupsFilterControlsProps } from './types';
 
 export default function GroupsFilterControls({ filters, onChange }: GroupsFilterControlsProps) {
   const { colors } = useTheme();
+  const { width } = useWindowDimensions();
   const { language } = useAppSelector(({ settings }) => settings);
   const { allGroups, myGroups, allActivities, search: searchCopy, closeSearch } = GROUPS_COPY[language];
   const sportLabels = getGroupSportLabels(language);
@@ -32,8 +33,8 @@ export default function GroupsFilterControls({ filters, onChange }: GroupsFilter
           onChange({ ...filters, scope });
         }}
         buttons={[
-          { value: 'all', label: allGroups },
-          { value: 'mine', label: myGroups },
+          { value: 'all', label: allGroups, style: styles.scopeButton },
+          { value: 'mine', label: myGroups, style: styles.scopeButton },
         ]}
       />
       <View style={styles.filterRow} testID="groups-filter-row">
@@ -41,45 +42,60 @@ export default function GroupsFilterControls({ filters, onChange }: GroupsFilter
           visible={isSportMenuVisible}
           onDismiss={() => setIsSportMenuVisible(false)}
           elevation={3}
-          contentStyle={[styles.sportMenu, { backgroundColor: colors.surface }]}
+          contentStyle={[
+            styles.sportMenu,
+            { backgroundColor: colors.surface, width: Math.min(Math.max(width - 32, 220), 360) },
+          ]}
           anchor={
-            <TouchableRipple
-              accessibilityLabel={sport ? sportLabels[sport] : allActivities}
-              accessibilityRole="button"
-              onPress={() => setIsSportMenuVisible(true)}
-              rippleColor={colors.primaryContainer}
-              style={[styles.sportFilter, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}
-              testID="groups-sport-filter">
-              <View style={styles.sportFilterContent}>
-                <Text variant="labelLarge" numberOfLines={1} style={{ color: colors.primary }}>
-                  {sport ? sportLabels[sport] : allActivities}
-                </Text>
-                <Icon source="chevron-down" size={18} color={colors.onSurfaceVariant} />
-              </View>
-            </TouchableRipple>
+            <View style={styles.sportFilterClip}>
+              <TouchableRipple
+                accessibilityLabel={sport ? sportLabels[sport] : allActivities}
+                accessibilityRole="button"
+                borderless={false}
+                onPress={() => setIsSportMenuVisible(true)}
+                rippleColor={colors.primaryContainer}
+                style={[styles.sportFilter, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}
+                testID="groups-sport-filter">
+                <View style={styles.sportFilterContent}>
+                  <Text variant="labelLarge" numberOfLines={1} style={{ color: colors.primary }}>
+                    {sport ? sportLabels[sport] : allActivities}
+                  </Text>
+                  <Icon source="chevron-down" size={18} color={colors.onSurfaceVariant} />
+                </View>
+              </TouchableRipple>
+            </View>
           }>
           <Menu.Item
             title={allActivities}
-            trailingIcon={sport === null ? 'check' : undefined}
+            accessibilityState={{ selected: sport === null }}
+            contentStyle={styles.sportOptionContent}
+            style={[styles.sportOption, sport === null && { backgroundColor: colors.surfaceVariant }]}
+            titleStyle={sport === null ? { color: colors.onSurface, fontWeight: '600' } : undefined}
             testID="groups-sport-filter-all"
             onPress={() => {
               onChange({ ...filters, sport: null });
               setIsSportMenuVisible(false);
             }}
           />
-          {GROUP_SPORTS.map((activitySport) => (
-            <Menu.Item
-              key={activitySport}
-              title={sportLabels[activitySport]}
-              leadingIcon={getIconNameByTypeOfSport(activitySport)}
-              trailingIcon={sport === activitySport ? 'check' : undefined}
-              testID={`groups-sport-filter-${activitySport}`}
-              onPress={() => {
-                onChange({ ...filters, sport: activitySport });
-                setIsSportMenuVisible(false);
-              }}
-            />
-          ))}
+          {GROUP_SPORTS.map((activitySport) => {
+            const isSelected = sport === activitySport;
+            return (
+              <Menu.Item
+                key={activitySport}
+                title={sportLabels[activitySport]}
+                leadingIcon={getIconNameByTypeOfSport(activitySport)}
+                accessibilityState={{ selected: isSelected }}
+                contentStyle={styles.sportOptionContent}
+                style={[styles.sportOption, isSelected && { backgroundColor: colors.surfaceVariant }]}
+                titleStyle={isSelected ? { color: colors.onSurface, fontWeight: '600' } : undefined}
+                testID={`groups-sport-filter-${activitySport}`}
+                onPress={() => {
+                  onChange({ ...filters, sport: activitySport });
+                  setIsSportMenuVisible(false);
+                }}
+              />
+            );
+          })}
         </Menu>
         <Searchbar
           iconColor={colors.primary}
@@ -110,6 +126,7 @@ export default function GroupsFilterControls({ filters, onChange }: GroupsFilter
 const styles = StyleSheet.create({
   controls: { gap: 12, paddingHorizontal: 16, paddingTop: 12, paddingBottom: 8 },
   filterRow: { alignItems: 'center', flexDirection: 'row', gap: 8 },
+  scopeButton: { overflow: 'hidden' },
   filterSearch: {
     borderRadius: 24,
     borderWidth: 1,
@@ -118,11 +135,15 @@ const styles = StyleSheet.create({
     height: 48,
     margin: 0,
     minHeight: 48,
+    overflow: 'hidden',
     width: '100%',
   },
   filterSearchInput: { fontSize: 14, lineHeight: 18, minHeight: 40, paddingVertical: 0 },
   searchClear: { height: 40, margin: 0, width: 40 },
-  sportFilter: { alignSelf: 'flex-start', borderRadius: 24, borderWidth: 1, overflow: 'hidden' },
+  sportFilterClip: { alignSelf: 'flex-start', borderRadius: 24, overflow: 'hidden' },
+  sportFilter: { borderRadius: 24, borderWidth: 1, overflow: 'hidden' },
+  sportOptionContent: { flex: 1 },
+  sportOption: { borderRadius: 12, maxWidth: '100%', overflow: 'hidden', width: '100%' },
   sportFilterContent: {
     alignItems: 'center',
     borderRadius: 24,

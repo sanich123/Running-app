@@ -5,8 +5,8 @@ import { changeLanguage } from '@R/slices/settings/settings';
 import { mockStore, resetMockLocation } from '@T/utils/mock-store';
 import { renderWithProviders } from '@T/utils/test-utils';
 import { getPedometerActivityData } from '@U/pedometer/pedometer';
-import ActiveMotionStatus from './active-motion-status';
 import { ACTIVITY_MOTION_STATUS } from '../const';
+import ActiveMotionStatus from './active-motion-status';
 
 jest.mock('@U/pedometer/pedometer', () => ({
   getPedometerActivityData: jest.fn(),

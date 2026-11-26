@@ -3,8 +3,8 @@ import { ActivityIndicator, Avatar, useTheme } from 'react-native-paper';
 import { useGetUserProfileByUserIdQuery } from '@R/services/profile/profile';
 import { useAppSelector } from '@R/typed-hooks';
 import MediaModerationPlaceholder from '@S/media-moderation-placeholder/media-moderation-placeholder';
-import { UserProfileAvatarIcons, UserProfileAvatarTestIds } from './const';
 import UserAvatar from '../user-avatar/user-avatar';
+import { UserProfileAvatarIcons, UserProfileAvatarTestIds } from './const';
 import type { UserProfileAvatarProps } from './types';
 
 export default function UserProfileAvatar({

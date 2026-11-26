@@ -4,6 +4,7 @@ import { MAX_MOBILE_WIDTH } from '@const/const';
 import { useGetActivityChartDataQuery } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
 import ErrorComponent from '@S/error-component/error-component';
+import { HOME_ACTIVITY_FULL_VIEW } from '../metrics/const';
 import ActivityTimeChart from './activity-time-chart/activity-time-chart';
 import {
   buildActivityChartSeries,
@@ -13,7 +14,6 @@ import {
   getHeartRateZoneSettings,
   HEART_RATE_ZONE_COLORS,
 } from './utils';
-import { HOME_ACTIVITY_FULL_VIEW } from '../metrics/const';
 import type { ActivityChartProps } from './types';
 
 export default function ActivityChart({

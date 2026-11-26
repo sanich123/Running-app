@@ -6,9 +6,9 @@ import { useGetActivityByActivityIdQuery } from '@R/services/activity/activity';
 import { useAppSelector } from '@R/typed-hooks';
 import CrossPlatformLayout from '@S/cross-platform-layout/cross-platform-layout';
 import ErrorComponent from '@S/error-component/error-component';
+import KilometreSplitTable from '../kilometre-split-table/kilometre-split-table';
 import { ACTIVITY_STATISTICS_PAGE_COPY } from './const';
 import { buildActivityStatisticSections } from './utils';
-import KilometreSplitTable from '../kilometre-split-table/kilometre-split-table';
 
 export default function ActivityStatisticsPage() {
   const { width } = useWindowDimensions();

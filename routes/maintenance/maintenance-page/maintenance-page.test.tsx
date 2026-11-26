@@ -1,8 +1,8 @@
 import { screen, userEvent } from '@testing-library/react-native';
 import { ROUTES, LANGUAGES } from '@const/enums';
 import { renderWithProviders } from '@T/utils/test-utils';
-import MaintenancePage from './maintenance-page';
 import { MAINTENANCE_TEXT } from '../const';
+import MaintenancePage from './maintenance-page';
 
 const mockReplace = jest.fn();
 jest.mock('expo-router', () => ({ useRouter: () => ({ replace: mockReplace }) }));
