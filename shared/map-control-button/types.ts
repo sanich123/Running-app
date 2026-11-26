@@ -13,4 +13,5 @@ export interface MapControlButtonProps {
   loading?: boolean;
   loadingTestID?: string;
   selected?: boolean;
+  androidAppearance?: 'theme' | 'light';
 }

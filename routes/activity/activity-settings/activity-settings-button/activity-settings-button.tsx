@@ -1,9 +1,12 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { SymbolView } from 'expo-symbols';
 import { Platform, Pressable, StyleSheet } from 'react-native';
-import { Icon, useTheme } from 'react-native-paper';
+import { Icon } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import {
+  ANDROID_ACTIVITY_HEADER_BACKGROUND_COLOR,
+  ANDROID_ACTIVITY_HEADER_ICON_COLOR,
+  ANDROID_ACTIVITY_HEADER_OUTLINE_COLOR,
   ACTIVITY_HEADER_BUTTON_SIZE,
   IOS_ACTIVITY_HEADER_ICON_COLOR,
   getActivityHeaderButtonStyle,
@@ -21,7 +24,6 @@ export default function ActivitySettingsButton({
   openRef?: { current: () => void };
   showTrigger?: boolean;
 }) {
-  const { colors } = useTheme();
   const { language } = useAppSelector(({ settings }) => settings);
   const activitySettingsModalRef = useRef<BottomSheetModal>(null);
   const activityLocationInfoModalRef = useRef<BottomSheetModal>(null);
@@ -50,15 +52,18 @@ export default function ActivitySettingsButton({
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={ACTIVITY_SETTINGS[language].open}
-          android_ripple={{ color: colors.onSurface, radius: ACTIVITY_HEADER_BUTTON_SIZE / 2 }}
+          android_ripple={{ color: ANDROID_ACTIVITY_HEADER_OUTLINE_COLOR, radius: ACTIVITY_HEADER_BUTTON_SIZE / 2 }}
           onPress={(event) => {
             if (isActivityHeaderButtonTap(event)) {
               openActivitySettings();
             }
           }}
-          style={getActivityHeaderButtonStyle(colors.surface, colors.outlineVariant)}
+          style={getActivityHeaderButtonStyle(
+            ANDROID_ACTIVITY_HEADER_BACKGROUND_COLOR,
+            ANDROID_ACTIVITY_HEADER_OUTLINE_COLOR,
+          )}
           testID="activity-settings-button">
-          <Icon source="cogs" size={24} color={colors.onSurface} />
+          <Icon source="cogs" size={24} color={ANDROID_ACTIVITY_HEADER_ICON_COLOR} />
         </Pressable>
       ) : null}
       <ActivitySettings

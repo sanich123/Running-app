@@ -2,7 +2,7 @@ import { useCallback, useRef } from 'react';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { MaterialDesignIcons as MaterialCommunityIcons } from '@react-native-vector-icons/material-design-icons/static';
 import { KeyboardAwareScrollView, type KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import { Divider, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { useAppSelector } from '@R/typed-hooks';
 import { ACTIVITY_SETTINGS } from './const';
@@ -40,7 +40,7 @@ export default function ActivitySettings({
     <BottomSheetModal
       ref={settingsModalRef}
       index={0}
-      snapPoints={['90%']}
+      snapPoints={Platform.OS === 'android' ? ['50%'] : ['90%']}
       enableDynamicSizing={false}
       backdropComponent={renderBackdrop}
       keyboardBehavior="interactive"

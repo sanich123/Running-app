@@ -35,7 +35,7 @@ export default function BackgroundLocationSwitcher({
           }
         }}>
         {' '}
-        {language === LANGUAGES.russian ? 'Разрешить' : 'Allow'}{' '}
+        {language === LANGUAGES.russian ? 'Продолжить' : 'Continue'}{' '}
       </Button>
     </View>
   );

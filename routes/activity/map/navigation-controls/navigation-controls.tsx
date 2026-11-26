@@ -63,6 +63,7 @@ export default function NavigationControls() {
         <MapControlButton
           testID="open-navigation-controls"
           androidIcon="navigation"
+          androidAppearance="light"
           iosSymbol="location.north.line"
           accessibilityLabel={labels.openNavigation}
           onPress={() => navigationModalRef.current?.present()}

@@ -26,7 +26,8 @@ export default function BatteryOptimizationModal() {
       {isActive ? (
         <MapControlButton
           testID="battery-optimization-info"
-          androidIcon="information-outline"
+          androidIcon="battery-alert-variant-outline"
+          androidAppearance="light"
           iosSymbol="info.circle"
           onPress={() => batteryOptimizationEnabledModalRef.current?.present()}
           accessibilityLabel="Информация об оптимизации батареи"

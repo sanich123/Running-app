@@ -16,6 +16,9 @@ import {
 import { clearTrackingRecovery } from '@R/slices/tracking-recovery/tracking-recovery';
 import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
 import {
+  ANDROID_ACTIVITY_HEADER_BACKGROUND_COLOR,
+  ANDROID_ACTIVITY_HEADER_ICON_COLOR,
+  ANDROID_ACTIVITY_HEADER_OUTLINE_COLOR,
   ACTIVITY_HEADER_BUTTON_SIZE,
   ACTIVITY_TRACKING_ERROR_COPY,
   IOS_ACTIVITY_HEADER_ICON_COLOR,
@@ -109,12 +112,16 @@ export default function CloseBtn() {
               stopTrackingAndClose();
             }
           }}
-          style={getActivityHeaderButtonStyle(colors.surface, colors.outlineVariant)}
+          android_ripple={{ color: ANDROID_ACTIVITY_HEADER_OUTLINE_COLOR, radius: ACTIVITY_HEADER_BUTTON_SIZE / 2 }}
+          style={getActivityHeaderButtonStyle(
+            ANDROID_ACTIVITY_HEADER_BACKGROUND_COLOR,
+            ANDROID_ACTIVITY_HEADER_OUTLINE_COLOR,
+          )}
           testID="activity-close-button">
           {isStoppingTracking ? (
-            <ActivityIndicator size={18} color={colors.onSurface} />
+            <ActivityIndicator size={18} color={ANDROID_ACTIVITY_HEADER_ICON_COLOR} />
           ) : (
-            <Icon source="close" size={22} color={colors.onSurface} />
+            <Icon source="close" size={22} color={ANDROID_ACTIVITY_HEADER_ICON_COLOR} />
           )}
         </Pressable>
       )}
