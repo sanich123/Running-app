@@ -6355,14 +6355,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-prettier@npm:10.1.8":
-  version: 10.1.8
-  resolution: "eslint-config-prettier@npm:10.1.8"
+"eslint-config-prettier@npm:10.1.9":
+  version: 10.1.9
+  resolution: "eslint-config-prettier@npm:10.1.9"
   peerDependencies:
     eslint: ">=7.0.0"
   bin:
     eslint-config-prettier: bin/cli.js
-  checksum: 10c0/e1bcfadc9eccd526c240056b1e59c5cd26544fe59feb85f38f4f1f116caed96aea0b3b87868e68b3099e55caaac3f2e5b9f58110f85db893e83a332751192682
+  checksum: 10c0/e0dc423810f9877f0b72805ba4e166dc11ff801ee1a5d70f20e973aa3279abcfbffa242c248ce63f04e49a4b543aa6849d2f330bb6961b0b745f6a4c7eeaa30c
   languageName: node
   linkType: hard
 
@@ -9999,10 +9999,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mapbox-gl@npm:^3.35.2":
-  version: 3.35.2
-  resolution: "mapbox-gl@npm:3.35.2"
-  checksum: 10c0/acb329fa9cb737406ac76f53048d7dfc5fda6655fd43a6afc7475125e865b643c967b363104885dde2b746c944a993ce344c39e2383dfba29e9d15db248eac04
+"mapbox-gl@npm:^3.36.0":
+  version: 3.36.0
+  resolution: "mapbox-gl@npm:3.36.0"
+  checksum: 10c0/ea0f64bdd3ea4427308651ea84cae32d8fdbd0dbb5f59c2f62a8b4a96289fa592e2e99bf7bf5d72e69fa9314abf811298a2258134d938bb451fc1ca78ef1068e
   languageName: node
   linkType: hard
 
@@ -12375,7 +12375,7 @@ __metadata:
     babel-plugin-react-compiler: "npm:1.0.0"
     depcheck: "npm:^1.4.7"
     eslint: "npm:^10.15.0"
-    eslint-config-prettier: "npm:10.1.8"
+    eslint-config-prettier: "npm:10.1.9"
     eslint-import-resolver-typescript: "npm:^4.4.5"
     eslint-plugin-import-x: "npm:^4.18.1"
     eslint-plugin-react: "npm:^7.37.5"
@@ -12425,7 +12425,7 @@ __metadata:
     jest-expo: "npm:~58.0.16"
     lint-staged: "npm:^17.6.2"
     madge: "npm:^8.0.0"
-    mapbox-gl: "npm:^3.35.2"
+    mapbox-gl: "npm:^3.36.0"
     moment: "npm:^2.31.0"
     msw: "npm:^2.15.0"
     npm-check-updates: "npm:^23.1.1"
