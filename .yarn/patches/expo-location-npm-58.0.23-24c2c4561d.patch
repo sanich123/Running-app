@@ -1,5 +1,5 @@
 diff --git a/android/build.gradle b/android/build.gradle
-index 863b0ac8bbf4408a54c01ba2e882e001532edb15..8bf7ee6f073a5fbac7c3fbdc41df8d6ef27876ed 100644
+index bb16a37e580ad689ffacedf88bb5b3f8af02ad9a..834f186fef39b45ad2d1d247c34473375cf1758a 100644
 --- a/android/build.gradle
 +++ b/android/build.gradle
 @@ -17,5 +17,6 @@ android {
@@ -62,7 +62,7 @@ index 2a8f0f138193aea83c240d49dd82cde8924d734e..dd5d986ff3a1cd81c1009f52c822edd3
  
      // Decorator for Permissions.getPermissionsWithPermissionsManager, for use in Kotlin coroutines
 diff --git a/android/src/main/java/expo/modules/location/LocationModule.kt b/android/src/main/java/expo/modules/location/LocationModule.kt
-index 8088ec6c731a4f07efbbe9724d19211e8c4b2ff6..dbc48967cfa6c353935bfdb5f5fdb75c9d97a1bc 100644
+index 9bd212fe4e395dfdb9bde2164f2222e04e64c17f..3cc765433c201dd67c696b0858cc936a2209ea11 100644
 --- a/android/src/main/java/expo/modules/location/LocationModule.kt
 +++ b/android/src/main/java/expo/modules/location/LocationModule.kt
 @@ -1,6 +1,7 @@
@@ -98,7 +98,7 @@ index 8088ec6c731a4f07efbbe9724d19211e8c4b2ff6..dbc48967cfa6c353935bfdb5f5fdb75c
  import expo.modules.core.interfaces.ActivityEventListener
  import expo.modules.core.interfaces.services.UIManager
  import expo.modules.interfaces.taskManager.TaskManagerInterface
-@@ -75,6 +84,8 @@ import kotlin.coroutines.suspendCoroutine
+@@ -76,6 +85,8 @@ import kotlin.coroutines.suspendCoroutine
  import kotlin.math.abs
  
  class LocationModule : Module(), SensorEventListener, ActivityEventListener {
@@ -107,7 +107,7 @@ index 8088ec6c731a4f07efbbe9724d19211e8c4b2ff6..dbc48967cfa6c353935bfdb5f5fdb75c
    private var mGeofield: GeomagneticField? = null
    private val mLocationCallbacks = HashMap<Int, LocationCallback>()
    private val mLocationRequests = HashMap<Int, LocationRequest>()
-@@ -417,6 +428,14 @@ class LocationModule : Module(), SensorEventListener, ActivityEventListener {
+@@ -414,6 +425,14 @@ class LocationModule : Module(), SensorEventListener, ActivityEventListener {
      } ?: throw NoPermissionsModuleException()
    }
  
@@ -122,7 +122,7 @@ index 8088ec6c731a4f07efbbe9724d19211e8c4b2ff6..dbc48967cfa6c353935bfdb5f5fdb75c
    private fun getProviderStatus(): LocationProviderStatus {
      val manager = mContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
  
-@@ -469,8 +488,8 @@ class LocationModule : Module(), SensorEventListener, ActivityEventListener {
+@@ -466,8 +485,8 @@ class LocationModule : Module(), SensorEventListener, ActivityEventListener {
      }
      val lastKnownLocation = getLastKnownLocation() ?: return null
  
@@ -133,7 +133,7 @@ index 8088ec6c731a4f07efbbe9724d19211e8c4b2ff6..dbc48967cfa6c353935bfdb5f5fdb75c
      }
      return null
    }
-@@ -490,6 +509,14 @@ class LocationModule : Module(), SensorEventListener, ActivityEventListener {
+@@ -487,6 +506,14 @@ class LocationModule : Module(), SensorEventListener, ActivityEventListener {
        promise.reject(LocationUnauthorizedException())
        return
      }
@@ -148,7 +148,7 @@ index 8088ec6c731a4f07efbbe9724d19211e8c4b2ff6..dbc48967cfa6c353935bfdb5f5fdb75c
      if (LocationHelpers.hasNetworkProviderEnabled(mContext) || !showUserSettingsDialog) {
        LocationHelpers.requestSingleLocation(mLocationProvider, currentLocationRequest, promise)
      } else {
-@@ -754,14 +781,178 @@ class LocationModule : Module(), SensorEventListener, ActivityEventListener {
+@@ -751,14 +778,178 @@ class LocationModule : Module(), SensorEventListener, ActivityEventListener {
      }
    }
  
@@ -329,7 +329,7 @@ index 8088ec6c731a4f07efbbe9724d19211e8c4b2ff6..dbc48967cfa6c353935bfdb5f5fdb75c
            .addOnCanceledListener { continuation.resume(null) }
            .addOnFailureListener { continuation.resume(null) }
        } catch (e: SecurityException) {
-@@ -1087,6 +1278,7 @@ class LocationModule : Module(), SensorEventListener, ActivityEventListener {
+@@ -1084,6 +1275,7 @@ class LocationModule : Module(), SensorEventListener, ActivityEventListener {
      const val ACCURACY_HIGH = 4
      const val ACCURACY_HIGHEST = 5
      const val ACCURACY_BEST_FOR_NAVIGATION = 6
@@ -634,7 +634,7 @@ index 8c129fc7605d217fd73c6648c0168a142857a1cc..a8d2dc0573ad605bdce3108eeca99985
      val interval = (task.options["deferredUpdatesInterval"] as? Number)?.toLong() ?: 0L
      return newestLocation.time - oldestLocation.time >= interval && mDeferredDistance >= distance
 diff --git a/build/Location.types.d.ts b/build/Location.types.d.ts
-index 0596eef1074bebabd3ebcb824b9d43fa57e25f28..52ef65448bff66b25cf72d9d664eadd3903de31d 100644
+index c0b4c20ed58642833ff465f4f3cfc558be4747a5..65b423bebbb5685835ac16c7064b6fa55bbb7afd 100644
 --- a/build/Location.types.d.ts
 +++ b/build/Location.types.d.ts
 @@ -234,7 +234,13 @@ export type LocationRegion = {
@@ -652,7 +652,7 @@ index 0596eef1074bebabd3ebcb824b9d43fa57e25f28..52ef65448bff66b25cf72d9d664eadd3
       * The coordinates of the position.
       */
 diff --git a/src/Location.types.ts b/src/Location.types.ts
-index c43235c0fa5c0afff0a327ad5846a923e0ab87cb..6d389200788b3bd21620ae6240a545a966158987 100644
+index ddce89bc4eebe1bb13a17b264f7e26031d17416b..ef94bda57d606e49a4cf3b11ed024962a970cec1 100644
 --- a/src/Location.types.ts
 +++ b/src/Location.types.ts
 @@ -255,7 +255,13 @@ export type LocationRegion = {
