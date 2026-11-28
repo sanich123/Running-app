@@ -22,7 +22,7 @@ import {
   setTrackingRecoveryStatus,
   startTrackingRecovery,
 } from '@R/slices/tracking-recovery/tracking-recovery';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useAppDispatch, useAppSelector, useAppShallowSelector } from '@R/typed-hooks';
 import { ACTIVITY_TRACKING_ERROR_COPY } from '@Routes/activity/const';
 import { errorToast } from '@S/error-toast/error-toast';
 import { getCurrentActivityDuration } from '@U/activity-duration';
@@ -67,7 +67,17 @@ export default function StartBtn({
     distance,
     locationsFromBackground: locations,
     kilometresSplit,
-  } = useAppSelector(({ location }) => location);
+  } = useAppShallowSelector(({ location }) => ({
+    activityStatus: location.activityStatus,
+    duration: location.duration,
+    durationTimerBase: location.durationTimerBase,
+    durationTimerStartedAt: location.durationTimerStartedAt,
+    recordingStartedAt: location.recordingStartedAt,
+    recordingTimeZone: location.recordingTimeZone,
+    distance: location.distance,
+    locationsFromBackground: location.locationsFromBackground,
+    kilometresSplit: location.kilometresSplit,
+  }));
   const { language } = useAppSelector(({ settings }) => settings);
   const { push } = useRouter();
   const { sport } = useActivitySportParams();

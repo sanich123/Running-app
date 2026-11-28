@@ -33,7 +33,7 @@ jest.mock('expo-image-manipulator', () => ({
 }));
 jest.mock('react-native-compressor', () => ({
   Image: { compress: jest.fn() },
-  Video: { compress: jest.fn() },
+  Video: { cancelCompression: jest.fn(), compress: jest.fn() },
   getVideoMetaData: jest.fn(),
 }));
 jest.mock('@S/error-toast/error-toast', () => ({ errorToast: jest.fn() }));
@@ -45,9 +45,11 @@ const originalDocumentDescriptor = Object.getOwnPropertyDescriptor(globalThis, '
 const originalCreateObjectURLDescriptor = Object.getOwnPropertyDescriptor(URL, 'createObjectURL');
 const originalRevokeObjectURLDescriptor = Object.getOwnPropertyDescriptor(URL, 'revokeObjectURL');
 
-function mockBrowserVideoMetadata(duration = 20) {
+function mockBrowserVideoMetadata(duration = 20, width = 0, height = 0) {
   const video = {
     duration,
+    videoWidth: width,
+    videoHeight: height,
     preload: 'none',
     onloadedmetadata: null as (() => void) | null,
     onerror: null as ((event: Event) => void) | null,
@@ -442,11 +444,81 @@ describe('file sending', () => {
     expect(getVideoMetaData).not.toHaveBeenCalled();
   });
 
+  it('stores browser video dimensions as an aspect ratio', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
+    const webFile = { name: 'wide-clip.mp4', size: 1_000, type: 'video/mp4' } as unknown as File;
+    mockBrowserVideoMetadata(30, 1920, 1080);
+
+    await expect(compressMediaFile(webFile)).resolves.toMatchObject({
+      file: webFile,
+      aspectRatio: 16 / 9,
+      isVideo: true,
+    });
+    expect(VideoCompressor.compress).not.toHaveBeenCalled();
+  });
+
+  it('stores compressed native video dimensions as an aspect ratio', async () => {
+    (getVideoMetaData as jest.Mock)
+      .mockResolvedValueOnce({ size: 1_000, duration: 10 })
+      .mockResolvedValueOnce({ size: 1_000, duration: 10, width: 1920, height: 1080 });
+
+    await expect(compressMediaFile('wide-clip.mp4')).resolves.toMatchObject({
+      file: 'compressed-video.mp4',
+      aspectRatio: 16 / 9,
+      isVideo: true,
+    });
+  });
+
   it('returns no compressed media when a compressor produces no output', async () => {
     (ImageCompressor.compress as jest.Mock).mockResolvedValue(null);
 
     await expect(compressMediaFile('photo.jpg')).resolves.toBeNull();
     expect(errorToast).not.toHaveBeenCalled();
+  });
+
+  it('skips image compression when the upload was already cancelled', async () => {
+    const controller = new AbortController();
+    controller.abort();
+
+    await expect(compressMediaFile('photo.jpg', {}, { signal: controller.signal })).resolves.toBeNull();
+    expect(ImageCompressor.compress).not.toHaveBeenCalled();
+  });
+
+  it('cancels native video compression with its native cancellation id', async () => {
+    const controller = new AbortController();
+    const onStatusProgress = jest.fn();
+    let notifyCompressionStarted = () => {};
+    const compressionStarted = new Promise<void>((resolve) => {
+      notifyCompressionStarted = resolve;
+    });
+    let resolveCompressedFile: (file: string) => void = () => {};
+    const compressedFile = new Promise<string>((resolve) => {
+      resolveCompressedFile = resolve;
+    });
+    (VideoCompressor.compress as jest.Mock).mockImplementationOnce(
+      (
+        file: string,
+        options: { getCancellationId?: (id: string) => void },
+        onProgress?: (progress: number) => void,
+      ) => {
+        expect(file).toBe('activity.mp4');
+        options.getCancellationId?.('compression-1');
+        onProgress?.(0.4);
+        notifyCompressionStarted();
+        return compressedFile;
+      },
+    );
+
+    const compression = compressMediaFile('activity.mp4', {}, { signal: controller.signal, onStatusProgress });
+    await compressionStarted;
+    controller.abort();
+
+    expect(VideoCompressor.cancelCompression).toHaveBeenCalledWith('compression-1');
+    expect(onStatusProgress).toHaveBeenCalledWith('compressing', 0.4);
+    await expect(compression).resolves.toBeNull();
+    resolveCompressedFile('compressed-activity.mp4');
+    await Promise.resolve();
+    expect(getVideoMetaData).toHaveBeenCalledTimes(1);
   });
 
   it('rejects oversized browser videos without calling native video services', async () => {

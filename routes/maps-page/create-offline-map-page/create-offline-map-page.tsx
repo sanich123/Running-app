@@ -1,6 +1,6 @@
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { LANGUAGES } from '@const/enums';
-import { useAppSelector } from '@R/typed-hooks';
+import { useAppSelector, useAppShallowSelector } from '@R/typed-hooks';
 import { MAPS_PAGE_COPY } from '../const';
 import MapRegionDownloader from '../offline-maps-tab/map-region-downloader/map-region-downloader';
 
@@ -13,7 +13,10 @@ export default function CreateOfflineMapPage() {
     centerLongitude?: string;
   }>();
   const { language } = useAppSelector(({ settings }) => settings);
-  const { lastPosition, initialLocation } = useAppSelector(({ location }) => location);
+  const { lastPosition, initialLocation } = useAppShallowSelector(({ location }) => ({
+    lastPosition: location.lastPosition,
+    initialLocation: location.initialLocation,
+  }));
   const copy = MAPS_PAGE_COPY[language === LANGUAGES.english ? LANGUAGES.english : LANGUAGES.russian];
   const center = lastPosition ?? initialLocation;
   const routeLatitude = Number(centerLatitude);

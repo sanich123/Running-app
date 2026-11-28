@@ -31,6 +31,7 @@ export interface UploadedMedia {
   url?: string | null;
   thumbnail: string | null;
   blurhash?: string | null;
+  aspectRatio?: number | null;
   assetId?: string;
   thumbnailAssetId?: string;
   mediaReviewStatus?: 'queued' | 'processing' | 'review_required' | 'approved' | 'rejected' | 'failed' | null;
@@ -43,4 +44,5 @@ export interface CompressedMediaFile {
   extension: string;
   isVideo: boolean;
   mimeType: string;
+  aspectRatio?: number;
 }

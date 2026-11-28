@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
 import { useGetGroupsQuery } from '@R/services/groups/groups';
 import { useAppSelector } from '@R/typed-hooks';
+import useFocusedAppPolling from '@U/hooks/use-focused-app-polling';
 import { GROUPS_COPY } from '../../const';
 import type { GroupsQuery } from '@R/services/groups/types';
 
@@ -17,11 +17,11 @@ export default function useGroupsList(filters: GroupsQuery) {
         )
       : groups;
 
-  useEffect(() => {
-    if (!groups.some(({ photoPending }) => photoPending)) return;
-    const interval = setInterval(() => void refetch(), 8000);
-    return () => clearInterval(interval);
-  }, [groups, refetch]);
+  useFocusedAppPolling(
+    groups.some(({ photoPending }) => photoPending),
+    8000,
+    () => void refetch(),
+  );
 
   return {
     copy,

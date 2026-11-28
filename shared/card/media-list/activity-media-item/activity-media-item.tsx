@@ -22,7 +22,7 @@ import type { VideoMetadata } from '../types';
 import type { ActivityMediaItemProps } from './types';
 
 export default function ActivityMediaItem({
-  item: { id: mediaId, url: mediaUrl, isMap = false, mediaReviewStatus, blurhash, thumbnail },
+  item: { id: mediaId, url: mediaUrl, isMap = false, mediaReviewStatus, blurhash, thumbnail, aspectRatio },
   index,
 }: ActivityMediaItemProps) {
   const { width } = useWindowDimensions();
@@ -33,7 +33,12 @@ export default function ActivityMediaItem({
   const { language } = useAppSelector(({ settings }) => settings);
   const { push } = useRouter();
   const dispatch = useAppDispatch();
-  const [mediaAspectRatio, setMediaAspectRatio] = useState(1);
+  const storedAspectRatio =
+    typeof aspectRatio === 'number' && Number.isFinite(aspectRatio) && aspectRatio > 0 ? aspectRatio : undefined;
+  const [loadedAspectRatio, setLoadedAspectRatio] = useState<{ mediaUrl: string; aspectRatio: number } | null>(null);
+  const mediaAspectRatio =
+    storedAspectRatio ??
+    (loadedAspectRatio && loadedAspectRatio.mediaUrl === mediaUrl ? loadedAspectRatio.aspectRatio : 1);
   const [reportedMediaId, setReportedMediaId] = useState<string | null>(null);
   const [deleteActivityMedia, { isLoading: isDeletingMedia }] = useDeleteActivityMediaMutation();
   const isOwnActivity = activityOwnerId === currentUserId;
@@ -48,10 +53,21 @@ export default function ActivityMediaItem({
       errorToast('', error);
     }
   }, [activityId, deleteActivityMedia, mediaId]);
-  const handleMediaMetadata = useCallback(({ aspectRatio }: VideoMetadata) => {
-    if (!aspectRatio || !Number.isFinite(aspectRatio)) return;
-    setMediaAspectRatio((current) => (current === aspectRatio ? current : aspectRatio));
-  }, []);
+  const handleMediaMetadata = useCallback(
+    ({ aspectRatio: loadedAspectRatio }: VideoMetadata) => {
+      if (
+        storedAspectRatio !== undefined ||
+        !mediaUrl ||
+        loadedAspectRatio === undefined ||
+        !Number.isFinite(loadedAspectRatio) ||
+        loadedAspectRatio <= 0
+      ) {
+        return;
+      }
+      setLoadedAspectRatio({ mediaUrl, aspectRatio: loadedAspectRatio });
+    },
+    [mediaUrl, storedAspectRatio],
+  );
   const isAwaitingReview = ['queued', 'processing', 'review_required'].includes(mediaReviewStatus ?? '');
 
   if (!mediaUrl) {
@@ -100,7 +116,7 @@ export default function ActivityMediaItem({
 
   return (
     <View
-      testID={isMap ? 'activity-map-media-container' : undefined}
+      testID={isMap ? 'activity-map-media-container' : `activity-media-container-${mediaId ?? index}`}
       style={[styles.mediaTile, { height: mediaHeight, width: itemWidth }]}>
       {Platform.OS === 'web' && isVideo ? (
         <View
@@ -127,7 +143,7 @@ export default function ActivityMediaItem({
           disabled={isMap && hideMap && !isOwnActivity}
           onPress={handleMediaPress}
           borderless={false}
-          style={{ height: mediaHeight, width: itemWidth }}
+          style={{ height: mediaHeight, width: '100%' }}
           accessibilityRole="button"
           accessibilityLabel={isMap ? openMap : openMedia}>
           {isVideo ? (
@@ -146,7 +162,7 @@ export default function ActivityMediaItem({
             />
           ) : (
             <CustomImage
-              style={{ width: itemWidth, height: mediaHeight }}
+              style={{ width: '100%', height: mediaHeight }}
               source={{ uri: thumbnail ? thumbnail : mediaUrl }}
               contentFit="cover"
               placeholderContentFit="cover"

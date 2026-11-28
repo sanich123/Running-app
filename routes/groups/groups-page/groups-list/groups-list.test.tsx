@@ -1,3 +1,4 @@
+import type { EffectCallback } from 'react';
 import { fireEvent, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { LANGUAGES } from '@const/enums';
@@ -16,7 +17,13 @@ let groupsResponse: unknown[] = [];
 let groupsError: { status: number; message: string } | undefined;
 const groupRequests: URL[] = [];
 let testStore: ReturnType<typeof createMockStore>;
-jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush }) }));
+jest.mock('expo-router', () => ({
+  useFocusEffect: (callback: () => void | (() => void)) => {
+    const { useEffect } = require('react') as { useEffect: (effect: EffectCallback, deps: readonly unknown[]) => void };
+    useEffect(callback, [callback]);
+  },
+  useRouter: () => ({ push: mockPush }),
+}));
 
 describe('GroupsList', () => {
   beforeEach(() => {

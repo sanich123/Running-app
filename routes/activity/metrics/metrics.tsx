@@ -1,6 +1,6 @@
 import { View, StyleSheet, Platform } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import { useAppSelector } from '@R/typed-hooks';
+import { useAppSelector, useAppShallowSelector } from '@R/typed-hooks';
 import { formatDuration } from '@U/time-formatter';
 import { useActivitySportParams } from '../activity-params';
 import { MAP_METRICS } from './const';
@@ -9,8 +9,15 @@ import { getLiveLastKmMetric, getLiveMainMetric, getLiveTopMetric } from './util
 
 export default function Metrics() {
   const { colors } = useTheme();
-  const { kilometresSplit, altitude, duration, distance, steps, isMapVisible } = useAppSelector(
-    ({ location }) => location,
+  const { kilometresSplit, altitude, duration, distance, steps, isMapVisible } = useAppShallowSelector(
+    ({ location }) => ({
+      kilometresSplit: location.kilometresSplit,
+      altitude: location.altitude,
+      duration: location.duration,
+      distance: location.distance,
+      steps: location.steps,
+      isMapVisible: location.isMapVisible,
+    }),
   );
   const { language } = useAppSelector(({ settings }) => settings);
   const { sport } = useActivitySportParams();

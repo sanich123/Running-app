@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { IconButton, Menu, useTheme } from 'react-native-paper';
+import { Icon, IconButton, Menu, useTheme } from 'react-native-paper';
 import type { ContentActionsMenuProps } from './types';
 
 export default function ContentActionsMenu({
@@ -67,7 +67,9 @@ export default function ContentActionsMenu({
         {additionalActions?.map((action) => (
           <Menu.Item
             key={action.testID}
-            leadingIcon={action.leadingIcon}
+            leadingIcon={({ size, color }) => (
+              <Icon source={action.leadingIcon} size={size} color={action.destructive ? colors.error : color} />
+            )}
             title={action.label}
             dense
             rippleColor={colors.primaryContainer}

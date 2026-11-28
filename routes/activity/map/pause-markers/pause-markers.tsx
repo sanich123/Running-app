@@ -1,9 +1,11 @@
-import { useAppSelector } from '@R/typed-hooks';
+import { useAppShallowSelector } from '@R/typed-hooks';
 import PauseMarker from './pause-marker/pause-marker';
 import type { LocationObject } from 'expo-location';
 
 export default function PauseMarkers({ locations }: { locations?: LocationObject[][] } = {}) {
-  const { locationsWithPauses } = useAppSelector(({ location }) => location);
+  const { locationsWithPauses } = useAppShallowSelector(({ location }) => ({
+    locationsWithPauses: location.locationsWithPauses,
+  }));
   const routeLocations = locations ?? locationsWithPauses;
 
   return (

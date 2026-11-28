@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { CircleLayer, MarkerView, ShapeSource } from '@rnmapbox/maps';
 import { StyleSheet, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
-import { useAppSelector } from '@R/typed-hooks';
+import { useAppShallowSelector } from '@R/typed-hooks';
 import type { SelectedKilometre, RouteKilometreMarkersProps } from './types';
 import type { ActivityKilometreSplit } from '@S/card/types';
 
@@ -11,7 +11,9 @@ export default function RouteKilometreMarkers({
   kilometreUnit = 'km',
 }: RouteKilometreMarkersProps = {}) {
   const { colors } = useTheme();
-  const { kilometresSplit: kilometreSplitsFromStore } = useAppSelector(({ location }) => location);
+  const { kilometreSplits: kilometreSplitsFromStore } = useAppShallowSelector(({ location }) => ({
+    kilometreSplits: location.kilometresSplit,
+  }));
   const routeKilometreSplits = kilometresSplit ?? kilometreSplitsFromStore;
   const [selectedKilometre, setSelectedKilometre] = useState<SelectedKilometre | null>(null);
   const validKilometreSplits = (Array.isArray(routeKilometreSplits) ? routeKilometreSplits : []).filter(

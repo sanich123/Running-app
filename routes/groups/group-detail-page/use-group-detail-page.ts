@@ -1,7 +1,8 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useGetGroupByIdQuery, useGetGroupsQuery, useJoinGroupMutation } from '@R/services/groups/groups';
 import { useAppSelector } from '@R/typed-hooks';
+import useFocusedAppPolling from '@U/hooks/use-focused-app-polling';
 import { GROUPS_COPY } from '../const';
 
 export default function useGroupDetailPage() {
@@ -36,11 +37,7 @@ export default function useGroupDetailPage() {
     }, [groupId, refetch]),
   );
 
-  useEffect(() => {
-    if (!group?.photoPending) return;
-    const interval = setInterval(() => void refetch(), 8000);
-    return () => clearInterval(interval);
-  }, [group?.photoPending, refetch]);
+  useFocusedAppPolling(Boolean(group?.photoPending), 8000, () => void refetch());
 
   const isOwner = Boolean(group && (group.isOwner || (userId && group.createdByUserId === userId)));
   const isListedInMyGroups = Boolean(group && myGroups.some(({ id }) => id === group.id));

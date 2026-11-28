@@ -1,7 +1,7 @@
 import { afterAll } from '@jest/globals';
 import { act, fireEvent, screen, userEvent, waitFor } from '@testing-library/react-native';
 import { delay, http, HttpResponse } from 'msw';
-import { Share } from 'react-native';
+import { AppState, Share } from 'react-native';
 import { LANGUAGES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { BASE_URL } from '@T/utils/handlers';
@@ -16,8 +16,8 @@ import type { AppStore } from '@T/utils/mock-store';
 
 const mockBack = jest.fn();
 const mockPush = jest.fn();
-const mockFocusCallbacks: (() => void)[] = [];
-const mockUseFocusEffect = jest.fn((callback: () => void) => {
+const mockFocusCallbacks: (() => void | (() => void))[] = [];
+const mockUseFocusEffect = jest.fn((callback: () => void | (() => void)) => {
   mockFocusCallbacks.push(callback);
 });
 let mockRouteParams: { groupId: string | string[]; tab?: string | string[] } = { groupId: GROUP_FIXTURE.id };
@@ -132,7 +132,7 @@ describe('GroupDetailPage', () => {
     await screen.findByTestId('group-detail-photo');
 
     await waitFor(() => expect(groupRequestUrls).toHaveLength(1));
-    const onFocus = mockFocusCallbacks.at(-1);
+    const onFocus = mockFocusCallbacks.at(-2);
     expect(onFocus).toBeDefined();
 
     onFocus?.();
@@ -768,6 +768,8 @@ describe('GroupDetailPage', () => {
         }),
       ),
     );
+    const originalAppState = AppState.currentState;
+    Object.defineProperty(AppState, 'currentState', { configurable: true, value: 'active' });
     const originalSetInterval = globalThis.setInterval;
     const intervalId = originalSetInterval(() => undefined, 60_000);
     globalThis.clearInterval(intervalId);
@@ -785,15 +787,25 @@ describe('GroupDetailPage', () => {
       const { unmount } = await renderWithProviders(<GroupDetailPage />, { store: groupStore });
       await screen.findByTestId('group-detail-photo');
       expect(screen.getByTestId('group-detail-photo-moderation-status')).toBeOnTheScreen();
+      const onFocus = mockFocusCallbacks.at(-1);
+      expect(onFocus).toBeDefined();
+      let onBlur: (() => void) | undefined;
+      await act(async () => {
+        onBlur = onFocus?.() ?? undefined;
+      });
       expect(pollingCallback).toBeDefined();
       await act(async () => pollingCallback?.());
       await waitFor(() => expect(groupRequestUrls).toHaveLength(2));
-      await act(async () => unmount());
+      await act(async () => {
+        onBlur?.();
+        unmount();
+      });
       expect(clearIntervalSpy).toHaveBeenCalledWith(intervalId);
       expect(groupRequestUrls).toHaveLength(2);
     } finally {
       setIntervalSpy.mockRestore();
       clearIntervalSpy.mockRestore();
+      Object.defineProperty(AppState, 'currentState', { configurable: true, value: originalAppState });
     }
   });
 

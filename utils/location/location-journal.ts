@@ -1,5 +1,5 @@
 import { createMMKV } from 'react-native-mmkv';
-import { MAX_RAW_ACTIVITY_LOCATIONS } from './const';
+import { MAX_ACTIVITY_LOCATIONS, MAX_RAW_ACTIVITY_LOCATIONS } from './const';
 import type { LocationObject } from 'expo-location';
 
 const LOCATION_JOURNAL_VERSION = 1;
@@ -26,6 +26,7 @@ interface LocationJournalMeta {
   pointCount: number;
   chunkCount: number;
   segmentStarts: number[];
+  lastTimestamp?: number | null;
 }
 
 interface LocationJournalSnapshot {
@@ -140,6 +141,7 @@ export function createLocationJournal() {
     pointCount: 0,
     chunkCount: 0,
     segmentStarts: [0],
+    lastTimestamp: null,
   });
   storage.set(ACTIVE_JOURNAL_KEY, journalId);
   return journalId;
@@ -153,19 +155,26 @@ export function appendLocationToJournal(journalId: string, location: LocationObj
   const meta = readMeta(journalId);
   if (!meta || meta.pointCount >= MAX_RAW_ACTIVITY_LOCATIONS) return false;
 
-  const lastTimestamp = meta.pointCount > 0 ? readChunk(journalId, meta.chunkCount - 1).at(-1)?.[2] : undefined;
+  const lastTimestamp =
+    typeof meta.lastTimestamp === 'number'
+      ? meta.lastTimestamp
+      : meta.pointCount > 0
+        ? readChunk(journalId, meta.chunkCount - 1).at(-1)?.[2]
+        : undefined;
   const timestamp = location.timestamp ?? getCoordinates(location).timestamp;
   if (typeof lastTimestamp === 'number' && typeof timestamp === 'number' && timestamp <= lastTimestamp) return false;
 
   const chunkIndex = Math.floor(meta.pointCount / LOCATION_CHUNK_SIZE);
   const chunk = readChunk(journalId, chunkIndex);
-  chunk.push(toCompactLocation(location));
+  const compactLocation = toCompactLocation(location);
+  chunk.push(compactLocation);
   storage.set(getChunkKey(journalId, chunkIndex), JSON.stringify(chunk));
 
   writeMeta(journalId, {
     ...meta,
     pointCount: meta.pointCount + 1,
     chunkCount: Math.max(meta.chunkCount, chunkIndex + 1),
+    lastTimestamp: compactLocation[2],
   });
   return true;
 }
@@ -174,7 +183,12 @@ export function getLocationJournalProgress(journalId: string): LocationJournalPr
   const meta = readMeta(journalId);
   if (!meta) return null;
 
-  const lastTimestamp = meta.pointCount > 0 ? readChunk(journalId, meta.chunkCount - 1).at(-1)?.[2] : null;
+  const lastTimestamp =
+    typeof meta.lastTimestamp === 'number'
+      ? meta.lastTimestamp
+      : meta.pointCount > 0
+        ? readChunk(journalId, meta.chunkCount - 1).at(-1)?.[2]
+        : null;
   return { pointCount: meta.pointCount, lastTimestamp: typeof lastTimestamp === 'number' ? lastTimestamp : null };
 }
 
@@ -196,6 +210,68 @@ export function readLocationJournal(journalId: string): LocationJournalSnapshot 
   const segments = segmentStarts.slice(0, -1).map((start, index) => locations.slice(start, segmentStarts[index + 1]));
 
   return { locations, segments: segments.length ? segments : [[]], pointCount: meta.pointCount };
+}
+
+export function readLocationJournalPreview(journalId: string, maxLocations = MAX_ACTIVITY_LOCATIONS) {
+  const meta = readMeta(journalId);
+  if (!meta) return null;
+
+  const pointLimit = Math.max(1, Math.floor(maxLocations));
+  const segmentStarts = [...meta.segmentStarts, meta.pointCount];
+  const segmentRanges = segmentStarts.slice(0, -1).map((start, index) => ({
+    start,
+    end: segmentStarts[index + 1] ?? start,
+  }));
+  const selectedIndexes = segmentRanges.map(({ start, end }) => {
+    const length = Math.max(0, end - start);
+    if (length <= pointLimit) return null;
+    if (pointLimit === 1) return new Set([length - 1]);
+    return new Set(
+      Array.from({ length: pointLimit }, (_, index) => Math.round((index * (length - 1)) / (pointLimit - 1))),
+    );
+  });
+  const segments = segmentRanges.map((): LocationObject[] => []);
+  let segmentIndex = 0;
+  let pointIndex = 0;
+
+  for (let chunkIndex = 0; chunkIndex < meta.chunkCount; chunkIndex += 1) {
+    for (const [
+      latitude,
+      longitude,
+      timestamp,
+      altitude,
+      altitudeAccuracy,
+      accuracy,
+      heading,
+      speed,
+      mocked,
+    ] of readChunk(journalId, chunkIndex)) {
+      while (segmentIndex < segmentRanges.length && pointIndex >= segmentRanges[segmentIndex]!.end) {
+        segmentIndex += 1;
+      }
+
+      const range = segmentRanges[segmentIndex];
+      const sampleIndexes = selectedIndexes[segmentIndex];
+      if (range && (sampleIndexes === null || sampleIndexes?.has(pointIndex - range.start))) {
+        segments[segmentIndex]!.push(
+          fromCompactLocation([
+            latitude,
+            longitude,
+            timestamp,
+            altitude,
+            altitudeAccuracy,
+            accuracy,
+            heading,
+            speed,
+            mocked,
+          ]),
+        );
+      }
+      pointIndex += 1;
+    }
+  }
+
+  return segments.length ? segments : [[]];
 }
 
 export function removeLocationJournal(journalId: string) {

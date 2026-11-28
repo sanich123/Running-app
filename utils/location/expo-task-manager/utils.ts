@@ -1,21 +1,5 @@
 import { getActivitySettings } from '@R/slices/activity-settings/types';
-import {
-  addDurationAndLocationToKmSplits,
-  resetLastKm,
-  setAltitude,
-  setCurrentPace,
-  setDistance,
-  syncDurationFromLocation,
-  setIsTooMuchSpeed,
-  setTooMuchSpeed,
-  setTooMuchSpeedTimestamp,
-  setLastKm,
-  setLastKmAltitude,
-  setLastKmDuration,
-  setLastPosition,
-  setLocationsFromBackground,
-  setLocationsWhenContinued,
-} from '@R/slices/location/location';
+import { recordLocationSample, setTooMuchSpeedDetails } from '@R/slices/location/location';
 import { store } from '@R/store';
 import { getCurrentActivityDuration } from '@U/activity-duration';
 import { speakActivityReminder, speakCompletedKilometer } from '@U/speech/activity-voice';
@@ -50,13 +34,14 @@ export function getCompletedReminderCount(
 }
 
 export function getMetricsTaskManager(currentPosition: LocationObject) {
-  const { locationsWithPauses } = store.getState().location;
+  const { lastPosition, locationsWithPauses } = store.getState().location;
   const lastArrayLength = locationsWithPauses[locationsWithPauses.length - 1]?.length;
   const firstArrayLength = locationsWithPauses[0]?.length;
   const previousPosition =
-    locationsWithPauses[0]?.length > 0
-      ? locationsWithPauses[locationsWithPauses.length - 1][lastArrayLength - 1]
-      : null;
+    lastPosition ??
+    (locationsWithPauses[0]?.length > 0
+      ? (locationsWithPauses[locationsWithPauses.length - 1]?.[Math.max(0, (lastArrayLength ?? 1) - 1)] ?? null)
+      : null);
   const currentDuration = previousPosition ? currentPosition.timestamp - previousPosition.timestamp : 0;
   const currentDistance = previousPosition ? getDistance(previousPosition, currentPosition) : 0;
   const currentAltitude = previousPosition ? getElevationGainBetweenLocations(previousPosition, currentPosition) : 0;
@@ -84,7 +69,14 @@ export function saveMetricsToStoreTaskManager(
   previousPosition: LocationObject | null,
 ) {
   const { sport } = store.getState().activity;
-  const { duration: totalMovingDuration, kilometresSplit: completedKilometres } = store.getState().location;
+  const locationState = store.getState().location;
+  const {
+    duration: totalMovingDuration,
+    kilometresSplit: completedKilometres,
+    lastKilometer,
+    lastKilometerDuration,
+    lastKilometerAltitude,
+  } = locationState;
   const { language } = store.getState().settings;
   const {
     activityVoiceEnabled,
@@ -97,9 +89,7 @@ export function saveMetricsToStoreTaskManager(
   const maxSpeedInKmPerHour = getMaxTrackingSpeedForSport(sport);
 
   if (speedInKmPerHour > maxSpeedInKmPerHour) {
-    store.dispatch(setIsTooMuchSpeed(true));
-    store.dispatch(setTooMuchSpeed(speedInKmPerHour));
-    store.dispatch(setTooMuchSpeedTimestamp(currentPosition.timestamp));
+    store.dispatch(setTooMuchSpeedDetails({ speed: speedInKmPerHour, timestamp: currentPosition.timestamp }));
     return false;
   }
 
@@ -116,7 +106,6 @@ export function saveMetricsToStoreTaskManager(
     }
   }
 
-  const { lastKilometer, lastKilometerDuration, lastKilometerAltitude } = store.getState().location;
   const elevationChange = previousPosition ? getElevationChangeBetweenLocations(previousPosition, currentPosition) : 0;
   const currentElevationChange = elevationChange || currentAltitude;
   const kilometerSplitCalculation = getKilometerSplitCalculation({
@@ -130,14 +119,9 @@ export function saveMetricsToStoreTaskManager(
     previousKilometerAltitude: lastKilometerAltitude,
   });
 
-  if (kilometerSplitCalculation.splits.length) {
-    store.dispatch(resetLastKm());
-    for (const [index, split] of kilometerSplitCalculation.splits.entries()) {
-      const splitPoint = split.kilometerPoint;
-      if (!splitPoint) continue;
-      store.dispatch(setLastKmDuration(split.lastKilometerDuration));
-      store.dispatch(setLastKmAltitude(split.lastKilometerAltitude));
-      store.dispatch(addDurationAndLocationToKmSplits(splitPoint));
+  for (const [index, split] of kilometerSplitCalculation.splits.entries()) {
+    const splitPoint = split.kilometerPoint;
+    if (splitPoint) {
       const splitTimestamp = splitPoint.timestamp;
       const previousTimestamp = previousPosition?.timestamp;
       const durationFromSegmentStart =
@@ -154,16 +138,8 @@ export function saveMetricsToStoreTaskManager(
         },
         { activityVoiceEnabled, activityVoiceMetrics, activityVoiceIdentifier },
       );
-      store.dispatch(resetLastKm());
     }
   }
-  // The calculation already includes the previous remainder. Replace the
-  // stored values instead of adding the remainder to the old remainder.
-  store.dispatch(resetLastKm());
-  store.dispatch(setLastKm(kilometerSplitCalculation.remainingDistance));
-  store.dispatch(setLastKmDuration(kilometerSplitCalculation.remainingDuration));
-  store.dispatch(setLastKmAltitude(kilometerSplitCalculation.remainingAltitude));
-  const locationState = store.getState().location;
   const normalizedCurrentDuration = Number.isFinite(currentDuration) ? Math.max(0, currentDuration) : 0;
   const durationAtLastLocation = Number.isFinite(locationState.durationAtLastLocation)
     ? locationState.durationAtLastLocation
@@ -174,19 +150,18 @@ export function saveMetricsToStoreTaskManager(
     ? durationAtLastLocation + normalizedCurrentDuration
     : getCurrentActivityDuration(locationState);
   store.dispatch(
-    syncDurationFromLocation({
-      duration: synchronizedDuration,
+    recordLocationSample({
+      currentPosition,
+      currentDistance,
+      currentAltitude,
+      currentPace,
+      synchronizedDuration,
       syncedAt: Date.now(),
+      kilometreSplits: kilometerSplitCalculation.splits,
+      remainingKilometreDistance: kilometerSplitCalculation.remainingDistance,
+      remainingKilometreDuration: kilometerSplitCalculation.remainingDuration,
+      remainingKilometreAltitude: kilometerSplitCalculation.remainingAltitude,
     }),
   );
-  store.dispatch(setDistance(currentDistance));
-  store.dispatch(setCurrentPace(currentPace));
-  store.dispatch(setAltitude(currentAltitude));
-  store.dispatch(setLocationsWhenContinued(currentPosition));
-  store.dispatch(setLastPosition(currentPosition));
-  store.dispatch(setLocationsFromBackground(currentPosition));
-  store.dispatch(setIsTooMuchSpeed(false));
-  store.dispatch(setTooMuchSpeed(0));
-  store.dispatch(setTooMuchSpeedTimestamp(null));
   return true;
 }

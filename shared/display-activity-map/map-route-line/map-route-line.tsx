@@ -1,14 +1,16 @@
 import { useMemo } from 'react';
 import { ShapeSource, LineLayer } from '@rnmapbox/maps';
 import { useTheme } from 'react-native-paper';
-import { useAppSelector } from '@R/typed-hooks';
+import { useAppShallowSelector } from '@R/typed-hooks';
 import { getReducedLocations } from '@U/location/location-geometry';
 import type { MapRouteLineProps } from './types';
 import type { ActivityLocation } from '@S/card/types';
 
 export default function MapRouteLine({ locations, segmentColors, variant = 'activity' }: MapRouteLineProps = {}) {
   const { colors } = useTheme();
-  const { locationsWithPauses } = useAppSelector(({ location }) => location);
+  const { locationsWithPauses } = useAppShallowSelector(({ location }) => ({
+    locationsWithPauses: location.locationsWithPauses,
+  }));
   const routeLocations = locations ?? locationsWithPauses;
   const routeColor = variant === 'navigation' ? colors.secondary : colors.primary;
   const sourceId = variant === 'navigation' ? 'planned-route' : 'activity-route';

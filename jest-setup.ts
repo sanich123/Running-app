@@ -1,11 +1,23 @@
 import 'react-native-gesture-handler/jestSetup';
-import type { ReactNode } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 import { cleanup } from '@testing-library/react-native';
 import type { Image as ReactNativeImage, StyleProp, ViewStyle } from 'react-native';
 import { runichApi } from './redux/runich-api/runich-api';
 import { mockStore } from './tests/utils/mock-store';
 import { server } from './tests/utils/server';
 import type * as ExpoLinking from 'expo-linking';
+
+jest.mock('react-native-reanimated', () => {
+  const { View } = jest.requireActual('react-native');
+  const linearTransition = { duration: jest.fn() };
+  linearTransition.duration.mockReturnValue(linearTransition);
+
+  return {
+    __esModule: true,
+    default: { View, createAnimatedComponent: (component: ComponentType) => component },
+    LinearTransition: linearTransition,
+  };
+});
 
 interface SegmentedControlMockProps {
   values: string[];
@@ -254,18 +266,23 @@ jest.mock('react-native-compressor', () => ({
 
 jest.mock('expo-video', () => {
   const reactNative = jest.requireActual('react-native');
+  const { useMemo } = jest.requireActual('react');
   const { View } = reactNative;
 
   return {
     VideoView: View,
-    useVideoPlayer: () => ({
-      addListener: jest.fn(() => ({ remove: jest.fn() })),
-      duration: 13,
-      muted: true,
-      pause: jest.fn(),
-      play: jest.fn(),
-      videoTrack: { size: { width: 1, height: 1 } },
-    }),
+    useVideoPlayer: () =>
+      useMemo(
+        () => ({
+          addListener: jest.fn(() => ({ remove: jest.fn() })),
+          duration: 13,
+          muted: true,
+          pause: jest.fn(),
+          play: jest.fn(),
+          videoTrack: { size: { width: 1, height: 1 } },
+        }),
+        [],
+      ),
     createVideoPlayer: jest.fn(() => ({
       status: 'readyToPlay',
       videoTrack: { averageBitrate: 8_000_000 },

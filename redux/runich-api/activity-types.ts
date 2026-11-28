@@ -30,6 +30,7 @@ export interface ActivityMediaItemResponse {
   url: string | null;
   thumbnail: string | null;
   blurhash?: string | null;
+  aspectRatio?: number | null;
   mediaReviewStatus?: 'queued' | 'processing' | 'review_required' | 'approved' | 'rejected' | 'failed' | null;
 }
 

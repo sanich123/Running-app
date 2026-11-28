@@ -1,13 +1,13 @@
 import { View, StyleSheet } from 'react-native';
 import { Icon, TouchableRipple, useTheme } from 'react-native-paper';
 import { setIsMapVisible } from '@R/slices/location/location';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useAppDispatch, useAppShallowSelector } from '@R/typed-hooks';
 import { ACTIVITY_SHOW_MAP_TEST_ID } from './const';
 
 export default function ShowMapBtn() {
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
-  const { isMapVisible } = useAppSelector(({ location }) => location);
+  const { isMapVisible } = useAppShallowSelector(({ location }) => ({ isMapVisible: location.isMapVisible }));
   return (
     <TouchableRipple
       borderless

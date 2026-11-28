@@ -1,4 +1,5 @@
 import type { STATUSES } from '@const/enums';
+import type { ActivityKilometreSplit } from '@S/card/types';
 import type { LocationProvider } from '@U/location/location-provider';
 import type { LocationObject } from 'expo-location';
 
@@ -36,4 +37,17 @@ export interface LocationInitialState {
   locationsWithPauses: LocationObject[][];
   locationsFromBackground: LocationObject[];
   navigationTrackId: string | null;
+}
+
+export interface LocationSamplePayload {
+  currentPosition: LocationObject;
+  currentDistance: number;
+  currentAltitude: number;
+  currentPace: number;
+  synchronizedDuration: number;
+  syncedAt: number;
+  kilometreSplits: ActivityKilometreSplit[];
+  remainingKilometreDistance: number;
+  remainingKilometreDuration: number;
+  remainingKilometreAltitude: number;
 }

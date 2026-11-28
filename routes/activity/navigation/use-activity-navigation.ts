@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { STATUSES } from '@const/enums';
 import { setNavigationTrackId } from '@R/slices/location/location';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useAppDispatch, useAppSelector, useAppShallowSelector } from '@R/typed-hooks';
 import { MAPS_PAGE_COPY, type OfflineBounds } from '@Routes/maps-page/const';
 import { ACTIVITY_SETTINGS } from '../activity-settings/const';
 import { NAVIGATION_SETTINGS_COPY } from '../navigation-settings/const';
@@ -11,7 +11,11 @@ import type { ActivityNavigationContextValue } from '../navigation-context';
 
 export default function useActivityNavigation(isLocationReady: boolean) {
   const dispatch = useAppDispatch();
-  const { activityStatus, lastPosition, navigationTrackId } = useAppSelector(({ location }) => location);
+  const { activityStatus, lastPosition, navigationTrackId } = useAppShallowSelector(({ location }) => ({
+    activityStatus: location.activityStatus,
+    lastPosition: location.lastPosition,
+    navigationTrackId: location.navigationTrackId,
+  }));
   const { language } = useAppSelector(({ settings }) => settings);
   const {
     activityVoiceIdentifier,

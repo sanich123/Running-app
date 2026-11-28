@@ -85,6 +85,7 @@ export function createMediaUploadFormData({
   extension,
   isVideo,
   mimeType,
+  aspectRatio,
   uploadOptions,
 }: {
   file: MediaSource;
@@ -92,6 +93,7 @@ export function createMediaUploadFormData({
   extension: string;
   isVideo: boolean;
   mimeType: string;
+  aspectRatio?: number;
   uploadOptions: MediaUploadOptions;
 }) {
   const formData = new FormData();
@@ -99,6 +101,7 @@ export function createMediaUploadFormData({
   if (uploadOptions.scope) formData.append('scope', uploadOptions.scope);
   if (uploadOptions.feedbackId) formData.append('feedbackId', uploadOptions.feedbackId);
   if (uploadOptions.groupId) formData.append('groupId', uploadOptions.groupId);
+  if (aspectRatio) formData.append('aspectRatio', String(aspectRatio));
   return formData;
 }
 
@@ -124,7 +127,15 @@ export function createMediaUploadBatchFormData({
   });
   if (uploadOptions.scope) formData.append('scope', uploadOptions.scope);
   if (uploadOptions.feedbackId) formData.append('feedbackId', uploadOptions.feedbackId);
-  formData.append('manifest', JSON.stringify(manifest));
+  formData.append(
+    'manifest',
+    JSON.stringify(
+      manifest.map((entry, index) => {
+        const aspectRatio = files[index].aspectRatio ?? entry.aspectRatio;
+        return { ...entry, ...(aspectRatio ? { aspectRatio } : {}) };
+      }),
+    ),
+  );
   return formData;
 }
 
@@ -134,6 +145,7 @@ interface MediaUploadFile {
   extension: string;
   isVideo: boolean;
   mimeType: string;
+  aspectRatio?: number;
 }
 
 function createUploadFile({ file, originalName, extension, isVideo, mimeType }: MediaUploadFile) {

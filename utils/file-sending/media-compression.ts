@@ -14,6 +14,11 @@ import {
 } from './file-utils';
 import type { CompressedMediaFile, MediaSource, MediaSourceMetadata, MediaUploadControl } from './file-sending-types';
 
+interface MediaCompressionResult {
+  file: MediaSource;
+  aspectRatio?: number;
+}
+
 const VIDEO_MAX_SIZE = 720;
 const VIDEO_THUMBNAIL_LOAD_TIMEOUT_MS = 15_000;
 
@@ -45,17 +50,18 @@ export async function compressMediaFile(
       }
       return null;
     });
-    const compressedFile = await waitForCompressionOrAbort(compression, control?.signal);
+    const compressedResult = await waitForCompressionOrAbort(compression, control?.signal);
     if (control?.signal?.aborted) return null;
-    if (!compressedFile) return null;
+    if (!compressedResult) return null;
     control?.onStatusProgress?.('compressing', 1);
 
     return {
-      file: compressedFile,
+      file: compressedResult.file,
       originalName: fileName,
       extension,
       isVideo,
       mimeType,
+      ...(compressedResult.aspectRatio ? { aspectRatio: compressedResult.aspectRatio } : {}),
     };
   } catch (error) {
     if (!control?.signal?.aborted) {
@@ -162,7 +168,10 @@ function loadVideoSourceForThumbnail(player: ReturnType<typeof createVideoPlayer
   });
 }
 
-async function compressVideo(fileSrc: MediaSource, control?: MediaUploadControl): Promise<MediaSource | null> {
+async function compressVideo(
+  fileSrc: MediaSource,
+  control?: MediaUploadControl,
+): Promise<MediaCompressionResult | null> {
   if (Platform.OS === 'web') {
     const videoInfo = await getWebVideoInfo(fileSrc);
     if (control?.signal?.aborted) return null;
@@ -180,7 +189,10 @@ async function compressVideo(fileSrc: MediaSource, control?: MediaUploadControl)
     }
 
     control?.onStatusProgress?.('compressing', 1);
-    return fileSrc;
+    return {
+      file: fileSrc,
+      ...(videoInfo.width > 0 && videoInfo.height > 0 ? { aspectRatio: videoInfo.width / videoInfo.height } : {}),
+    };
   }
 
   const sourceMetadata = await getVideoMetaData(String(fileSrc));
@@ -230,10 +242,17 @@ async function compressVideo(fileSrc: MediaSource, control?: MediaUploadControl)
     return null;
   }
 
-  return compressedFile;
+  return {
+    file: compressedFile,
+    ...(compressedMetadata.width > 0 && compressedMetadata.height > 0
+      ? { aspectRatio: compressedMetadata.width / compressedMetadata.height }
+      : {}),
+  };
 }
 
-async function getWebVideoInfo(fileSrc: MediaSource): Promise<{ duration: number; size: number }> {
+async function getWebVideoInfo(
+  fileSrc: MediaSource,
+): Promise<{ duration: number; size: number; width: number; height: number }> {
   if (typeof document === 'undefined') throw new Error('Невозможно определить параметры видео в этом окружении');
 
   const file = typeof fileSrc === 'string' ? await (await fetch(fileSrc)).blob() : fileSrc;
@@ -253,8 +272,10 @@ async function getWebVideoInfo(fileSrc: MediaSource): Promise<{ duration: number
 
     video.onloadedmetadata = () => {
       const duration = video.duration;
+      const width = video.videoWidth;
+      const height = video.videoHeight;
       cleanup();
-      resolve({ duration, size: file.size });
+      resolve({ duration, size: file.size, width, height });
     };
     video.onerror = () => {
       cleanup();
@@ -268,7 +289,8 @@ function isSupportedVideoFormat(extension: string, mimeType: string) {
   return extension ? SUPPORTED_VIDEO_FILE_EXTENSIONS.has(extension) : SUPPORTED_VIDEO_MIME_TYPES.has(mimeType);
 }
 
-async function compressImage(fileSrc: MediaSource): Promise<MediaSource> {
-  if (Platform.OS === 'web') return fileSrc;
-  return await ImageCompressor.compress(String(fileSrc));
+async function compressImage(fileSrc: MediaSource): Promise<MediaCompressionResult | null> {
+  if (Platform.OS === 'web') return { file: fileSrc };
+  const file = await ImageCompressor.compress(String(fileSrc));
+  return file ? { file } : null;
 }

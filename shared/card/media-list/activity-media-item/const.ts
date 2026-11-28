@@ -10,7 +10,7 @@ export const ACTIVITY_MEDIA_COPY = {
     unmuteVideo: 'Unmute video',
     mediaActions: 'Media actions',
     report: 'Report',
-    deleteMedia: 'Delete media',
+    deleteMedia: 'Delete',
     restrictedRoute: 'The user has disabled activity route viewing',
   },
   [LANGUAGES.russian]: {
@@ -22,7 +22,7 @@ export const ACTIVITY_MEDIA_COPY = {
     unmuteVideo: 'Включить звук видео',
     mediaActions: 'Дополнительные действия с медиа',
     report: 'Сообщить о нарушении',
-    deleteMedia: 'Удалить медиа',
+    deleteMedia: 'Удалить',
     restrictedRoute: 'Пользователь запретил просматривать информацию о своем маршруте',
   },
 } as const;

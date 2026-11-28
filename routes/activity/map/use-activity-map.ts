@@ -1,17 +1,22 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getCurrentPositionAsync, useBackgroundPermissions, useForegroundPermissions } from 'expo-location';
 // @ts-expect-error package has no types
 import { BatteryOptEnabled } from 'react-native-battery-optimization-check';
 import { Platform } from 'react-native';
 import { setLocationProvider } from '@R/slices/location/location';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useAppDispatch, useAppSelector, useAppShallowSelector } from '@R/typed-hooks';
 import { errorToast } from '@S/error-toast/error-toast';
 import { getLocationProvider } from '@U/location/location-provider';
 import useActivityMapCamera from './use-activity-map-camera';
 import type { LocationObject } from 'expo-location';
 
 export default function useActivityMap(onLocationReadinessChange: (isReady: boolean) => void) {
-  const { isMapVisible, lastPosition, initialLocation, locationProvider } = useAppSelector(({ location }) => location);
+  const { isMapVisible, lastPosition, initialLocation, locationProvider } = useAppShallowSelector(({ location }) => ({
+    isMapVisible: location.isMapVisible,
+    lastPosition: location.lastPosition,
+    initialLocation: location.initialLocation,
+    locationProvider: location.locationProvider,
+  }));
   const currentPosition: LocationObject | null = lastPosition ?? initialLocation;
   const dispatch = useAppDispatch();
   const { userId } = useAppSelector(({ auth }) => auth);
@@ -43,22 +48,6 @@ export default function useActivityMap(onLocationReadinessChange: (isReady: bool
     canRenderMap,
     currentPosition,
   });
-
-  useEffect(() => {
-    onLocationReadinessChange(canUseLocation);
-  }, [canUseLocation, onLocationReadinessChange]);
-
-  useEffect(() => {
-    if (Platform.OS !== 'android' || !canUseLocation) return;
-
-    BatteryOptEnabled()
-      .then((isEnabled: boolean) => {
-        setIsBatteryOptimizationActive(isEnabled);
-        setShouldRefreshPermissionStatus(false);
-      })
-      .catch((error: unknown) => errorToast('Не удалось проверить оптимизацию батареи', error));
-  }, [canUseLocation, shouldRefreshPermissionStatus]);
-
   const onCenterOnCurrentLocation = useCallback(async () => {
     setIsCenteringOnCurrentLocation(true);
     try {
@@ -72,17 +61,8 @@ export default function useActivityMap(onLocationReadinessChange: (isReady: bool
     }
   }, [centerOnPosition, dispatch]);
 
-  return {
-    canRenderMap,
-    isLoadingLocationPrerequisites,
-    isMapVisible,
-    locationSourceMessage,
-    mapViewProps: {
-      currentPosition,
-      cameraRef,
-      cameraDefaultSettings: defaultSettings,
-    },
-    activityMapContext: {
+  const activityMapContext = useMemo(
+    () => ({
       mapControls: {
         mapZoomLevel,
         isCenteringOnCurrentLocation,
@@ -103,6 +83,48 @@ export default function useActivityMap(onLocationReadinessChange: (isReady: bool
         isActive: isBatteryOptimizationActive,
         setIsNeedToRefreshPermission: setShouldRefreshPermissionStatus,
       },
+    }),
+    [
+      backgroundPermissionStatus,
+      foregroundPermissionStatus,
+      isBatteryOptimizationActive,
+      isCenteringOnCurrentLocation,
+      isLocationServicesEnabled,
+      isMapVisible,
+      mapZoomLevel,
+      onCenterOnCurrentLocation,
+      requestBackgroundPermission,
+      requestForegroundPermission,
+      zoomIn,
+      zoomOut,
+    ],
+  );
+
+  useEffect(() => {
+    onLocationReadinessChange(canUseLocation);
+  }, [canUseLocation, onLocationReadinessChange]);
+
+  useEffect(() => {
+    if (Platform.OS !== 'android' || !canUseLocation) return;
+
+    BatteryOptEnabled()
+      .then((isEnabled: boolean) => {
+        setIsBatteryOptimizationActive(isEnabled);
+        setShouldRefreshPermissionStatus(false);
+      })
+      .catch((error: unknown) => errorToast('Не удалось проверить оптимизацию батареи', error));
+  }, [canUseLocation, shouldRefreshPermissionStatus]);
+
+  return {
+    canRenderMap,
+    isLoadingLocationPrerequisites,
+    isMapVisible,
+    locationSourceMessage,
+    mapViewProps: {
+      currentPosition,
+      cameraRef,
+      cameraDefaultSettings: defaultSettings,
     },
+    activityMapContext,
   };
 }

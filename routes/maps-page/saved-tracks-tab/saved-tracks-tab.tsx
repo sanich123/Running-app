@@ -6,7 +6,7 @@ import { useRouter } from 'expo-router';
 import { ActivityIndicator, Button, Icon, IconButton, Text, TextInput, useTheme } from 'react-native-paper';
 import { ROUTES } from '@const/enums';
 import { setNavigationTrackId } from '@R/slices/location/location';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useAppDispatch, useAppSelector, useAppShallowSelector } from '@R/typed-hooks';
 import ConfirmDialog from '@S/confirm-dialog/confirm-dialog';
 import EmptyState from '@S/empty-state/empty-state';
 import { errorToast } from '@S/error-toast/error-toast';
@@ -31,7 +31,9 @@ export default function SavedTracksTab({ copy }: { copy: MapsPageCopy }) {
   const { colors } = useTheme();
   const { push } = useRouter();
   const dispatch = useAppDispatch();
-  const { navigationTrackId } = useAppSelector(({ location }) => location);
+  const { navigationTrackId } = useAppShallowSelector(({ location }) => ({
+    navigationTrackId: location.navigationTrackId,
+  }));
   const { language } = useAppSelector(({ settings }) => settings);
   const [tracks, setTracks] = useState<SavedActivityTrack[]>([]);
   const [storageBytes, setStorageBytes] = useState(0);

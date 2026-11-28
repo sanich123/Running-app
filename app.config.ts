@@ -10,7 +10,7 @@ export default {
     name: IS_DEV ? 'Runich(dev)' : 'Runich',
     slug: 'running-app',
     scheme: IS_DEV ? 'runich-dev' : 'runich',
-    version: '1.5.3',
+    version: '1.5.4',
     orientation: 'portrait',
     runtimeVersion: { policy: 'appVersion' },
     icon: IS_DEV ? './assets/images/icon-dev.png' : './assets/images/icon.png',

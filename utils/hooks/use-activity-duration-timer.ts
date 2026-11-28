@@ -3,7 +3,7 @@ import { useStore } from 'react-redux';
 import { AppState } from 'react-native';
 import { STATUSES } from '@const/enums';
 import { setDurationAt, startDurationTimer } from '@R/slices/location/location';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useAppDispatch, useAppShallowSelector } from '@R/typed-hooks';
 import { getCurrentActivityDuration } from '@U/activity-duration';
 import type { RootState } from '@R/store';
 
@@ -12,7 +12,7 @@ const TIMER_INTERVAL = 1_000;
 export default function useActivityDurationTimer(isEnabled = true) {
   const dispatch = useAppDispatch();
   const appStore = useStore<RootState>();
-  const { activityStatus } = useAppSelector(({ location }) => location);
+  const { activityStatus } = useAppShallowSelector(({ location }) => ({ activityStatus: location.activityStatus }));
   const isRecording = activityStatus === STATUSES.started || activityStatus === STATUSES.continued;
 
   useEffect(() => {

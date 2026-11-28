@@ -158,7 +158,7 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }: TaskManagerLoc
 
   for (const currentPosition of data.locations) {
     const provider = getLocationProvider(currentPosition);
-    if (provider) {
+    if (provider && provider !== store.getState().location.locationProvider) {
       store.dispatch(setLocationProvider(provider));
     }
     processLocation(stripLocationProvider(currentPosition));

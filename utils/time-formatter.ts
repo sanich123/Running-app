@@ -1,12 +1,26 @@
-import { utc, duration } from 'moment';
 import { LANGUAGES } from '../constants/enums';
 
+function getUtcDurationParts(time: number) {
+  const date = new Date(time);
+  if (!Number.isFinite(date.getTime())) return null;
+
+  return {
+    hours: date.getUTCHours(),
+    minutes: date.getUTCMinutes(),
+    seconds: date.getUTCSeconds(),
+  };
+}
+
 export function formatDuration(time: number) {
-  return utc(duration(time, 'ms').asMilliseconds()).format('HH:mm:ss');
+  const parts = getUtcDurationParts(time);
+  if (!parts) return 'Invalid date';
+  return [parts.hours, parts.minutes, parts.seconds].map((part) => String(part).padStart(2, '0')).join(':');
 }
 
 export function formatDurationMinsSecs(time: number) {
-  return utc(duration(time, 'ms').asMilliseconds()).format('mm:ss');
+  const parts = getUtcDurationParts(time);
+  if (!parts) return 'Invalid date';
+  return `${String(parts.minutes).padStart(2, '0')}:${String(parts.seconds).padStart(2, '0')}`;
 }
 
 export function formatDate(dateString: string, language: LANGUAGES) {

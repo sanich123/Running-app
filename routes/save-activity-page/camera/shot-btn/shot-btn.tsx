@@ -49,7 +49,11 @@ export default function ShotBtn({ cameraRef, setPhotos, photos, maxPhotos = 10, 
           if (cameraRef?.current) {
             const newPhoto = await cameraRef?.current.takePictureAsync(CAMERA_SETTINGS);
             if (newPhoto) {
-              const localPhoto: UploadedMedia = { url: newPhoto.uri, thumbnail: null };
+              const localPhoto: UploadedMedia = {
+                url: newPhoto.uri,
+                thumbnail: null,
+                ...(newPhoto.width > 0 && newPhoto.height > 0 ? { aspectRatio: newPhoto.width / newPhoto.height } : {}),
+              };
               const uploadedPhoto: UploadedMedia | null = userId
                 ? ((
                     await uploadActivityMediaBatch(

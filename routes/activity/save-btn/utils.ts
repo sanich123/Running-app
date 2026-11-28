@@ -36,10 +36,11 @@ interface SaveActivityActionsDependencies {
 }
 
 export function createActivityMedia(media: ActivityPhoto[]): ActivityDetails['media'] {
-  return media.map(({ url, thumbnail, blurhash, assetId, thumbnailAssetId }) => ({
+  return media.map(({ url, thumbnail, blurhash, aspectRatio, assetId, thumbnailAssetId }) => ({
     ...(url && !assetId ? { url } : {}),
     thumbnail: thumbnail ?? null,
     ...(blurhash ? { blurhash } : {}),
+    ...(aspectRatio && !assetId ? { aspectRatio } : {}),
     ...(assetId ? { assetId } : {}),
     ...(thumbnailAssetId ? { thumbnailAssetId } : {}),
   }));

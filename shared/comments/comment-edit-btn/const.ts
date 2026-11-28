@@ -2,9 +2,9 @@ import { LANGUAGES } from '@const/enums';
 
 export const COMMENT_EDIT_BTN = {
   [LANGUAGES.english]: {
-    label: 'Edit comment',
+    label: 'Edit',
   },
   [LANGUAGES.russian]: {
-    label: 'Редактировать комментарий',
+    label: 'Редактировать',
   },
 } as const;
