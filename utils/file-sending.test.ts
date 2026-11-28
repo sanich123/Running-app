@@ -33,7 +33,7 @@ jest.mock('expo-image-manipulator', () => ({
 }));
 jest.mock('react-native-compressor', () => ({
   Image: { compress: jest.fn() },
-  Video: { compress: jest.fn() },
+  Video: { cancelCompression: jest.fn(), compress: jest.fn() },
   getVideoMetaData: jest.fn(),
 }));
 jest.mock('@S/error-toast/error-toast', () => ({ errorToast: jest.fn() }));
@@ -474,6 +474,51 @@ describe('file sending', () => {
 
     await expect(compressMediaFile('photo.jpg')).resolves.toBeNull();
     expect(errorToast).not.toHaveBeenCalled();
+  });
+
+  it('skips image compression when the upload was already cancelled', async () => {
+    const controller = new AbortController();
+    controller.abort();
+
+    await expect(compressMediaFile('photo.jpg', {}, { signal: controller.signal })).resolves.toBeNull();
+    expect(ImageCompressor.compress).not.toHaveBeenCalled();
+  });
+
+  it('cancels native video compression with its native cancellation id', async () => {
+    const controller = new AbortController();
+    const onStatusProgress = jest.fn();
+    let notifyCompressionStarted = () => {};
+    const compressionStarted = new Promise<void>((resolve) => {
+      notifyCompressionStarted = resolve;
+    });
+    let resolveCompressedFile: (file: string) => void = () => {};
+    const compressedFile = new Promise<string>((resolve) => {
+      resolveCompressedFile = resolve;
+    });
+    (VideoCompressor.compress as jest.Mock).mockImplementationOnce(
+      (
+        file: string,
+        options: { getCancellationId?: (id: string) => void },
+        onProgress?: (progress: number) => void,
+      ) => {
+        expect(file).toBe('activity.mp4');
+        options.getCancellationId?.('compression-1');
+        onProgress?.(0.4);
+        notifyCompressionStarted();
+        return compressedFile;
+      },
+    );
+
+    const compression = compressMediaFile('activity.mp4', {}, { signal: controller.signal, onStatusProgress });
+    await compressionStarted;
+    controller.abort();
+
+    expect(VideoCompressor.cancelCompression).toHaveBeenCalledWith('compression-1');
+    expect(onStatusProgress).toHaveBeenCalledWith('compressing', 0.4);
+    await expect(compression).resolves.toBeNull();
+    resolveCompressedFile('compressed-activity.mp4');
+    await Promise.resolve();
+    expect(getVideoMetaData).toHaveBeenCalledTimes(1);
   });
 
   it('rejects oversized browser videos without calling native video services', async () => {
