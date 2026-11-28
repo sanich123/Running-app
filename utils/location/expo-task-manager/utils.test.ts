@@ -42,7 +42,7 @@ describe('location speed filtering', () => {
 
     saveMetricsToStoreTaskManager(MOCK_LOCATION, 90_000, 0, 0, 1000, null);
 
-    expect(store.getState().location.locationsFromBackground).toHaveLength(1);
+    expect(store.getState().location.locationsWithPauses.flat()).toEqual([MOCK_LOCATION]);
     expect(store.getState().location.isTooMuchSpeed).toBe(false);
   });
 });

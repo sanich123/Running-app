@@ -11,14 +11,18 @@ import {
   stopDurationTimer,
 } from '@R/slices/location/location';
 import { setTrackingRecoveryStatus } from '@R/slices/tracking-recovery/tracking-recovery';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useAppDispatch, useAppShallowSelector } from '@R/typed-hooks';
 import { ACTIVITY_TRACKING_ERROR_COPY } from '@Routes/activity/const';
 import { errorToast } from '@S/error-toast/error-toast';
 import { getCurrentActivityDuration } from '@U/activity-duration';
 import { getSpeedInMinsInKm } from '@U/location/activity-metrics';
 import { startLocationTracking, stopLocationTracking } from '@U/location/expo-task-manager/background-location';
 import { getElevationGainByKilometres } from '@U/location/location-geometry';
-import { getActiveLocationJournalId } from '@U/location/location-journal';
+import {
+  getActiveLocationJournalId,
+  markLocationJournalPause,
+  readLocationJournal,
+} from '@U/location/location-journal';
 import { pausePedometerActivity, resumePedometerActivity } from '@U/pedometer/pedometer';
 import { getDeviceTimeZone } from '@U/time-zone';
 
@@ -35,7 +39,17 @@ export default function PauseBtn() {
     distance,
     locationsFromBackground: locations,
     kilometresSplit,
-  } = useAppSelector(({ location }) => location);
+  } = useAppShallowSelector(({ location }) => ({
+    activityStatus: location.activityStatus,
+    duration: location.duration,
+    durationTimerBase: location.durationTimerBase,
+    durationTimerStartedAt: location.durationTimerStartedAt,
+    recordingStartedAt: location.recordingStartedAt,
+    recordingTimeZone: location.recordingTimeZone,
+    distance: location.distance,
+    locationsFromBackground: location.locationsFromBackground,
+    kilometresSplit: location.kilometresSplit,
+  }));
   const [pressScale] = useState(() => new Animated.Value(1));
   const [isTrackingActionInProgress, setIsTrackingActionInProgress] = useState(false);
 
@@ -69,14 +83,17 @@ export default function PauseBtn() {
             const durationForSave = getCurrentActivityDuration({ duration, durationTimerBase, durationTimerStartedAt });
             dispatch(setDurationAt(durationForSave));
             dispatch(stopDurationTimer());
-            const elevationGainByKilometre = getElevationGainByKilometres(locations, kilometresSplit.length);
+            const routeJournalId = getActiveLocationJournalId();
+            const journalLocations = routeJournalId ? readLocationJournal(routeJournalId)?.locations : null;
+            const trackedLocations = journalLocations?.length ? journalLocations : locations;
+            const elevationGainByKilometre = getElevationGainByKilometres(trackedLocations, kilometresSplit.length);
             dispatch(
               setFinishedActivity({
                 duration: durationForSave,
                 date: recordingStartedAt ? new Date(recordingStartedAt).toISOString() : undefined,
                 timeZone: recordingTimeZone ?? getDeviceTimeZone(),
                 distance,
-                routeJournalId: getActiveLocationJournalId(),
+                routeJournalId,
                 kilometresSplit: kilometresSplit.map((split, index) => ({
                   ...split,
                   lastKilometerAltitude: elevationGainByKilometre[index] ?? split.lastKilometerAltitude,
@@ -86,6 +103,7 @@ export default function PauseBtn() {
             );
             dispatch(setTrackingRecoveryStatus(STATUSES.paused));
             dispatch(setActivityStatus(STATUSES.paused));
+            if (routeJournalId) markLocationJournalPause(routeJournalId);
             dispatch(setEmptyLastArrayWhenPaused());
           }
         } catch (error) {

@@ -31,6 +31,7 @@ export async function uploadMediaFile(
       extension: uploadFile.extension,
       isVideo: uploadFile.isVideo,
       mimeType: uploadFile.mimeType,
+      aspectRatio: uploadFile.aspectRatio,
       uploadOptions,
     });
     return (await uploadRequest(formData, control)) ?? null;

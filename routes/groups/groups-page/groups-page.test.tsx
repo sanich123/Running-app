@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { EffectCallback, ReactNode } from 'react';
 import { act, fireEvent, screen, userEvent, waitFor, within } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { View } from 'react-native';
@@ -38,6 +38,12 @@ jest.mock('expo-router', () => {
   const { Stack: toolbarStack } = require('@T/utils/expo-router-toolbar-mock').createExpoRouterToolbarMock();
   return {
     Stack: { ...toolbarStack, Screen: mockStackScreen },
+    useFocusEffect: (callback: () => void | (() => void)) => {
+      const { useEffect } = require('react') as {
+        useEffect: (effect: EffectCallback, deps: readonly unknown[]) => void;
+      };
+      useEffect(callback, [callback]);
+    },
     useRouter: () => ({ push: mockPush }),
   };
 });

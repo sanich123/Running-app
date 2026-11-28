@@ -128,6 +128,7 @@ export interface ActivityMediaItem {
   url?: string | null;
   thumbnail: string | null;
   blurhash?: string | null;
+  aspectRatio?: number | null;
   assetId?: string;
   thumbnailAssetId?: string;
   mediaReviewStatus?: 'queued' | 'processing' | 'review_required' | 'approved' | 'rejected' | 'failed' | null;

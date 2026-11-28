@@ -1,8 +1,11 @@
-import { useAppSelector } from '@R/typed-hooks';
+import { useAppShallowSelector } from '@R/typed-hooks';
 import UserAvatarMarker from '@S/display-activity-map/user-avatar-marker/user-avatar-marker';
 
 export default function MapNavIcon() {
-  const { lastPosition, initialLocation } = useAppSelector(({ location }) => location);
+  const { lastPosition, initialLocation } = useAppShallowSelector(({ location }) => ({
+    lastPosition: location.lastPosition,
+    initialLocation: location.initialLocation,
+  }));
   const currentPosition = lastPosition ?? initialLocation;
 
   return currentPosition?.coords ? (

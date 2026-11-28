@@ -9582,13 +9582,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"moment@npm:^2.31.0":
-  version: 2.31.0
-  resolution: "moment@npm:2.31.0"
-  checksum: 10c0/3755b186b8ff62c565685ce69dde55bf46003c0329139be5c8dd7845cd567bfd7d02be3a13e379a25acb9e98f6b87136c4776745e440615a4f5ca8dd9a8815b9
-  languageName: node
-  linkType: hard
-
 "ms@npm:2.0.0":
   version: 2.0.0
   resolution: "ms@npm:2.0.0"
@@ -11295,7 +11288,6 @@ __metadata:
     jest: "npm:30.5.2"
     jest-expo: "npm:~58.0.16"
     mapbox-gl: "npm:^3.36.0"
-    moment: "npm:^2.31.0"
     msw: "npm:^2.15.0"
     prettier: "npm:^3.10.1"
     react: "npm:19.3.0"

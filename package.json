@@ -97,7 +97,6 @@
     "expo-video": "~58.0.14",
     "expo-vpn-checker": "^0.1.4",
     "mapbox-gl": "^3.36.0",
-    "moment": "^2.31.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-hook-form": "^7.92.0",

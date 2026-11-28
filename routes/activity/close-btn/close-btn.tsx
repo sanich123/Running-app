@@ -14,7 +14,7 @@ import {
   stopDurationTimer,
 } from '@R/slices/location/location';
 import { clearTrackingRecovery } from '@R/slices/tracking-recovery/tracking-recovery';
-import { useAppDispatch, useAppSelector } from '@R/typed-hooks';
+import { useAppDispatch, useAppSelector, useAppShallowSelector } from '@R/typed-hooks';
 import {
   ANDROID_ACTIVITY_HEADER_BACKGROUND_COLOR,
   ANDROID_ACTIVITY_HEADER_ICON_COLOR,
@@ -37,7 +37,11 @@ export default function CloseBtn() {
   const { back, canGoBack, replace } = useRouter();
   const { colors } = useTheme();
   const [isConfirmDialogVisible, setIsConfirmDialogVisible] = useState(false);
-  const { duration, durationTimerBase, durationTimerStartedAt } = useAppSelector(({ location }) => location);
+  const { duration, durationTimerBase, durationTimerStartedAt } = useAppShallowSelector(({ location }) => ({
+    duration: location.duration,
+    durationTimerBase: location.durationTimerBase,
+    durationTimerStartedAt: location.durationTimerStartedAt,
+  }));
   const { language } = useAppSelector(({ settings }) => settings);
   const dispatch = useAppDispatch();
   const [isStoppingTracking, setIsStoppingTracking] = useState(false);

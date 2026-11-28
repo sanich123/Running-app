@@ -16,7 +16,7 @@ import { errorToast } from '@S/error-toast/error-toast';
 import { getAndStoreInitialPosition } from '@U/get-initial-position';
 import useActivityDurationTimer from '@U/hooks/use-activity-duration-timer';
 import { stopLocationTracking } from '@U/location/expo-task-manager/background-location';
-import { markLocationJournalPause, readLocationJournal } from '@U/location/location-journal';
+import { markLocationJournalPause, readLocationJournalPreview } from '@U/location/location-journal';
 import { pausePedometerActivity, subscribePedometerSteps } from '@U/pedometer/pedometer';
 
 export default function useActivityTrackingLifecycle(isLocationReadyForRecording: boolean) {
@@ -61,8 +61,8 @@ export default function useActivityTrackingLifecycle(isLocationReadyForRecording
       return;
     }
 
-    const snapshot = readLocationJournal(recovery.journalId);
-    if (!snapshot) {
+    const locationPreview = readLocationJournalPreview(recovery.journalId);
+    if (!locationPreview) {
       dispatch(clearTrackingRecovery());
       return;
     }
@@ -71,8 +71,8 @@ export default function useActivityTrackingLifecycle(isLocationReadyForRecording
     dispatch(restoreTrackingMetrics(recovery.metrics));
     dispatch(
       restoreLocationsFromJournal({
-        locationsFromBackground: snapshot.locations,
-        locationsWithPauses: snapshot.segments,
+        locationsFromBackground: [],
+        locationsWithPauses: locationPreview,
       }),
     );
     dispatch(setActivityStatus(recovery.status));

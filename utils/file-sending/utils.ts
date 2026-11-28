@@ -52,6 +52,7 @@ export async function uploadMediaWithThumbnail(
       thumbnail: null,
       ...(reviewedFile.assetId ? { assetId: reviewedFile.assetId } : {}),
       ...(reviewedFile.blurhash ? { blurhash: reviewedFile.blurhash } : {}),
+      ...(reviewedFile.aspectRatio ? { aspectRatio: reviewedFile.aspectRatio } : {}),
       ...(reviewedFile.status ? { mediaReviewStatus: reviewedFile.status } : {}),
       ...(reviewedFile.contentType ? { contentType: reviewedFile.contentType } : {}),
     };
@@ -131,14 +132,22 @@ export async function uploadMediaBatchWithThumbnails(
       ? await uploadMediaFiles(
           compressedItems.map(({ file }) => file),
           uploadOptions,
-          compressedItems.map(({ item }) => ({ mediaId: item.mediaId, role: 'media' })),
+          compressedItems.map(({ item, file }) => ({
+            mediaId: item.mediaId,
+            role: 'media',
+            aspectRatio: file.aspectRatio,
+          })),
           undefined,
           withUploadProgressRange(control, 0, hasVideoItems ? 0.8 : 1),
         )
       : await uploadMediaFiles(
           compressedItems.map(({ file }) => file),
           uploadOptions,
-          compressedItems.map(({ item }) => ({ mediaId: item.mediaId, role: 'media' })),
+          compressedItems.map(({ item, file }) => ({
+            mediaId: item.mediaId,
+            role: 'media',
+            aspectRatio: file.aspectRatio,
+          })),
         );
     if (!uploadedFiles) return emptyResult();
 
@@ -160,6 +169,7 @@ export async function uploadMediaBatchWithThumbnails(
           thumbnail: null,
           ...(uploadedFile.assetId ? { assetId: uploadedFile.assetId } : {}),
           ...(uploadedFile.blurhash ? { blurhash: uploadedFile.blurhash } : {}),
+          ...(uploadedFile.aspectRatio ? { aspectRatio: uploadedFile.aspectRatio } : {}),
           ...(uploadedFile.status ? { mediaReviewStatus: uploadedFile.status } : {}),
           ...(uploadedFile.contentType ? { contentType: uploadedFile.contentType } : {}),
         };

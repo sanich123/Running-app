@@ -4,7 +4,7 @@ import { View, StyleSheet, Platform } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { useTheme } from 'react-native-paper';
 import { LABELS, ROUTES, STATUSES } from '@const/enums';
-import { useAppSelector } from '@R/typed-hooks';
+import { useAppShallowSelector, useAppSelector } from '@R/typed-hooks';
 import ActivityRoutesButton from '@Routes/activity/activity-routes-button/activity-routes-button';
 import ActivitySettingsButton from '@Routes/activity/activity-settings/activity-settings-button/activity-settings-button';
 import { ACTIVITY_SETTINGS } from '@Routes/activity/activity-settings/const';
@@ -22,7 +22,10 @@ import useActivityTrackingLifecycle from './use-activity-tracking-lifecycle';
 
 export default function Activity() {
   const { colors } = useTheme();
-  const { activityStatus, isMapVisible } = useAppSelector(({ location }) => location);
+  const { activityStatus, isMapVisible } = useAppShallowSelector(({ location }) => ({
+    activityStatus: location.activityStatus,
+    isMapVisible: location.isMapVisible,
+  }));
   const { language } = useAppSelector(({ settings }) => settings);
   const { push } = useRouter();
   const [isLocationReadyForRecording, setIsLocationReadyForRecording] = useState(false);

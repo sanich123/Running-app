@@ -32,6 +32,7 @@ interface ActivityMediaInput {
   url?: string;
   thumbnail?: string | null;
   blurhash?: string | null;
+  aspectRatio?: number | null;
   assetId?: string;
   thumbnailAssetId?: string;
 }

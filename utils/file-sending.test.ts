@@ -45,9 +45,11 @@ const originalDocumentDescriptor = Object.getOwnPropertyDescriptor(globalThis, '
 const originalCreateObjectURLDescriptor = Object.getOwnPropertyDescriptor(URL, 'createObjectURL');
 const originalRevokeObjectURLDescriptor = Object.getOwnPropertyDescriptor(URL, 'revokeObjectURL');
 
-function mockBrowserVideoMetadata(duration = 20) {
+function mockBrowserVideoMetadata(duration = 20, width = 0, height = 0) {
   const video = {
     duration,
+    videoWidth: width,
+    videoHeight: height,
     preload: 'none',
     onloadedmetadata: null as (() => void) | null,
     onerror: null as ((event: Event) => void) | null,
@@ -440,6 +442,31 @@ describe('file sending', () => {
     });
     expect(VideoCompressor.compress).not.toHaveBeenCalled();
     expect(getVideoMetaData).not.toHaveBeenCalled();
+  });
+
+  it('stores browser video dimensions as an aspect ratio', async () => {
+    Object.defineProperty(Platform, 'OS', { configurable: true, value: 'web' });
+    const webFile = { name: 'wide-clip.mp4', size: 1_000, type: 'video/mp4' } as unknown as File;
+    mockBrowserVideoMetadata(30, 1920, 1080);
+
+    await expect(compressMediaFile(webFile)).resolves.toMatchObject({
+      file: webFile,
+      aspectRatio: 16 / 9,
+      isVideo: true,
+    });
+    expect(VideoCompressor.compress).not.toHaveBeenCalled();
+  });
+
+  it('stores compressed native video dimensions as an aspect ratio', async () => {
+    (getVideoMetaData as jest.Mock)
+      .mockResolvedValueOnce({ size: 1_000, duration: 10 })
+      .mockResolvedValueOnce({ size: 1_000, duration: 10, width: 1920, height: 1080 });
+
+    await expect(compressMediaFile('wide-clip.mp4')).resolves.toMatchObject({
+      file: 'compressed-video.mp4',
+      aspectRatio: 16 / 9,
+      isVideo: true,
+    });
   });
 
   it('returns no compressed media when a compressor produces no output', async () => {

@@ -137,7 +137,7 @@ describe('media list', () => {
     const mediaList = screen.getByTestId('activity-media-list');
     const mapTileWidth = StyleSheet.flatten(screen.getByTestId('activity-map-media-container').props.style).width;
     const mapImageStyle = StyleSheet.flatten(screen.getByTestId(mapUrl).props.style);
-    const photoWidth = StyleSheet.flatten(screen.getByTestId(photoUrl).props.style).width;
+    const photoWidth = StyleSheet.flatten(screen.getByTestId('activity-media-container-1').props.style).width;
 
     expect(mediaList.props.horizontal).toBe(true);
     expect(mediaList.props.data.map(({ url }: { url: string }) => url)).toEqual([mapUrl, photoUrl]);
@@ -146,7 +146,7 @@ describe('media list', () => {
     expect(screen.queryByTestId(routeOnlyMapUrl)).not.toBeOnTheScreen();
     expect(screen.getByTestId(mapUrl)).toHaveProp('contentFit', 'cover');
     expect(screen.getByTestId(photoUrl)).toHaveProp('contentFit', 'cover');
-    expect(mapImageStyle.width).toBe(mapTileWidth);
+    expect(mapImageStyle.width).toBe('100%');
     expect(mapImageStyle.transform).toBeUndefined();
     expect(photoWidth).toBeLessThan(mapTileWidth);
     expect(mediaList.props.onContentSizeChange).toEqual(expect.any(Function));
@@ -568,13 +568,19 @@ describe('media list', () => {
     });
     const media = screen.getByTestId(photoUrl);
     const touchTarget = screen.getByTestId('activity-media-media-metadata');
-    const initialWidth = StyleSheet.flatten(screen.getByTestId(photoUrl).props.style).width;
+    const initialWidth = StyleSheet.flatten(
+      screen.getByTestId('activity-media-container-media-metadata').props.style,
+    ).width;
 
     await fireEvent(media, 'load', { source: { width: 0, height: 100 } });
-    expect(StyleSheet.flatten(screen.getByTestId(photoUrl).props.style).width).toBe(initialWidth);
+    expect(StyleSheet.flatten(screen.getByTestId('activity-media-container-media-metadata').props.style).width).toBe(
+      initialWidth,
+    );
 
     await fireEvent(media, 'load', { source: { width: 200, height: 100 } });
-    expect(StyleSheet.flatten(screen.getByTestId(photoUrl).props.style).width).not.toBe(initialWidth);
+    expect(
+      StyleSheet.flatten(screen.getByTestId('activity-media-container-media-metadata').props.style).width,
+    ).not.toBe(initialWidth);
 
     await fireEvent(touchTarget, 'longPress');
     expect(screen.queryByTestId('activity-media-delete-button')).not.toBeOnTheScreen();
@@ -592,12 +598,14 @@ describe('media list', () => {
 
     try {
       await renderMediaList({ mapPhotoUrl: mapUrl, media: undefined });
-      expect(screen.getByTestId(mapUrl)).toHaveProp('style', expect.objectContaining({ width: MAX_MOBILE_WIDTH }));
+      expect(StyleSheet.flatten(screen.getByTestId('activity-map-media-container').props.style).width).toBe(
+        MAX_MOBILE_WIDTH,
+      );
 
       useWindowDimensions.mockReturnValue({ width: 320, height: 800, scale: 1, fontScale: 1 });
       const narrowMapUrl = 'https://cdn.example.test/narrow-map.jpg';
       await renderMediaList({ mapPhotoUrl: narrowMapUrl, media: [] });
-      expect(screen.getByTestId(narrowMapUrl)).toHaveProp('style', expect.objectContaining({ width: 320 }));
+      expect(StyleSheet.flatten(screen.getByTestId('activity-map-media-container').props.style).width).toBe(320);
     } finally {
       useWindowDimensions.mockRestore();
     }

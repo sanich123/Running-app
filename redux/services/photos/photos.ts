@@ -7,6 +7,7 @@ export interface UploadedPhotoResponse {
   url?: string;
   previewUrl?: string;
   blurhash?: string | null;
+  aspectRatio?: number | null;
   key?: string;
   assetId?: string;
   status?: MediaUploadStatus;
@@ -21,6 +22,7 @@ interface MediaUploadStatusResponse {
     status: MediaUploadStatus;
     url?: string;
     contentType: string;
+    aspectRatio?: number | null;
   }[];
 }
 
@@ -29,6 +31,7 @@ type MediaUploadRole = 'media' | 'thumbnail';
 export interface MediaUploadManifestEntry {
   mediaId: string;
   role: MediaUploadRole;
+  aspectRatio?: number;
 }
 
 export interface UploadedPhotoBatchResponse extends UploadedPhotoResponse {

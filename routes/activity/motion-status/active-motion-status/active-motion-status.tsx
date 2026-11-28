@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Accelerometer } from 'expo-sensors';
 import { View, StyleSheet } from 'react-native';
 import { Icon, IconButton, Text, useTheme } from 'react-native-paper';
-import { useAppSelector } from '@R/typed-hooks';
+import { useAppShallowSelector } from '@R/typed-hooks';
 import { ACCELEROMETER_UPDATE_INTERVAL } from '@U/motion/const';
 import { createMotionStatusDetector } from '@U/motion/motion-detector';
 import { getPedometerActivityData } from '@U/pedometer/pedometer';
@@ -12,7 +12,10 @@ import type { MotionSource } from '@U/motion/types';
 
 export default function ActiveMotionStatus({ language }: { language: LANGUAGES }) {
   const { colors } = useTheme();
-  const { lastPosition, steps } = useAppSelector(({ location }) => location);
+  const { lastPosition, steps } = useAppShallowSelector(({ location }) => ({
+    lastPosition: location.lastPosition,
+    steps: location.steps,
+  }));
   const [restingSources, setRestingSources] = useState<MotionSource[]>([]);
   const [isDismissed, setIsDismissed] = useState(false);
   const lastPositionRef = useRef(lastPosition);

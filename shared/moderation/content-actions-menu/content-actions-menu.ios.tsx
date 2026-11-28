@@ -31,7 +31,7 @@ export default function ContentActionsMenu({
 
   return hasActions ? (
     <Host
-      seedColor={iconColor ?? colors.primary}
+      seedColor={colors.primary}
       style={[
         styles.host,
         triggerBackgroundColor ? { backgroundColor: triggerBackgroundColor, borderRadius: 22 } : undefined,
@@ -56,13 +56,20 @@ export default function ContentActionsMenu({
         {additionalActions?.map((action) => (
           <Button
             key={action.testID}
-            label={action.label}
-            systemImage={action.systemImage}
+            label={action.destructive ? undefined : action.label}
+            systemImage={action.destructive ? undefined : action.systemImage}
             role={action.destructive ? 'destructive' : undefined}
             modifiers={action.disabled ? [disabled(true)] : undefined}
             testID={action.testID}
-            onPress={action.onPress}
-          />
+            onPress={action.onPress}>
+            {action.destructive ? (
+              <Label
+                title={action.label}
+                systemImage={action.systemImage}
+                modifiers={[foregroundStyle(colors.error)]}
+              />
+            ) : undefined}
+          </Button>
         ))}
         {onBlock && blockLabel ? (
           <Button

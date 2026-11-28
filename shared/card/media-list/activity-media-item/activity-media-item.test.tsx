@@ -1,4 +1,5 @@
 import { fireEvent, screen, userEvent } from '@testing-library/react-native';
+import { StyleSheet } from 'react-native';
 import { LANGUAGES, ROUTES } from '@const/enums';
 import { changeLanguage } from '@R/slices/settings/settings';
 import { MEDIA_MODERATION_PLACEHOLDER_COPY } from '@S/media-moderation-placeholder/const';
@@ -89,14 +90,57 @@ describe('ActivityMediaItem', () => {
       item: { id: 'photo-id', url: photoUrl, thumbnail: null, blurhash: 'photo-blurhash' },
     });
 
-    const initialWidth = screen.getByTestId(photoUrl).props.style.width;
+    const mediaContainer = screen.getByTestId('activity-media-container-photo-id');
+    const initialWidth = StyleSheet.flatten(mediaContainer.props.style).width;
     await fireEvent(screen.getByTestId(photoUrl), 'load', { source: { width: 480, height: 240 } });
-    expect(screen.getByTestId(photoUrl).props.style.width).not.toBe(initialWidth);
+    expect(StyleSheet.flatten(screen.getByTestId('activity-media-container-photo-id').props.style).width).not.toBe(
+      initialWidth,
+    );
 
     const mediaButton = screen.getByTestId('activity-media-photo-id');
     expect(mediaButton).toHaveProp('accessibilityLabel', ACTIVITY_MEDIA_COPY[LANGUAGES.english].openMedia);
     await userEvent.press(mediaButton);
     expect(mockPush).toHaveBeenCalledWith(`/${ROUTES.media}/activity-id?indexOfPhoto=0&blurhash=photo-blurhash`);
+  });
+
+  it('uses the aspect ratio received with the activity media', async () => {
+    const photoUrl = 'https://images.example.test/server-ratio-photo.jpg';
+    await renderActivityMediaItem({
+      item: { id: 'server-ratio-photo', url: photoUrl, thumbnail: null, aspectRatio: 2 },
+    });
+
+    const mediaContainer = screen.getByTestId('activity-media-container-server-ratio-photo');
+    const serverRatioWidth = StyleSheet.flatten(mediaContainer.props.style).width;
+    await fireEvent(screen.getByTestId(photoUrl), 'load', { source: { width: 1, height: 2 } });
+
+    expect(
+      StyleSheet.flatten(screen.getByTestId('activity-media-container-server-ratio-photo').props.style).width,
+    ).toBe(serverRatioWidth);
+  });
+
+  it('falls back to image dimensions when the saved aspect ratio is invalid', async () => {
+    const photoUrl = 'https://images.example.test/invalid-server-ratio.jpg';
+    await renderActivityMediaItem({
+      item: { id: 'invalid-server-ratio', url: photoUrl, thumbnail: null, aspectRatio: 0 },
+    });
+
+    const mediaContainer = screen.getByTestId('activity-media-container-invalid-server-ratio');
+    const initialWidth = StyleSheet.flatten(mediaContainer.props.style).width;
+    await fireEvent(screen.getByTestId(photoUrl), 'load', { source: { width: 480, height: 240 } });
+
+    expect(
+      StyleSheet.flatten(screen.getByTestId('activity-media-container-invalid-server-ratio').props.style).width,
+    ).not.toBe(initialWidth);
+  });
+
+  it('shows a moderation placeholder when media has no available URL', async () => {
+    mockStore.dispatch(setMockUserId('viewer-id'));
+    await renderActivityMediaItem({
+      item: { id: 'pending-without-url', url: null, thumbnail: null, mediaReviewStatus: 'processing' },
+    });
+
+    expect(screen.getByTestId('pending-activity-media-pending-without-url')).toBeOnTheScreen();
+    expect(screen.getByTestId('media-moderation-placeholder')).toBeOnTheScreen();
   });
 
   it('shows the delete action in the media menu for the owner', async () => {
