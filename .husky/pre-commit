@@ -8,7 +8,7 @@ yarn npm audit --recursive --severity high
 yarn tsc
 
 # 2. Линтинг и форматирование staged-файлов
-yarn lint-staged
+npx lint-staged@latest
 
 # 3. Проверка состояния Expo
 npx expo-doctor@latest || true
@@ -17,7 +17,7 @@ npx expo-doctor@latest || true
 yarn test
 
 # 5. Проверка circular dependencies
-yarn madge \
+npx madge@latest \
   --ts-config ./tsconfig.json \
   --warning \
   --circular \
@@ -25,10 +25,10 @@ yarn madge \
   ./app ./routes ./shared ./constants ./redux ./utils
 
 # 6. Проверка неиспользуемых экспортов ts-prune
-yarn ts-prune || true
+npx ts-prune@latest || true
 
 # 7. Обновление зависимостей
-yarn npm-check-updates || true
+npx npm-check-updates@latest || true
 
 # 8. Проверка неиспользуемых зависимостей опционально
-yarn depcheck || true
+npx depcheck@latest || true
